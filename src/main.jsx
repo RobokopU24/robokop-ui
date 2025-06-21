@@ -12,11 +12,13 @@ import AlertProvider from './components/AlertProvider.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 
 createRoot(document.getElementById('root')).render(
-  <AlertProvider>
-    <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </BrowserRouter>
-  </AlertProvider>
+  <div id="pageContainer">
+    <AlertProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
+    </AlertProvider>
+  </div>
 );
