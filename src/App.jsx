@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import './App.css';
 import Header from './components/header/Header';
+import Footer from './components/footer/Footer';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { ThemeProvider as StylesThemeProvider } from '@mui/styles';
 import theme from './theme';
@@ -14,6 +15,14 @@ import { useAlert } from './components/AlertProvider';
 import BiolinkContext from './context/biolink.js';
 
 import API from './API';
+import Profile from './pages/Profile.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import About from './pages/About.jsx';
+import Guide from './pages/Guide.jsx';
+import Tutorial from './pages/Tutorial.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
+import ActivateUser from './pages/ActivateUser.jsx';
+import Answer from './pages/answer/Answer.jsx';
 
 function App() {
   const biolink = useBiolinkModel();
@@ -41,9 +50,24 @@ function App() {
             <Routes>
               <Route path="/" element={<QueryBuilder />} />
               <Route path="/oauth-callback" element={<OAuthCallback />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/guide" element={<Guide />} />
+              <Route path="/tutorial" element={<Tutorial />} />
+              <Route path="/termsofservice" element={<TermsOfService />} />
+              <Route path="/activate-user" element={<ActivateUser />} />
+              <Route path="/answer/:answer_id?" element={<Answer />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="*" element={<div>404 Not Found</div>} />
             </Routes>
           </div>
+          <Footer />
         </StylesThemeProvider>
       </MuiThemeProvider>
     </BiolinkContext.Provider>

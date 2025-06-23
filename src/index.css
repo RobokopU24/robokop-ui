@@ -88,6 +88,11 @@ body :focus {
   outline: none;
 }
 
+em {
+  font-style: italic;
+  font-weight: 600;
+}
+
 * h1 {
   font-size: 30
 }
@@ -213,4 +218,17 @@ figure img {
 figure>figcaption {
   font-style: italic;
   text-align: center;
+}
+
+code {
+  padding: 2px 4px;
+  font-size: 90%;
+  color: #c7254e;
+  background-color: #f9f2f4;
+  border-radius: 4px;
+}
+
+a {
+  color: #337ab7;
+  text-decoration: none;
 }

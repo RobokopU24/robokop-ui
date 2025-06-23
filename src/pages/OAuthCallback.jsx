@@ -30,7 +30,7 @@ function OAuthCallback() {
 
         if (response.status === 200 && response.data.message === 'Token is valid') {
           login(response.data.user, token);
-          navigate('/dashboard');
+          navigate('/');
         } else {
           // TODO: Handle invalid token case
           navigate('/');

@@ -1,0 +1,26 @@
+#emptyTableOverlay {
+    position: absolute;
+    top: 40%;
+    left: 45%;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid grey;
+    border-radius: 5px;
+}
+.emptyCell {
+    padding: 20px !important;
+}
+#emptyTableRowsText {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#emptyTableRowsText > td {
+    border: none;
+    background-color: white;
+}

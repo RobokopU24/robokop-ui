@@ -20,6 +20,7 @@ import GraphEditor from './graphEditor/GraphEditor';
 import TemplatedQueriesModal from './templatedQueries/TemplatedQueriesModal';
 import JsonEditor from './jsonEditor/JsonEditor';
 import DownloadDialog from '../../components/DownloadDialog';
+import './queryBuilder.css';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
