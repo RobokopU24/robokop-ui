@@ -2,9 +2,12 @@
     margin: 0px 10px;
     min-width: 200px;
 }
-.referenceNode > .nodeDropdown {
+
+
+.referenceNode>.nodeDropdown {
     background-color: #f2f2f2;
 }
+
 .node-option-tooltip-wrapper {
     display: flex;
     flex-direction: column;
@@ -54,13 +57,24 @@ summary {
     padding: 4px;
     border-radius: 0px 0px 16px 16px;
 }
+
 .dropdown-toggle:hover {
     background-color: #e6e6e6;
 }
+
 .dropdown-toggle:active {
     background-color: #e0e0e0;
 }
+
 .dropdown-toggle:focus-visible {
     outline: 2px solid blue;
     outline-offset: -2px;
+}
+
+.css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root {
+    margin-top: -6px;
+}
+
+.css-1tlcqt-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
+    padding: 0px !important;
 }

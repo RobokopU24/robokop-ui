@@ -23,6 +23,8 @@ import Tutorial from './pages/Tutorial.jsx';
 import TermsOfService from './pages/TermsOfService.jsx';
 import ActivateUser from './pages/ActivateUser.jsx';
 import Answer from './pages/answer/Answer.jsx';
+import Explore from './pages/explore/Explore.jsx';
+import DrugDiseasePairs from './pages/explore/DrugDiseasePairs.jsx';
 
 function App() {
   const biolink = useBiolinkModel();
@@ -56,6 +58,8 @@ function App() {
               <Route path="/termsofservice" element={<TermsOfService />} />
               <Route path="/activate-user" element={<ActivateUser />} />
               <Route path="/answer/:answer_id?" element={<Answer />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/explore/drug-chemical" element={<DrugDiseasePairs />} />
               <Route
                 path="/profile"
                 element={
