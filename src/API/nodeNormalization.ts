@@ -7,7 +7,7 @@ const baseRoutes = {
    * Use node normalizer post method
    * @param {object} curies object of array of curies to search for
    */
-  async getNormalizedNodes(curies, cancel) {
+  async getNormalizedNodes(curies: any, cancel: any) {
     const config = {
       cancelToken: cancel,
     };
@@ -18,7 +18,7 @@ const baseRoutes = {
       if (axios.isCancel(error)) {
         return {};
       }
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
 };

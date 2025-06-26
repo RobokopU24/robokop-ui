@@ -2,7 +2,12 @@ import React from 'react';
 
 import './loading.css';
 
-const Loading = (props) => {
+interface LoadingProps {
+  message?: string;
+  positionStatic?: boolean;
+}
+
+const Loading: React.FC<LoadingProps> = (props) => {
   const { message, positionStatic } = props;
 
   return (

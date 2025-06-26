@@ -7,7 +7,7 @@ const baseRoutes = {
   /**
    * Look up possible entities using a search string
    */
-  async entityLookup(entity_name) {
+  async entityLookup(entity_name: any) {
     const config = {
       headers: {
         'Content-Type': 'text/plain',
@@ -19,14 +19,14 @@ const baseRoutes = {
     try {
       const response = await axios(config);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       return utils.handleAxiosError(error);
     }
   },
   /**
    * Look up possible predicates given two entities
    */
-  async predicateLookup(firstNode, secondNode) {
+  async predicateLookup(firstNode: any, secondNode: any) {
     const config = {
       url: `${ranker}/count_predicates`,
       method: 'POST',
@@ -35,7 +35,7 @@ const baseRoutes = {
     try {
       const response = await axios(config);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       return utils.handleAxiosError(error);
     }
   },

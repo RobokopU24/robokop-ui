@@ -29,14 +29,22 @@ const PopoverPaperBelow = styled(PopoverPaper)(() => ({
   },
 }));
 
-const Popover = ({ children, open, onClose, anchorPosition, above }) => {
+interface PopoverProps {
+  children: React.ReactNode;
+  open: boolean;
+  onClose: () => void;
+  anchorPosition: { top: number; left: number };
+  above?: boolean;
+}
+
+const Popover: React.FC<PopoverProps> = ({ children, open, onClose, anchorPosition, above }) => {
   let PositionedPaper = PopoverPaperBelow;
   if (above) PositionedPaper = PopoverPaper;
 
-  let anchorOriginVertical = 'bottom';
+  let anchorOriginVertical: 'top' | 'bottom' | 'center' = 'bottom';
   if (above) anchorOriginVertical = 'top';
 
-  let transformOriginVertical = 'top';
+  let transformOriginVertical: 'top' | 'bottom' | 'center' = 'top';
   if (above) transformOriginVertical = 'bottom';
 
   let marginBlockStart = '28px';

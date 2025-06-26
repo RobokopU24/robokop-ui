@@ -1,6 +1,7 @@
 import React from 'react';
+import { JSX } from 'react/jsx-runtime';
 
-const RobokopLogo = (props) => (
+const RobokopLogo = (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 455 76" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
     <g>
       <path
@@ -137,7 +138,7 @@ const RobokopLogo = (props) => (
   </svg>
 );
 
-const YobokopLogo = (props) => (
+const YobokopLogo = (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) => (
   <svg
     width="1736"
     height="289"

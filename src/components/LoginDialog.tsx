@@ -1,7 +1,7 @@
 import React from 'react';
-// import { Dialog, DialogTitle, DialogContent, Button, IconButton, Input } from '@material-ui/core';
-// import { Close as CloseIcon } from '@material-ui/icons';
-import { FaGoogle, FaGithub, FaFingerprint } from 'react-icons/fa';
+import FaGoogle from '@mui/icons-material/Google';
+import FaGithub from '@mui/icons-material/GitHub';
+import FaFingerprint from '@mui/icons-material/Fingerprint';
 import API from '../API/routes';
 import axios from 'axios';
 import { useAlert } from './AlertProvider';
@@ -10,7 +10,12 @@ import { usePasskey } from '../hooks/usePasskey';
 import { Dialog, DialogTitle, DialogContent, Button, IconButton, Input } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function LoginDialog({ open, onClose }) {
+interface LoginDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+function LoginDialog({ open, onClose }: LoginDialogProps) {
   const { displayAlert } = useAlert();
   const [email, setEmail] = React.useState('');
   const { login } = useAuth();

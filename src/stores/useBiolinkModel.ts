@@ -5,7 +5,7 @@ import getNodeCategoryColorMap from '../utils/colors';
 
 const baseClass = 'biolink:NamedThing';
 
-const newClassNode = (name) => ({
+const newClassNode = (name: string) => ({
   name,
   uuid: crypto.randomUUID(),
   parent: null,
@@ -16,7 +16,7 @@ const newClassNode = (name) => ({
   mixin: false,
 });
 
-const newSlotNode = (name) => ({
+const newSlotNode = (name: string) => ({
   name,
   uuid: crypto.randomUUID(),
   parent: null,
@@ -26,23 +26,43 @@ const newSlotNode = (name) => ({
   abstract: false,
   mixin: false,
 });
+
+interface BiolinkModel {
+  classes: { [key: string]: any };
+  slots: { [key: string]: any };
+  enums: { [key: string]: any };
+}
 
 export default function useBiolinkModel() {
-  const [biolinkModel, setBiolinkModel] = useState(null);
-  const [concepts, setConcepts] = useState([]);
-  const [hierarchies, setHierarchies] = useState({});
-  const [predicates, setPredicates] = useState([]);
-  const [ancestorsMap, setAncestorsMap] = useState([]);
+  const [biolinkModel, setBiolinkModel] = useState<BiolinkModel | null>(null);
+  const [concepts, setConcepts] = useState<string[]>([]);
+  const [hierarchies, setHierarchies] = useState<Record<string, any>>({});
+  const [predicates, setPredicates] = useState<string[]>([]);
+  const [ancestorsMap, setAncestorsMap] = useState<Record<string, string[]>>({});
   const colorMap = useCallback(getNodeCategoryColorMap(hierarchies), [hierarchies]);
 
-  const [model, setModel] = useState(null);
+  interface ModelType {
+    classes: {
+      treeRootNodes: any[];
+      lookup: Map<string, any>;
+    };
+    slots: {
+      treeRootNodes: any[];
+      lookup: Map<string, any>;
+    };
+    associations: any;
+    qualifiers: any;
+    enums: { [key: string]: any };
+  }
 
-  function checkIfDescendantOfRelatedTo([name, slot]) {
+  const [model, setModel] = useState<ModelType | null>(null);
+
+  function checkIfDescendantOfRelatedTo([name, slot]: [string, any]) {
     let currentName = name;
     let current = slot;
     while (current.is_a) {
       currentName = current.is_a;
-      current = biolinkModel.slots[current.is_a];
+      current = biolinkModel?.slots?.[current.is_a];
     }
     return currentName === 'related to';
   }
@@ -51,7 +71,10 @@ export default function useBiolinkModel() {
    * Get a list of all predicates in the biolink model
    * @returns {object[]} list of predicate objects
    */
-  function getEdgePredicates() {
+  function getEdgePredicates(): object[] {
+    if (!biolinkModel || !biolinkModel.slots) {
+      return [];
+    }
     const newPredicates = Object.entries(biolinkModel.slots).filter(checkIfDescendantOfRelatedTo);
     // hard code in treats + parent, they're techincally not descendants of `related to`
     // TODO: we'll want the more correct parsing using mixins at some point
@@ -76,7 +99,10 @@ export default function useBiolinkModel() {
    * @param {object} classes - object of all biolink classes
    * @returns {string[]}
    */
-  function collectMixins(className, classes) {
+  function collectMixins(
+    className: string,
+    classes: { [x: string]: { is_a: any; mixins?: any[] } }
+  ): string[] {
     const collected = [];
     if (
       classes[className] &&
@@ -86,7 +112,7 @@ export default function useBiolinkModel() {
       for (let i = 0; i < classes[className].mixins.length; i += 1) {
         const mixin = classes[className].mixins[i];
         collected.push(mixin);
-        if (classes[mixin].is_a) {
+        if (classes[mixin] && classes[mixin].is_a) {
           collectMixins(classes[mixin].is_a, classes);
         }
       }
@@ -106,7 +132,7 @@ export default function useBiolinkModel() {
    * @param {object} biolinkClasses - object of all biolink classes
    * @returns {string[]} list of related biolink classes
    */
-  function getAncestors(childClass, classes) {
+  function getAncestors(childClass: string, classes: { [x: string]: { is_a: any } }) {
     let currentClass = childClass;
     const ancestors = [];
     // Repeat until we hit the top of the classes
@@ -124,8 +150,11 @@ export default function useBiolinkModel() {
    * @param {object} classes - object of all biolink classes
    * @returns {string[]} list of all descendants
    */
-  function getDescendants(parentClass, classes) {
-    let descendants = [];
+  function getDescendants(
+    parentClass: string,
+    classes: { [x: string]: { is_a: any; mixins?: any[] } }
+  ): string[] {
+    let descendants: any[] = [];
     Object.keys(classes).forEach((key) => {
       if (classes[key].is_a === parentClass) {
         descendants.push(key);
@@ -152,18 +181,21 @@ export default function useBiolinkModel() {
    * @param {object} biolinkClasses - object of all biolink classes
    * @returns {object} Object with classes as keys and hierarchy lists as values
    */
-  function getAllHierarchies(biolinkClasses) {
-    const newHierarchies = Object.keys(biolinkClasses).reduce((obj, item) => {
-      let ancestors = getAncestors(item, biolinkClasses);
-      ancestors = ancestors.map((h) => strings.nodeFromBiolink(h));
-      let descendants = getDescendants(item, biolinkClasses);
-      descendants = descendants.map((h) => strings.nodeFromBiolink(h));
-      const thisClassAndMixins = [item, ...collectMixins(item, biolinkClasses)].map((h) =>
-        strings.nodeFromBiolink(h)
-      );
-      obj[strings.nodeFromBiolink(item)] = [...descendants, ...thisClassAndMixins, ...ancestors];
-      return obj;
-    }, {});
+  function getAllHierarchies(biolinkClasses: { [key: string]: any }): { [key: string]: string[] } {
+    const newHierarchies = Object.keys(biolinkClasses).reduce(
+      (obj: { [key: string]: string[] }, item) => {
+        let ancestors = getAncestors(item, biolinkClasses);
+        ancestors = ancestors.map((h) => strings.nodeFromBiolink(h));
+        let descendants = getDescendants(item, biolinkClasses);
+        descendants = descendants.map((h) => strings.nodeFromBiolink(h));
+        const thisClassAndMixins = [item, ...collectMixins(item, biolinkClasses)].map((h) =>
+          strings.nodeFromBiolink(h)
+        );
+        obj[strings.nodeFromBiolink(item)] = [...descendants, ...thisClassAndMixins, ...ancestors];
+        return obj;
+      },
+      {} as { [key: string]: string[] }
+    );
     return newHierarchies;
   }
 
@@ -172,16 +204,19 @@ export default function useBiolinkModel() {
    * @param {object} biolinkClasses - object of all biolink classes
    * @returns {object} Object with classes as keys and ancestor lists as values
    */
-  function getAllAncestors(biolinkClasses) {
-    const newAncestors = Object.keys(biolinkClasses).reduce((obj, item) => {
-      let ancestors = getAncestors(item, biolinkClasses);
-      ancestors = ancestors.map((h) => strings.nodeFromBiolink(h));
-      const thisClassAndMixins = [item, ...collectMixins(item, biolinkClasses)].map((h) =>
-        strings.nodeFromBiolink(h)
-      );
-      obj[strings.nodeFromBiolink(item)] = [...thisClassAndMixins, ...ancestors];
-      return obj;
-    }, {});
+  function getAllAncestors(biolinkClasses: { [key: string]: any }): Record<string, string[]> {
+    const newAncestors = Object.keys(biolinkClasses).reduce(
+      (obj: Record<string, string[]>, item) => {
+        let ancestors = getAncestors(item, biolinkClasses);
+        ancestors = ancestors.map((h) => strings.nodeFromBiolink(h));
+        const thisClassAndMixins = [item, ...collectMixins(item, biolinkClasses)].map((h) =>
+          strings.nodeFromBiolink(h)
+        );
+        obj[strings.nodeFromBiolink(item)] = [...thisClassAndMixins, ...ancestors];
+        return obj;
+      },
+      {} as Record<string, string[]>
+    );
     return newAncestors;
   }
 
@@ -190,7 +225,7 @@ export default function useBiolinkModel() {
    * @param {object} allHierarchies - object of all hierarchy lists
    * @returns {array} list of valid concepts
    */
-  function getValidConcepts(allHierarchies) {
+  function getValidConcepts(allHierarchies: { [x: string]: string | string[] }) {
     const newConcepts = Object.keys(allHierarchies).filter((biolinkClass) =>
       allHierarchies[biolinkClass].includes(baseClass)
     );
@@ -199,16 +234,20 @@ export default function useBiolinkModel() {
 
   useEffect(() => {
     if (biolinkModel) {
-      const biolinkClasses = _.transform(biolinkModel.classes, (result, value, key) => {
-        result[key] = value;
-      });
+      const biolinkClasses = _.transform(
+        biolinkModel.classes,
+        (result: Record<string, any>, value, key) => {
+          result[key] = value;
+        },
+        {} as Record<string, any>
+      );
       const allHierarchies = getAllHierarchies(biolinkClasses);
       const allConcepts = getValidConcepts(allHierarchies);
       const allPredicates = getEdgePredicates();
       const allAncestors = getAllAncestors(biolinkClasses);
       setHierarchies(allHierarchies);
       setConcepts(allConcepts);
-      setPredicates(allPredicates);
+      setPredicates(allPredicates.map((p: any) => p.predicate));
       setAncestorsMap(allAncestors);
 
       const slotRootItems = [];

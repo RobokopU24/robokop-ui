@@ -8,15 +8,15 @@
  */
 import _ from 'lodash';
 
-function toSpaceCase(str) {
+function toSpaceCase(str: string) {
   return _.startCase(str);
 }
 
-function toCamelCase(str) {
+function toCamelCase(str: string) {
   return _.camelCase(str);
 }
 
-function toSnakeCase(str) {
+function toSnakeCase(str: string) {
   return _.snakeCase(str);
 }
 
@@ -24,7 +24,7 @@ function toSnakeCase(str) {
  * Convert to pascal case with biolink curie format
  * @param {string} str - string to convert to pascal case
  */
-function toPascalCase(str) {
+function toPascalCase(str: string) {
   const camelCaseStr = _.camelCase(str);
   const pascalCase = `${camelCaseStr.charAt(0).toUpperCase()}${camelCaseStr.slice(1)}`;
   return pascalCase;
@@ -34,7 +34,7 @@ function toPascalCase(str) {
  * Convert category from biolink into snake case
  * @param {string} category - biolink category to ingest
  */
-function nodeFromBiolink(category) {
+function nodeFromBiolink(category: string) {
   return category && `biolink:${toPascalCase(category)}`;
 }
 
@@ -43,7 +43,7 @@ function nodeFromBiolink(category) {
  * @param {string} type - biolink type to ingest
  * @returns {string} 'biolink:snake_case'
  */
-function edgeFromBiolink(type) {
+function edgeFromBiolink(type: string) {
   return type && `biolink:${toSnakeCase(type)}`;
 }
 
@@ -52,7 +52,7 @@ function edgeFromBiolink(type) {
  * @param {string|array} arg - string or array of wanted pretty display
  * will only grab the first item in array
  */
-function displayCategory(arg) {
+function displayCategory(arg: any) {
   if (!arg) {
     return '';
   }
@@ -77,7 +77,7 @@ function displayCategory(arg) {
  * @param {string} category - node category
  * @returns Set of {category}
  */
-function setify(category) {
+function setify(category: any) {
   let pluralCategory = displayCategory(category);
   if (pluralCategory.endsWith('ay')) {
     // Pathway
@@ -95,7 +95,7 @@ function setify(category) {
   return `Set of ${pluralCategory}`;
 }
 
-function displayPredicate(arg) {
+function displayPredicate(arg: any) {
   if (!arg) {
     return '';
   }
@@ -120,7 +120,7 @@ function displayPredicate(arg) {
  * @param {string|array} arg string or array of wanted pretty display
  * will only grab the first item in array
  */
-function prettyDisplay(arg) {
+function prettyDisplay(arg: any) {
   if (!arg) {
     return '';
   }
@@ -131,7 +131,7 @@ function prettyDisplay(arg) {
   const out = label.replace(/_/g, ' ');
   return out.replace(
     /(?!or\b)\b\w+/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+    (txt: string) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   );
 }
 

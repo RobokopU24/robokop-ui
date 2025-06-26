@@ -1,6 +1,14 @@
 import { useReducer } from 'react';
 
-function reducer(state, action) {
+function reducer(
+  state: {
+    [x: string]: {
+      [x: string]: any;
+      disabled?: boolean;
+    };
+  },
+  action: { type: any; payload: { component: any; show?: any } }
+) {
   switch (action.type) {
     case 'toggle': {
       const { component, show } = action.payload;

@@ -7,13 +7,19 @@ import {
 import axios from 'axios';
 import routes from '../API/routes';
 
+interface Passkey {
+  id: string;
+  createdAt: string;
+  deviceType: string;
+}
+
 export const usePasskey = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [registrationError, setRegistrationError] = useState(null);
-  const [passkeys, setPasskeys] = useState([]);
+  const [error, setError] = useState<string | null>(null);
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
+  const [passkeys, setPasskeys] = useState<Passkey[]>([]);
   const [loadingPasskeys, setLoadingPasskeys] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
   const getAuthHeader = () => ({
     'Content-Type': 'application/json',
@@ -37,7 +43,7 @@ export const usePasskey = () => {
     }
   };
 
-  const deletePasskey = async (id) => {
+  const deletePasskey = async (id: string) => {
     setDeleteLoading(id);
     try {
       await axios.delete(`${routes.passkeyRoutes.base}/${id}`, {
@@ -47,8 +53,13 @@ export const usePasskey = () => {
 
       setPasskeys(passkeys.filter((passkey) => passkey.id !== id));
     } catch (deleteError) {
-      if (deleteError.response) {
-        throw new Error(deleteError.response.data.message || 'Error deleting passkey');
+      if (
+        typeof deleteError === 'object' &&
+        deleteError !== null &&
+        'response' in deleteError &&
+        (deleteError as any).response
+      ) {
+        throw new Error((deleteError as any).response.data?.message || 'Error deleting passkey');
       }
       throw deleteError;
     } finally {
@@ -56,7 +67,7 @@ export const usePasskey = () => {
     }
   };
 
-  const registerPasskey = async (email) => {
+  const registerPasskey = async (email?: string) => {
     setIsLoading(true);
     setRegistrationError(null);
     try {
@@ -90,7 +101,13 @@ export const usePasskey = () => {
 
       return verifyResponse.data;
     } catch (registerError) {
-      setRegistrationError(registerError.message || 'Failed to register passkey');
+      if (registerError && typeof registerError === 'object' && 'message' in registerError) {
+        setRegistrationError(
+          (registerError as { message: string }).message || 'Failed to register passkey'
+        );
+      } else {
+        setRegistrationError('Failed to register passkey');
+      }
       throw registerError;
     } finally {
       setIsLoading(false);
@@ -128,7 +145,11 @@ export const usePasskey = () => {
 
       return verifyResponse.data;
     } catch (loginError) {
-      setError(loginError.message || 'Failed to login with passkey');
+      if (loginError && typeof loginError === 'object' && 'message' in loginError) {
+        setError((loginError as { message: string }).message || 'Failed to login with passkey');
+      } else {
+        setError('Failed to login with passkey');
+      }
       throw loginError;
     } finally {
       setIsLoading(false);

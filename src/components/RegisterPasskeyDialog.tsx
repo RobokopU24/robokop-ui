@@ -5,7 +5,12 @@ import { usePasskey } from '../hooks/usePasskey';
 import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function RegisterPasskeyDialog({ open, onClose }) {
+interface RegisterPasskeyDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+function RegisterPasskeyDialog({ open, onClose }: RegisterPasskeyDialogProps) {
   const { displayAlert } = useAlert();
   const { user, setUser } = useAuth();
   const { registerPasskey } = usePasskey();
@@ -13,7 +18,9 @@ function RegisterPasskeyDialog({ open, onClose }) {
   const handleRegisterPasskey = async () => {
     try {
       await registerPasskey();
-      setUser({ ...user, _count: { ...user._count, WebAuthnCredential: 1 } });
+      if (user) {
+        setUser({ ...user, _count: { ...user._count, WebAuthnCredential: 1 } });
+      }
       displayAlert('success', 'Passkey registered successfully!');
       onClose();
     } catch (error) {

@@ -1,9 +1,14 @@
-// Check out https://html-color.codes to pick new colors
-// This is hard to have this many contrasting colors that are within families leave text readable.
-// This should be periodically updated as new node categories are introduced to give them consistent colors
+interface Hierarchies {
+  [category: string]: string[];
+}
+
+type Category = string;
+
+type ConceptColorMap = { [category: string]: string };
+
 const undefinedColor = '#FFEEA3';
 
-const conceptColorMap = {
+const conceptColorMap: ConceptColorMap = {
   'biolink:AnatomicalEntity': '#e5d8bd', // Brown
   'biolink:BiologicalEntity': '#c1a25a', // Darker Brown
   'biolink:BiologicalProcess': '#b3cde3', // Blue
@@ -36,8 +41,8 @@ const conceptColorMap = {
   // 'biolink:SmallMolecule': '#7b68ee', // Medium Slate Blue
 };
 
-export default function getNodeCategoryColorMap(hierarchies) {
-  return (categories) => {
+export default function getNodeCategoryColorMap(hierarchies: Hierarchies) {
+  return (categories: Category | Category[]): [Category | null, string] => {
     if (!categories || !Object.keys(hierarchies).length) {
       return [null, undefinedColor];
     }
@@ -45,8 +50,8 @@ export default function getNodeCategoryColorMap(hierarchies) {
       categories = [categories]; // eslint-disable-line
     }
     // traverse up hierarchy until we find a category we have a color for
-    let category;
-    categories.forEach((c) => {
+    let category: Category | undefined;
+    (categories as Category[]).forEach((c) => {
       if (!category) {
         const hierarchy = hierarchies[c];
         if (hierarchy) {

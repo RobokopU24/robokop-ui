@@ -8,9 +8,9 @@ import _ from 'lodash';
  * @param {integer} numResults - total number of results
  * @returns {function} function that takes a number and returns a radius
  */
-function getNodeRadius(width, height, numQNodes, numResults) {
+function getNodeRadius(width: number, height: number, numQNodes: number, numResults: number) {
   const totalArea = width * height * 0.5;
-  return (num) => {
+  return (num: number) => {
     const numerator = totalArea * num;
     const circleArea = numerator / numResults / numQNodes;
     let radius = Math.sqrt(circleArea / Math.PI);
@@ -26,8 +26,8 @@ function getNodeRadius(width, height, numQNodes, numResults) {
  * @param {array} categories - list of categories of a specific node
  * @returns {string[]} list of ranked categories
  */
-function getRankedCategories(hierarchies, categories) {
-  const rankedCategories = categories.sort((a, b) => {
+function getRankedCategories(hierarchies: { [x: string]: string | any[] }, categories: string[]) {
+  const rankedCategories = categories.sort((a: string | number, b: string | number) => {
     const aLength = (hierarchies[a] && hierarchies[a].length) || 0;
     const bLength = (hierarchies[b] && hierarchies[b].length) || 0;
     return aLength - bLength;
@@ -41,21 +41,41 @@ function getRankedCategories(hierarchies, categories) {
  * @param {object} hierarchies - all biolink hierarchies
  * @returns {object[]} list of node objects for display
  */
-function makeDisplayNodes(message, hierarchies) {
-  const displayNodes = {};
+type KnowledgeGraphNode = {
+  name: any;
+  categories?: string[] | string;
+};
+
+type KnowledgeGraph = {
+  nodes: { [x: string]: KnowledgeGraphNode };
+};
+
+type NodeBinding = { id: string | number };
+
+type Result = {
+  node_bindings: { [s: string]: NodeBinding[] };
+};
+
+function makeDisplayNodes(
+  message: { results: Result[]; knowledge_graph: KnowledgeGraph },
+  hierarchies: any
+) {
+  const displayNodes: { [id: string]: any } = {};
   message.results.forEach((result) => {
     Object.values(result.node_bindings).forEach((kgObjects) => {
-      kgObjects.forEach((kgObj) => {
+      (kgObjects as NodeBinding[]).forEach((kgObj) => {
         let displayNode = displayNodes[kgObj.id];
         if (!displayNode) {
           displayNode = _.cloneDeep(kgObj);
-          let { categories } = message.knowledge_graph.nodes[displayNode.id];
+          const nodeData = message.knowledge_graph.nodes[String(displayNode.id)];
+          let categories = nodeData.categories;
           if (categories && !Array.isArray(categories)) {
             categories = [categories];
           }
+          categories = Array.isArray(categories) ? categories : categories ? [categories] : [];
           categories = getRankedCategories(hierarchies, categories);
           displayNode.categories = categories;
-          displayNode.name = message.knowledge_graph.nodes[displayNode.id].name;
+          displayNode.name = nodeData.name;
           displayNode.count = 1;
         } else {
           displayNode.count += 1;
@@ -64,7 +84,7 @@ function makeDisplayNodes(message, hierarchies) {
       });
     });
   });
-  const kgNodes = Object.values(displayNodes);
+  const kgNodes: { count: number }[] = Object.values(displayNodes);
   kgNodes.sort((a, b) => b.count - a.count);
   return kgNodes;
 }
@@ -74,24 +94,35 @@ function makeDisplayNodes(message, hierarchies) {
  * @param {object} message - TRAPI message
  * @returns {{ nodes: object[], edges: object[] }} lists of nodes and edges for display
  */
-function getFullDisplay(message) {
+function getFullDisplay(message: { knowledge_graph: { nodes: any; edges: any } }) {
   let { nodes, edges } = message.knowledge_graph;
+  type NodeType = { id: string; name?: string; categories?: string[] | string };
   nodes = Object.entries(nodes).map(([nodeId, nodeProps]) => {
-    const node = {};
-    node.id = nodeId;
-    node.name = nodeProps.name;
-    node.categories = nodeProps.categories;
+    const props = nodeProps as { name?: string; categories?: string[] | string };
+    const node: NodeType = {
+      id: nodeId,
+      name: props.name,
+      categories: props.categories,
+    };
     if (node.categories && !Array.isArray(node.categories)) {
       node.categories = [node.categories];
     }
     return node;
   });
   edges = Object.entries(edges).map(([edgeId, edgeProps]) => {
-    const edge = {};
-    edge.id = edgeId;
-    edge.source = edgeProps.subject;
-    edge.target = edgeProps.object;
-    edge.predicates = edgeProps.predicates;
+    type EdgeType = {
+      id: string;
+      source: string;
+      target: string;
+      predicates?: string[] | string;
+    };
+    const eProps = edgeProps as { subject: string; object: string; predicates?: string[] | string };
+    const edge: EdgeType = {
+      id: edgeId,
+      source: eProps.subject,
+      target: eProps.object,
+      predicates: eProps.predicates,
+    };
     if (edge.predicates && !Array.isArray(edge.predicates)) {
       edge.predicates = [edge.predicates];
     }

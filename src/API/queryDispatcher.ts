@@ -8,7 +8,7 @@ const baseRoutes = {
    * @param {object} questionData query graph object
    * @param {string} token jws token
    */
-  async getAnswer(ara, questionId, token) {
+  async getAnswer(ara: any, questionId: any, token: any) {
     const config = {
       url: '/api/dispatcher',
       method: 'POST',
@@ -16,14 +16,14 @@ const baseRoutes = {
         questionId,
         ara,
       },
-      headers: {},
+      headers: {} as Record<string, string>,
     };
     config.headers.Authorization = token;
     try {
       const response = await api(config);
       return response.data;
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
 };

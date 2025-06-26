@@ -1,16 +1,38 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, use } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
 
-const AuthContext = createContext(null);
+interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  login: (userData: User, token: string) => void;
+  logout: () => Promise<void>;
+}
 
-export const AuthProvider = ({ children }) => {
+const AuthContext = createContext<AuthContextType | null>(null);
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+interface User {
+  id: string;
+  email: string;
+  createdAt: string;
+  name?: string;
+  profilePicture?: string;
+  _count?: {
+    WebAuthnCredential: number;
+  };
+}
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const { displayAlert } = useAlert();
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +61,7 @@ export const AuthProvider = ({ children }) => {
     validateToken();
   }, []);
 
-  const login = (userData, token) => {
+  const login = (userData: User, token: string) => {
     setUser(userData);
     localStorage.setItem('authToken', token);
     displayAlert('success', 'You have successfully logged in.');

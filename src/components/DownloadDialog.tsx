@@ -16,9 +16,10 @@ import Papa from 'papaparse';
 
 import { useLocalStorage } from '../hooks';
 
-const jsonToCsvString = (json) => Promise.resolve(Papa.unparse(json));
+const jsonToCsvString = (json: any[] | Papa.UnparseObject<unknown>) =>
+  Promise.resolve(Papa.unparse(json));
 
-const constructPmidOrPmcLink = (id) => {
+const constructPmidOrPmcLink = (id: string) => {
   if (id.startsWith('PMID')) {
     return `https://pubmed.ncbi.nlm.nih.gov/${id.split(':')[1]}`;
   }
@@ -28,93 +29,128 @@ const constructPmidOrPmcLink = (id) => {
   return '';
 };
 
-const getConcatPublicationsForResult = (result, message) => {
+const getConcatPublicationsForResult = (
+  result: { analyses: { edge_bindings: { [s: string]: unknown } | ArrayLike<unknown> }[] },
+  message: { knowledge_graph: { edges: { [x: string]: any } } }
+) => {
   const edgeIds = Object.values(result.analyses[0].edge_bindings)
     .flat()
-    .map((e) => e.id);
+    .map((e) => (e as { id: string }).id);
   const publications = edgeIds
     .flatMap((edgeId) =>
       message.knowledge_graph.edges[edgeId].attributes
-        .filter((attr) => attr.attribute_type_id === 'biolink:publications')
-        .flatMap((attr) => attr.value)
+        .filter(
+          (attr: { attribute_type_id: string }) => attr.attribute_type_id === 'biolink:publications'
+        )
+        .flatMap((attr: { value: any }) => attr.value)
     )
     .map(constructPmidOrPmcLink);
 
   return publications;
 };
 
-const constructCsvObj = (message) => {
+const constructCsvObj = (message: {
+  results: any[];
+  knowledge_graph: {
+    edges: { [x: string]: { subject: any; object: any; predicate: any; sources: any } };
+    nodes: { [x: string]: any };
+  };
+}) => {
   const nodeLabelHeaders = Object.keys(message.results[0].node_bindings).flatMap((node_label) => [
     `${node_label} (Name)`,
     `${node_label} (CURIE)`,
   ]);
 
   let csvHeaderEdgeLabelsMerged = new Set();
-  message.results.forEach((result) => {
-    const curieToNodeLabel = {};
+  message.results.forEach(
+    (result: {
+      node_bindings: ArrayLike<unknown> | { [s: string]: unknown };
+      analyses: { edge_bindings: { [s: string]: unknown } | ArrayLike<unknown> }[];
+    }) => {
+      const curieToNodeLabel: Record<string, string> = {};
 
-    Object.entries(result.node_bindings).forEach(([nodeLabel, nb]) => {
-      const curie = nb[0].id;
-      curieToNodeLabel[curie] = nodeLabel;
-    });
-
-    Object.values(result.analyses[0].edge_bindings)
-      .flat()
-      .forEach((eb) => {
-        const { subject, object } = message.knowledge_graph.edges[eb.id];
-        const subjectLabel = curieToNodeLabel[subject];
-        const objectLabel = curieToNodeLabel[object];
-        const csvHeaderEdgeLabel = `${subjectLabel} -> ${objectLabel}`;
-        if (subjectLabel && objectLabel) {
-          // TODO: These were occasionally returning undefined, figure out why
-          csvHeaderEdgeLabelsMerged.add(csvHeaderEdgeLabel);
-        }
-      });
-  });
-  csvHeaderEdgeLabelsMerged = Array.from(csvHeaderEdgeLabelsMerged);
-
-  const header = [...nodeLabelHeaders, ...csvHeaderEdgeLabelsMerged, 'Score', 'Publications'];
-
-  const body = message.results.map((result) => {
-    const row = new Array(header.length).fill('');
-    const curieToNodeLabel = {};
-    Object.entries(result.node_bindings).forEach(([nodeLabel, nb], i) => {
-      const curie = nb[0].id;
-      curieToNodeLabel[curie] = nodeLabel;
-      const node = message.knowledge_graph.nodes[curie];
-      row[i * 2] = node.name || node.categories[0];
-      row[i * 2 + 1] = curie;
-    });
-
-    Object.values(result.analyses[0].edge_bindings)
-      .flat()
-      .forEach((eb) => {
-        const { subject, object, predicate, sources } = message.knowledge_graph.edges[eb.id];
-        const subjectLabel = curieToNodeLabel[subject];
-        const objectLabel = curieToNodeLabel[object];
-        if (subjectLabel && objectLabel) {
-          const csvHeaderEdgeLabel = `${curieToNodeLabel[subject]} -> ${curieToNodeLabel[object]}`;
-          const edgeHeaderIndex = header.findIndex((h) => h === csvHeaderEdgeLabel);
-          const primarySourceObj = sources.find(
-            (s) => s.resource_role === 'primary_knowledge_source'
-          );
-          const primarySource = (primarySourceObj && primarySourceObj.resource_id) || undefined;
-          row[edgeHeaderIndex] += `${row[edgeHeaderIndex].length > 0 ? '\n' : ''}${predicate}${
-            primarySource ? ` (${primarySource})` : ''
-          }`;
-        }
+      Object.entries(result.node_bindings).forEach(([nodeLabel, nb]) => {
+        const curie = (nb as Array<{ id: string }>)[0].id;
+        curieToNodeLabel[curie] = nodeLabel;
       });
 
-    row[row.length - 2] = result.score;
-    row[row.length - 1] = getConcatPublicationsForResult(result, message).join('\n');
+      Object.values(result.analyses[0].edge_bindings)
+        .flat()
+        .forEach((eb) => {
+          const { subject, object } = message.knowledge_graph.edges[(eb as { id: string }).id];
+          const subjectLabel = curieToNodeLabel[subject];
+          const objectLabel = curieToNodeLabel[object];
+          const csvHeaderEdgeLabel = `${subjectLabel} -> ${objectLabel}`;
+          if (subjectLabel && objectLabel) {
+            // TODO: These were occasionally returning undefined, figure out why
+            csvHeaderEdgeLabelsMerged.add(csvHeaderEdgeLabel);
+          }
+        });
+    }
+  );
+  const csvHeaderEdgeLabelsMergedArray = Array.from(csvHeaderEdgeLabelsMerged);
 
-    return row;
-  });
+  const header = [...nodeLabelHeaders, ...csvHeaderEdgeLabelsMergedArray, 'Score', 'Publications'];
+
+  const body = message.results.map(
+    (result: {
+      node_bindings: ArrayLike<unknown> | { [s: string]: unknown };
+      analyses: { edge_bindings: { [s: string]: unknown } | ArrayLike<unknown> }[];
+      score: any;
+    }) => {
+      const row = new Array(header.length).fill('');
+      const curieToNodeLabel: Record<string, string> = {};
+      Object.entries(result.node_bindings).forEach(([nodeLabel, nb], i) => {
+        const curie = (nb as Array<{ id: string }>)[0].id;
+        curieToNodeLabel[curie] = nodeLabel;
+        const node = message.knowledge_graph.nodes[curie];
+        row[i * 2] = node.name || node.categories[0];
+        row[i * 2 + 1] = curie;
+      });
+
+      Object.values(result.analyses[0].edge_bindings)
+        .flat()
+        .forEach((eb) => {
+          const { subject, object, predicate, sources } =
+            message.knowledge_graph.edges[(eb as { id: string }).id];
+          const subjectLabel = curieToNodeLabel[subject];
+          const objectLabel = curieToNodeLabel[object];
+          if (subjectLabel && objectLabel) {
+            const csvHeaderEdgeLabel = `${curieToNodeLabel[subject]} -> ${curieToNodeLabel[object]}`;
+            const edgeHeaderIndex = header.findIndex((h) => h === csvHeaderEdgeLabel);
+            const primarySourceObj = sources.find(
+              (s: { resource_role: string }) => s.resource_role === 'primary_knowledge_source'
+            );
+            const primarySource = (primarySourceObj && primarySourceObj.resource_id) || undefined;
+            row[edgeHeaderIndex] += `${row[edgeHeaderIndex].length > 0 ? '\n' : ''}${predicate}${
+              primarySource ? ` (${primarySource})` : ''
+            }`;
+          }
+        });
+
+      row[row.length - 2] = result.score;
+      row[row.length - 1] = getConcatPublicationsForResult(result, message).join('\n');
+
+      return row;
+    }
+  );
 
   return [header, ...body];
 };
 
-export default function DownloadDialog({ open, setOpen, message, download_type = 'answer' }) {
+type DownloadDialogProps = {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  message: any;
+  download_type?: 'answer' | 'all_queries' | 'query';
+};
+
+export default function DownloadDialog({
+  open,
+  setOpen,
+  message,
+  download_type = 'answer',
+}: DownloadDialogProps) {
   const [type, setType] = React.useState('json');
   const [fileName, setFileName] = React.useState('ROBOKOP_message');
   const [queryHistory, setQueryHistory] = useLocalStorage('query_history', {});
@@ -135,6 +171,10 @@ export default function DownloadDialog({ open, setOpen, message, download_type =
           blob = new Blob([csvString], { type: 'text/csv' });
         }
 
+        if (!blob) {
+          // If blob is undefined, do not proceed
+          break;
+        }
         const a = document.createElement('a');
         a.download = `${fileName}.${type}`;
         a.href = window.URL.createObjectURL(blob);
@@ -161,7 +201,7 @@ export default function DownloadDialog({ open, setOpen, message, download_type =
       case 'query': {
         // Bookmark the query with the filename that's given.
         if (!(fileName in queryHistory)) {
-          setQueryHistory((prev) => ({
+          setQueryHistory((prev: any) => ({
             ...prev,
             [fileName]: {
               query_graph: message,
@@ -181,14 +221,14 @@ export default function DownloadDialog({ open, setOpen, message, download_type =
   return (
     <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title">
       <DialogTitle id="alert-dialog-title">Download Answer</DialogTitle>
-      <DialogContent style={{ width: 600 }}>
+      <DialogContent style={{ width: 600, paddingTop: '1rem' }}>
         <TextField
           label={
             ['answer', 'all_queries'].includes(download_type) ? 'File name' : 'Query Graph Name'
           }
-          fullWidth
+          // fullWidth
           variant="outlined"
-          style={{ marginBottom: '2rem' }}
+          style={{ marginBottom: '1rem', width: '90%' }}
           value={fileName}
           onChange={(e) => {
             setFileName(e.target.value);

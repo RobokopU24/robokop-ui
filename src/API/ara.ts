@@ -6,21 +6,21 @@ const baseRoutes = {
    * Send a query graph to ask an ARA for an answer
    * @param {object} message message standard object
    */
-  async getQuickAnswer(ara, message) {
+  async getQuickAnswer(ara: any, message: any) {
     try {
       const response = await api.post(`/api/quick_answer/?ara=${ara}`, message);
       return response.data;
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
 
-  async getAnswer(ara, questionId, token) {
+  async getAnswer(ara: any, questionId: any, token: any) {
     const config = {
       url: '/api/answer',
       method: 'POST',
       withCredentials: true,
-      headers: {},
+      headers: {} as Record<string, string>,
       params: {
         questionId,
         ara,
@@ -33,7 +33,7 @@ const baseRoutes = {
       const response = await api(config);
       return response.data;
     } catch (e) {
-      return utils.handleAxiosError(e);
+      return utils.handleAxiosError(e as any);
     }
   },
 };

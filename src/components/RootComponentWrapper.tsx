@@ -7,10 +7,14 @@ import BiolinkContext from '../context/biolink';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import { ThemeProvider as StylesThemeProvider } from '@mui/styles';
 import { AuthProvider } from '../context/AuthContext';
-import Header from '../components/header/Header';
-import Footer from '../components/footer/Footer';
+import Header from './header/Header';
+import Footer from './footer/Footer';
 
-function RootComponentWrapper({ children }) {
+interface RootComponentWrapperProps {
+  children: React.ReactNode;
+}
+
+function RootComponentWrapper({ children }: RootComponentWrapperProps) {
   const biolink = useBiolinkModel();
   const { displayAlert } = useAlert();
   async function fetchBiolink() {

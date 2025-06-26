@@ -10,7 +10,7 @@ const routes = {
     try {
       response = await api.get('/api/biolink');
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
     return response.data;
   },

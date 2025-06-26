@@ -1,11 +1,14 @@
-import { Navigate, useLocation } from '@tanstack/react-router';
+import { Navigate } from '@tanstack/react-router';
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAlert } from './AlertProvider';
 
-const ProtectedRoute = ({ children }) => {
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
+
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
-  const location = useLocation();
   const { displayAlert } = useAlert();
 
   if (loading) {
@@ -18,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
 
   if (!user) {
     displayAlert('error', 'You must be logged in to access this page.');
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

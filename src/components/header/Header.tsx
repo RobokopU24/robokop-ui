@@ -14,10 +14,10 @@ function Header() {
   const navigate = useNavigate();
 
   //   const { user, logout } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [loginDialogOpen, setLoginDialogOpen] = React.useState(false);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 

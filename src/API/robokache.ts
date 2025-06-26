@@ -2,8 +2,18 @@ import utils from './utils';
 import { api } from './baseUrlProxy';
 
 // Base request method for all endpoints
-async function baseRequest(path, method, body, token) {
-  const config = {
+async function baseRequest(path: string, method: string, body: any, token: string | null) {
+  const config: {
+    url: string;
+    method: string;
+    data: any;
+    withCredentials: boolean;
+    headers: {
+      Accept: string;
+      'Content-Type': string;
+      Authorization?: string;
+    };
+  } = {
     url: `/api/robokache/${path}`,
     method,
     data: body,
@@ -21,32 +31,32 @@ async function baseRequest(path, method, body, token) {
     const response = await api(config);
     return response.data;
   } catch (error) {
-    return utils.handleAxiosError(error);
+    return utils.handleAxiosError(error as any);
   }
 }
 
 const routes = {
-  async getQuestions(token) {
+  async getQuestions(token: string | null) {
     return baseRequest('questions', 'GET', null, token);
   },
-  async getAnswers(doc_id, token) {
+  async getAnswers(doc_id: any, token: string | null) {
     return baseRequest(`answers/${doc_id}`, 'GET', null, token);
   },
 
-  async getQuestion(doc_id, token) {
+  async getQuestion(doc_id: any, token: string | null) {
     return baseRequest(`question/${doc_id}`, 'GET', null, token);
   },
-  async getAnswer(doc_id, token) {
+  async getAnswer(doc_id: any, token: string | null) {
     return baseRequest(`question/${doc_id}`, 'GET', null, token);
   },
 
-  async getQuestionData(doc_id, token) {
+  async getQuestionData(doc_id: any, token: any) {
     const config = {
       url: `/api/robokache/question_data/${doc_id}`,
       method: 'GET',
       withCredentials: true,
-      headers: {},
-      transformResponse: (res) => res,
+      headers: {} as { Authorization?: string },
+      transformResponse: (res: any) => res,
     };
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -55,16 +65,16 @@ const routes = {
       const response = await api(config);
       return response.data;
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
-  async getAnswerData(doc_id, token) {
+  async getAnswerData(doc_id: any, token: any) {
     const config = {
       url: `/api/robokache/answer_data/${doc_id}`,
       method: 'GET',
       withCredentials: true,
-      headers: {},
-      transformResponse: (res) => res,
+      headers: {} as { Authorization?: string },
+      transformResponse: (res: any) => res,
     };
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -73,59 +83,59 @@ const routes = {
       const response = await api(config);
       return response.data;
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
 
-  async setQuestionData(doc_id, newData, token) {
+  async setQuestionData(doc_id: any, newData: any, token: any) {
     const config = {
       url: `/api/robokache/question_data/${doc_id}`,
       method: 'PUT',
       data: newData,
       withCredentials: true,
-      headers: {},
+      headers: {} as { Authorization?: string },
     };
     config.headers.Authorization = `Bearer ${token}`;
     try {
       const response = await api(config);
       return response.data;
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
-  async setAnswerData(doc_id, newData, token) {
+  async setAnswerData(doc_id: any, newData: any, token: any) {
     const config = {
       url: `/api/robokache/answer_data/${doc_id}`,
       method: 'PUT',
       data: newData,
       withCredentials: true,
-      headers: {},
+      headers: {} as { Authorization?: string },
     };
     config.headers.Authorization = `Bearer ${token}`;
     try {
       const response = await api(config);
       return response.data;
     } catch (error) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
 
-  async createQuestion(doc, token) {
+  async createQuestion(doc: any, token: string | null) {
     return baseRequest('question', 'POST', doc, token);
   },
-  async createAnswer(doc, token) {
+  async createAnswer(doc: any, token: string | null) {
     return baseRequest('answer', 'POST', doc, token);
   },
-  async updateQuestion(doc, token) {
+  async updateQuestion(doc: { id: any }, token: string | null) {
     return baseRequest(`question/${doc.id}`, 'PUT', doc, token);
   },
-  async updateAnswer(doc, token) {
+  async updateAnswer(doc: { id: any }, token: string | null) {
     return baseRequest(`answer/${doc.id}`, 'PUT', doc, token);
   },
-  async deleteQuestion(doc_id, token) {
+  async deleteQuestion(doc_id: any, token: string | null) {
     return baseRequest(`question/${doc_id}`, 'DELETE', undefined, token);
   },
-  async deleteAnswer(doc_id, token) {
+  async deleteAnswer(doc_id: any, token: string | null) {
     return baseRequest(`answer/${doc_id}`, 'DELETE', undefined, token);
   },
 };

@@ -1,9 +1,14 @@
-// src/components/AlertProvider.tsx
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
-const AlertContext = createContext(undefined);
+type AlertSeverity = 'success' | 'error' | 'info' | 'warning';
+
+type AlertContextType = {
+  displayAlert: (severity: AlertSeverity, message: string) => void;
+};
+
+const AlertContext = createContext<AlertContextType | undefined>(undefined);
 
 export const useAlert = () => {
   const context = useContext(AlertContext);
@@ -11,12 +16,16 @@ export const useAlert = () => {
   return context;
 };
 
-const AlertProvider = ({ children }) => {
+type AlertProviderProps = {
+  children: React.ReactNode;
+};
+
+const AlertProvider = ({ children }: AlertProviderProps) => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [severity, setSeverity] = useState('info');
+  const [severity, setSeverity] = useState<AlertSeverity>('info');
 
-  const displayAlert = useCallback((severity, message) => {
+  const displayAlert = useCallback((severity: AlertSeverity, message: string) => {
     setMessage(message);
     setSeverity(severity);
     setOpen(true);

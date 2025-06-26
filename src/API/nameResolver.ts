@@ -6,7 +6,7 @@ const baseRoutes = {
   /**
    * Look up possible entities using a search string
    */
-  async entityLookup(search_string, limit, cancel, type) {
+  async entityLookup(search_string: any, limit: any, cancel: any, type: any) {
     const config = {
       headers: {
         'Content-Type': 'text/plain',
@@ -25,7 +25,7 @@ const baseRoutes = {
       if (axios.isCancel(error)) {
         return {};
       }
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error as any);
     }
   },
 };

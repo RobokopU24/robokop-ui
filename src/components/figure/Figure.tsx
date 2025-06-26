@@ -2,7 +2,14 @@ import { IconButton, Modal } from '@mui/material';
 import Close from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 
-const Figure = ({ image, imageAlt, children, figureStyle }) => {
+interface FigureProps {
+  image: string;
+  imageAlt: string;
+  children?: React.ReactNode;
+  figureStyle?: React.CSSProperties;
+}
+
+const Figure: React.FC<FigureProps> = ({ image, imageAlt, children, figureStyle }) => {
   const [open, setOpen] = useState(false);
 
   return (

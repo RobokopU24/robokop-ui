@@ -1,7 +1,9 @@
 import _ from 'lodash';
 
-function handleAxiosError(error) {
-  const output = {};
+function handleAxiosError(error: {
+  response: { status: any; data: { message: any; detail: any } };
+}) {
+  const output: { message?: string; status?: string } = {};
   if (error.response) {
     const axiosErrorPrefix = `Error in response with code ${error.response.status}: `;
     if (error.response.data.message) {
