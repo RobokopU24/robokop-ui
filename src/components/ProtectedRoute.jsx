@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate, useLocation } from '@tanstack/react-router';
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useAlert } from './AlertProvider';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Typography, Box, Divider, Link as MuiLink } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link } from '@tanstack/react-router';
 
 export default function Explore() {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Grid, Typography, Divider } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link } from '@tanstack/react-router';
 import Figure from '../components/figure/Figure';
 
 import fig1 from '/images/tutorial/1.png';

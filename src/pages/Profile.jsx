@@ -20,7 +20,8 @@ import {
   ListItemButton,
   ListItem,
 } from '@mui/material';
-import { Delete as DeleteIcon, Close as CloseIcon } from '@mui/icons-material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
 import ReactJsonView from 'react-json-view';
 import { useAuth } from '../context/AuthContext';
 import API from '../API/routes';

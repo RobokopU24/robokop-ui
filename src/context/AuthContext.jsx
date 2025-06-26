@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('authToken');
     await new Promise((resolve) => setTimeout(resolve, 0));
     displayAlert('success', 'You have successfully logged out.');
-    navigate('/');
+    navigate({ to: '/' });
   };
 
   return (

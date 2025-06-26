@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { usePasskey } from '../../hooks/usePasskey';
 import ARAs from '../../API/services';
 import { useAlert } from '../../components/AlertProvider';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import queryGraphUtils from '../../utils/queryGraph';
 import API from '../../API';
 import QueryBuilderContext from '../../context/queryBuilder';
@@ -84,7 +84,7 @@ export default function QueryBuilder() {
         .then(() => {
           displayAlert('success', 'Your answer is ready!');
           // once message is stored, navigate to answer page to load and display
-          navigate('/answer');
+          navigate({ to: '/answer/' });
         })
         .catch((err) => {
           displayAlert(
@@ -126,6 +126,7 @@ export default function QueryBuilder() {
                   <Button onClick={() => setDownloadOpen(true)} variant="outlined">
                     Download Query
                   </Button>
+                  <div style={{ flexGrow: 1 }}></div>
                   <SubmitButton onClick={() => onQuickSubmit()} variant="contained">
                     Submit
                   </SubmitButton>

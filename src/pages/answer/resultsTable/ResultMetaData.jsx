@@ -1,6 +1,7 @@
 import React, { useState, useReducer, useEffect, useMemo } from 'react';
 import { Paper, IconButton, List, ListItem, ListItemText, Collapse } from '@mui/material';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import shortid from 'shortid';
 
 function expansionReducer(state, action) {

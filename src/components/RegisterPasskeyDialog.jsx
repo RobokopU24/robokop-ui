@@ -3,7 +3,7 @@ import { useAlert } from './AlertProvider';
 import { useAuth } from '../context/AuthContext';
 import { usePasskey } from '../hooks/usePasskey';
 import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 
 function RegisterPasskeyDialog({ open, onClose }) {
   const { displayAlert } = useAlert();

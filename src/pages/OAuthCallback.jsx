@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 
 import routes from '../API/routes';
@@ -15,10 +15,11 @@ function OAuthCallback() {
       try {
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
+        console.log('OAuth token:', token);
 
         if (!token) {
           // TODO: Handle the case where no token is provided
-          navigate('/');
+          navigate({ to: '/' });
           return;
         }
 
@@ -30,15 +31,15 @@ function OAuthCallback() {
 
         if (response.status === 200 && response.data.message === 'Token is valid') {
           login(response.data.user, token);
-          navigate('/');
+          navigate({ to: '/' });
         } else {
           // TODO: Handle invalid token case
-          navigate('/');
+          navigate({ to: '/' });
         }
       } catch (error) {
         console.log('Error validating token:', error);
         // TODO: Handle errors, such as network issues or server errors
-        navigate('/');
+        navigate({ to: '/' });
       }
     };
 

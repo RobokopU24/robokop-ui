@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, Input, Button } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useLocation, useNavigate, Navigate } from 'react-router-dom';
+import { useLocation, useNavigate, Navigate } from '@tanstack/react-router';
 import axios from 'axios';
 import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
@@ -29,7 +29,7 @@ function ActivateUser() {
       .catch((error) => {
         console.error('Error fetching activation data:', error);
         displayAlert('error', 'Invalid or expired activation link. Please try again.');
-        navigate('/');
+        navigate({ to: '/' });
       });
   }, []);
 
@@ -64,7 +64,7 @@ function ActivateUser() {
       })
       .then((response) => {
         displayAlert('success', 'Account activated successfully!.');
-        navigate(`/oauth-callback?token=${response.data.token}`);
+        navigate({ to: `/oauth-callback?token=${response.data.token}` });
       })
       .catch((error) => {
         console.error('Error activating account:', error);

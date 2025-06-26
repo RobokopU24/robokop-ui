@@ -1,5 +1,8 @@
 import { Badge, Collapse, IconButton, Tooltip } from '@mui/material';
-import { ArrowDownward, ArrowUpward, FilterList, SwapVert } from '@mui/icons-material';
+import ArrowDownward from '@mui/icons-material/ArrowDownward';
+import ArrowUpward from '@mui/icons-material/ArrowUpward';
+import FilterList from '@mui/icons-material/FilterList';
+import SwapVert from '@mui/icons-material/SwapVert';
 import { flexRender } from '@tanstack/react-table';
 import React from 'react';
 import DebouncedFilterBox from './DebouncedFilterBox';

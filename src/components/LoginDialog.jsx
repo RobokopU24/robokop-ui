@@ -8,7 +8,7 @@ import { useAlert } from './AlertProvider';
 import { useAuth } from '../context/AuthContext';
 import { usePasskey } from '../hooks/usePasskey';
 import { Dialog, DialogTitle, DialogContent, Button, IconButton, Input } from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 
 function LoginDialog({ open, onClose }) {
   const { displayAlert } = useAlert();

@@ -1,21 +1,13 @@
 import React from 'react';
-import {
-  AppBar,
-  Avatar,
-  IconButton,
-  Menu,
-  MenuItem,
-  Link as MuiLink,
-  Toolbar,
-} from '@mui/material';
+import { AppBar, Avatar, IconButton, Menu, MenuItem, Toolbar } from '@mui/material';
 
 import './header.css';
 
 import Logo from '../Logo';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from '@tanstack/react-router';
 import LoginDialog from '../LoginDialog';
 import { useAuth } from '../../context/AuthContext';
-import { AccountCircle } from '@mui/icons-material';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 function Header() {
   const { user, logout } = useAuth();
@@ -39,7 +31,7 @@ function Header() {
   };
 
   const handleProfileClick = () => {
-    navigate('/profile');
+    navigate({ to: '/profile' });
     handleMenuClose();
   };
 
@@ -50,9 +42,9 @@ function Header() {
   return (
     <AppBar position="relative" className="header">
       <Toolbar id="headerToolbar">
-        <MuiLink href="/" sx={{ cursor: 'pointer', margin: 0 }}>
+        <Link to="/" style={{ cursor: 'pointer', margin: 0 }}>
           <Logo height="32px" width="100%" style={{ paddingTop: '6px' }} />
-        </MuiLink>
+        </Link>
         <div className="grow" />
         <Link to="/">Question Builder</Link>
         <Link to="/explore">Explore</Link>
@@ -60,7 +52,7 @@ function Header() {
         <Link to="/guide">Guide</Link>
         <Link to="/tutorial">Tutorial</Link>
         {/* This will go to the actual root of the host (robokop.renci.org/#contact), not an internal route in this application */}
-        <a href="/#contact">Help</a>
+        <Link to="/#contact">Help</Link>
         <div>
           <IconButton onClick={handleMenuOpen}>
             {user ? (

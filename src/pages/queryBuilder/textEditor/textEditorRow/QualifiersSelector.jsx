@@ -88,7 +88,7 @@ export default function QualifiersSelector({ id, associations }) {
           size="small"
           options={associationOptions}
           getOptionLabel={(option) => option.name}
-          getOptionSelected={(opt, val) => opt.uuid === val.uuid}
+          isOptionEqualToValue={(opt, val) => opt.uuid === val.uuid}
           style={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Association" variant="outlined" />}
         />

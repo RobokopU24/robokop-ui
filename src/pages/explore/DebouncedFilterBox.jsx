@@ -1,5 +1,5 @@
 import { IconButton, InputLabel, FormControl, InputAdornment, FilledInput } from '@mui/material';
-import { Clear } from '@mui/icons-material';
+import Clear from '@mui/icons-material/Clear';
 import React from 'react';
 
 function DebouncedFilterBox({ value: initialValue, onChange, debounce = 500, ...props }) {

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Container, Grid, Typography, Card, Button, Divider } from '@mui/material';
 import { blue } from '@mui/material/colors';
-import { ArrowForward } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import { Link } from '@tanstack/react-router';
 
 export default function Guide() {
   return (

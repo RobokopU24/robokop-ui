@@ -1,10 +1,9 @@
 import React, { useContext, useState } from 'react';
 
 import { IconButton, Collapse } from '@mui/material';
-import {
-  AddBoxOutlined as AddBoxOutlinedIcon,
-  IndeterminateCheckBoxOutlined as IndeterminateCheckBoxOutlinedIcon,
-} from '@mui/icons-material';
+
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 
 import BiolinkContext from '../../../../context/biolink';
 import QueryBuilderContext from '../../../../context/queryBuilder';

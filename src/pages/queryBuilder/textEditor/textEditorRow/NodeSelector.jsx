@@ -11,7 +11,8 @@ import highlighter from '../../../../utils/d3/highlighter';
 import taxaCurieLookup from './taxon-curie-lookup.json';
 import { useAlert } from '../../../../components/AlertProvider';
 import { Autocomplete, IconButton, Tooltip, TextField, CircularProgress } from '@mui/material';
-import { Check, FileCopy } from '@mui/icons-material';
+import Check from '@mui/icons-material/Check';
+import FileCopy from '@mui/icons-material/FileCopy';
 import { withStyles } from '@mui/styles';
 
 function isValidNode(properties) {
@@ -235,7 +236,7 @@ export default function NodeSelector({
       disableClearable={!clearable}
       inputValue={inputText}
       value={selectorValue}
-      getOptionSelected={(option, value) => option.name === value.name}
+      isOptionEqualToValue={(option, value) => option.name === value.name}
       open={open}
       onChange={handleUpdate}
       onOpen={() => toggleOpen(true)}

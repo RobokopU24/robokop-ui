@@ -1,5 +1,5 @@
 import { IconButton, Modal } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
 import React, { useState } from 'react';
 
 const Figure = ({ image, imageAlt, children, figureStyle }) => {

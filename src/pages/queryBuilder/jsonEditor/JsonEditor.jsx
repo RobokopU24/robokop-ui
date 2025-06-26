@@ -10,12 +10,10 @@ import {
   DialogActions,
   IconButton,
 } from '@mui/material';
-import {
-  CloudUpload as CloudUploadIcon,
-  Close as CloseIcon,
-  FileCopy as FileCopyIcon,
-  Save as SaveIcon,
-} from '@mui/icons-material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloseIcon from '@mui/icons-material/Close';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import SaveIcon from '@mui/icons-material/Save';
 
 import trapiUtils from '../../../utils/trapi';
 import queryGraphUtils from '../../../utils/queryGraph';

@@ -14,7 +14,7 @@ import {
   ListSubheader,
   Modal,
 } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
 import QueryBuilderContext from '../../../context/queryBuilder';
 import API from '../../../API/routes';
 import { makeStyles } from '@mui/styles';
@@ -110,9 +110,6 @@ export default function TemplatedQueriesModal({ open, setOpen }) {
   const queryBuilder = useContext(QueryBuilderContext);
   const [selectedExample, setSelectedExample] = useState(null);
   const [queries, setQueries] = useState([]);
-  const raw = window.localStorage.getItem('query_history');
-  const bookmarked_queries = raw ? JSON.parse(raw) : null;
-  console.log(bookmarked_queries);
   const handleClose = () => {
     setOpen(false);
     setSelectedExample(null);

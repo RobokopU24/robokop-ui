@@ -12,7 +12,8 @@ import {
   IconButton,
 } from '@mui/material';
 
-import { Publish as PublishIcon, GetApp as GetAppIcon } from '@mui/icons-material';
+import PublishIcon from '@mui/icons-material/Publish';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 import DownloadDialog from '../../../components/DownloadDialog';
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from '@tanstack/react-router';
 import { get as idbGet, del as idbDelete, set as idbSet } from 'idb-keyval';
 
 import API from '../../API';
@@ -28,7 +28,7 @@ import { useAlert } from '../../components/AlertProvider';
  * - full knowledge graph
  * - results table
  */
-export default function Answer() {
+export default function Answer({ answer_id }) {
   const { displayAlert } = useAlert();
   const answerStore = useAnswerStore();
   const navigate = useNavigate();
@@ -41,11 +41,6 @@ export default function Answer() {
   ];
   const pageStatus = usePageStatus(isLoading, 'Loading Message...');
   const [owned, setOwned] = useState(false);
-
-  /**
-   * If we are rendering an answer, get answer_id with useRouteMatch
-   */
-  const { answer_id } = useParams();
 
   /**
    * Validate a TRAPI message and either display any errors or initialize the answer store
@@ -197,7 +192,7 @@ export default function Answer() {
               answerStore.initialize(msg.message, updateDisplayState);
               // user uploaded a new answer, reset the url
               if (answer_id) {
-                navigate('/answer');
+                navigate({ to: '/answer/' });
               }
             } catch (err) {
               displayAlert('error', `Failed to initialize message. Please submit an issue: ${err}`);
@@ -286,7 +281,7 @@ export default function Answer() {
     if (response.status === 'error') {
       return displayAlert('error', `Failed to delete answer: ${response.message}`);
     }
-    navigate('/answer');
+    navigate({ to: '/answer/' });
     let alertType = 'success';
     let alertText = 'Your answer has been deleted!';
     // check if question has other answers

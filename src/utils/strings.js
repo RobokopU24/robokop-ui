@@ -66,8 +66,8 @@ function displayCategory(arg) {
     // split pascal case
     const splitCategory = pascalCategory.split(/(?=[A-Z][a-z])/g);
     return splitCategory.join(' ');
+    // eslint-disable-next-line no-unused-vars
   } catch (err) {
-    console.error('Error in displayCategory:', err);
     return '';
   }
 }

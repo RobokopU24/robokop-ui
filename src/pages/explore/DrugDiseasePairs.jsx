@@ -11,8 +11,8 @@ import {
   TableCell,
   TablePagination,
 } from '@mui/material';
-import { ArrowRight } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import ArrowRight from '@mui/icons-material/ArrowRight';
+import { Link, useNavigate } from '@tanstack/react-router';
 import {
   createColumnHelper,
   flexRender,
@@ -90,7 +90,7 @@ export default function DrugDiseasePairs() {
       },
     };
     queryBuilder.dispatch({ type: 'saveGraph', payload: query });
-    navigate('/');
+    navigate({ to: '/' });
   };
 
   const classes = useStyles();
