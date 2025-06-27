@@ -1,5 +1,10 @@
-import React from 'react';
+import React from "react";
 
-const BiolinkContext = React.createContext({});
+interface BiolinkContextType {
+  colorMap?: (categories: string | string[]) => [string | null, string];
+  hierarchies?: Record<string, any>;
+}
+
+const BiolinkContext = React.createContext<BiolinkContextType>({});
 
 export default BiolinkContext;

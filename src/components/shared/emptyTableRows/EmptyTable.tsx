@@ -3,7 +3,7 @@ import { TableCell, TableRow } from '@mui/material';
 
 import './emptyTable.css';
 
-function makeEmptyArray(num) {
+function makeEmptyArray(num: number) {
   const emptyArray = [];
   for (let i = 0; i < num; i += 1) {
     emptyArray.push('');
@@ -11,7 +11,13 @@ function makeEmptyArray(num) {
   return emptyArray;
 }
 
-export default function EmptyTable({ numRows, numCells, text }) {
+interface EmptyTableProps {
+  numRows: number;
+  numCells: number;
+  text: string;
+}
+
+export default function EmptyTable({ numRows, numCells, text }: EmptyTableProps) {
   const emptyRows = makeEmptyArray(numRows);
   const emptyCells = makeEmptyArray(numCells);
   return (

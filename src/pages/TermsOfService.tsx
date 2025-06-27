@@ -1,11 +1,11 @@
 import React from 'react';
-import { Container, Grid, Typography, Card, Button, Divider } from '@mui/material';
+import { Container, Grid, Typography, Divider } from '@mui/material';
 
 export default function TermsOfService() {
   return (
     <Container sx={{ my: 6 }} maxWidth="md">
       <Grid container spacing={4} justifyContent="center">
-        <Grid item xs={12} md={8}>
+        <Grid>
           <Typography variant="h4" gutterBottom textAlign="center">
             Terms of Service
           </Typography>

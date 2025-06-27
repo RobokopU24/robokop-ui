@@ -2,7 +2,19 @@ import { IconButton, InputLabel, FormControl, InputAdornment, FilledInput } from
 import Clear from '@mui/icons-material/Clear';
 import React from 'react';
 
-function DebouncedFilterBox({ value: initialValue, onChange, debounce = 500, ...props }) {
+interface DebouncedFilterBoxProps {
+  value: string;
+  onChange: (value: string) => void;
+  debounce?: number;
+  [key: string]: any;
+}
+
+function DebouncedFilterBox({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}: DebouncedFilterBoxProps) {
   const [value, setValue] = React.useState(initialValue);
 
   React.useEffect(() => {
@@ -23,7 +35,6 @@ function DebouncedFilterBox({ value: initialValue, onChange, debounce = 500, ...
       <FilledInput
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        variant="filled"
         margin="dense"
         endAdornment={
           <InputAdornment position="end">

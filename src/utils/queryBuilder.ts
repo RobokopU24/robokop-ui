@@ -3,7 +3,7 @@ import _ from 'lodash';
 /**
  * Get the next unused Node ID in the query_graph for insertion
  */
-function getNextNodeID(q_graph) {
+function getNextNodeID(q_graph: { nodes: any }) {
   let index = 0;
   while (`n${index}` in q_graph.nodes) {
     index += 1;
@@ -14,7 +14,7 @@ function getNextNodeID(q_graph) {
 /**
  * Get the next unused Edge ID in the query_graph for insertion
  */
-function getNextEdgeID(q_graph) {
+function getNextEdgeID(q_graph: { edges: any }) {
   let index = 0;
   while (`e${index}` in q_graph.edges) {
     index += 1;
@@ -24,14 +24,19 @@ function getNextEdgeID(q_graph) {
 
 /**
  * Get number of edges for each node
- * @param {obj} q_graph - query graph object with edges
- * @returns {obj} an object with keys as node ids and values as number of edges
+ * @returns an object with keys as node ids and values as number of edges
  */
-function getNumEdgesPerNode(q_graph) {
-  return _.transform(q_graph.edges, (result, value) => {
-    result[value.object] = result[value.object] ? result[value.object] + 1 : 1;
-    result[value.subject] = result[value.subject] ? result[value.subject] + 1 : 1;
-  });
+function getNumEdgesPerNode(q_graph: {
+  edges: { [key: string]: { subject: string; object: string } };
+}): { [nodeId: string]: number } {
+  return _.transform(
+    q_graph.edges,
+    (result: { [nodeId: string]: number }, value) => {
+      result[value.object] = result[value.object] ? result[value.object] + 1 : 1;
+      result[value.subject] = result[value.subject] ? result[value.subject] + 1 : 1;
+    },
+    {}
+  );
 }
 
 /**
@@ -40,7 +45,15 @@ function getNumEdgesPerNode(q_graph) {
  * @param {string} nodeId - node id
  * @returns Set of edge ids
  */
-function getConnectedEdges(edges, nodeId) {
+function getConnectedEdges(
+  edges: {
+    [x: string]: {
+      subject: string;
+      object: any;
+    };
+  },
+  nodeId: string
+) {
   return new Set(
     Object.keys(edges).filter(
       (eId) => edges[eId].subject === nodeId || edges[eId].object === nodeId
@@ -59,15 +72,21 @@ function getConnectedEdges(edges, nodeId) {
  * @param {object} q_graph - valid query graph with nodes and edges
  * @returns {string} the id of the root node in the query graph
  */
-function getRootNode(q_graph, rootNode) {
+type QueryGraphNode = { id?: unknown };
+type QueryGraph = { edges: any; nodes: { [s: string]: QueryGraphNode } };
+
+function getRootNode(q_graph: QueryGraph, rootNode: string | null) {
   if (rootNode && getConnectedEdges(q_graph.edges, rootNode).size > 0) {
     return rootNode;
   }
   // create nodes object with pinned boolean property
-  const nodes = Object.entries(q_graph.nodes).map(([key, node]) => ({
-    key,
-    pinned: node.id && Array.isArray(node.id) && node.id.length > 0,
-  }));
+  const nodes = Object.entries(q_graph.nodes).map(([key, node]) => {
+    const n = node as { id?: unknown };
+    return {
+      key,
+      pinned: n.id && Array.isArray(n.id) && n.id.length > 0,
+    };
+  });
   // create node map of total edge connections
   const edgeNums = getNumEdgesPerNode(q_graph);
   // split nodes into pinned and unpinned arrays
@@ -91,7 +110,10 @@ function getRootNode(q_graph, rootNode) {
  * @param {object} q_graph - deep copy of the query_graph, modifies and returns
  * @param {string} rootNode - root node of graph
  */
-function removeDetachedFromRoot(q_graph, rootNode) {
+function removeDetachedFromRoot(
+  q_graph: { edges: Partial<any>; nodes: Pick<any, any> },
+  rootNode: any
+) {
   // all edges start out as disconnected and we'll remove them when we find a connection to root
   const disconnectedEdges = Object.keys(q_graph.edges);
   // we add to connected nodes, starting default with the root node
@@ -138,7 +160,7 @@ function removeDetachedFromRoot(q_graph, rootNode) {
  * @param {string} nodeId - node id
  * @returns trimDetached query graph
  */
-function removeAttachedEdges(q_graph, nodeId) {
+function removeAttachedEdges(q_graph: { edges: { [x: string]: any } }, nodeId: any) {
   const edgeIds = Object.keys(q_graph.edges).map((id) => id);
   edgeIds.forEach((eId) => {
     const currentEdge = q_graph.edges[eId];
@@ -154,7 +176,7 @@ function removeAttachedEdges(q_graph, nodeId) {
  * @param {object} query_graph - query graph object
  * @returns isValid boolean and an error message
  */
-function isValidGraph(query_graph) {
+function isValidGraph(query_graph: { nodes: {}; edges: any }) {
   let isValid = true;
   let errMsg = '';
   const nodeIds = Object.keys(query_graph.nodes);

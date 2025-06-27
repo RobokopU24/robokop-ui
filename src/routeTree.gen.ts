@@ -9,47 +9,52 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TutorialRouteImport } from './routes/tutorial'
+import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
+import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
+import { Route as GuideRouteImport } from './routes/guide'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TutorialIndexRouteImport } from './routes/tutorial/index'
-import { Route as TermsofserviceIndexRouteImport } from './routes/termsofservice/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as OauthCallbackIndexRouteImport } from './routes/oauth-callback/index'
-import { Route as GuideIndexRouteImport } from './routes/guide/index'
 import { Route as ExploreIndexRouteImport } from './routes/explore/index'
 import { Route as AnswerIndexRouteImport } from './routes/answer/index'
 import { Route as ActivateUserIndexRouteImport } from './routes/activate-user/index'
-import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/drug-chemical/index'
 import { Route as AnswerAnswer_idIndexRouteImport } from './routes/answer/$answer_id/index'
 
+const TutorialRoute = TutorialRouteImport.update({
+  id: '/tutorial',
+  path: '/tutorial',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsofserviceRoute = TermsofserviceRouteImport.update({
+  id: '/termsofservice',
+  path: '/termsofservice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OauthCallbackRoute = OauthCallbackRouteImport.update({
+  id: '/oauth-callback',
+  path: '/oauth-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TutorialIndexRoute = TutorialIndexRouteImport.update({
-  id: '/tutorial/',
-  path: '/tutorial/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsofserviceIndexRoute = TermsofserviceIndexRouteImport.update({
-  id: '/termsofservice/',
-  path: '/termsofservice/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProfileIndexRoute = ProfileIndexRouteImport.update({
   id: '/profile/',
   path: '/profile/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OauthCallbackIndexRoute = OauthCallbackIndexRouteImport.update({
-  id: '/oauth-callback/',
-  path: '/oauth-callback/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuideIndexRoute = GuideIndexRouteImport.update({
-  id: '/guide/',
-  path: '/guide/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreIndexRoute = ExploreIndexRouteImport.update({
@@ -67,11 +72,6 @@ const ActivateUserIndexRoute = ActivateUserIndexRouteImport.update({
   path: '/activate-user/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutIndexRoute = AboutIndexRouteImport.update({
-  id: '/about/',
-  path: '/about/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ExploreDrugChemicalIndexRoute =
   ExploreDrugChemicalIndexRouteImport.update({
     id: '/explore/drug-chemical/',
@@ -86,44 +86,44 @@ const AnswerAnswer_idIndexRoute = AnswerAnswer_idIndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
+  '/about': typeof AboutRoute
+  '/guide': typeof GuideRoute
+  '/oauth-callback': typeof OauthCallbackRoute
+  '/termsofservice': typeof TermsofserviceRoute
+  '/tutorial': typeof TutorialRoute
   '/activate-user': typeof ActivateUserIndexRoute
   '/answer': typeof AnswerIndexRoute
   '/explore': typeof ExploreIndexRoute
-  '/guide': typeof GuideIndexRoute
-  '/oauth-callback': typeof OauthCallbackIndexRoute
   '/profile': typeof ProfileIndexRoute
-  '/termsofservice': typeof TermsofserviceIndexRoute
-  '/tutorial': typeof TutorialIndexRoute
   '/answer/$answer_id': typeof AnswerAnswer_idIndexRoute
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutIndexRoute
+  '/about': typeof AboutRoute
+  '/guide': typeof GuideRoute
+  '/oauth-callback': typeof OauthCallbackRoute
+  '/termsofservice': typeof TermsofserviceRoute
+  '/tutorial': typeof TutorialRoute
   '/activate-user': typeof ActivateUserIndexRoute
   '/answer': typeof AnswerIndexRoute
   '/explore': typeof ExploreIndexRoute
-  '/guide': typeof GuideIndexRoute
-  '/oauth-callback': typeof OauthCallbackIndexRoute
   '/profile': typeof ProfileIndexRoute
-  '/termsofservice': typeof TermsofserviceIndexRoute
-  '/tutorial': typeof TutorialIndexRoute
   '/answer/$answer_id': typeof AnswerAnswer_idIndexRoute
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about/': typeof AboutIndexRoute
+  '/about': typeof AboutRoute
+  '/guide': typeof GuideRoute
+  '/oauth-callback': typeof OauthCallbackRoute
+  '/termsofservice': typeof TermsofserviceRoute
+  '/tutorial': typeof TutorialRoute
   '/activate-user/': typeof ActivateUserIndexRoute
   '/answer/': typeof AnswerIndexRoute
   '/explore/': typeof ExploreIndexRoute
-  '/guide/': typeof GuideIndexRoute
-  '/oauth-callback/': typeof OauthCallbackIndexRoute
   '/profile/': typeof ProfileIndexRoute
-  '/termsofservice/': typeof TermsofserviceIndexRoute
-  '/tutorial/': typeof TutorialIndexRoute
   '/answer/$answer_id/': typeof AnswerAnswer_idIndexRoute
   '/explore/drug-chemical/': typeof ExploreDrugChemicalIndexRoute
 }
@@ -132,63 +132,98 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/guide'
+    | '/oauth-callback'
+    | '/termsofservice'
+    | '/tutorial'
     | '/activate-user'
     | '/answer'
     | '/explore'
-    | '/guide'
-    | '/oauth-callback'
     | '/profile'
-    | '/termsofservice'
-    | '/tutorial'
     | '/answer/$answer_id'
     | '/explore/drug-chemical'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/guide'
+    | '/oauth-callback'
+    | '/termsofservice'
+    | '/tutorial'
     | '/activate-user'
     | '/answer'
     | '/explore'
-    | '/guide'
-    | '/oauth-callback'
     | '/profile'
-    | '/termsofservice'
-    | '/tutorial'
     | '/answer/$answer_id'
     | '/explore/drug-chemical'
   id:
     | '__root__'
     | '/'
-    | '/about/'
+    | '/about'
+    | '/guide'
+    | '/oauth-callback'
+    | '/termsofservice'
+    | '/tutorial'
     | '/activate-user/'
     | '/answer/'
     | '/explore/'
-    | '/guide/'
-    | '/oauth-callback/'
     | '/profile/'
-    | '/termsofservice/'
-    | '/tutorial/'
     | '/answer/$answer_id/'
     | '/explore/drug-chemical/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutIndexRoute: typeof AboutIndexRoute
+  AboutRoute: typeof AboutRoute
+  GuideRoute: typeof GuideRoute
+  OauthCallbackRoute: typeof OauthCallbackRoute
+  TermsofserviceRoute: typeof TermsofserviceRoute
+  TutorialRoute: typeof TutorialRoute
   ActivateUserIndexRoute: typeof ActivateUserIndexRoute
   AnswerIndexRoute: typeof AnswerIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
-  GuideIndexRoute: typeof GuideIndexRoute
-  OauthCallbackIndexRoute: typeof OauthCallbackIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
-  TermsofserviceIndexRoute: typeof TermsofserviceIndexRoute
-  TutorialIndexRoute: typeof TutorialIndexRoute
   AnswerAnswer_idIndexRoute: typeof AnswerAnswer_idIndexRoute
   ExploreDrugChemicalIndexRoute: typeof ExploreDrugChemicalIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tutorial': {
+      id: '/tutorial'
+      path: '/tutorial'
+      fullPath: '/tutorial'
+      preLoaderRoute: typeof TutorialRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/termsofservice': {
+      id: '/termsofservice'
+      path: '/termsofservice'
+      fullPath: '/termsofservice'
+      preLoaderRoute: typeof TermsofserviceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oauth-callback': {
+      id: '/oauth-callback'
+      path: '/oauth-callback'
+      fullPath: '/oauth-callback'
+      preLoaderRoute: typeof OauthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -196,39 +231,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tutorial/': {
-      id: '/tutorial/'
-      path: '/tutorial'
-      fullPath: '/tutorial'
-      preLoaderRoute: typeof TutorialIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/termsofservice/': {
-      id: '/termsofservice/'
-      path: '/termsofservice'
-      fullPath: '/termsofservice'
-      preLoaderRoute: typeof TermsofserviceIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/profile/': {
       id: '/profile/'
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/oauth-callback/': {
-      id: '/oauth-callback/'
-      path: '/oauth-callback'
-      fullPath: '/oauth-callback'
-      preLoaderRoute: typeof OauthCallbackIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guide/': {
-      id: '/guide/'
-      path: '/guide'
-      fullPath: '/guide'
-      preLoaderRoute: typeof GuideIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore/': {
@@ -252,13 +259,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivateUserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about/': {
-      id: '/about/'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/explore/drug-chemical/': {
       id: '/explore/drug-chemical/'
       path: '/explore/drug-chemical'
@@ -278,15 +278,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutIndexRoute: AboutIndexRoute,
+  AboutRoute: AboutRoute,
+  GuideRoute: GuideRoute,
+  OauthCallbackRoute: OauthCallbackRoute,
+  TermsofserviceRoute: TermsofserviceRoute,
+  TutorialRoute: TutorialRoute,
   ActivateUserIndexRoute: ActivateUserIndexRoute,
   AnswerIndexRoute: AnswerIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,
-  GuideIndexRoute: GuideIndexRoute,
-  OauthCallbackIndexRoute: OauthCallbackIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
-  TermsofserviceIndexRoute: TermsofserviceIndexRoute,
-  TutorialIndexRoute: TutorialIndexRoute,
   AnswerAnswer_idIndexRoute: AnswerAnswer_idIndexRoute,
   ExploreDrugChemicalIndexRoute: ExploreDrugChemicalIndexRoute,
 }

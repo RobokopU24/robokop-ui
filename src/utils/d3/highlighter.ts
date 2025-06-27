@@ -3,7 +3,7 @@ import * as d3 from 'd3';
 const orangeHighlight = 'rgb(255, 172, 30)';
 const opaqueOrangeHighlight = 'rgba(255, 172, 30, 0.4)';
 
-function highlightTextEditorNode(nodeId) {
+function highlightTextEditorNode(nodeId: any) {
   d3.selectAll(`.nodeSelector-${nodeId} > fieldset`)
     .style('border-width', '3px')
     .style('border-color', orangeHighlight);
@@ -13,7 +13,7 @@ function highlightTextEditorNode(nodeId) {
   );
 }
 
-function clearTextEditorNode(nodeId) {
+function clearTextEditorNode(nodeId: any) {
   d3.selectAll(`.nodeSelector-${nodeId} > fieldset`)
     .style('border-width', null)
     .style('border-color', null);
@@ -23,11 +23,11 @@ function clearTextEditorNode(nodeId) {
   );
 }
 
-function highlightGraphNode(nodeId) {
+function highlightGraphNode(nodeId: any) {
   d3.selectAll(`.node-${nodeId}`).attr('stroke-width', '3px').attr('stroke', orangeHighlight);
 }
 
-function clearGraphNode(nodeId) {
+function clearGraphNode(nodeId: any) {
   d3.selectAll(`.node-${nodeId}`).attr('stroke-width', '0px');
 }
 
@@ -37,7 +37,7 @@ function clearAllNodes() {
   d3.selectAll('.nodeSelector > fieldset').style('border-width', null).style('border-color', null);
 }
 
-function highlightTextEditorEdge(edgeId) {
+function highlightTextEditorEdge(edgeId: any) {
   d3.selectAll(`.edgeSelector-${edgeId} > fieldset`)
     .style('border-width', '3px')
     .style('border-color', orangeHighlight);
@@ -47,18 +47,18 @@ function highlightTextEditorEdge(edgeId) {
   );
 }
 
-function clearTextEditorEdge(edgeId) {
+function clearTextEditorEdge(edgeId: any) {
   d3.selectAll(`.edgeSelector-${edgeId} > fieldset`)
     .style('border-width', null)
     .style('border-color', null);
   d3.selectAll(`.highlight-${edgeId} > .edgeDropdown`).style('background-color', null);
 }
 
-function highlightGraphEdge(edgeId) {
+function highlightGraphEdge(edgeId: any) {
   d3.selectAll(`.edge-${edgeId}`).attr('stroke', opaqueOrangeHighlight);
 }
 
-function clearGraphEdge(edgeId) {
+function clearGraphEdge(edgeId: any) {
   d3.selectAll(`.edge-${edgeId}`).attr('stroke', 'transparent');
 }
 

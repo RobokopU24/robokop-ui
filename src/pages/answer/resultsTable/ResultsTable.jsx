@@ -173,8 +173,7 @@ export default function ResultsTable({ answerStore }) {
               onClick: nextPage,
               disabled: !canNextPage,
             }}
-            onChangePage={() => {}} // required prop
-            onChangeRowsPerPage={(e) => setPageSize(e.target.value)}
+            onRowsPerPageChange={(e) => setPageSize(Number(e.target.value))}
           />
         </Paper>
         <ResultExplorer answerStore={answerStore} />

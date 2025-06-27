@@ -16,10 +16,10 @@ function getEmptyGraph() {
  * to an object
  * @param {array} array - a list of objects that each have an ID property
  */
-function arrayWithIdsToObj(array) {
-  const object = {};
+function arrayWithIdsToObj(array: any[]) {
+  const object: { [key: string]: any } = {};
 
-  array.forEach((item) => {
+  array.forEach((item: { id: string | number }) => {
     object[item.id] = { ...item };
     delete object[item.id].id;
   });
@@ -33,7 +33,7 @@ function arrayWithIdsToObj(array) {
  * @throws {TypeError}
  * @returns {(array|null)} array of the value or null
  */
-function makeArray(value) {
+function makeArray(value: null | undefined) {
   if (Array.isArray(value)) {
     // return copy of array
     return [...value];
@@ -52,7 +52,7 @@ function makeArray(value) {
  * @param {object} obj - object to prune
  * @param {string} property - property of object to prune
  */
-function pruneEmptyArray(obj, property) {
+function pruneEmptyArray(obj: { [x: string]: any }, property: string) {
   if (obj[property] && Array.isArray(obj[property]) && obj[property].length === 0) {
     delete obj[property];
   }
@@ -63,7 +63,7 @@ function pruneEmptyArray(obj, property) {
  * @param {object} qGraph - a query graph in an older format
  * @returns {object} a query graph in the current TRAPI format
  */
-function toCurrentTRAPI(qGraph) {
+function toCurrentTRAPI(qGraph: { nodes: any; edges: any }) {
   const query_graph = _.cloneDeep(qGraph);
   // convert arrays to objects
   if (Array.isArray(qGraph.nodes)) {
@@ -78,7 +78,8 @@ function toCurrentTRAPI(qGraph) {
   }
 
   // convert outdated node properties
-  Object.values(query_graph.nodes).forEach((node) => {
+  Object.values(query_graph.nodes).forEach((nodeUnknown) => {
+    const node = nodeUnknown as Record<string, any>;
     if (node.curie) {
       node.ids = node.curie;
       delete node.curie;
@@ -116,7 +117,8 @@ function toCurrentTRAPI(qGraph) {
   });
 
   // convert outdated edge properties
-  Object.values(query_graph.edges).forEach((edge) => {
+  Object.values(query_graph.edges).forEach((edgeUnknown) => {
+    const edge = edgeUnknown as Record<string, any>;
     if (edge.source_id) {
       edge.subject = edge.source_id;
       delete edge.source_id;
@@ -141,7 +143,7 @@ function toCurrentTRAPI(qGraph) {
  * @param {obj} q_graph - query graph
  * @returns query graph
  */
-function prune(q_graph) {
+function prune(q_graph: any) {
   const clonedQueryGraph = _.cloneDeep(q_graph);
   Object.keys(clonedQueryGraph.nodes).forEach((n) => {
     delete clonedQueryGraph.nodes[n].taxa;
@@ -159,7 +161,7 @@ function prune(q_graph) {
  * @param {object} node - query graph node
  * @returns {string} human-readable id label
  */
-function getTableHeaderLabel(node) {
+function getTableHeaderLabel(node: { ids: any[] }) {
   if (node.ids && Array.isArray(node.ids)) {
     return node.ids.join(', ');
   }
@@ -171,14 +173,35 @@ function getTableHeaderLabel(node) {
  * @param {obj} query_graph
  * @returns {obj} query graph with node and edge lists
  */
-function getNodeAndEdgeListsForDisplay(query_graph) {
+type QueryGraphNode = {
+  name?: string;
+  ids?: string[];
+  categories?: string[];
+  is_set?: boolean;
+  [key: string]: any;
+};
+
+type QueryGraphEdge = {
+  predicates?: string[];
+  subject?: string;
+  object?: string;
+  [key: string]: any;
+};
+
+type QueryGraph = {
+  nodes: { [s: string]: QueryGraphNode };
+  edges: { [s: string]: QueryGraphEdge };
+};
+
+function getNodeAndEdgeListsForDisplay(query_graph: QueryGraph) {
   const nodes = Object.entries(query_graph.nodes).map(([nodeId, obj]) => {
-    let { name } = obj;
-    if (!obj.name) {
+    const node = obj as QueryGraphNode;
+    let { name } = node;
+    if (!node.name) {
       name =
-        obj.ids && obj.ids.length
-          ? obj.ids.join(', ')
-          : stringUtils.displayCategory(obj.categories);
+        node.ids && node.ids.length
+          ? node.ids.join(', ')
+          : stringUtils.displayCategory(node.categories);
     }
     if (!name) {
       name = 'Something';
@@ -186,17 +209,20 @@ function getNodeAndEdgeListsForDisplay(query_graph) {
     return {
       id: nodeId,
       name,
-      categories: obj.categories,
-      is_set: obj.is_set,
+      categories: node.categories,
+      is_set: node.is_set,
     };
   });
-  const edges = Object.entries(query_graph.edges).map(([edgeId, obj]) => ({
-    id: edgeId,
-    predicates: obj.predicates,
-    // source and target are specifically for d3
-    source: obj.subject,
-    target: obj.object,
-  }));
+  const edges = Object.entries(query_graph.edges).map(([edgeId, obj]) => {
+    const edge = obj as QueryGraphEdge;
+    return {
+      id: edgeId,
+      predicates: edge.predicates,
+      // source and target are specifically for d3
+      source: edge.subject,
+      target: edge.object,
+    };
+  });
   return { nodes, edges };
 }
 

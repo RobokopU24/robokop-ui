@@ -12,7 +12,14 @@
  * @param {string} graphName - name of graph for error messages
  * @returns list of errors
  */
-function validateGraph(graph, graphName) {
+function validateGraph(
+  graph: {
+    constructor: ObjectConstructor;
+    nodes: { [x: string]: any };
+    edges: { [x: string]: any };
+  },
+  graphName: string
+) {
   const errors = [];
 
   if (!graph || graph.constructor !== Object) {
@@ -73,7 +80,7 @@ function validateGraph(graph, graphName) {
  * malformed result
  * @param {array} results - results array of a message
  */
-function validateResults(results) {
+function validateResults(results: string | any[]) {
   const errors = [];
 
   if (!Array.isArray(results)) {
@@ -106,7 +113,10 @@ function validateResults(results) {
  * Returns a list of validation errors.
  * @param {Message} message - TRAPI message
  */
-function validateMessage(message) {
+function validateMessage(message: {
+  constructor: ObjectConstructor;
+  message: { query_graph: any; knowledge_graph: any; results: any };
+}) {
   if (!message || message.constructor !== Object) {
     return ["The uploaded message isn't a valid JSON object."];
   }

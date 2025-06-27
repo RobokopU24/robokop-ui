@@ -9,13 +9,21 @@ import { Button, Alert, Snackbar } from '@mui/material';
  * @param {string} notificationText - text of snackbar notification
  * @param {boolean} disabled - is button disabled
  */
+interface ClipboardButtonProps {
+  startIcon?: React.ReactNode;
+  displayText: string;
+  clipboardText: () => string;
+  notificationText: string;
+  disabled?: boolean;
+}
+
 export default function ClipboardButton({
   startIcon,
   displayText,
   clipboardText,
   notificationText,
   disabled,
-}) {
+}: ClipboardButtonProps) {
   const [snackbarNotification, updateSnackbarNotification] = useState('');
 
   /**

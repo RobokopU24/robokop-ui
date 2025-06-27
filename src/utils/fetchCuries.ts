@@ -1,6 +1,11 @@
 import API from '../API/index';
 
-export default async function fetchCuries(entity, displayAlert, cancel, biolinkType) {
+export default async function fetchCuries(
+  entity: any,
+  displayAlert: (arg0: string, arg1: string) => void,
+  cancel: any,
+  biolinkType: any
+) {
   // Get list of curies that match this search term
   const response = await API.nameResolver.entityLookup(entity, 1000, cancel, biolinkType);
   if (response.status === 'error') {

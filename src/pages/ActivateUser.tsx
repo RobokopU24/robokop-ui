@@ -33,10 +33,10 @@ function ActivateUser() {
       });
   }, []);
 
-  const countdown = (expiry) => {
-    const expiryDate = new Date(expiry * 1000);
+  const countdown = (expiry: string | number) => {
+    const expiryDate = new Date(Number(expiry) * 1000);
     const now = new Date();
-    const diff = expiryDate - now;
+    const diff = expiryDate.getTime() - now.getTime();
     if (diff <= 0) return 'Expired';
     const minutes = Math.floor((diff / 1000 / 60) % 60);
     const seconds = Math.floor((diff / 1000) % 60);
@@ -53,7 +53,7 @@ function ActivateUser() {
   }, [expiryTime]);
 
   if (user) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/" replace />;
   }
 
   const handleActivate = () => {

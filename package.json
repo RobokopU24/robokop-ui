@@ -39,6 +39,7 @@
   "devDependencies": {
     "@eslint/js": "^9.25.0",
     "@tanstack/router-plugin": "^1.121.34",
+    "@types/d3": "^7.4.3",
     "@types/lodash": "^4.17.19",
     "@types/papaparse": "^5.3.16",
     "@types/react": "^19.1.8",

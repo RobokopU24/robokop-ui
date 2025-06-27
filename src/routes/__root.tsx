@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 
-import RootComponentWrapper from '../components/RootComponentWrapper.jsx';
+import RootComponentWrapper from '../components/RootComponentWrapper';
 
 export const Route = createRootRoute({
   component: () => {

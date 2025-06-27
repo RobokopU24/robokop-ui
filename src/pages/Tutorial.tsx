@@ -15,7 +15,7 @@ export default function Tutorial() {
   return (
     <Container sx={{ my: 6 }} maxWidth="md">
       <Grid container justifyContent="center">
-        <Grid item xs={12} md={8}>
+        <Grid>
           <Typography variant="h4" gutterBottom>
             ROBOKOP Tutorial
           </Typography>
@@ -96,12 +96,12 @@ export default function Tutorial() {
           <Figure
             image={fig2}
             figureStyle={{ marginBottom: 0 }}
-            alt="Bubble graph for one-hop query results."
+            imageAlt="Bubble graph for one-hop query results."
           />
           <Figure
             image={fig3}
             figureStyle={{ marginTop: 0 }}
-            alt="One-hop query results for all diseases associated with 2,3,7,8-tetrachlorodibenzo-P-dioxin in ROBOKOP."
+            imageAlt="One-hop query results for all diseases associated with 2,3,7,8-tetrachlorodibenzo-P-dioxin in ROBOKOP."
           >
             One-hop query results for all diseases associated with
             2,3,7,8-tetrachlorodibenzo-P-dioxin in ROBOKOP.

@@ -1,26 +1,28 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
+type VisibilityValue = 'Invisible' | 'Private' | 'Shareable' | 'Public';
+type VisibilityKey = 0 | 1 | 2 | 3;
+
 /**
  * Convert a type of visibility to what Robokache is expecting
  * @param {('Invisible'|'Private'|'Shareable'|'Public')} value
  */
 function useVisibility() {
-  const visibilityMapping = {
+  const visibilityMapping: Record<VisibilityKey, VisibilityValue> = {
     0: 'Invisible',
     1: 'Private',
     2: 'Shareable',
     3: 'Public',
   };
 
-  function toString(key) {
+  function toString(key: VisibilityKey): VisibilityValue {
     return visibilityMapping[key];
   }
 
-  function toInt(val) {
-    return parseInt(
-      Object.keys(visibilityMapping).find((key) => visibilityMapping[key] === val),
-      10
-    );
+  function toInt(val: VisibilityValue): VisibilityKey {
+    const entries = Object.entries(visibilityMapping);
+    const foundEntry = entries.find(([_, value]) => value === val);
+    return parseInt(foundEntry?.[0] || '0', 10) as VisibilityKey;
   }
 
   return {
@@ -29,9 +31,9 @@ function useVisibility() {
   };
 }
 
-function formatDateTimeNicely(dateString) {
+function formatDateTimeNicely(dateString: string): string {
   const jsDate = new Date(dateString);
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     dateStyle: 'long',
     timeStyle: 'long',
     hour12: true,
@@ -39,9 +41,9 @@ function formatDateTimeNicely(dateString) {
   return Intl.DateTimeFormat('en-US', options).format(jsDate);
 }
 
-function formatDateTimeShort(dateString) {
+function formatDateTimeShort(dateString: string): string {
   const jsDate = new Date(dateString);
-  const options = {
+  const options: Intl.DateTimeFormatOptions = {
     dateStyle: 'short',
     timeStyle: 'short',
     hour12: true,

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import OAuthCallback from '../../pages/OAuthCallback';
+import OAuthCallback from '../pages/OAuthCallback';
 
-export const Route = createFileRoute('/oauth-callback/')({
+export const Route = createFileRoute('/oauth-callback')({
   component: RouteComponent,
 });
 

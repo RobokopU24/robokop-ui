@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useMemo, useContext, useEffect } from 'react';
 import BiolinkContext from '../../../../context/biolink';
 import strings from '../../../../utils/strings';

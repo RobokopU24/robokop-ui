@@ -29,7 +29,14 @@ import { authApi } from '../API/baseUrlProxy';
 import { useAlert } from '../components/AlertProvider';
 import { usePasskey } from '../hooks/usePasskey';
 
-function DeletePasskeyDialog({ open, onClose, onConfirm, deviceType }) {
+type DeletePasskeyDialogProps = {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  deviceType?: string;
+};
+
+function DeletePasskeyDialog({ open, onClose, onConfirm, deviceType }: DeletePasskeyDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
@@ -58,7 +65,14 @@ function DeletePasskeyDialog({ open, onClose, onConfirm, deviceType }) {
   );
 }
 
-function DeleteQueryDialog({ open, onClose, onConfirm, queryName }) {
+type DeleteQueryDialogProps = {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  queryName?: string;
+};
+
+function DeleteQueryDialog({ open, onClose, onConfirm, queryName }: DeleteQueryDialogProps) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
@@ -86,19 +100,36 @@ function DeleteQueryDialog({ open, onClose, onConfirm, queryName }) {
   );
 }
 
+interface Passkey {
+  id: string;
+  deviceType?: string;
+  createdAt: string;
+}
+
+interface SavedQuery {
+  id: string;
+  name: string;
+  createdAt: string;
+  query: {
+    message: {
+      query_graph: Record<string, any>;
+    };
+  };
+}
+
 function Profile() {
   const { user } = useAuth();
   const { displayAlert } = useAlert();
   const { registerPasskey } = usePasskey();
-  const [passkeys, setPasskeys] = useState([]);
-  const [savedQueries, setSavedQueries] = useState([]);
-  const [selectedQuery, setSelectedQuery] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState(0);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [passkeyToDelete, setPasskeyToDelete] = useState(null);
-  const [deleteQueryDialogOpen, setDeleteQueryDialogOpen] = useState(false);
-  const [queryToDelete, setQueryToDelete] = useState(null);
+  const [passkeys, setPasskeys] = useState<(null | Passkey)[]>([]);
+  const [savedQueries, setSavedQueries] = useState<(null | SavedQuery)[]>([]);
+  const [selectedQuery, setSelectedQuery] = useState<null | SavedQuery>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+  const [passkeyToDelete, setPasskeyToDelete] = useState<null | Passkey>(null);
+  const [deleteQueryDialogOpen, setDeleteQueryDialogOpen] = useState<boolean>(false);
+  const [queryToDelete, setQueryToDelete] = useState<null | SavedQuery>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -119,15 +150,16 @@ function Profile() {
     fetchData();
   }, [displayAlert]);
 
-  const handleDeleteClick = (passkey) => {
+  const handleDeleteClick = (passkey: Passkey) => {
     setPasskeyToDelete(passkey);
     setDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
+    if (!passkeyToDelete) return;
     try {
       await authApi.delete(`${API.passkeyRoutes.base}/${passkeyToDelete.id}`);
-      setPasskeys(passkeys.filter((pk) => pk.id !== passkeyToDelete.id));
+      setPasskeys(passkeys.filter((pk) => pk?.id !== passkeyToDelete.id));
       displayAlert('success', 'Passkey deleted');
     } catch {
       displayAlert('error', 'Failed to delete passkey');
@@ -137,15 +169,15 @@ function Profile() {
     }
   };
 
-  const handleQueryDeleteClick = (query) => {
+  const handleQueryDeleteClick = (query: SavedQuery) => {
     setQueryToDelete(query);
     setDeleteQueryDialogOpen(true);
   };
 
   const handleQueryDeleteConfirm = async () => {
     try {
-      await authApi.delete(`${API.queryRoutes.base}/${queryToDelete.id}`);
-      setSavedQueries(savedQueries.filter((q) => q.id !== queryToDelete.id));
+      await authApi.delete(`${API.queryRoutes.base}/${queryToDelete?.id}`);
+      setSavedQueries(savedQueries.filter((q) => q?.id !== queryToDelete?.id));
       setSelectedQuery(null);
       displayAlert('success', 'Query deleted');
     } catch {
@@ -162,7 +194,7 @@ function Profile() {
       displayAlert('success', 'Passkey registered');
       const { data } = await authApi.get(API.passkeyRoutes.list);
       setPasskeys(data);
-    } catch (err) {
+    } catch (err: any) {
       displayAlert('error', err.message || 'Failed to register passkey');
     }
   };
@@ -177,22 +209,24 @@ function Profile() {
 
   return (
     <Grid container direction="column" spacing={3} sx={{ px: 4, pb: 4 }}>
-      <Grid item>
+      <Grid>
         <Paper sx={{ p: 4, width: '100%' }}>
           <Box display="flex" alignItems="center" flexWrap="wrap" gap={3}>
-            <Avatar src={user.profilePicture} alt={user.name} sx={{ width: 100, height: 100 }} />
+            <Avatar src={user?.profilePicture} alt={user?.name} sx={{ width: 100, height: 100 }} />
             <Box>
-              <Typography variant="h4">{user.name}</Typography>
-              <Typography>Email: {user.email}</Typography>
-              <Typography variant="body2" color="text.secondary">
-                Member since: {new Date(user.createdAt).toLocaleDateString()}
-              </Typography>
+              <Typography variant="h4">{user?.name}</Typography>
+              <Typography>Email: {user?.email}</Typography>
+              {user?.createdAt && (
+                <Typography variant="body2" color="text.secondary">
+                  Member since: {new Date(user.createdAt).toLocaleDateString()}
+                </Typography>
+              )}
             </Box>
           </Box>
         </Paper>
       </Grid>
 
-      <Grid item>
+      <Grid>
         <Paper sx={{ p: 4, width: '100%' }}>
           <Tabs
             value={activeTab}
@@ -215,21 +249,30 @@ function Profile() {
                 ) : (
                   savedQueries.map((query) => (
                     <ListItemButton
-                      key={query.id}
-                      selected={selectedQuery?.id === query.id}
+                      key={query?.id}
+                      selected={selectedQuery?.id === query?.id}
                       onClick={() => setSelectedQuery(query)}
                     >
                       <ListItem
                         sx={{ p: 0 }}
                         secondaryAction={
-                          <IconButton edge="end" onClick={() => handleQueryDeleteClick(query)}>
+                          <IconButton
+                            edge="end"
+                            onClick={() => {
+                              if (query) handleQueryDeleteClick(query);
+                            }}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         }
                       >
                         <ListItemText
-                          primary={query.name}
-                          secondary={new Date(query.createdAt).toLocaleDateString()}
+                          primary={query?.name}
+                          secondary={
+                            query?.createdAt
+                              ? new Date(query.createdAt).toLocaleDateString()
+                              : 'Unknown Date'
+                          }
                         />
                       </ListItem>
                     </ListItemButton>
@@ -280,17 +323,22 @@ function Profile() {
               ) : (
                 <List>
                   {passkeys.map((passkey, index) => (
-                    <React.Fragment key={passkey.id}>
+                    <React.Fragment key={passkey?.id}>
                       <ListItem
                         secondaryAction={
-                          <IconButton edge="end" onClick={() => handleDeleteClick(passkey)}>
+                          <IconButton
+                            edge="end"
+                            onClick={() => {
+                              if (passkey) handleDeleteClick(passkey);
+                            }}
+                          >
                             <DeleteIcon />
                           </IconButton>
                         }
                       >
                         <ListItemText
-                          primary={passkey.deviceType || 'Unknown Device'}
-                          secondary={`Created: ${new Date(passkey.createdAt).toLocaleDateString()}`}
+                          primary={passkey?.deviceType || 'Unknown Device'}
+                          secondary={`Created: ${passkey?.createdAt ? new Date(passkey.createdAt).toLocaleDateString() : 'Unknown Date'}`}
                         />
                       </ListItem>
                       {index < passkeys.length - 1 && <Divider />}
