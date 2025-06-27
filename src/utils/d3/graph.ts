@@ -309,7 +309,6 @@ function shouldShowArrow(
   edge: { predicates: any[]; predicate: string },
   symmetricPredicates = ['biolink:related_to']
 ) {
-  console.log('shouldShowArrow', edge, symmetricPredicates);
   return (
     (edge.predicates &&
       edge.predicates.findIndex((p: string) => !symmetricPredicates.includes(p)) > -1) ||
