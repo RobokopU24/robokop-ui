@@ -5,7 +5,7 @@ export default function About() {
   return (
     <Container maxWidth="md" sx={{ my: 6 }}>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={8}>
+        <Grid>
           <Typography variant="h4" gutterBottom>
             About ROBOKOP
           </Typography>

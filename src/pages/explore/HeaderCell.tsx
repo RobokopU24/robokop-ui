@@ -3,14 +3,18 @@ import ArrowDownward from '@mui/icons-material/ArrowDownward';
 import ArrowUpward from '@mui/icons-material/ArrowUpward';
 import FilterList from '@mui/icons-material/FilterList';
 import SwapVert from '@mui/icons-material/SwapVert';
-import { flexRender } from '@tanstack/react-table';
+import { flexRender, Header } from '@tanstack/react-table';
 import React from 'react';
 import DebouncedFilterBox from './DebouncedFilterBox';
+
+interface HeaderCellProps {
+  header: Header<unknown, unknown>;
+}
 
 /**
  * @param {{ header: import('@tanstack/react-table').Header<unknown, unknown> }} props
  */
-export default function HeaderCell({ header }) {
+export default function HeaderCell({ header }: HeaderCellProps) {
   const [isFilterOpen, setIsFilterOpen] = React.useState(header.column.getIsFiltered());
 
   return (
@@ -31,7 +35,7 @@ export default function HeaderCell({ header }) {
                   {
                     asc: 'Sort ascending',
                     desc: 'Sort descending',
-                  }[header.column.getNextSortingOrder()] || 'Unsort'
+                  }[header.column.getNextSortingOrder() as string] || 'Unsort'
                 }
               >
                 <IconButton
@@ -42,7 +46,7 @@ export default function HeaderCell({ header }) {
                   {{
                     asc: <ArrowDownward />,
                     desc: <ArrowUpward />,
-                  }[header.column.getIsSorted()] || <SwapVert />}
+                  }[header.column.getIsSorted() as string] || <SwapVert />}
                 </IconButton>
               </Tooltip>
             )}
@@ -52,7 +56,6 @@ export default function HeaderCell({ header }) {
                 <Badge variant="dot" color="primary" invisible={!header.column.getIsFiltered()}>
                   <IconButton
                     size="small"
-                    variant="filled"
                     onClick={() => {
                       setIsFilterOpen(!isFilterOpen);
                     }}
@@ -70,7 +73,7 @@ export default function HeaderCell({ header }) {
       {header.column.getCanFilter() && (
         <Collapse in={isFilterOpen}>
           <DebouncedFilterBox
-            value={header.column.getFilterValue() || ''}
+            value={(header.column.getFilterValue() as string) || ''}
             onChange={(value) => header.column.setFilterValue(value)}
           />
         </Collapse>

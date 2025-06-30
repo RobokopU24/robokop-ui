@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import stringUtils from './strings';
 
 /**
@@ -64,7 +64,7 @@ function pruneEmptyArray(obj: { [x: string]: any }, property: string) {
  * @returns {object} a query graph in the current TRAPI format
  */
 function toCurrentTRAPI(qGraph: { nodes: any; edges: any }) {
-  const query_graph = _.cloneDeep(qGraph);
+  const query_graph = cloneDeep(qGraph);
   // convert arrays to objects
   if (Array.isArray(qGraph.nodes)) {
     query_graph.nodes = arrayWithIdsToObj(qGraph.nodes);
@@ -144,7 +144,7 @@ function toCurrentTRAPI(qGraph: { nodes: any; edges: any }) {
  * @returns query graph
  */
 function prune(q_graph: any) {
-  const clonedQueryGraph = _.cloneDeep(q_graph);
+  const clonedQueryGraph = cloneDeep(q_graph);
   Object.keys(clonedQueryGraph.nodes).forEach((n) => {
     delete clonedQueryGraph.nodes[n].taxa;
     pruneEmptyArray(clonedQueryGraph.nodes[n], 'categories');

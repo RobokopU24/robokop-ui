@@ -6,18 +6,20 @@
  * All outgoing edge types are 'biolink:snake_case'
  * User input types can be anything
  */
-import _ from 'lodash';
+import startCase from 'lodash/startCase';
+import camelCase from 'lodash/camelCase';
+import snakeCase from 'lodash/snakeCase';
 
 function toSpaceCase(str: string) {
-  return _.startCase(str);
+  return startCase(str);
 }
 
 function toCamelCase(str: string) {
-  return _.camelCase(str);
+  return camelCase(str);
 }
 
 function toSnakeCase(str: string) {
-  return _.snakeCase(str);
+  return snakeCase(str);
 }
 
 /**
@@ -25,7 +27,7 @@ function toSnakeCase(str: string) {
  * @param {string} str - string to convert to pascal case
  */
 function toPascalCase(str: string) {
-  const camelCaseStr = _.camelCase(str);
+  const camelCaseStr = camelCase(str);
   const pascalCase = `${camelCaseStr.charAt(0).toUpperCase()}${camelCaseStr.slice(1)}`;
   return pascalCase;
 }

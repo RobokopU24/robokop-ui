@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 
 /**
  * Calculate the radius node circles
@@ -66,7 +66,7 @@ function makeDisplayNodes(
       (kgObjects as NodeBinding[]).forEach((kgObj) => {
         let displayNode = displayNodes[kgObj.id];
         if (!displayNode) {
-          displayNode = _.cloneDeep(kgObj);
+          displayNode = cloneDeep(kgObj);
           const nodeData = message.knowledge_graph.nodes[String(displayNode.id)];
           let categories = nodeData.categories;
           if (categories && !Array.isArray(categories)) {

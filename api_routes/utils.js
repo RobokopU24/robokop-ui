@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isString from 'lodash/isString.js';
 
 export function handleAxiosError(error) {
   const output = {};
@@ -6,7 +6,7 @@ export function handleAxiosError(error) {
     const axiosErrorPrefix = `Error in response with code ${error.response.status}: `;
     if (error.response.data.message) {
       output.message = error.response.data.message;
-    } else if (_.isString(error.response.data)) {
+    } else if (isString(error.response.data)) {
       output.message = `${axiosErrorPrefix} ${error.response.data}`;
     } else {
       output.message = `${axiosErrorPrefix} Unparseable error response.`;

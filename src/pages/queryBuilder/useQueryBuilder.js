@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useMemo } from 'react';
 
-import _ from 'lodash';
+import snakeCase from 'lodash/snakeCase';
 import queryBuilderUtils from '../../utils/queryBuilder';
 import queryGraphUtils from '../../utils/queryGraph';
 import { useAlert } from '../../components/AlertProvider';
@@ -76,9 +76,9 @@ function reducer(state, action) {
       const { id, qualifiers } = action.payload;
       if (qualifiers.length !== 0) {
         const qualifier_set = Object.entries(qualifiers).map(([name, value]) => ({
-          qualifier_type_id: `biolink:${_.snakeCase(name)}`,
+          qualifier_type_id: `biolink:${snakeCase(name)}`,
           qualifier_value:
-            name === 'qualified predicate' ? `biolink:${_.snakeCase(value)}` : _.snakeCase(value),
+            name === 'qualified predicate' ? `biolink:${snakeCase(value)}` : snakeCase(value),
         }));
         state.message.message.query_graph.edges[id].qualifier_constraints = [{ qualifier_set }];
       }

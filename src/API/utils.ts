@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import isString from 'lodash/isString';
 
 function handleAxiosError(error: {
   response: { status: any; data: { message: any; detail: any } };
@@ -10,7 +10,7 @@ function handleAxiosError(error: {
       // Data object contains a 'message' property
       // so we assume it includes info and we don't need the prefix
       output.message = error.response.data.message;
-    } else if (_.isString(error.response.data)) {
+    } else if (isString(error.response.data)) {
       // Not a JSON response so let's use it as a string
       output.message = `${axiosErrorPrefix} ${error.response.data}`;
     } else if (error.response.data.detail) {

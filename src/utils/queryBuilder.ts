@@ -1,4 +1,6 @@
-import _ from 'lodash';
+import transform from 'lodash/transform';
+import omitBy from 'lodash/omitBy';
+import pick from 'lodash/pick';
 
 /**
  * Get the next unused Node ID in the query_graph for insertion
@@ -29,7 +31,7 @@ function getNextEdgeID(q_graph: { edges: any }) {
 function getNumEdgesPerNode(q_graph: {
   edges: { [key: string]: { subject: string; object: string } };
 }): { [nodeId: string]: number } {
-  return _.transform(
+  return transform(
     q_graph.edges,
     (result: { [nodeId: string]: number }, value) => {
       result[value.object] = result[value.object] ? result[value.object] + 1 : 1;
@@ -148,9 +150,9 @@ function removeDetachedFromRoot(
     }
   }
   // remove any edges still in the disconnectedEdges list
-  q_graph.edges = _.omitBy(q_graph.edges, (e, id) => disconnectedEdges.indexOf(id) > -1);
+  q_graph.edges = omitBy(q_graph.edges, (e, id) => disconnectedEdges.indexOf(id) > -1);
   // keep all nodes that are attached to existing edges
-  q_graph.nodes = _.pick(q_graph.nodes, connectedNodes);
+  q_graph.nodes = pick(q_graph.nodes, connectedNodes);
   return q_graph;
 }
 

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import _ from 'lodash';
 import strings from '../utils/strings';
 import getNodeCategoryColorMap from '../utils/colors';
 

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 
 // https://vite.dev/config/
@@ -9,6 +10,7 @@ export default defineConfig({
       target: 'react',
       autoCodeSplitting: true,
     }),
+    visualizer({ filename: 'vite-report.html', open: false }),
     react(),
   ],
   server: {

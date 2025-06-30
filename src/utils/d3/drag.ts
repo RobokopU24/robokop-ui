@@ -1,21 +1,61 @@
 import * as d3 from 'd3';
 import graphUtils from './graph';
+
+// Type definitions for D3 simulation and data
+type D3Simulation = d3.Simulation<any, undefined>;
+
+interface D3DragEvent {
+  active: boolean;
+  x: number;
+  y: number;
+  sourceEvent: {
+    stopPropagation(): void;
+  };
+}
+
+interface D3Node {
+  id: string;
+  x: number;
+  y: number;
+  fx: number | null;
+  fy: number | null;
+  [key: string]: any;
+}
+
+interface D3Edge {
+  id: string;
+  source: D3Node;
+  target: D3Node;
+  numEdges: number;
+  index: number;
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+  [key: string]: any;
+}
+
+interface EdgeEndMapping {
+  source: string;
+  target: string;
+}
+
 /**
  * Handle node dragging
  */
-function dragNode(simulation) {
-  function dragstarted(event, d) {
+function dragNode(simulation: D3Simulation) {
+  function dragstarted(event: any, d: any) {
     if (!event.active) simulation.alphaTarget(0.01).restart();
     d.fx = d.x;
     d.fy = d.y;
   }
 
-  function dragged(event, d) {
+  function dragged(event: any, d: any) {
     d.fx = event.x;
     d.fy = event.y;
   }
 
-  function dragended(event, d) {
+  function dragended(event: any, d: any) {
     if (!event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
@@ -24,14 +64,21 @@ function dragNode(simulation) {
   return d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
 }
 
-function dragEdgeEnd(subject, simulation, width, height, nodeRadius, updateEdge) {
-  function dragstarted(event) {
+function dragEdgeEnd(
+  subject: D3Edge,
+  simulation: D3Simulation,
+  width: number,
+  height: number,
+  nodeRadius: number,
+  updateEdge: (edgeId: string, endpoint: string, nodeId: string) => void
+) {
+  function dragstarted(event: any) {
     // stop simulation if user grabs an edge end
     if (!event.active) simulation.stop();
     event.sourceEvent.stopPropagation();
   }
 
-  function dragged(event, d) {
+  function dragged(this: Element, event: any, d: any) {
     const { id } = d;
     const type = d3.select(this).attr('class').split(' ')[0];
     const otherEdgeEnd = graphUtils.getOtherEdgeEnd(type);
@@ -63,23 +110,23 @@ function dragEdgeEnd(subject, simulation, width, height, nodeRadius, updateEdge)
       .call((e) => e.select(`.${otherEdgeEnd}`).attr('cx', x2).attr('cy', y2));
   }
 
-  function dragended(event, d) {
+  function dragended(this: Element, event: any, d: any) {
     // see if edge was dropped on an edge
     const droppedCircle = d3
       .selectAll('.nodeCircle')
       .data()
-      .find((n) => graphUtils.isInside(event.x, event.y, n.x, n.y, nodeRadius));
+      .find((n: any) => graphUtils.isInside(event.x, event.y, n.x, n.y, nodeRadius));
     const { id } = d;
     const type = d3.select(this).attr('class').split(' ')[0];
-    if (droppedCircle) {
+    if (droppedCircle && (droppedCircle as any).id) {
       // edge was on a node
-      const mapping = {
+      const mapping: EdgeEndMapping = {
         source: 'subject',
         target: 'object',
       };
       // no need to adjust anything internal because graph will be
       // redrawn
-      updateEdge(id, mapping[type], droppedCircle.id);
+      updateEdge(id, mapping[type as keyof EdgeEndMapping], (droppedCircle as any).id);
     } else {
       // edge was dropped in space, put it back to previous nodes
       let {
