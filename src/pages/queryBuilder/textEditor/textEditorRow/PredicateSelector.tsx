@@ -1,23 +1,66 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useMemo, useContext, useEffect } from 'react';
-import BiolinkContext from '../../../../context/biolink';
-import strings from '../../../../utils/strings';
-import QueryBuilderContext from '../../../../context/queryBuilder';
-import highlighter from '../../../../utils/d3/highlighter';
-import { Autocomplete, TextField } from '@mui/material';
+import React, { useMemo, useContext, useEffect } from "react";
+import BiolinkContext from "../../../../context/biolink";
+import strings from "../../../../utils/strings";
+import QueryBuilderContext from "../../../../context/queryBuilder";
+import highlighter from "../../../../utils/d3/highlighter";
+import { Autocomplete, TextField } from "@mui/material";
+
+// Types for the biolink context
+interface BiolinkPredicate {
+  predicate: string;
+  domain: string;
+  range: string;
+  symmetric: boolean;
+}
+
+interface BiolinkContextType {
+  colorMap?: (categories: string | string[]) => [string | null, string];
+  hierarchies?: Record<string, any>;
+  predicates: BiolinkPredicate[];
+  ancestorsMap: Record<string, string[]>;
+}
+
+// Types for the query builder context
+interface QueryGraphNode {
+  categories?: string[];
+  [key: string]: any;
+}
+
+interface QueryGraphEdge {
+  subject: string;
+  object: string;
+  predicates?: string[];
+  [key: string]: any;
+}
+
+interface QueryGraph {
+  nodes: Record<string, QueryGraphNode>;
+  edges: Record<string, QueryGraphEdge>;
+}
+
+interface QueryBuilderContextType {
+  query_graph: QueryGraph;
+  dispatch: (action: { type: string; payload: any }) => void;
+}
+
+// Props interface
+interface PredicateSelectorProps {
+  id: string;
+}
 
 /**
  * Get a list of categories
  * @param {array|undefined} categories - array of node categories
  * @returns list of categories or biolink:NamedThing
  */
-function getCategories(categories) {
-  return (Array.isArray(categories) && categories.length && categories) || ['biolink:NamedThing'];
+function getCategories(categories: string[] | undefined): string[] {
+  return (Array.isArray(categories) && categories.length && categories) || ["biolink:NamedThing"];
 }
 
-export default function PredicateSelector({ id }) {
-  const biolink = useContext(BiolinkContext);
-  const queryBuilder = useContext(QueryBuilderContext);
+export default function PredicateSelector({ id }: PredicateSelectorProps) {
+  const biolink = useContext(BiolinkContext) as BiolinkContextType;
+  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
   const { query_graph } = queryBuilder;
   const edge = query_graph.edges[id];
 
@@ -25,7 +68,7 @@ export default function PredicateSelector({ id }) {
    * Get list of valid predicates from selected node categories
    * @returns {string[]|null} list of valid predicates
    */
-  function getFilteredPredicateList() {
+  function getFilteredPredicateList(): string[] | null {
     if (!biolink || !biolink.predicates.length) {
       return null;
     }
@@ -37,19 +80,15 @@ export default function PredicateSelector({ id }) {
     const objectCategories = getCategories(objectNode.categories);
 
     // get hierarchies of all involved node categories
-    const subjectNodeCategoryHierarchy = subjectCategories.flatMap(
-      (subjectCategory) => biolink.ancestorsMap[subjectCategory]
-    );
-    const objectNodeCategoryHierarchy = objectCategories.flatMap(
-      (objectCategory) => biolink.ancestorsMap[objectCategory]
-    );
+    const subjectNodeCategoryHierarchy = subjectCategories.flatMap((subjectCategory: string) => biolink.ancestorsMap[subjectCategory]);
+    const objectNodeCategoryHierarchy = objectCategories.flatMap((objectCategory: string) => biolink.ancestorsMap[objectCategory]);
 
     // if we get categories back that aren't in the biolink model
     if (!subjectNodeCategoryHierarchy || !objectNodeCategoryHierarchy) {
       return null;
     }
 
-    return biolink.predicates.map(({ predicate }) => predicate);
+    return biolink.predicates.map(({ predicate }: BiolinkPredicate) => predicate);
   }
 
   const filteredPredicateList =
@@ -60,15 +99,13 @@ export default function PredicateSelector({ id }) {
       biolink,
     ]) || [];
 
-  function editPredicates(predicates) {
-    queryBuilder.dispatch({ type: 'editPredicate', payload: { id, predicates } });
+  function editPredicates(predicates: string[]) {
+    queryBuilder.dispatch({ type: "editPredicate", payload: { id, predicates } });
   }
 
   useEffect(() => {
     if (filteredPredicateList.length) {
-      const keptPredicates =
-        (edge.predicates && edge.predicates.filter((p) => filteredPredicateList.indexOf(p) > -1)) ||
-        [];
+      const keptPredicates = (edge.predicates && edge.predicates.filter((p: string) => filteredPredicateList.indexOf(p) > -1)) || [];
       editPredicates(keptPredicates);
     }
   }, [filteredPredicateList]);
