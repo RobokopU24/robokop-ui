@@ -5,44 +5,7 @@ import strings from "../../../../utils/strings";
 import QueryBuilderContext from "../../../../context/queryBuilder";
 import highlighter from "../../../../utils/d3/highlighter";
 import { Autocomplete, TextField } from "@mui/material";
-
-// Types for the biolink context
-interface BiolinkPredicate {
-  predicate: string;
-  domain: string;
-  range: string;
-  symmetric: boolean;
-}
-
-interface BiolinkContextType {
-  colorMap?: (categories: string | string[]) => [string | null, string];
-  hierarchies?: Record<string, any>;
-  predicates: BiolinkPredicate[];
-  ancestorsMap: Record<string, string[]>;
-}
-
-// Types for the query builder context
-interface QueryGraphNode {
-  categories?: string[];
-  [key: string]: any;
-}
-
-interface QueryGraphEdge {
-  subject: string;
-  object: string;
-  predicates?: string[];
-  [key: string]: any;
-}
-
-interface QueryGraph {
-  nodes: Record<string, QueryGraphNode>;
-  edges: Record<string, QueryGraphEdge>;
-}
-
-interface QueryBuilderContextType {
-  query_graph: QueryGraph;
-  dispatch: (action: { type: string; payload: any }) => void;
-}
+import { BiolinkPredicate, BiolinkContextType, QueryGraphNode, QueryGraphEdge, QueryGraph, QueryBuilderContextType } from "../types";
 
 // Props interface
 interface PredicateSelectorProps {
@@ -69,7 +32,7 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
    * @returns {string[]|null} list of valid predicates
    */
   function getFilteredPredicateList(): string[] | null {
-    if (!biolink || !biolink.predicates.length) {
+    if (!biolink || !biolink.predicates || !biolink.predicates.length) {
       return null;
     }
     const subjectNode = query_graph.nodes[edge.subject];
@@ -80,8 +43,8 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
     const objectCategories = getCategories(objectNode.categories);
 
     // get hierarchies of all involved node categories
-    const subjectNodeCategoryHierarchy = subjectCategories.flatMap((subjectCategory: string) => biolink.ancestorsMap[subjectCategory]);
-    const objectNodeCategoryHierarchy = objectCategories.flatMap((objectCategory: string) => biolink.ancestorsMap[objectCategory]);
+    const subjectNodeCategoryHierarchy = subjectCategories.flatMap((subjectCategory: string) => biolink.ancestorsMap?.[subjectCategory] ?? []);
+    const objectNodeCategoryHierarchy = objectCategories.flatMap((objectCategory: string) => biolink.ancestorsMap?.[objectCategory] ?? []);
 
     // if we get categories back that aren't in the biolink model
     if (!subjectNodeCategoryHierarchy || !objectNodeCategoryHierarchy) {
@@ -104,7 +67,7 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
   }
 
   useEffect(() => {
-    if (filteredPredicateList.length) {
+    if (filteredPredicateList && filteredPredicateList.length) {
       const keptPredicates = (edge.predicates && edge.predicates.filter((p: string) => filteredPredicateList.indexOf(p) > -1)) || [];
       editPredicates(keptPredicates);
     }

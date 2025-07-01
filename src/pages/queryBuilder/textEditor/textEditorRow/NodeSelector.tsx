@@ -15,16 +15,7 @@ import Check from "@mui/icons-material/Check";
 import FileCopy from "@mui/icons-material/FileCopy";
 import { withStyles } from "@mui/styles";
 import { Theme } from "@mui/material/styles";
-
-// Option type for the Autocomplete
-export interface NodeOption {
-  name: string;
-  key?: string | null;
-  ids?: string[];
-  categories?: string[];
-  taxa?: string[];
-  is_set?: boolean;
-}
+import { NodeOption } from "../types";
 
 interface NodeSelectorProps {
   id: string;

@@ -16,7 +16,7 @@ import useQueryBuilder from '../useQueryBuilder';
 import { authApi } from '../../../API/baseUrlProxy';
 import { useAlert } from '../../../components/AlertProvider';
 
-function SaveQuery({ show, close }) {
+function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
   const { displayAlert } = useAlert();
 
   const queryBuilder = useQueryBuilder();

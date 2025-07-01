@@ -1,30 +1,9 @@
 import React, { useContext } from "react";
 import QueryBuilderContext from "../../../../context/queryBuilder";
 import { TextField, Autocomplete } from "@mui/material";
+import { QueryBuilderContextType } from "../types";
 
 // Types for the query builder context
-interface QueryGraphNode {
-  categories?: string[];
-  [key: string]: any;
-}
-
-interface QueryGraphEdge {
-  subject: string;
-  object: string;
-  predicates?: string[];
-  [key: string]: any;
-}
-
-interface QueryGraph {
-  nodes: Record<string, QueryGraphNode>;
-  edges: Record<string, QueryGraphEdge>;
-}
-
-interface QueryBuilderContextType {
-  query_graph: QueryGraph;
-  dispatch: (action: { type: string; payload: any }) => void;
-}
-
 interface TreeNode {
   name: string;
   children?: TreeNode[];

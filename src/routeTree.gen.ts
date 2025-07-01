@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
+import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as AboutRouteImport } from './routes/about'
@@ -30,6 +31,11 @@ const TutorialRoute = TutorialRouteImport.update({
 const TermsofserviceRoute = TermsofserviceRouteImport.update({
   id: '/termsofservice',
   path: '/termsofservice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuestionBuilderRoute = QuestionBuilderRouteImport.update({
+  id: '/question-builder',
+  path: '/question-builder',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OauthCallbackRoute = OauthCallbackRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/guide': typeof GuideRoute
   '/oauth-callback': typeof OauthCallbackRoute
+  '/question-builder': typeof QuestionBuilderRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/activate-user': typeof ActivateUserIndexRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/guide': typeof GuideRoute
   '/oauth-callback': typeof OauthCallbackRoute
+  '/question-builder': typeof QuestionBuilderRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/activate-user': typeof ActivateUserIndexRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/guide': typeof GuideRoute
   '/oauth-callback': typeof OauthCallbackRoute
+  '/question-builder': typeof QuestionBuilderRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/activate-user/': typeof ActivateUserIndexRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/guide'
     | '/oauth-callback'
+    | '/question-builder'
     | '/termsofservice'
     | '/tutorial'
     | '/activate-user'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/guide'
     | '/oauth-callback'
+    | '/question-builder'
     | '/termsofservice'
     | '/tutorial'
     | '/activate-user'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/guide'
     | '/oauth-callback'
+    | '/question-builder'
     | '/termsofservice'
     | '/tutorial'
     | '/activate-user/'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   GuideRoute: typeof GuideRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
+  QuestionBuilderRoute: typeof QuestionBuilderRoute
   TermsofserviceRoute: typeof TermsofserviceRoute
   TutorialRoute: typeof TutorialRoute
   ActivateUserIndexRoute: typeof ActivateUserIndexRoute
@@ -201,6 +214,13 @@ declare module '@tanstack/react-router' {
       path: '/termsofservice'
       fullPath: '/termsofservice'
       preLoaderRoute: typeof TermsofserviceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/question-builder': {
+      id: '/question-builder'
+      path: '/question-builder'
+      fullPath: '/question-builder'
+      preLoaderRoute: typeof QuestionBuilderRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/oauth-callback': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   GuideRoute: GuideRoute,
   OauthCallbackRoute: OauthCallbackRoute,
+  QuestionBuilderRoute: QuestionBuilderRoute,
   TermsofserviceRoute: TermsofserviceRoute,
   TutorialRoute: TutorialRoute,
   ActivateUserIndexRoute: ActivateUserIndexRoute,
