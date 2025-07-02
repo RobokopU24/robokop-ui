@@ -1,0 +1,68 @@
+.card {
+  color: var(--text-color);
+  background-color: var(--card-background-color);
+  padding: 16px 24px;
+  border: 1px solid var(--card-border-color);
+  border-radius: 20px;
+  box-shadow: var(--box-shadow);
+
+  transition: box-shadow 250ms ease-in-out;
+  transition: border-color 250ms ease-in-out;
+}
+
+.gradientCard {
+  color: white;
+}
+
+.gradientCard {
+  color: white;
+}
+
+.warning {
+  margin: 16px -24px -16px -24px;
+  padding: 16px 24px;
+  background-color: var(--warning-background-color);
+  color: var(--warning-text-color);
+  border-radius: 0 0 20px 20px;
+}
+
+.card:focus {
+  outline: 2px solid var(--blue);
+}
+
+.card:hover {
+  color: var(--text-hover-color);
+  box-shadow: var(--box-shadow-hover);
+  border-color: var(--blue);
+  text-decoration: none;
+
+  transition: box-shadow 250ms ease-in-out;
+  transition: border-color 250ms ease-in-out;
+}
+
+.card hr {
+  all: unset;
+  border-top: 1px solid var(--card-border-color);
+  display: block;
+  margin: var(--spacing-3) 0;
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1ch;
+}
+
+.iconCardHeader {
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  justify-content: flex-start;
+  gap: 2ch;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-size: clamp(1.25rem, 1.2rem + 0.25vw, 1.5rem);
+  display: inline-block;
+}

@@ -1,0 +1,21 @@
+.section {
+  padding: var(--spacing);
+  grid-column: content-start / content-end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+}
+
+@media (max-width: 850px) {
+  .section {
+    gap: var(--spacing);
+  }
+}
+
+.title {
+  font-size: 1.75rem;
+  font-size: clamp(1.75rem, 1.65rem + 0.5vw, 2.25rem);
+  font-weight: 300;
+  margin-top: -0.25em;
+  margin-bottom: 0.25em;
+}

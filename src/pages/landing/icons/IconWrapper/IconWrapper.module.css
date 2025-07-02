@@ -1,0 +1,14 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 120px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 696px) {
+  .wrapper {
+    display: none;
+  }
+}

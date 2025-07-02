@@ -1,0 +1,11 @@
+.wrapper {
+  max-width: 450px;
+}
+
+.logo {
+  width: 100%;
+}
+
+.logoLetters path {
+  fill: var(--heading-color);
+}

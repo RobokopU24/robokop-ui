@@ -1,0 +1,13 @@
+.icon {
+  display: inline-block;
+  align-self: center;
+  stroke: var(--text-color);
+  transform: translate(0, -2px);
+  transition: transform 250ms ease-in-out;
+}
+
+a:hover .icon {
+  stroke: var(--text-hover-color);
+  transform: translate(5px, -2px);
+  transition: transform 250ms ease-in-out;
+}

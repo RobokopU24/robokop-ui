@@ -18,6 +18,7 @@
     "@mui/styles": "^6.4.12",
     "@simplewebauthn/browser": "^13.1.0",
     "@tanstack/react-router": "^1.121.34",
+    "@tanstack/react-start": "^1.124.0",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.10.0",
     "body-parser": "^2.2.0",
@@ -31,10 +32,12 @@
     "papaparse": "^5.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.59.0",
     "react-json-view": "^1.21.3",
     "react-table": "^7.8.0",
     "shortid": "^2.2.17",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",

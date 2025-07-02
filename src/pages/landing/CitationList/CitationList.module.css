@@ -1,0 +1,10 @@
+.list {
+  padding-left: 1em;
+}
+.list li {
+  padding-left: 1ch;
+}
+/* break long links in citation */
+.list a {
+  word-break: break-all;
+}

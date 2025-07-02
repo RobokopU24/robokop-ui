@@ -46,13 +46,13 @@ function Header() {
           <Logo height="32px" width="100%" style={{ paddingTop: '6px' }} />
         </Link>
         <div className="grow" />
-        <Link to="/">Question Builder</Link>
+        <Link to="/question-builder">Question Builder</Link>
         <Link to="/explore">Explore</Link>
         <Link to="/about">About</Link>
         <Link to="/guide">Guide</Link>
         <Link to="/tutorial">Tutorial</Link>
         {/* This will go to the actual root of the host (robokop.renci.org/#contact), not an internal route in this application */}
-        <Link to="/#contact">Help</Link>
+        <Link to="/">Help</Link>
         <div>
           <IconButton onClick={handleMenuOpen}>
             {user ? (

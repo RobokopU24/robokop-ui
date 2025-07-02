@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import useBiolinkModel from '../stores/useBiolinkModel';
 import API from '../API';
-import { useAlert } from './AlertProvider';
+import AlertProvider, { useAlert } from './AlertProvider';
 import theme from '../theme';
 import BiolinkContext from '../context/biolink';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
@@ -32,19 +32,21 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
     fetchBiolink();
   }, []);
   return (
-    <AuthProvider>
-      <BiolinkContext.Provider value={biolink}>
-        <MuiThemeProvider theme={theme}>
-          <StylesThemeProvider theme={theme}>
-            <div id="pageContainer">
-              <Header />
-              <div id="contentContainer">{children}</div>
-              <Footer />
-            </div>
-          </StylesThemeProvider>
-        </MuiThemeProvider>
-      </BiolinkContext.Provider>
-    </AuthProvider>
+    <AlertProvider>
+      <AuthProvider>
+        <BiolinkContext.Provider value={biolink}>
+          <MuiThemeProvider theme={theme}>
+            <StylesThemeProvider theme={theme}>
+              <div id="pageContainer">
+                <Header />
+                <div id="contentContainer">{children}</div>
+                <Footer />
+              </div>
+            </StylesThemeProvider>
+          </MuiThemeProvider>
+        </BiolinkContext.Provider>
+      </AuthProvider>
+    </AlertProvider>
   );
 }
 

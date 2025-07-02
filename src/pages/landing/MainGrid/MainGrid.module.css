@@ -1,0 +1,35 @@
+.grid {
+  min-height: 100%;
+
+  width: 100%;
+  display: grid;
+  grid-template-columns:
+    auto
+    [divider-start]
+    1px
+    [divider-end content-start]
+    minmax(min-content, 850px)
+    [content-end]
+    auto;
+}
+
+/* 
+Create a dotted line using a radial gradient background on a divider 1px in height/width 
+Thickness of the divider is defined by the css grid-template-columns/rows
+*/
+.divider {
+  background-image: radial-gradient(var(--divider-color) 1px, transparent 0);
+  background-size: 5px 5px;
+  background-position: -2px -2px;
+}
+
+/* Vertical line running down the whole length of the page */
+.vertical {
+  grid-column: divider-start / divider-end;
+  grid-row: 1 / -1;
+}
+
+/* Horizontal lines between sections, grid-row has is determined in inline styles by component */
+.horizontal {
+  grid-column: 1 / -1;
+}

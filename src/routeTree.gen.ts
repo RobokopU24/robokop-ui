@@ -9,48 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TutorialRouteImport } from './routes/tutorial'
-import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
-import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
-import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
-import { Route as GuideRouteImport } from './routes/guide'
-import { Route as AboutRouteImport } from './routes/about'
+import { Route as AppLayoutRouteImport } from './routes/_appLayout'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProfileIndexRouteImport } from './routes/profile/index'
-import { Route as ExploreIndexRouteImport } from './routes/explore/index'
-import { Route as AnswerIndexRouteImport } from './routes/answer/index'
-import { Route as ActivateUserIndexRouteImport } from './routes/activate-user/index'
-import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/drug-chemical/index'
-import { Route as AnswerAnswer_idIndexRouteImport } from './routes/answer/$answer_id/index'
+import { Route as AppLayoutTutorialRouteImport } from './routes/_appLayout/tutorial'
+import { Route as AppLayoutTermsofserviceRouteImport } from './routes/_appLayout/termsofservice'
+import { Route as AppLayoutQuestionBuilderRouteImport } from './routes/_appLayout/question-builder'
+import { Route as AppLayoutOauthCallbackRouteImport } from './routes/_appLayout/oauth-callback'
+import { Route as AppLayoutGuideRouteImport } from './routes/_appLayout/guide'
+import { Route as AppLayoutAboutRouteImport } from './routes/_appLayout/about'
+import { Route as AppLayoutProfileIndexRouteImport } from './routes/_appLayout/profile/index'
+import { Route as AppLayoutExploreIndexRouteImport } from './routes/_appLayout/explore/index'
+import { Route as AppLayoutAnswerIndexRouteImport } from './routes/_appLayout/answer/index'
+import { Route as AppLayoutActivateUserIndexRouteImport } from './routes/_appLayout/activate-user/index'
+import { Route as AppLayoutExploreDrugChemicalIndexRouteImport } from './routes/_appLayout/explore/drug-chemical/index'
+import { Route as AppLayoutAnswerAnswer_idIndexRouteImport } from './routes/_appLayout/answer/$answer_id/index'
 
-const TutorialRoute = TutorialRouteImport.update({
-  id: '/tutorial',
-  path: '/tutorial',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsofserviceRoute = TermsofserviceRouteImport.update({
-  id: '/termsofservice',
-  path: '/termsofservice',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuestionBuilderRoute = QuestionBuilderRouteImport.update({
-  id: '/question-builder',
-  path: '/question-builder',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OauthCallbackRoute = OauthCallbackRouteImport.update({
-  id: '/oauth-callback',
-  path: '/oauth-callback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuideRoute = GuideRouteImport.update({
-  id: '/guide',
-  path: '/guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const AppLayoutRoute = AppLayoutRouteImport.update({
+  id: '/_appLayout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,83 +33,117 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileIndexRoute = ProfileIndexRouteImport.update({
+const AppLayoutTutorialRoute = AppLayoutTutorialRouteImport.update({
+  id: '/tutorial',
+  path: '/tutorial',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
+const AppLayoutTermsofserviceRoute = AppLayoutTermsofserviceRouteImport.update({
+  id: '/termsofservice',
+  path: '/termsofservice',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
+const AppLayoutQuestionBuilderRoute =
+  AppLayoutQuestionBuilderRouteImport.update({
+    id: '/question-builder',
+    path: '/question-builder',
+    getParentRoute: () => AppLayoutRoute,
+  } as any)
+const AppLayoutOauthCallbackRoute = AppLayoutOauthCallbackRouteImport.update({
+  id: '/oauth-callback',
+  path: '/oauth-callback',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
+const AppLayoutGuideRoute = AppLayoutGuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
+const AppLayoutAboutRoute = AppLayoutAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
+const AppLayoutProfileIndexRoute = AppLayoutProfileIndexRouteImport.update({
   id: '/profile/',
   path: '/profile/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppLayoutRoute,
 } as any)
-const ExploreIndexRoute = ExploreIndexRouteImport.update({
+const AppLayoutExploreIndexRoute = AppLayoutExploreIndexRouteImport.update({
   id: '/explore/',
   path: '/explore/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppLayoutRoute,
 } as any)
-const AnswerIndexRoute = AnswerIndexRouteImport.update({
+const AppLayoutAnswerIndexRoute = AppLayoutAnswerIndexRouteImport.update({
   id: '/answer/',
   path: '/answer/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppLayoutRoute,
 } as any)
-const ActivateUserIndexRoute = ActivateUserIndexRouteImport.update({
-  id: '/activate-user/',
-  path: '/activate-user/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExploreDrugChemicalIndexRoute =
-  ExploreDrugChemicalIndexRouteImport.update({
+const AppLayoutActivateUserIndexRoute =
+  AppLayoutActivateUserIndexRouteImport.update({
+    id: '/activate-user/',
+    path: '/activate-user/',
+    getParentRoute: () => AppLayoutRoute,
+  } as any)
+const AppLayoutExploreDrugChemicalIndexRoute =
+  AppLayoutExploreDrugChemicalIndexRouteImport.update({
     id: '/explore/drug-chemical/',
     path: '/explore/drug-chemical/',
-    getParentRoute: () => rootRouteImport,
+    getParentRoute: () => AppLayoutRoute,
   } as any)
-const AnswerAnswer_idIndexRoute = AnswerAnswer_idIndexRouteImport.update({
-  id: '/answer/$answer_id/',
-  path: '/answer/$answer_id/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AppLayoutAnswerAnswer_idIndexRoute =
+  AppLayoutAnswerAnswer_idIndexRouteImport.update({
+    id: '/answer/$answer_id/',
+    path: '/answer/$answer_id/',
+    getParentRoute: () => AppLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/guide': typeof GuideRoute
-  '/oauth-callback': typeof OauthCallbackRoute
-  '/question-builder': typeof QuestionBuilderRoute
-  '/termsofservice': typeof TermsofserviceRoute
-  '/tutorial': typeof TutorialRoute
-  '/activate-user': typeof ActivateUserIndexRoute
-  '/answer': typeof AnswerIndexRoute
-  '/explore': typeof ExploreIndexRoute
-  '/profile': typeof ProfileIndexRoute
-  '/answer/$answer_id': typeof AnswerAnswer_idIndexRoute
-  '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
+  '/about': typeof AppLayoutAboutRoute
+  '/guide': typeof AppLayoutGuideRoute
+  '/oauth-callback': typeof AppLayoutOauthCallbackRoute
+  '/question-builder': typeof AppLayoutQuestionBuilderRoute
+  '/termsofservice': typeof AppLayoutTermsofserviceRoute
+  '/tutorial': typeof AppLayoutTutorialRoute
+  '/activate-user': typeof AppLayoutActivateUserIndexRoute
+  '/answer': typeof AppLayoutAnswerIndexRoute
+  '/explore': typeof AppLayoutExploreIndexRoute
+  '/profile': typeof AppLayoutProfileIndexRoute
+  '/answer/$answer_id': typeof AppLayoutAnswerAnswer_idIndexRoute
+  '/explore/drug-chemical': typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/guide': typeof GuideRoute
-  '/oauth-callback': typeof OauthCallbackRoute
-  '/question-builder': typeof QuestionBuilderRoute
-  '/termsofservice': typeof TermsofserviceRoute
-  '/tutorial': typeof TutorialRoute
-  '/activate-user': typeof ActivateUserIndexRoute
-  '/answer': typeof AnswerIndexRoute
-  '/explore': typeof ExploreIndexRoute
-  '/profile': typeof ProfileIndexRoute
-  '/answer/$answer_id': typeof AnswerAnswer_idIndexRoute
-  '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
+  '/about': typeof AppLayoutAboutRoute
+  '/guide': typeof AppLayoutGuideRoute
+  '/oauth-callback': typeof AppLayoutOauthCallbackRoute
+  '/question-builder': typeof AppLayoutQuestionBuilderRoute
+  '/termsofservice': typeof AppLayoutTermsofserviceRoute
+  '/tutorial': typeof AppLayoutTutorialRoute
+  '/activate-user': typeof AppLayoutActivateUserIndexRoute
+  '/answer': typeof AppLayoutAnswerIndexRoute
+  '/explore': typeof AppLayoutExploreIndexRoute
+  '/profile': typeof AppLayoutProfileIndexRoute
+  '/answer/$answer_id': typeof AppLayoutAnswerAnswer_idIndexRoute
+  '/explore/drug-chemical': typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/guide': typeof GuideRoute
-  '/oauth-callback': typeof OauthCallbackRoute
-  '/question-builder': typeof QuestionBuilderRoute
-  '/termsofservice': typeof TermsofserviceRoute
-  '/tutorial': typeof TutorialRoute
-  '/activate-user/': typeof ActivateUserIndexRoute
-  '/answer/': typeof AnswerIndexRoute
-  '/explore/': typeof ExploreIndexRoute
-  '/profile/': typeof ProfileIndexRoute
-  '/answer/$answer_id/': typeof AnswerAnswer_idIndexRoute
-  '/explore/drug-chemical/': typeof ExploreDrugChemicalIndexRoute
+  '/_appLayout': typeof AppLayoutRouteWithChildren
+  '/_appLayout/about': typeof AppLayoutAboutRoute
+  '/_appLayout/guide': typeof AppLayoutGuideRoute
+  '/_appLayout/oauth-callback': typeof AppLayoutOauthCallbackRoute
+  '/_appLayout/question-builder': typeof AppLayoutQuestionBuilderRoute
+  '/_appLayout/termsofservice': typeof AppLayoutTermsofserviceRoute
+  '/_appLayout/tutorial': typeof AppLayoutTutorialRoute
+  '/_appLayout/activate-user/': typeof AppLayoutActivateUserIndexRoute
+  '/_appLayout/answer/': typeof AppLayoutAnswerIndexRoute
+  '/_appLayout/explore/': typeof AppLayoutExploreIndexRoute
+  '/_appLayout/profile/': typeof AppLayoutProfileIndexRoute
+  '/_appLayout/answer/$answer_id/': typeof AppLayoutAnswerAnswer_idIndexRoute
+  '/_appLayout/explore/drug-chemical/': typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,78 +179,33 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/about'
-    | '/guide'
-    | '/oauth-callback'
-    | '/question-builder'
-    | '/termsofservice'
-    | '/tutorial'
-    | '/activate-user/'
-    | '/answer/'
-    | '/explore/'
-    | '/profile/'
-    | '/answer/$answer_id/'
-    | '/explore/drug-chemical/'
+    | '/_appLayout'
+    | '/_appLayout/about'
+    | '/_appLayout/guide'
+    | '/_appLayout/oauth-callback'
+    | '/_appLayout/question-builder'
+    | '/_appLayout/termsofservice'
+    | '/_appLayout/tutorial'
+    | '/_appLayout/activate-user/'
+    | '/_appLayout/answer/'
+    | '/_appLayout/explore/'
+    | '/_appLayout/profile/'
+    | '/_appLayout/answer/$answer_id/'
+    | '/_appLayout/explore/drug-chemical/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  GuideRoute: typeof GuideRoute
-  OauthCallbackRoute: typeof OauthCallbackRoute
-  QuestionBuilderRoute: typeof QuestionBuilderRoute
-  TermsofserviceRoute: typeof TermsofserviceRoute
-  TutorialRoute: typeof TutorialRoute
-  ActivateUserIndexRoute: typeof ActivateUserIndexRoute
-  AnswerIndexRoute: typeof AnswerIndexRoute
-  ExploreIndexRoute: typeof ExploreIndexRoute
-  ProfileIndexRoute: typeof ProfileIndexRoute
-  AnswerAnswer_idIndexRoute: typeof AnswerAnswer_idIndexRoute
-  ExploreDrugChemicalIndexRoute: typeof ExploreDrugChemicalIndexRoute
+  AppLayoutRoute: typeof AppLayoutRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tutorial': {
-      id: '/tutorial'
-      path: '/tutorial'
-      fullPath: '/tutorial'
-      preLoaderRoute: typeof TutorialRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/termsofservice': {
-      id: '/termsofservice'
-      path: '/termsofservice'
-      fullPath: '/termsofservice'
-      preLoaderRoute: typeof TermsofserviceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/question-builder': {
-      id: '/question-builder'
-      path: '/question-builder'
-      fullPath: '/question-builder'
-      preLoaderRoute: typeof QuestionBuilderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/oauth-callback': {
-      id: '/oauth-callback'
-      path: '/oauth-callback'
-      fullPath: '/oauth-callback'
-      preLoaderRoute: typeof OauthCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guide': {
-      id: '/guide'
-      path: '/guide'
-      fullPath: '/guide'
-      preLoaderRoute: typeof GuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/_appLayout': {
+      id: '/_appLayout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -251,65 +215,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile/': {
-      id: '/profile/'
+    '/_appLayout/tutorial': {
+      id: '/_appLayout/tutorial'
+      path: '/tutorial'
+      fullPath: '/tutorial'
+      preLoaderRoute: typeof AppLayoutTutorialRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_appLayout/termsofservice': {
+      id: '/_appLayout/termsofservice'
+      path: '/termsofservice'
+      fullPath: '/termsofservice'
+      preLoaderRoute: typeof AppLayoutTermsofserviceRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_appLayout/question-builder': {
+      id: '/_appLayout/question-builder'
+      path: '/question-builder'
+      fullPath: '/question-builder'
+      preLoaderRoute: typeof AppLayoutQuestionBuilderRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_appLayout/oauth-callback': {
+      id: '/_appLayout/oauth-callback'
+      path: '/oauth-callback'
+      fullPath: '/oauth-callback'
+      preLoaderRoute: typeof AppLayoutOauthCallbackRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_appLayout/guide': {
+      id: '/_appLayout/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof AppLayoutGuideRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_appLayout/about': {
+      id: '/_appLayout/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AppLayoutAboutRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
+    '/_appLayout/profile/': {
+      id: '/_appLayout/profile/'
       path: '/profile'
       fullPath: '/profile'
-      preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLayoutProfileIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
-    '/explore/': {
-      id: '/explore/'
+    '/_appLayout/explore/': {
+      id: '/_appLayout/explore/'
       path: '/explore'
       fullPath: '/explore'
-      preLoaderRoute: typeof ExploreIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLayoutExploreIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
-    '/answer/': {
-      id: '/answer/'
+    '/_appLayout/answer/': {
+      id: '/_appLayout/answer/'
       path: '/answer'
       fullPath: '/answer'
-      preLoaderRoute: typeof AnswerIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLayoutAnswerIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
-    '/activate-user/': {
-      id: '/activate-user/'
+    '/_appLayout/activate-user/': {
+      id: '/_appLayout/activate-user/'
       path: '/activate-user'
       fullPath: '/activate-user'
-      preLoaderRoute: typeof ActivateUserIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLayoutActivateUserIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
-    '/explore/drug-chemical/': {
-      id: '/explore/drug-chemical/'
+    '/_appLayout/explore/drug-chemical/': {
+      id: '/_appLayout/explore/drug-chemical/'
       path: '/explore/drug-chemical'
       fullPath: '/explore/drug-chemical'
-      preLoaderRoute: typeof ExploreDrugChemicalIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLayoutExploreDrugChemicalIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
-    '/answer/$answer_id/': {
-      id: '/answer/$answer_id/'
+    '/_appLayout/answer/$answer_id/': {
+      id: '/_appLayout/answer/$answer_id/'
       path: '/answer/$answer_id'
       fullPath: '/answer/$answer_id'
-      preLoaderRoute: typeof AnswerAnswer_idIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppLayoutAnswerAnswer_idIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
   }
 }
 
+interface AppLayoutRouteChildren {
+  AppLayoutAboutRoute: typeof AppLayoutAboutRoute
+  AppLayoutGuideRoute: typeof AppLayoutGuideRoute
+  AppLayoutOauthCallbackRoute: typeof AppLayoutOauthCallbackRoute
+  AppLayoutQuestionBuilderRoute: typeof AppLayoutQuestionBuilderRoute
+  AppLayoutTermsofserviceRoute: typeof AppLayoutTermsofserviceRoute
+  AppLayoutTutorialRoute: typeof AppLayoutTutorialRoute
+  AppLayoutActivateUserIndexRoute: typeof AppLayoutActivateUserIndexRoute
+  AppLayoutAnswerIndexRoute: typeof AppLayoutAnswerIndexRoute
+  AppLayoutExploreIndexRoute: typeof AppLayoutExploreIndexRoute
+  AppLayoutProfileIndexRoute: typeof AppLayoutProfileIndexRoute
+  AppLayoutAnswerAnswer_idIndexRoute: typeof AppLayoutAnswerAnswer_idIndexRoute
+  AppLayoutExploreDrugChemicalIndexRoute: typeof AppLayoutExploreDrugChemicalIndexRoute
+}
+
+const AppLayoutRouteChildren: AppLayoutRouteChildren = {
+  AppLayoutAboutRoute: AppLayoutAboutRoute,
+  AppLayoutGuideRoute: AppLayoutGuideRoute,
+  AppLayoutOauthCallbackRoute: AppLayoutOauthCallbackRoute,
+  AppLayoutQuestionBuilderRoute: AppLayoutQuestionBuilderRoute,
+  AppLayoutTermsofserviceRoute: AppLayoutTermsofserviceRoute,
+  AppLayoutTutorialRoute: AppLayoutTutorialRoute,
+  AppLayoutActivateUserIndexRoute: AppLayoutActivateUserIndexRoute,
+  AppLayoutAnswerIndexRoute: AppLayoutAnswerIndexRoute,
+  AppLayoutExploreIndexRoute: AppLayoutExploreIndexRoute,
+  AppLayoutProfileIndexRoute: AppLayoutProfileIndexRoute,
+  AppLayoutAnswerAnswer_idIndexRoute: AppLayoutAnswerAnswer_idIndexRoute,
+  AppLayoutExploreDrugChemicalIndexRoute:
+    AppLayoutExploreDrugChemicalIndexRoute,
+}
+
+const AppLayoutRouteWithChildren = AppLayoutRoute._addFileChildren(
+  AppLayoutRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
-  GuideRoute: GuideRoute,
-  OauthCallbackRoute: OauthCallbackRoute,
-  QuestionBuilderRoute: QuestionBuilderRoute,
-  TermsofserviceRoute: TermsofserviceRoute,
-  TutorialRoute: TutorialRoute,
-  ActivateUserIndexRoute: ActivateUserIndexRoute,
-  AnswerIndexRoute: AnswerIndexRoute,
-  ExploreIndexRoute: ExploreIndexRoute,
-  ProfileIndexRoute: ProfileIndexRoute,
-  AnswerAnswer_idIndexRoute: AnswerAnswer_idIndexRoute,
-  ExploreDrugChemicalIndexRoute: ExploreDrugChemicalIndexRoute,
+  AppLayoutRoute: AppLayoutRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

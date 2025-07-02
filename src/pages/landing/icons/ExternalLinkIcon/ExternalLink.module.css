@@ -1,0 +1,18 @@
+.icon {
+  display: inline-block;
+  stroke: var(--text-color);
+  transform: translateY(4px);
+}
+
+.arrow {
+  transition: transform 250ms ease-in-out;
+}
+
+a:hover .icon {
+  stroke: var(--text-hover-color);
+}
+
+a:hover .arrow {
+  transform: translate(2px, -2px);
+  transition: transform 250ms ease-in-out;
+}

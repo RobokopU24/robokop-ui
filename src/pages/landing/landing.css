@@ -1,0 +1,179 @@
+:root {
+    --box-shadow: 0 1.5px 3px 0 rgba(0, 0, 0, 0.25);
+    --box-shadow-hover: 0 4.5px 9px 0 rgba(0, 0, 0, 0.15);
+
+    --spacing: 3rem;
+    --spacing-2: 1.5rem;
+    --spacing-3: 1rem;
+
+    --first-gradient: linear-gradient(180deg, #9d7afe 0%, #5baaff 100%);
+    --second-gradient: linear-gradient(180deg, #af71ff 0%, #dc89f8 100%);
+    --link-underline-gradient: linear-gradient(90deg, #af71ff 0%, #dc89f8 100%);
+
+    --background-color: #ffffff;
+    --divider-color: rgba(0 0 0 / 0.4);
+    --card-background-color: #ffffff;
+    --card-border-color: #ebedf0;
+    --scrollbar-color: #cccccc;
+    --scrollbar-hover-color: #bebebe;
+    --scrollbar-active-color: #9f9f9f;
+    --heading-color: #1c1e21;
+    --text-color: #444950;
+    --text-hover-color: #606770;
+    --text-faded-color: #505050;
+    --green: #2e8555;
+    --blue: #4aa8f6;
+    --warning-background-color: #fff4e5;
+    --warning-text-color: #663c00;
+    --button-text-color: #000000;
+    --button-face-color: #aad9ff;
+    --button-edge-color: #91bee3;
+    --button-edge-shadow-color: #7da9cd;
+    --text-link-color: #0076d8;
+    --text-link-color-hovered: #1c99ff;
+    --form-response-background-color: #00fd0038;
+    --form-response-border-color: #009d0088;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --first-gradient: linear-gradient(180deg, #8358f6 0%, #3b90ed 100%);
+        --second-gradient: linear-gradient(180deg, #964ff0 0%, #cb6feb 100%);
+        --link-underline-gradient: linear-gradient(90deg, #8358f6 0%, #3b90ed 100%);
+
+        --background-color: #1b1b1d;
+        --divider-color: #444950;
+        --card-background-color: #242526;
+        --card-border-color: #444950;
+        --scrollbar-color: #444950;
+        --scrollbar-hover-color: #585e68;
+        --scrollbar-active-color: #616872;
+        --heading-color: #e3e3e3;
+        --text-color: #ebedf0;
+        --text-hover-color: #dadde1;
+        --text-faded-color: #b8b8b8;
+        --green: #3cad6e;
+        --blue: #6bb6f3;
+        --warning-background-color: #3b3326;
+        --warning-text-color: #f2cb8c;
+        --button-text-color: #000000;
+        --button-face-color: #6bb6f3;
+        --button-edge-color: #398cd1;
+        --button-edge-shadow-color: #206298;
+        --text-link-color: #4aa8f6;
+        --text-link-color-hovered: #65b9fd;
+        --form-response-background-color: #00ff511b;
+        --form-response-border-color: #00ff5185;
+    }
+}
+
+@media (max-width: 850px) {
+    :root {
+        --spacing: 1.5rem;
+        --spacing-2: 0.5rem;
+        --spacing-3: 0.5rem;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 15px;
+    height: 15px;
+}
+
+::-webkit-scrollbar-corner {
+    background-color: #00000000;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-hover-color);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background-color: var(--scrollbar-active-color);
+}
+
+html {
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    height: 100%;
+
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: var(--text-link-color);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--text-link-color-hovered);
+    text-decoration: underline;
+}
+
+.grecaptcha-badge {
+    visibility: hidden;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    overflow-wrap: break-word;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:focus-within {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
