@@ -18,13 +18,36 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  ColumnDef,
+  SortingState,
+  ColumnFiltersState,
 } from '@tanstack/react-table';
 import explorePage from '../../API/explorePage';
-import QueryBuilderContext from '../../context/queryBuilder';
 import Loading from '../../components/loading/Loading';
 import useQueryBuilder from '../queryBuilder/useQueryBuilder';
 import HeaderCell from './HeaderCell';
 import { makeStyles } from '@mui/styles';
+
+// Type definitions
+interface DrugDiseasePair {
+  drug_name: string;
+  drug_id: string;
+  disease_name: string;
+  disease_id: string;
+  score: number;
+  known: number;
+}
+
+interface ApiResponse {
+  rows: DrugDiseasePair[];
+  num_of_results: number;
+  limit: number;
+  offset: number;
+}
+
+interface ChipProps {
+  children: React.ReactNode;
+}
 
 const useStyles = makeStyles({
   hover: {
@@ -49,7 +72,7 @@ const useStyles = makeStyles({
 
 const fetchPairs = explorePage.getDrugChemicalPairs;
 
-function Chip({ children }) {
+function Chip({ children }: ChipProps) {
   return (
     <span
       style={{
@@ -67,15 +90,20 @@ function Chip({ children }) {
 
 export default function DrugDiseasePairs() {
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 20 });
-  const [sorting, setSorting] = React.useState([]);
-  const [columnFilters, setColumnFilters] = React.useState([]);
-  const [data, setData] = React.useState([]);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [data, setData] = React.useState<ApiResponse>({
+    rows: [],
+    num_of_results: 0,
+    limit: 0,
+    offset: 0,
+  });
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const queryBuilder = useQueryBuilder(QueryBuilderContext);
+  const queryBuilder = useQueryBuilder();
   const navigate = useNavigate();
 
-  const handleStartQuery = (pair) => {
+  const handleStartQuery = (pair: DrugDiseasePair) => {
     const query = {
       message: {
         query_graph: {
@@ -95,8 +123,8 @@ export default function DrugDiseasePairs() {
 
   const classes = useStyles();
 
-  const columnHelper = createColumnHelper();
-  const columns = React.useMemo(
+  const columnHelper = createColumnHelper<DrugDiseasePair>();
+  const columns = React.useMemo<ColumnDef<DrugDiseasePair, any>[]>(
     () => [
       columnHelper.accessor('disease_name', {
         header: 'Disease',
@@ -235,7 +263,7 @@ export default function DrugDiseasePairs() {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableCell key={header.id}>
-                    {header.isPlaceholder ? null : <HeaderCell header={header} />}
+                    {header.isPlaceholder ? null : <HeaderCell header={header as any} />}
                   </TableCell>
                 ))}
               </TableRow>

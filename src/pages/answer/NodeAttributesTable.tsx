@@ -8,7 +8,11 @@ const StyledTableBody = styled(TableBody)(() => ({
   },
 }));
 
-const ValueCell = ({ value }) => (
+interface ValueCellProps {
+  value: string | number | (string | number)[] | undefined;
+}
+
+const ValueCell: React.FC<ValueCellProps> = ({ value }) => (
   <TableCell>
     <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
       {Array.isArray(value) ? (
@@ -20,7 +24,18 @@ const ValueCell = ({ value }) => (
   </TableCell>
 );
 
-const NodeAttributesTable = ({ nodeData }) => {
+interface NodeData {
+  name?: string | number | (string | number)[];
+  id?: string | number | (string | number)[];
+  categories?: string | number | (string | number)[];
+  count?: string | number | (string | number)[];
+}
+
+interface NodeAttributesTableProps {
+  nodeData: NodeData;
+}
+
+const NodeAttributesTable: React.FC<NodeAttributesTableProps> = ({ nodeData }) => {
   const { name, id, categories, count } = nodeData;
 
   return (

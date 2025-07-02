@@ -2,6 +2,22 @@ import React from 'react';
 import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
+interface Attribute {
+  attribute_type_id: string;
+  value: string | string[];
+}
+
+interface Source {
+  resource_id: string;
+  resource_role: string;
+  upstream_resource_ids?: string[];
+}
+
+interface AttributesTableProps {
+  attributes: Attribute[];
+  sources: Source[];
+}
+
 const headerStyles = { fontWeight: 'bold', backgroundColor: '#eee' };
 
 const StyledTableBody = styled(TableBody)(() => ({
@@ -10,7 +26,7 @@ const StyledTableBody = styled(TableBody)(() => ({
   },
 }));
 
-const ValueCell = ({ value }) => (
+const ValueCell: React.FC<{ value: string | string[] }> = ({ value }) => (
   <TableCell>
     <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
       {Array.isArray(value) ? (
@@ -22,15 +38,15 @@ const ValueCell = ({ value }) => (
   </TableCell>
 );
 
-const PublicationLinkCell = ({ value }) => {
-  const getLinkFromValue = (pmidValue) => {
+const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) => {
+  const getLinkFromValue = (pmidValue: string): string | null => {
     const pmid = pmidValue.split(':');
     if (pmid.length !== 2) return null;
     return pmid[0] === 'PMC'
       ? `https://pmc.ncbi.nlm.nih.gov/articles/${pmid[0]}${pmid[1]}/`
       : pmid[0] === 'PMID'
-      ? `https://pubmed.ncbi.nlm.nih.gov/${pmid[1]}/`
-      : null;
+        ? `https://pubmed.ncbi.nlm.nih.gov/${pmid[1]}/`
+        : null;
   };
 
   return (
@@ -56,7 +72,7 @@ const PublicationLinkCell = ({ value }) => {
             {getLinkFromValue(value) === null ? (
               value
             ) : (
-              <a href={getLinkFromValue(value)} target="_blank" rel="noreferrer">
+              <a href={getLinkFromValue(value) || '#'} target="_blank" rel="noreferrer">
                 {value}
               </a>
             )}
@@ -67,7 +83,7 @@ const PublicationLinkCell = ({ value }) => {
   );
 };
 
-const AttributesTable = ({ attributes, sources }) => (
+const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources }) => (
   <Box style={{ maxHeight: 500, overflow: 'auto' }}>
     <Table size="small" aria-label="edge attributes table">
       <TableHead style={{ position: 'sticky', top: 0 }}>

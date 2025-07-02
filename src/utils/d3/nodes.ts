@@ -26,28 +26,42 @@ const editTextOffset = {
   y: (editRectOffset.y + (editRectOffset.y + rectSize.h)) / 2,
 };
 
+interface NodeData {
+  id: string;
+  name?: string;
+  categories: any;
+  x?: number;
+  y?: number;
+  is_set?: boolean;
+}
+
+interface NodeArgs {
+  nodeRadius: number;
+  colorMap: (categories: any) => any[];
+}
+
 /**
  * Handle creation of nodes
  * @param {obj} node - d3 node object
  * @param {obj} args - object of node properties
  */
-function enter(node, args) {
+function enter(node: any, args: NodeArgs) {
   const { nodeRadius, colorMap } = args;
   return (
     node
       .append('g')
       .attr('class', 'node')
-      .attr('id', (d) => d.id)
+      .attr('id', (d: NodeData) => d.id)
       // create node circle
-      .call((nodeCircle) =>
+      .call((nodeCircle: any) =>
         nodeCircle
           .append('circle')
-          .attr('class', (d) => `nodeCircle node-${d.id}`)
+          .attr('class', (d: NodeData) => `nodeCircle node-${d.id}`)
           .attr('r', nodeRadius)
-          .attr('fill', (d) => colorMap(d.categories)[1])
+          .attr('fill', (d: NodeData) => colorMap(d.categories)[1])
           .style('cursor', 'pointer')
-          .call((n) =>
-            n.append('title').text((d) => {
+          .call((n: any) =>
+            n.append('title').text((d: NodeData) => {
               let title = d.id;
               if (d.name) {
                 title += `: ${d.name}`;
@@ -57,7 +71,7 @@ function enter(node, args) {
           )
       )
       // create node label
-      .call((nodeLabel) =>
+      .call((nodeLabel: any) =>
         nodeLabel
           .append('text')
           .attr('class', 'nodeLabel')
@@ -65,14 +79,14 @@ function enter(node, args) {
           .attr('text-anchor', 'middle')
           .style('font-weight', 600)
           .attr('alignment-baseline', 'middle')
-          .text((d) => {
+          .text((d: NodeData) => {
             const { name } = d;
             return name || 'Something';
           })
           .each(graphUtils.fitTextIntoCircle)
       )
       // create delete button
-      .call((nodeDelete) =>
+      .call((nodeDelete: any) =>
         nodeDelete
           .append('rect')
           .attr('rx', 5)
@@ -84,10 +98,10 @@ function enter(node, args) {
           .attr('fill', 'white')
           .style('filter', 'url(#buttonShadow)')
           .style('display', 'none')
-          .attr('class', (d) => `${d.id} deleteRect`)
+          .attr('class', (d: NodeData) => `${d.id} deleteRect`)
       )
       // add delete button label
-      .call((nodeDeleteLabel) =>
+      .call((nodeDeleteLabel: any) =>
         nodeDeleteLabel
           .append('text')
           .attr('dx', deleteTextOffset.x)
@@ -95,12 +109,12 @@ function enter(node, args) {
           .style('pointer-events', 'none')
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'middle')
-          .attr('class', (d) => `${d.id} deleteLabel`)
+          .attr('class', (d: NodeData) => `${d.id} deleteLabel`)
           .style('display', 'none')
           .text('delete')
       )
       // create edit button
-      .call((nodeEdit) =>
+      .call((nodeEdit: any) =>
         nodeEdit
           .append('rect')
           .attr('rx', 5)
@@ -112,10 +126,10 @@ function enter(node, args) {
           .attr('fill', 'white')
           .style('filter', 'url(#buttonShadow)')
           .style('display', 'none')
-          .attr('class', (d) => `${d.id} editRect`)
+          .attr('class', (d: NodeData) => `${d.id} editRect`)
       )
       // add edit button label
-      .call((nodeEditLabel) =>
+      .call((nodeEditLabel: any) =>
         nodeEditLabel
           .append('text')
           .attr('dx', editTextOffset.x)
@@ -123,7 +137,7 @@ function enter(node, args) {
           .style('pointer-events', 'none')
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'middle')
-          .attr('class', (d) => `${d.id} editLabel`)
+          .attr('class', (d: NodeData) => `${d.id} editLabel`)
           .style('display', 'none')
           .text('edit')
       )
@@ -135,13 +149,15 @@ function enter(node, args) {
  * @param {obj} node - d3 node object
  * @param {obj} args - node circle properties
  */
-function update(node, args) {
+function update(node: any, args: { colorMap: (categories: any) => any[] }) {
   const { colorMap } = args;
   return node
-    .call((n) => n.select('.nodeCircle').attr('fill', (d) => colorMap(d.categories)[1]))
-    .style('filter', (d) => (d.is_set ? 'url(#setShadow)' : ''))
-    .call((nodeCircle) =>
-      nodeCircle.select('title').text((d) => {
+    .call((n: any) =>
+      n.select('.nodeCircle').attr('fill', (d: NodeData) => colorMap(d.categories)[1])
+    )
+    .style('filter', (d: NodeData) => (d.is_set ? 'url(#setShadow)' : ''))
+    .call((nodeCircle: any) =>
+      nodeCircle.select('title').text((d: NodeData) => {
         let title = d.id;
         if (d.name) {
           title += `: ${d.name}`;
@@ -149,10 +165,10 @@ function update(node, args) {
         return title;
       })
     )
-    .call((l) =>
+    .call((l: any) =>
       l
         .select('.nodeLabel')
-        .text((d) => {
+        .text((d: NodeData) => {
           const { name } = d;
           return name || 'Something';
         })
@@ -164,13 +180,13 @@ function update(node, args) {
  * Handle node deletion
  * @param {obj} node - d3 node object
  */
-function exit(node) {
+function exit(node: any) {
   return node
     .transition()
     .ease(d3.easeCircle)
     .duration(1000)
-    .attr('transform', (d) => `translate(${d.x},-40)`)
-    .call((e) => e.select('circle').attr('fill', 'red'))
+    .attr('transform', (d: NodeData) => `translate(${d.x},-40)`)
+    .call((e: any) => e.select('circle').attr('fill', 'red'))
     .remove();
 }
 
@@ -178,8 +194,8 @@ function exit(node) {
  * Set node circle click listener to be able to add an edge
  * @param {function} addNodeToConnection - add node to edge connection
  */
-function attachConnectionClick(addNodeToConnection) {
-  d3.selectAll('.nodeCircle').on('click', function (e, d) {
+function attachConnectionClick(addNodeToConnection: (id: string) => void) {
+  d3.selectAll('.nodeCircle').on('click', function (e: any, d: any) {
     e.stopPropagation();
     d3.select(this).attr('stroke', '#e0dfdf').attr('stroke-width', '5');
     addNodeToConnection(d.id);
@@ -191,8 +207,8 @@ function attachConnectionClick(addNodeToConnection) {
  * @param {string} clickedId - current clicked id
  * @param {function} setClickedId - set current clicked id
  */
-function attachNodeClick(clickedId, setClickedId) {
-  d3.selectAll('.nodeCircle').on('click', (e, d) => {
+function attachNodeClick(clickedId: string, setClickedId: (id: string) => void) {
+  d3.selectAll('.nodeCircle').on('click', (e: any, d: any) => {
     const { id } = d;
     // raise node to front of other nodes
     d3.select('#nodeContainer').raise();
@@ -215,7 +231,7 @@ function attachNodeClick(clickedId, setClickedId) {
   });
 }
 
-function clickNode(id) {
+function clickNode(id: string) {
   d3.select(`.nodeCircle.node-${id}`).dispatch('click');
 }
 
@@ -224,8 +240,8 @@ function clickNode(id) {
  * @param {function} deleteNode - delete node from graph
  * @param {function} setClickedId - set current clicked id
  */
-function attachDeleteClick(deleteNode, setClickedId) {
-  d3.selectAll('.deleteRect').on('click', (e, d) => {
+function attachDeleteClick(deleteNode: (id: string) => void, setClickedId: (id: string) => void) {
+  d3.selectAll('.deleteRect').on('click', (e: any, d: any) => {
     const { id } = d;
     d3.select('#edgeContainer').raise();
     setClickedId('');
@@ -238,8 +254,11 @@ function attachDeleteClick(deleteNode, setClickedId) {
  * @param {function} openNodeEditor - open the node editor
  * @param {string} setClickedId - set current clicked id
  */
-function attachEditClick(openEditor, setClickedId) {
-  d3.selectAll('.editRect').on('click', (e, d) => {
+function attachEditClick(
+  openEditor: (id: string, nodeAnchor: any, mode: string) => void,
+  setClickedId: (id: string) => void
+) {
+  d3.selectAll('.editRect').on('click', (e: any, d: any) => {
     const { id } = d;
     const nodeAnchor = d3.select(`#${id} > .nodeCircle`).node();
     d3.select('#edgeContainer').raise();
@@ -252,15 +271,15 @@ function attachEditClick(openEditor, setClickedId) {
  * Show and hide node border on hover
  * @param {string} clickedId - current edit id
  */
-function attachMouseHover(clickedId) {
+function attachMouseHover(clickedId: string) {
   d3.selectAll('.nodeCircle')
-    .on('mouseover', (e, d) => {
+    .on('mouseover', (e: any, d: any) => {
       if (clickedId === d.id || !clickedId) {
         highlighter.highlightTextEditorNode(d.id);
         highlighter.highlightGraphNode(d.id);
       }
     })
-    .on('mouseout', (e, d) => {
+    .on('mouseout', (e: any, d: any) => {
       if (clickedId !== d.id || !clickedId) {
         highlighter.clearTextEditorNode(d.id);
         highlighter.clearGraphNode(d.id);
@@ -275,8 +294,8 @@ function attachMouseHover(clickedId) {
  * @param {int} height - height of the svg
  * @param {int} nodeRadius - radius of node circles
  */
-function attachDrag(simulation, width, height, nodeRadius) {
-  d3.selectAll('.node').call(dragUtils.dragNode(simulation, width, height, nodeRadius));
+function attachDrag(simulation: any, width: number, height: number, nodeRadius: number) {
+  d3.selectAll('.node').call(dragUtils.dragNode(simulation) as any);
 }
 
 /**

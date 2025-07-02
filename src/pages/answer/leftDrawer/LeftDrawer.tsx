@@ -19,6 +19,31 @@ import DownloadDialog from '../../../components/DownloadDialog';
 
 import './leftDrawer.css';
 
+interface DisplayStateItem {
+  show: boolean;
+  disabled: boolean;
+  label: string;
+}
+
+interface DisplayState {
+  [key: string]: DisplayStateItem;
+}
+
+interface UpdateDisplayStateAction {
+  type: 'toggle';
+  payload: {
+    component: string;
+    show: boolean;
+  };
+}
+
+interface LeftDrawerProps {
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  displayState: DisplayState;
+  updateDisplayState: (action: UpdateDisplayStateAction) => void;
+  message: Record<string, any>;
+}
+
 /**
  * Main Drawer component on answer page
  * @param {function} onUpload - function to call when user uploads their own message
@@ -29,10 +54,15 @@ import './leftDrawer.css';
  * @param {function} deleteAnswer - delete an answer from Robokache
  * @param {boolean} owned - does the user own this answer
  */
-export default function LeftDrawer({ onUpload, displayState, updateDisplayState, message }) {
+export default function LeftDrawer({
+  onUpload,
+  displayState,
+  updateDisplayState,
+  message,
+}: LeftDrawerProps) {
   const [downloadOpen, setDownloadOpen] = useState(false);
 
-  function toggleDisplay(component, show) {
+  function toggleDisplay(component: string, show: boolean) {
     updateDisplayState({ type: 'toggle', payload: { component, show } });
   }
 

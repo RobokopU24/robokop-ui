@@ -14,37 +14,74 @@ const width = 400;
 // const maxNodes = 40;
 // const maxEdges = 100;
 
+interface KgFullProps {
+  message: {
+    knowledge_graph: {
+      nodes: any;
+      edges: any;
+    };
+  };
+}
+
+interface GraphData {
+  nodes: Array<{
+    x: number;
+    y: number;
+    categories?: string[];
+  }>;
+  edges: Array<{
+    source: { x: number; y: number };
+    target: { x: number; y: number };
+  }>;
+}
+
+interface WorkerMessage {
+  type: string;
+  progress?: number;
+  nodes?: GraphData['nodes'];
+  edges?: GraphData['edges'];
+}
+
 /**
  * Full Knowledge Graph display
  * @param {object} message - TRAPI message
  */
-export default function KgFull({ message }) {
-  const canvasRef = useRef();
+export default function KgFull({ message }: KgFullProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [loading, toggleLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const { colorMap, hierarchies } = useContext(BiolinkContext);
 
-  function displayCanvas(data) {
+  function displayCanvas(data: GraphData) {
+    // if (!canvasRef.current) return;
+
     const canvas = d3.select(canvasRef.current).attr('width', width).attr('height', height);
-    const context = canvas.node().getContext('2d');
+    const context = canvas.node()?.getContext('2d');
+
+    if (!context) return;
+
     const { nodes, edges } = data;
     context.clearRect(0, 0, width, height);
     context.save();
     context.translate(width / 2, height / 2);
 
-    function drawEdge(d) {
-      context.moveTo(d.source.x, d.source.y);
-      context.lineTo(d.target.x, d.target.y);
+    function drawEdge(d: GraphData['edges'][0]) {
+      if (context) {
+        context.moveTo(d.source.x, d.source.y);
+        context.lineTo(d.target.x, d.target.y);
+      }
     }
 
-    function drawNode(d) {
+    function drawNode(d: GraphData['nodes'][0]) {
+      if (!context) return;
+
       context.beginPath();
       context.moveTo(d.x + 5, d.y);
       context.arc(d.x, d.y, 5, 0, 2 * Math.PI);
       if (d.categories && Array.isArray(d.categories)) {
-        d.categories = kgUtils.getRankedCategories(hierarchies, d.categories);
+        d.categories = kgUtils.getRankedCategories(hierarchies || {}, d.categories);
       }
-      const color = colorMap(d.categories)[1];
+      const color = colorMap && d.categories ? colorMap(d.categories)[1] : '#000';
       context.strokeStyle = color;
       context.fillStyle = color;
       context.fill();
@@ -65,10 +102,10 @@ export default function KgFull({ message }) {
     const simulationWorker = new Worker();
     const kgLists = kgUtils.getFullDisplay(message);
     toggleLoading(true);
-    simulationWorker.onmessage = (e) => {
+    simulationWorker.onmessage = (e: MessageEvent<WorkerMessage>) => {
       switch (e.data.type) {
         case 'display': {
-          displayCanvas(e.data);
+          displayCanvas(e.data as any);
           // TODO: if graph is small enough, display as svg
           // if (e.data.nodes.length > maxNodes || e.data.edges.length > maxEdges) {
           //   displayCanvas(e.data);
@@ -81,7 +118,9 @@ export default function KgFull({ message }) {
           break;
         }
         case 'tick': {
-          setProgress(e.data.progress);
+          if (e.data.progress !== undefined) {
+            setProgress(e.data.progress);
+          }
           break;
         }
         default:
@@ -93,7 +132,9 @@ export default function KgFull({ message }) {
   }
 
   useEffect(() => {
-    d3.select(canvasRef.current).attr('width', 0).attr('height', 0);
+    if (canvasRef.current) {
+      d3.select(canvasRef.current).attr('width', 0).attr('height', 0);
+    }
     if (Object.keys(message).length) {
       getGraphFromWorker();
     }

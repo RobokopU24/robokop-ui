@@ -1,13 +1,46 @@
 import React, { useState, useReducer, useEffect, useMemo } from 'react';
-import { Paper, IconButton, List, ListItem, ListItemText, Collapse } from '@mui/material';
+import {
+  Paper,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Collapse,
+  ListItemButton,
+} from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+// @ts-ignore
 import shortid from 'shortid';
 
-function expansionReducer(state, action) {
+interface ExpansionState {
+  [key: string]: boolean;
+}
+
+interface ExpansionAction {
+  type: 'toggle' | 'clear';
+  key?: string;
+}
+
+interface MetaData {
+  [key: string]: string[];
+}
+
+interface Result {
+  [key: string]: any;
+}
+
+interface ResultMetaDataProps {
+  metaData: MetaData;
+  result: Result;
+}
+
+function expansionReducer(state: ExpansionState, action: ExpansionAction): ExpansionState {
   switch (action.type) {
     case 'toggle':
-      state[action.key] = !state[action.key];
+      if (action.key) {
+        state[action.key] = !state[action.key];
+      }
       break;
     case 'clear':
       return {};
@@ -22,7 +55,7 @@ function expansionReducer(state, action) {
  * @param {object} metaData - selected result edge metadata
  * @param {object} result - full node and edge result json from knowledge graph
  */
-export default function ResultMetaData({ metaData, result }) {
+export default function ResultMetaData({ metaData, result }: ResultMetaDataProps) {
   const [expanded, updateExpanded] = useReducer(expansionReducer, {});
   const [showJSON, toggleJSONVisibility] = useState(false);
 
@@ -32,7 +65,7 @@ export default function ResultMetaData({ metaData, result }) {
   }, [metaData]);
 
   const hasSupportPublications = useMemo(
-    () => !!Object.values(metaData).find((pubs) => pubs.length),
+    () => !!Object.values(metaData).find((pubs: string[]) => pubs.length > 0),
     [metaData]
   );
 
@@ -46,17 +79,16 @@ export default function ResultMetaData({ metaData, result }) {
               <React.Fragment key={shortid.generate()}>
                 {publications.length > 0 && (
                   <>
-                    <ListItem button onClick={() => updateExpanded({ type: 'toggle', key })}>
+                    <ListItemButton onClick={() => updateExpanded({ type: 'toggle', key })}>
                       <ListItemText primary={key} />
                       {expanded[key] ? <ExpandLess /> : <ExpandMore />}
-                    </ListItem>
+                    </ListItemButton>
                     <Collapse in={expanded[key]} timeout="auto" unmountOnExit>
                       <List component="div">
-                        {publications.map((publication) => (
+                        {publications.map((publication: string) => (
                           <ListItem
-                            button
-                            component="a"
                             key={shortid.generate()}
+                            component="a"
                             href={publication}
                             target="_blank"
                             rel="noreferrer"
