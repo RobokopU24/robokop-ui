@@ -15,13 +15,81 @@ import './queryGraph.css';
 const nodeRadius = 48;
 const edgeLength = 225;
 
+// Types for query graph nodes and edges
+// These match the output of getNodeAndEdgeListsForDisplay
+interface DisplayNode {
+  id: string;
+  name: string;
+  categories?: string[];
+  is_set?: boolean;
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+}
+
+interface DisplayEdge {
+  id: string;
+  predicates?: string[];
+  source: string | DisplayNode;
+  target: string | DisplayNode;
+  numEdges?: number;
+  index?: number;
+  strokeWidth?: number;
+}
+
+// Biolink predicate type
+interface BiolinkPredicate {
+  predicate: string;
+  domain: string;
+  range: string;
+  symmetric: boolean;
+}
+
+// Context type
+interface BiolinkContextType {
+  colorMap?: (categories: string | string[]) => [string | null, string];
+  hierarchies?: Record<string, any>;
+  predicates?: BiolinkPredicate[];
+}
+
+// QueryGraph prop type
+interface QueryGraphProps {
+  query_graph: {
+    nodes: Record<string, any>;
+    edges: Record<string, any>;
+  };
+}
+
+// Strict types for D3
+interface StrictDisplayNode {
+  id: string;
+  name: string;
+  categories: string[];
+  is_set: boolean;
+  x: number;
+  y: number;
+  fx?: number | null;
+  fy?: number | null;
+}
+
+interface StrictDisplayEdge {
+  id: string;
+  predicates: string[];
+  source: string | StrictDisplayNode;
+  target: string | StrictDisplayNode;
+  numEdges?: number;
+  index?: number;
+  strokeWidth?: number;
+}
+
 /**
  * Query Graph Display
  * @param {object} query_graph - query graph object
  */
-export default function QueryGraph({ query_graph }) {
-  const svgRef = useRef();
-  const { colorMap, predicates } = useContext(BiolinkContext);
+export default function QueryGraph({ query_graph }: QueryGraphProps) {
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const { colorMap, predicates = [] } = useContext(BiolinkContext) as BiolinkContextType;
   const [drawing, setDrawing] = useState(false);
   const symmetricPredicates = predicates
     .filter((predicate) => predicate.symmetric)
@@ -31,8 +99,12 @@ export default function QueryGraph({ query_graph }) {
    * Initialize the svg size
    */
   function setSvgSize() {
-    const svg = d3.select(svgRef.current);
-    const { width, height } = svg.node().parentNode.getBoundingClientRect();
+    const svgElem = svgRef.current;
+    if (!svgElem) return;
+    const svg = d3.select(svgElem);
+    const { width, height } = (
+      svg.node()?.parentNode as HTMLElement
+    )?.getBoundingClientRect() as any;
     svg
       .attr('width', width)
       .attr('height', height)
@@ -47,7 +119,9 @@ export default function QueryGraph({ query_graph }) {
   function drawQueryGraph() {
     let { nodes, edges } = queryGraphUtils.getNodeAndEdgeListsForDisplay(query_graph);
     const svg = d3.select(svgRef.current);
-    const { width, height } = svg.node().parentNode.getBoundingClientRect();
+    const { width, height } = (
+      svg.node()?.parentNode as HTMLElement
+    )?.getBoundingClientRect() as any;
     // clear the graph for redraw
     svg.selectAll('*').remove();
     const defs = svg.append('defs');
@@ -67,14 +141,20 @@ export default function QueryGraph({ query_graph }) {
           [0, 0],
           [0, 13],
           [25, 6.5],
-        ])
+        ]) as string
       )
       .attr('fill', '#999');
-    let node = svg.append('g').attr('id', 'nodeContainer').selectAll('g');
-    let edge = svg.append('g').attr('id', 'edgeContainer').selectAll('g');
+    let node = svg
+      .append('g')
+      .attr('id', 'nodeContainer')
+      .selectAll<SVGGElement, StrictDisplayNode>('g');
+    let edge = svg
+      .append('g')
+      .attr('id', 'edgeContainer')
+      .selectAll<SVGGElement, StrictDisplayNode>('g');
     nodes = nodes.map((d) => ({ ...d, x: Math.random() * width, y: Math.random() * height }));
     const simulation = d3
-      .forceSimulation(nodes)
+      .forceSimulation(nodes as any)
       .force('center', d3.forceCenter(width / 2, height / 2).strength(0.5))
       // .force('forceX', d3.forceX(width / 2).strength(0.02))
       .force('forceY', d3.forceY(height / 2).strength(0.2))
@@ -82,13 +162,13 @@ export default function QueryGraph({ query_graph }) {
       .force(
         'link',
         d3
-          .forceLink(edges)
-          .id((d) => d.id)
+          .forceLink(edges as any)
+          .id((d: any) => d.id)
           .distance(edgeLength)
           .strength(0)
       )
       .on('tick', () => {
-        node.attr('transform', (d) => {
+        node.attr('transform', (d: any) => {
           let padding = nodeRadius;
           // 70% of padding so a dragged node can push into the graph bounds a little
           if (d.fx !== null && d.fx !== undefined) {
@@ -100,7 +180,7 @@ export default function QueryGraph({ query_graph }) {
           return `translate(${d.x}, ${d.y})`;
         });
 
-        edge.select('.edge').attr('d', (d) => {
+        edge.select('.edge').attr('d', (d: any) => {
           const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
             d.source.x,
             d.source.y,
@@ -112,7 +192,7 @@ export default function QueryGraph({ query_graph }) {
           );
           return `M${x1},${y1}Q${qx},${qy} ${x2},${y2}`;
         });
-        edge.select('.edgeTransparent').attr('d', (d) => {
+        edge.select('.edgeTransparent').attr('d', (d: any) => {
           const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
             d.source.x,
             d.source.y,
@@ -130,17 +210,17 @@ export default function QueryGraph({ query_graph }) {
       });
 
     node = node
-      .data(nodes)
+      .data(nodes as any)
       .enter()
       .append('g')
       .attr('class', 'node')
-      .call(dragUtils.dragNode(simulation))
+      .call(dragUtils.dragNode(simulation) as any)
       .call((n) =>
         n
           .append('circle')
           .attr('r', nodeRadius)
-          .attr('fill', (d) => colorMap(d.categories)[1])
-          .call((nCircle) => nCircle.append('title').text((d) => d.name))
+          .attr('fill', (d: any) => colorMap!(d.categories)[1])
+          .call((nCircle) => nCircle.append('title').text((d: any) => d.name))
       )
       .call((n) =>
         n
@@ -150,16 +230,16 @@ export default function QueryGraph({ query_graph }) {
           .attr('text-anchor', 'middle')
           .style('font-weight', 600)
           .attr('alignment-baseline', 'middle')
-          .text((d) => {
+          .text((d: any) => {
             const { name } = d;
             return name || 'Any';
           })
           .each(graphUtils.fitTextIntoCircle)
-      );
+      ) as any;
 
     edges = edgeUtils.addEdgeCurveProperties(edges);
     edge = edge
-      .data(edges)
+      .data(edges as any)
       .enter()
       .append('g')
       .call((e) =>
@@ -167,9 +247,9 @@ export default function QueryGraph({ query_graph }) {
           .append('path')
           .attr('stroke', '#999')
           .attr('fill', 'none')
-          .attr('stroke-width', (d) => d.strokeWidth)
+          .attr('stroke-width', (d: any) => d.strokeWidth)
           .attr('class', 'edge')
-          .attr('marker-end', (d) =>
+          .attr('marker-end', (d: any) =>
             graphUtils.shouldShowArrow(d, symmetricPredicates) ? 'url(#arrow)' : ''
           )
       )
@@ -180,34 +260,34 @@ export default function QueryGraph({ query_graph }) {
           .attr('fill', 'none')
           .attr('stroke-width', 10)
           .attr('class', 'edgeTransparent')
-          .attr('id', (d) => `edge${d.id}`)
+          .attr('id', (d: any) => `edge${d.id}`)
           .call(() =>
             e
               .append('text')
               .attr('class', 'edgeText')
               .attr('pointer-events', 'none')
               .style('text-anchor', 'middle')
-              .attr('dy', (d) => -d.strokeWidth)
+              .attr('dy', (d: any) => -d.strokeWidth)
               .append('textPath')
               .attr('pointer-events', 'none')
-              .attr('xlink:href', (d) => `#edge${d.id}`)
+              .attr('xlink:href', (d: any) => `#edge${d.id}`)
               .attr('startOffset', '50%')
-              .text((d) =>
+              .text((d: any) =>
                 d.predicates
-                  ? d.predicates.map((p) => stringUtils.displayPredicate(p)).join(' or ')
+                  ? d.predicates.map((p: any) => stringUtils.displayPredicate(p)).join(' or ')
                   : ''
               )
           )
-          .call((eLabel) =>
+          .call((eLabel: any) =>
             eLabel
               .append('title')
-              .text((d) =>
+              .text((d: any) =>
                 d.predicates
-                  ? d.predicates.map((p) => stringUtils.displayPredicate(p)).join(' or ')
+                  ? d.predicates.map((p: any) => stringUtils.displayPredicate(p)).join(' or ')
                   : ''
               )
           )
-      );
+      ) as any;
 
     simulation.alpha(1).restart();
   }
@@ -219,7 +299,7 @@ export default function QueryGraph({ query_graph }) {
   }, [query_graph, colorMap]);
 
   useEffect(() => {
-    let timer;
+    let timer: any;
     function handleResize() {
       const svg = d3.select(svgRef.current);
       // clear the graph

@@ -3,6 +3,7 @@ import Tutorial from '../../pages/Tutorial';
 
 export const Route = createFileRoute('/_appLayout/tutorial')({
   component: RouteComponent,
+  ssr: false,
 });
 
 function RouteComponent() {

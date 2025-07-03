@@ -14,6 +14,10 @@ dist-ssr
 *.local
 vite-report.html
 
+.nitro
+.output
+.tanstack
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

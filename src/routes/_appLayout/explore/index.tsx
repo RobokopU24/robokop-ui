@@ -3,6 +3,7 @@ import Explore from '../../../pages/explore/Explore';
 
 export const Route = createFileRoute('/_appLayout/explore/')({
   component: RouteComponent,
+  ssr: false,
 });
 
 function RouteComponent() {

@@ -3,6 +3,7 @@ import Answer from '../../../pages/answer/Answer';
 
 export const Route = createFileRoute('/_appLayout/answer/')({
   component: RouteComponent,
+  ssr: false,
 });
 
 function RouteComponent() {

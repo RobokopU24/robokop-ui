@@ -1,5 +1,14 @@
 import React, { useMemo } from 'react';
-import { useTable, usePagination, useSortBy, useFilters } from 'react-table';
+import {
+  useTable,
+  usePagination,
+  useSortBy,
+  useFilters,
+  Column,
+  TableInstance,
+  Row,
+  HeaderGroup,
+} from 'react-table';
 
 import {
   Paper,
@@ -18,23 +27,86 @@ import EmptyTable from '../../../components/shared/emptyTableRows/EmptyTable';
 
 import './resultsTable.css';
 
+// Types for answerStore (from useAnswerStore and ResultExplorer)
+interface NodeType {
+  id: string;
+  name: string;
+  categories: string[];
+  score: number;
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+}
+
+interface EdgeType {
+  id: string;
+  source: string | NodeType;
+  target: string | NodeType;
+  predicate: string;
+  strokeWidth?: number;
+  numEdges?: number;
+  index?: number;
+  attributes?: any[];
+  sources?: any[];
+}
+
+interface AnswerStoreType {
+  numQgNodes: number;
+  showNodePruneSlider: boolean;
+  selectedResult: {
+    nodes: { [id: string]: NodeType };
+    edges: { [id: string]: EdgeType };
+  };
+  selectedRowId: string;
+  metaData?: any;
+  resultJSON: {
+    knowledge_graph: {
+      edges: { [id: string]: { attributes: any[]; sources: any[] } };
+    };
+    result?: any;
+  };
+  tableHeaders: Column<any>[];
+  message: {
+    results: any[];
+    [key: string]: any;
+  };
+  selectRow: (row: any, id: string | number) => void;
+}
+
+interface ResultsTableProps {
+  answerStore: AnswerStoreType;
+}
+
 /**
  * Paginated results table
  * @param {object} answerStore - answer store hook
  */
-export default function ResultsTable({ answerStore }) {
-  const columns = useMemo(() => answerStore.tableHeaders, [answerStore.tableHeaders]);
-  const data = useMemo(() => answerStore.message.results, [answerStore.message]);
+export default function ResultsTable({ answerStore }: ResultsTableProps) {
+  const columns = useMemo<Column<any>[]>(
+    () => answerStore.tableHeaders,
+    [answerStore.tableHeaders]
+  );
+  const data = useMemo<any[]>(() => answerStore.message.results, [answerStore.message]);
 
   // This is a custom filter UI for selecting
   // a unique option from a list
-  function SelectColumnFilterFn({ column: { filterValue, setFilter, preFilteredRows, id } }) {
+  function SelectColumnFilterFn({
+    column: { filterValue, setFilter, preFilteredRows, id },
+  }: {
+    column: {
+      filterValue: any;
+      setFilter: (val: any) => void;
+      preFilteredRows: Row<any>[];
+      id: string;
+    };
+  }) {
     // Calculate the options for filtering
     // using the preFilteredRows
     const options = useMemo(() => {
-      const o = new Set();
+      const o = new Set<string | null>();
       preFilteredRows.forEach((row) => {
-        o.add(row.values[id] ? row.values[id] : null);
+        o.add(row.values[id] ? String(row.values[id]) : null);
       });
       return [...o.values()];
     }, [id, preFilteredRows]);
@@ -42,7 +114,7 @@ export default function ResultsTable({ answerStore }) {
     // Render a multi-select box
     return (
       <select
-        value={filterValue}
+        value={filterValue || ''}
         onChange={(e) => {
           setFilter(e.target.value || undefined);
         }}
@@ -50,8 +122,8 @@ export default function ResultsTable({ answerStore }) {
       >
         <option value="">All</option>
         {options.map((option, i) => (
-          <option key={i} value={option}>
-            {option}
+          <option key={i} value={option ?? ''}>
+            {option ?? '—'}
           </option>
         ))}
       </select>
@@ -59,7 +131,7 @@ export default function ResultsTable({ answerStore }) {
   }
 
   // Let's set up our default Filter UI
-  const defaultColumn = useMemo(() => ({ Filter: SelectColumnFilterFn }), []);
+  const defaultColumn = useMemo(() => ({ Filter: SelectColumnFilterFn }), []) as any;
 
   const {
     getTableProps,
@@ -73,7 +145,9 @@ export default function ResultsTable({ answerStore }) {
     setPageSize,
     nextPage,
     previousPage,
-  } = useTable(
+    gotoPage,
+    pageCount,
+  } = useTable<any>(
     {
       columns,
       data,
@@ -87,12 +161,35 @@ export default function ResultsTable({ answerStore }) {
             desc: true,
           },
         ],
-      },
+      } as any, // react-table's types are not always up to date with plugins
     },
     useFilters,
     useSortBy,
     usePagination
-  );
+  ) as TableInstance<any> & {
+    page: Row<any>[];
+    canPreviousPage: boolean;
+    canNextPage: boolean;
+    setPageSize: (size: number) => void;
+    nextPage: () => void;
+    previousPage: () => void;
+    gotoPage: (page: number) => void;
+    pageCount: number;
+    state: any;
+  };
+
+  // react-table's state shape
+  const pageIndex = state.pageIndex ?? 0;
+  const pageSize = state.pageSize ?? 15;
+
+  // MUI TablePagination expects onPageChange
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    gotoPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPageSize(Number(e.target.value));
+  };
 
   return (
     <>
@@ -101,11 +198,10 @@ export default function ResultsTable({ answerStore }) {
           <TableContainer>
             <Table {...getTableProps()}>
               <TableHead>
-                {headerGroups.map((headerGroup, i) => (
-                  <TableRow key={i} {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column) => (
+                {headerGroups.map((headerGroup: HeaderGroup<any>) => (
+                  <TableRow {...headerGroup.getHeaderGroupProps()}>
+                    {headerGroup.headers.map((column: any) => (
                       <TableCell
-                        key={column.id}
                         className="resultsTableHeader"
                         {...column.getHeaderProps(
                           column.getSortByToggleProps({
@@ -136,7 +232,7 @@ export default function ResultsTable({ answerStore }) {
               <TableBody style={{ position: 'relative' }} {...getTableBodyProps()}>
                 {page.length > 0 ? (
                   <>
-                    {page.map((row) => {
+                    {page.map((row: Row<any>) => {
                       prepareRow(row);
                       return (
                         <TableRow
@@ -146,7 +242,7 @@ export default function ResultsTable({ answerStore }) {
                           onClick={() => answerStore.selectRow(row.original, row.id)}
                           role="button"
                         >
-                          {row.cells.map((cell) => (
+                          {row.cells.map((cell: any) => (
                             <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
                           ))}
                         </TableRow>
@@ -160,20 +256,13 @@ export default function ResultsTable({ answerStore }) {
             </Table>
           </TableContainer>
           <TablePagination
-            component="div"
             rowsPerPageOptions={[5, 10, 15, 50, 100]}
             count={data.length}
-            rowsPerPage={state.pageSize}
-            page={state.pageIndex}
-            backIconButtonProps={{
-              onClick: previousPage,
-              disabled: !canPreviousPage,
-            }}
-            nextIconButtonProps={{
-              onClick: nextPage,
-              disabled: !canNextPage,
-            }}
-            onRowsPerPageChange={(e) => setPageSize(Number(e.target.value))}
+            rowsPerPage={pageSize}
+            page={pageIndex}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            component="div"
           />
         </Paper>
         <ResultExplorer answerStore={answerStore} />

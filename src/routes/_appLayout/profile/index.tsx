@@ -4,6 +4,7 @@ import Profile from '../../../pages/Profile';
 
 export const Route = createFileRoute('/_appLayout/profile/')({
   component: RouteComponent,
+  ssr: false,
 });
 
 function RouteComponent() {
