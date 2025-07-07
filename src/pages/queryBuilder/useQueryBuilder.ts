@@ -4,6 +4,7 @@ import snakeCase from 'lodash/snakeCase';
 import queryBuilderUtils from '../../utils/queryBuilder';
 import queryGraphUtils from '../../utils/queryGraph';
 import { useAlert } from '../../components/AlertProvider';
+import cloneDeep from 'lodash/cloneDeep';
 
 interface QueryGraphNode {
   name?: string;
@@ -97,11 +98,12 @@ const initialState: QueryBuilderState = {
 };
 
 function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBuilderState {
+  const newState = cloneDeep(state);
   switch (action.type) {
     case 'addEdge': {
       const [subjectId, objectId]: [string, string] = action.payload;
-      const newEdgeId = queryBuilderUtils.getNextEdgeID(state.message.message.query_graph);
-      state.message.message.query_graph.edges[newEdgeId] = getDefaultEdge(subjectId, objectId);
+      const newEdgeId = queryBuilderUtils.getNextEdgeID(newState.message.message.query_graph);
+      newState.message.message.query_graph.edges[newEdgeId] = getDefaultEdge(subjectId, objectId);
       break;
     }
     case 'editEdge': {
@@ -111,25 +113,25 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
         nodeId,
       }: { edgeId: string; endpoint: 'subject' | 'object'; nodeId?: string } = action.payload;
       if (!nodeId) {
-        const newNodeId = queryBuilderUtils.getNextNodeID(state.message.message.query_graph);
-        state.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
-        state.message.message.query_graph.edges[edgeId][endpoint] = newNodeId;
+        const newNodeId = queryBuilderUtils.getNextNodeID(newState.message.message.query_graph);
+        newState.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
+        newState.message.message.query_graph.edges[edgeId][endpoint] = newNodeId;
       } else {
-        state.message.message.query_graph.edges[edgeId][endpoint] = nodeId;
+        newState.message.message.query_graph.edges[edgeId][endpoint] = nodeId;
       }
-      state.rootNode = queryBuilderUtils.getRootNode(
-        state.message.message.query_graph as any,
-        state.rootNode
+      newState.rootNode = queryBuilderUtils.getRootNode(
+        newState.message.message.query_graph as any,
+        newState.rootNode
       );
-      state.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
-        state.message.message.query_graph as any,
-        state.rootNode
+      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
+        newState.message.message.query_graph as any,
+        newState.rootNode
       );
       break;
     }
     case 'editPredicate': {
       const { id, predicates }: { id: string; predicates: string[] } = action.payload;
-      state.message.message.query_graph.edges[id].predicates = predicates;
+      newState.message.message.query_graph.edges[id].predicates = predicates;
       break;
     }
     case 'editQualifiers': {
@@ -142,80 +144,83 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
               ? `biolink:${snakeCase(value as string)}`
               : snakeCase(value as string),
         }));
-        state.message.message.query_graph.edges[id].qualifier_constraints = [{ qualifier_set }];
+        newState.message.message.query_graph.edges[id].qualifier_constraints = [{ qualifier_set }];
       }
       break;
     }
     case 'deleteEdge': {
       const { id }: { id: string } = action.payload;
-      delete state.message.message.query_graph.edges[id];
-      state.rootNode = queryBuilderUtils.getRootNode(
-        state.message.message.query_graph as any,
-        state.rootNode
+      delete newState.message.message.query_graph.edges[id];
+      newState.rootNode = queryBuilderUtils.getRootNode(
+        newState.message.message.query_graph as any,
+        newState.rootNode
       );
-      state.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
-        state.message.message.query_graph as any,
-        state.rootNode
+      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
+        newState.message.message.query_graph as any,
+        newState.rootNode
       );
       break;
     }
     case 'addHop': {
       const { nodeId }: { nodeId?: string } = action.payload;
-      const newNodeId = queryBuilderUtils.getNextNodeID(state.message.message.query_graph);
-      const newEdgeId = queryBuilderUtils.getNextEdgeID(state.message.message.query_graph);
+      const newNodeId = queryBuilderUtils.getNextNodeID(newState.message.message.query_graph);
+      const newEdgeId = queryBuilderUtils.getNextEdgeID(newState.message.message.query_graph);
       let subjectId = nodeId;
       if (nodeId === undefined) {
-        const nodeKeys = Object.keys(state.message.message.query_graph.nodes);
+        const nodeKeys = Object.keys(newState.message.message.query_graph.nodes);
         subjectId = nodeKeys[nodeKeys.length - 1];
       }
-      state.message.message.query_graph.edges[newEdgeId] = getDefaultEdge(subjectId, newNodeId);
-      state.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
+      newState.message.message.query_graph.edges[newEdgeId] = getDefaultEdge(subjectId, newNodeId);
+      newState.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
       break;
     }
     case 'addNode': {
-      const newNodeId = queryBuilderUtils.getNextNodeID(state.message.message.query_graph);
-      state.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
+      const newNodeId = queryBuilderUtils.getNextNodeID(newState.message.message.query_graph);
+      newState.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
       break;
     }
     case 'editNode': {
       const { id, node }: { id: string; node?: QueryGraphNode } = action.payload;
-      state.message.message.query_graph.nodes[id] = node || getDefaultNode();
+      newState.message.message.query_graph.nodes[id] = node || getDefaultNode();
       break;
     }
     case 'deleteNode': {
       const { id }: { id: string } = action.payload;
-      delete state.message.message.query_graph.nodes[id];
+      delete newState.message.message.query_graph.nodes[id];
       const trimmedQueryGraph = queryBuilderUtils.removeAttachedEdges(
-        state.message.message.query_graph as any,
+        newState.message.message.query_graph as any,
         id
       );
-      state.rootNode = queryBuilderUtils.getRootNode(trimmedQueryGraph as any, state.rootNode);
-      state.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
+      newState.rootNode = queryBuilderUtils.getRootNode(
         trimmedQueryGraph as any,
-        state.rootNode
+        newState.rootNode
+      );
+      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
+        trimmedQueryGraph as any,
+        newState.rootNode
       );
       break;
     }
     case 'saveGraph': {
-      state.message.message.query_graph = queryGraphUtils.toCurrentTRAPI(
+      newState.message.message.query_graph = queryGraphUtils.toCurrentTRAPI(
         action.payload.message.query_graph
       );
-      state.rootNode = queryBuilderUtils.getRootNode(
-        state.message.message.query_graph as any,
+      newState.rootNode = queryBuilderUtils.getRootNode(
+        newState.message.message.query_graph as any,
         null
       );
       break;
     }
     default: {
-      return state;
+      return newState;
     }
   }
   const { isValid, errMsg }: { isValid: boolean; errMsg: string } = queryBuilderUtils.isValidGraph(
-    state.message.message.query_graph
+    newState.message.message.query_graph
   );
-  state.isValid = isValid;
-  state.errMessage = errMsg;
-  return { ...state };
+  newState.isValid = isValid;
+  newState.errMessage = errMsg;
+  return newState;
 }
 
 /**

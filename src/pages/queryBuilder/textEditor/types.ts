@@ -21,8 +21,8 @@ export interface QueryGraphNode {
 }
 
 export interface QueryGraphEdge {
-  subject: string;
-  object: string;
+  subject?: string;
+  object?: string;
   predicates?: string[];
   qualifier_constraints?: Array<{
     qualifier_set: Array<{ qualifier_type_id: string; qualifier_value: string }>;

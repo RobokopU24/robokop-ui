@@ -11,6 +11,81 @@ import queryGraphUtils from '../../../utils/queryGraph';
 const nodeRadius = 48;
 const edgeLength = 225;
 
+// Type definitions
+interface BiolinkPredicate {
+  predicate: string;
+  domain: string;
+  range: string;
+  symmetric: boolean;
+}
+
+interface BiolinkContextType {
+  colorMap?: (categories: string | string[]) => [string | null, string];
+  hierarchies?: Record<string, any>;
+  predicates?: BiolinkPredicate[];
+  ancestorsMap?: Record<string, string[]>;
+}
+
+interface QueryGraphNode {
+  id: string;
+  name?: string;
+  categories?: string[];
+  is_set?: boolean;
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+  [key: string]: any;
+}
+
+interface QueryGraphEdge {
+  id: string;
+  subject: string;
+  object: string;
+  predicates?: string[];
+  source: QueryGraphNode;
+  target: QueryGraphNode;
+  numEdges?: number;
+  index?: number;
+  strokeWidth?: string;
+  symmetric?: string[];
+  x?: number;
+  y?: number;
+  [key: string]: any;
+}
+
+interface QueryGraph {
+  nodes: Record<string, QueryGraphNode>;
+  edges: Record<string, QueryGraphEdge>;
+}
+
+interface QueryBuilderContextType {
+  query_graph: QueryGraph;
+  state: {
+    isValid: boolean;
+    [key: string]: any;
+  };
+  dispatch: (action: { type: string; payload: any }) => void;
+}
+
+interface ClickState {
+  clickedId: string;
+  creatingConnection: boolean;
+  [key: string]: any;
+}
+
+interface QueryGraphProps {
+  height: number;
+  width: number;
+  clickState: ClickState;
+  updateClickState: (action: { type: string; payload: any }) => void;
+}
+
+interface NodeArgs {
+  nodeRadius: number;
+  colorMap: (categories: any) => any[];
+}
+
 /**
  * Main D3 query graph component
  * @param {int} height - height of the query graph element
@@ -18,30 +93,35 @@ const edgeLength = 225;
  * @param {obj} clickState - dict of graph click state properties
  * @param {func} updateClickState - reducer to update graph click state
  */
-export default function QueryGraph({ height, width, clickState, updateClickState }) {
-  const { colorMap, predicates } = useContext(BiolinkContext);
+export default function QueryGraph({
+  height,
+  width,
+  clickState,
+  updateClickState,
+}: QueryGraphProps) {
+  const { colorMap, predicates = [] } = useContext(BiolinkContext) as BiolinkContextType;
   const symmetricPredicates = predicates
-    ?.filter((predicate) => predicate?.symmetric)
-    ?.map((predicate) => predicate?.predicate);
-  const queryBuilder = useContext(QueryBuilderContext);
+    ?.filter((predicate: BiolinkPredicate) => predicate?.symmetric)
+    ?.map((predicate: BiolinkPredicate) => predicate?.predicate);
+  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
   const { query_graph } = queryBuilder;
   const { nodes, edges } = useMemo(
     () => queryGraphUtils.getNodeAndEdgeListsForDisplay(query_graph),
     [queryBuilder.state]
   );
-  const node = useRef({});
-  const edge = useRef({});
-  const svgRef = useRef();
-  const svg = useRef();
-  const simulation = useRef();
+  const node = useRef<any>(null);
+  const edge = useRef<any>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const svg = useRef<any>(null);
+  const simulation = useRef<any>(null);
   /**
    * Node args
    * @property {int} nodeRadius - radius of node circles
    * @property {func} colorMap - function to get node background color
    */
-  const nodeArgs = {
+  const nodeArgs: NodeArgs = {
     nodeRadius,
-    colorMap,
+    colorMap: colorMap || (() => ['', '']),
   };
 
   /**
@@ -154,8 +234,8 @@ export default function QueryGraph({ height, width, clickState, updateClickState
       .force(
         'link',
         d3
-          .forceLink()
-          .id((d) => d.id)
+          .forceLink<QueryGraphNode, QueryGraphEdge>()
+          .id((d: QueryGraphNode) => d.id)
           .distance(edgeLength)
           .strength(1)
       )
@@ -167,116 +247,120 @@ export default function QueryGraph({ height, width, clickState, updateClickState
    * Move all nodes and edges on each simulation 'tick'
    */
   function ticked() {
-    node.current.attr('transform', (d) => {
-      let padding = nodeRadius;
-      // 70% of node radius so a dragged node can push into the graph bounds a little
-      if (d.fx !== null && d.fx !== undefined) {
-        padding *= 0.5;
-      }
-      d.x = graphUtils.getBoundedValue(d.x, width - padding, padding);
-      d.y = graphUtils.getBoundedValue(d.y, height - padding, padding);
-      return `translate(${d.x},${d.y})`;
-    });
+    if (node.current) {
+      node.current.attr('transform', (d: QueryGraphNode) => {
+        let padding = nodeRadius;
+        // 70% of node radius so a dragged node can push into the graph bounds a little
+        if (d.fx !== null && d.fx !== undefined) {
+          padding *= 0.5;
+        }
+        d.x = graphUtils.getBoundedValue(d.x || 0, width - padding, padding);
+        d.y = graphUtils.getBoundedValue(d.y || 0, height - padding, padding);
+        return `translate(${d.x},${d.y})`;
+      });
+    }
 
-    edge.current.select('.edgePath').attr('d', (d) => {
-      const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
-        d.source.x,
-        d.source.y,
-        d.target.x,
-        d.target.y,
-        d.numEdges,
-        d.index,
-        nodeRadius
-      );
-      return `M${x1},${y1}Q${qx},${qy} ${x2},${y2}`;
-    });
-
-    edge.current.select('.edgeTransparent').attr('d', (d) => {
-      const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
-        d.source.x,
-        d.source.y,
-        d.target.x,
-        d.target.y,
-        d.numEdges,
-        d.index,
-        nodeRadius
-      );
-      // if necessary, flip transparent path so text is always right side up
-      const leftNode = x1 > x2 ? `${x2},${y2}` : `${x1},${y1}`;
-      const rightNode = x1 > x2 ? `${x1},${y1}` : `${x2},${y2}`;
-      return `M${leftNode}Q${qx},${qy} ${rightNode}`;
-    });
-
-    edge.current
-      .select('.source')
-      .attr('cx', (d) => {
-        const { x1 } = graphUtils.getCurvedEdgePos(
-          d.source.x,
-          d.source.y,
-          d.target.x,
-          d.target.y,
-          d.numEdges,
-          d.index,
+    if (edge.current) {
+      edge.current.select('.edgePath').attr('d', (d: QueryGraphEdge) => {
+        const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
+          d.source?.x || 0,
+          d.source?.y || 0,
+          d.target?.x || 0,
+          d.target?.y || 0,
+          d.numEdges || 1,
+          d.index || 0,
           nodeRadius
         );
-        const boundedVal = graphUtils.getBoundedValue(x1, width);
-        // set internal x value of edge end
-        d.x = boundedVal;
-        return boundedVal;
-      })
-      .attr('cy', (d) => {
-        const { y1 } = graphUtils.getCurvedEdgePos(
-          d.source.x,
-          d.source.y,
-          d.target.x,
-          d.target.y,
-          d.numEdges,
-          d.index,
-          nodeRadius
-        );
-        const boundedVal = graphUtils.getBoundedValue(y1, height);
-        // set internal y value of edge end
-        d.y = boundedVal;
-        return boundedVal;
+        return `M${x1},${y1}Q${qx},${qy} ${x2},${y2}`;
       });
 
-    edge.current
-      .select('.target')
-      .attr('cx', (d) => {
-        const { x2 } = graphUtils.getCurvedEdgePos(
-          d.source.x,
-          d.source.y,
-          d.target.x,
-          d.target.y,
-          d.numEdges,
-          d.index,
+      edge.current.select('.edgeTransparent').attr('d', (d: QueryGraphEdge) => {
+        const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
+          d.source?.x || 0,
+          d.source?.y || 0,
+          d.target?.x || 0,
+          d.target?.y || 0,
+          d.numEdges || 1,
+          d.index || 0,
           nodeRadius
         );
-        const boundedVal = graphUtils.getBoundedValue(x2, width);
-        // set internal x value of edge end
-        d.x = boundedVal;
-        return boundedVal;
-      })
-      .attr('cy', (d) => {
-        const { y2 } = graphUtils.getCurvedEdgePos(
-          d.source.x,
-          d.source.y,
-          d.target.x,
-          d.target.y,
-          d.numEdges,
-          d.index,
-          nodeRadius
-        );
-        const boundedVal = graphUtils.getBoundedValue(y2, height);
-        // set internal y value of edge end
-        d.y = boundedVal;
-        return boundedVal;
+        // if necessary, flip transparent path so text is always right side up
+        const leftNode = x1 > x2 ? `${x2},${y2}` : `${x1},${y1}`;
+        const rightNode = x1 > x2 ? `${x1},${y1}` : `${x2},${y2}`;
+        return `M${leftNode}Q${qx},${qy} ${rightNode}`;
       });
 
-    edge.current.select('.edgeButtons').attr('transform', (d) => {
-      const { x, y } = graphUtils.getEdgeMidpoint(d);
-      return `translate(${x},${y})`;
-    });
+      edge.current
+        .select('.source')
+        .attr('cx', (d: QueryGraphEdge) => {
+          const { x1 } = graphUtils.getCurvedEdgePos(
+            d.source?.x || 0,
+            d.source?.y || 0,
+            d.target?.x || 0,
+            d.target?.y || 0,
+            d.numEdges || 1,
+            d.index || 0,
+            nodeRadius
+          );
+          const boundedVal = graphUtils.getBoundedValue(x1, width);
+          // set internal x value of edge end
+          d.x = boundedVal;
+          return boundedVal;
+        })
+        .attr('cy', (d: QueryGraphEdge) => {
+          const { y1 } = graphUtils.getCurvedEdgePos(
+            d.source?.x || 0,
+            d.source?.y || 0,
+            d.target?.x || 0,
+            d.target?.y || 0,
+            d.numEdges || 1,
+            d.index || 0,
+            nodeRadius
+          );
+          const boundedVal = graphUtils.getBoundedValue(y1, height);
+          // set internal y value of edge end
+          d.y = boundedVal;
+          return boundedVal;
+        });
+
+      edge.current
+        .select('.target')
+        .attr('cx', (d: QueryGraphEdge) => {
+          const { x2 } = graphUtils.getCurvedEdgePos(
+            d.source?.x || 0,
+            d.source?.y || 0,
+            d.target?.x || 0,
+            d.target?.y || 0,
+            d.numEdges || 1,
+            d.index || 0,
+            nodeRadius
+          );
+          const boundedVal = graphUtils.getBoundedValue(x2, width);
+          // set internal x value of edge end
+          d.x = boundedVal;
+          return boundedVal;
+        })
+        .attr('cy', (d: QueryGraphEdge) => {
+          const { y2 } = graphUtils.getCurvedEdgePos(
+            d.source?.x || 0,
+            d.source?.y || 0,
+            d.target?.x || 0,
+            d.target?.y || 0,
+            d.numEdges || 1,
+            d.index || 0,
+            nodeRadius
+          );
+          const boundedVal = graphUtils.getBoundedValue(y2, height);
+          // set internal y value of edge end
+          d.y = boundedVal;
+          return boundedVal;
+        });
+
+      edge.current.select('.edgeButtons').attr('transform', (d: QueryGraphEdge) => {
+        const { x, y } = graphUtils.getEdgeMidpoint(d);
+        return `translate(${x},${y})`;
+      });
+    }
   }
 
   /**
@@ -284,49 +368,51 @@ export default function QueryGraph({ height, width, clickState, updateClickState
    */
   useEffect(() => {
     // preserve node position by using the already existing nodes
-    const oldNodes = new Map(node.current.data().map((d) => [d.id, { x: d.x, y: d.y }]));
-    const newNodes = nodes.map((d) =>
+    const oldNodes = new Map(
+      node.current.data().map((d: QueryGraphNode) => [d.id, { x: d.x, y: d.y }])
+    );
+    const newNodes = nodes.map((d: QueryGraphNode) =>
       Object.assign(
         oldNodes.get(d.id) || { x: Math.random() * width, y: Math.random() * height },
         d
       )
     );
     // edges need to preserve some internal properties
-    const newEdges = edges.map((d) => ({ ...d }));
+    const newEdges = edges.map((d: any) => ({ ...d }));
 
     // simulation adds x and y properties to nodes
     simulation.current.nodes(newNodes);
     // simulation converts source and target properties of
     // edges to node objects
-    simulation.current.force('link').links(newEdges);
+    simulation.current.force('link')?.links(newEdges);
     simulation.current.alpha(1).restart();
 
     node.current = node.current
-      .data(newNodes, (d) => d.id)
+      .data(newNodes, (d: QueryGraphNode) => d.id)
       .join(
-        (n) => nodeUtils.enter(n, nodeArgs),
-        (n) => nodeUtils.update(n, nodeArgs),
-        (n) => nodeUtils.exit(n)
+        (n: any) => nodeUtils.enter(n, nodeArgs),
+        (n: any) => nodeUtils.update(n, nodeArgs),
+        (n: any) => nodeUtils.exit(n)
       );
 
     // edge ends need the x and y of their attached nodes
     // must come after simulation
     const edgesWithCurves = edgeUtils.addEdgeCurveProperties(newEdges);
     // add symmetricPredicates to each edgesWithCurves
-    edgesWithCurves.forEach((e) => {
+    edgesWithCurves.forEach((e: QueryGraphEdge) => {
       e.symmetric = symmetricPredicates;
     });
 
     edge.current = edge.current
-      .data(edgesWithCurves, (d) => d.id)
+      .data(edgesWithCurves, (d: QueryGraphEdge) => d.id)
       .join(edgeUtils.enter, edgeUtils.update, edgeUtils.exit);
   }, [nodes, edges]);
 
-  function updateEdge(edgeId, endpoint, nodeId) {
+  function updateEdge(edgeId: string, endpoint: string, nodeId: string) {
     queryBuilder.dispatch({ type: 'editEdge', payload: { edgeId, endpoint, nodeId } });
     if (!queryBuilder.state.isValid) {
       // hacky, calls the tick function which moves the edge ends back
-      simulation.current.alpha(0.001).restart();
+      simulation.current?.alpha(0.001).restart();
     }
   }
 
@@ -336,7 +422,7 @@ export default function QueryGraph({ height, width, clickState, updateClickState
   useEffect(() => {
     if (clickState.creatingConnection) {
       // creating a new edge
-      const addNodeToConnection = (id) =>
+      const addNodeToConnection = (id: string) =>
         updateClickState({ type: 'connectTerm', payload: { id } });
       nodeUtils.attachConnectionClick(addNodeToConnection);
       nodeUtils.removeMouseHover();
@@ -345,29 +431,29 @@ export default function QueryGraph({ height, width, clickState, updateClickState
       edgeUtils.removeMouseHover();
     } else {
       const { clickedId } = clickState;
-      const setClickedId = (id) => updateClickState({ type: 'click', payload: { id } });
-      const openEditor = (id, anchor, type) =>
+      const setClickedId = (id: string) => updateClickState({ type: 'click', payload: { id } });
+      const openEditor = (id: string, anchor: any, type: string) =>
         updateClickState({ type: 'openEditor', payload: { id, anchor, type } });
       nodeUtils.attachNodeClick(clickedId, setClickedId);
       nodeUtils.attachEditClick(openEditor, setClickedId);
       nodeUtils.attachDeleteClick(
-        (id) => queryBuilder.dispatch({ type: 'deleteNode', payload: { id } }),
+        (id: string) => queryBuilder.dispatch({ type: 'deleteNode', payload: { id } }),
         setClickedId
       );
       nodeUtils.attachMouseHover(clickedId);
-      nodeUtils.attachDrag(simulation.current);
+      nodeUtils.attachDrag(simulation.current, width, height, nodeRadius);
 
       edgeUtils.attachEdgeClick(clickedId, setClickedId);
       edgeUtils.attachEditClick(openEditor, setClickedId);
       edgeUtils.attachDeleteClick(
-        (id) => queryBuilder.dispatch({ type: 'deleteEdge', payload: { id } }),
+        (id: string) => queryBuilder.dispatch({ type: 'deleteEdge', payload: { id } }),
         setClickedId
       );
       edgeUtils.attachMouseHover(clickedId);
       edgeUtils.attachDrag(simulation.current, width, height, nodeRadius, updateEdge);
     }
     // set svg global click listener for highlighting
-    svg.current.on('click', (e) => {
+    svg.current.on('click', (e: any) => {
       d3.selectAll('.deleteRect,.deleteLabel,.editRect,.editLabel').style('display', 'none');
       d3.select('#edgeContainer').raise();
       highlighter.clearAllNodes();

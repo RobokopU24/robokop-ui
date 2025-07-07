@@ -1,11 +1,11 @@
-import { Alert, Box } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import React, { useState, useCallback } from 'react';
+import { Alert, Box } from "@mui/material";
+import { withStyles } from "@mui/styles";
+import React, { useState, useCallback } from "react";
 
-import Loading from '../components/loading/Loading';
+import Loading from "../components/loading/Loading";
 
 const CenteredAlert = withStyles({
-  root: { justifyContent: 'center' },
+  root: { justifyContent: "center" },
 })(Alert);
 
 /**
@@ -15,15 +15,15 @@ const CenteredAlert = withStyles({
  * Handles the display of a loading indicator when the page is first
  * rendered and an optional error message.
  */
-export default function usePageStatus(startAsLoading: any, initialLoadingMessage: any) {
+export default function usePageStatus(startAsLoading: any, initialLoadingMessage?: string) {
   // Full page loading indicator
   const [loading, toggleLoading] = useState(!!startAsLoading);
-  const [loadingMessage, setLoadingMessage] = useState(initialLoadingMessage || '');
+  const [loadingMessage, setLoadingMessage] = useState(initialLoadingMessage || "");
   // Full page error indicator
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   function setLoading(msg: any) {
-    setError('');
+    setError("");
     if (msg) {
       setLoadingMessage(msg);
     }
@@ -31,8 +31,8 @@ export default function usePageStatus(startAsLoading: any, initialLoadingMessage
   }
 
   function setSuccess() {
-    setError('');
-    setLoadingMessage('');
+    setError("");
+    setLoadingMessage("");
     toggleLoading(false);
   }
 
