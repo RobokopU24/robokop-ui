@@ -18,10 +18,9 @@ import SaveIcon from '@mui/icons-material/Save';
 import trapiUtils from '../../../utils/trapi';
 import queryGraphUtils from '../../../utils/queryGraph';
 import usePageStatus from '../../../stores/usePageStatus';
-import QueryBuilderContext from '../../../context/queryBuilder';
+import { useQueryBuilderContext } from '../../../context/queryBuilder';
 import ClipboardButton from '../../../components/shared/ClipboardButton';
 import { useAlert } from '../../../components/AlertProvider';
-import { QueryBuilderContextType } from '../textEditor/types';
 
 // Local type for context value expected here
 type QueryBuilderContextWithState = {
@@ -55,7 +54,7 @@ const emptyTRAPIMessage: TRAPIMessage = {
  * @param {func} close - close the json editor
  */
 export default function JsonEditor({ show, close }: { show: boolean; close: () => void }) {
-  const queryBuilder = useContext(QueryBuilderContext) as unknown as QueryBuilderContextWithState;
+  const queryBuilder = useQueryBuilderContext() as unknown as QueryBuilderContextWithState;
   const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const { message } = queryBuilder.state;
   const [localMessage, updateLocalMessage] = useState(message);

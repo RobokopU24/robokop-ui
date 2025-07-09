@@ -2,17 +2,10 @@
 import React, { useMemo, useContext, useEffect } from 'react';
 import BiolinkContext from '../../../../context/biolink';
 import strings from '../../../../utils/strings';
-import QueryBuilderContext from '../../../../context/queryBuilder';
+import { useQueryBuilderContext } from '../../../../context/queryBuilder';
 import highlighter from '../../../../utils/d3/highlighter';
 import { Autocomplete, TextField } from '@mui/material';
-import {
-  BiolinkPredicate,
-  BiolinkContextType,
-  QueryGraphNode,
-  QueryGraphEdge,
-  QueryGraph,
-  QueryBuilderContextType,
-} from '../types';
+import { BiolinkPredicate, BiolinkContextType } from '../types';
 
 // Props interface
 interface PredicateSelectorProps {
@@ -30,7 +23,7 @@ function getCategories(categories: string[] | undefined): string[] {
 
 export default function PredicateSelector({ id }: PredicateSelectorProps) {
   const biolink = useContext(BiolinkContext) as BiolinkContextType;
-  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
+  const queryBuilder = useQueryBuilderContext();
   const { query_graph } = queryBuilder;
   const edge = query_graph.edges[id];
 

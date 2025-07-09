@@ -24,7 +24,7 @@ import {
 } from '@tanstack/react-table';
 import explorePage from '../../API/explorePage';
 import Loading from '../../components/loading/Loading';
-import useQueryBuilder from '../queryBuilder/useQueryBuilder';
+import { useQueryBuilderContext } from '../../context/queryBuilder';
 import HeaderCell from './HeaderCell';
 import { makeStyles } from '@mui/styles';
 
@@ -100,7 +100,7 @@ export default function DrugDiseasePairs() {
   });
   const [isLoading, setIsLoading] = React.useState(true);
 
-  const queryBuilder = useQueryBuilder();
+  const queryBuilder = useQueryBuilderContext();
   const navigate = useNavigate();
 
   const handleStartQuery = (pair: DrugDiseasePair) => {

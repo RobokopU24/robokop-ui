@@ -6,22 +6,14 @@ import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 
 import BiolinkContext from '../../../../context/biolink';
-import QueryBuilderContext from '../../../../context/queryBuilder';
+import { useQueryBuilderContext } from '../../../../context/queryBuilder';
 import NodeSelector from './NodeSelector';
 import { NodeOption } from '../types';
 import PredicateSelector from './PredicateSelector';
 import QualifiersSelector from './QualifiersSelector';
 
 import './textEditorRow.css';
-import {
-  BiolinkModel,
-  QueryGraphNode,
-  QueryGraphEdge,
-  QueryGraph,
-  QueryBuilderContextType,
-  BiolinkContextType,
-  TextEditorRowProps,
-} from '../types';
+import { BiolinkModel, BiolinkContextType, TextEditorRowProps } from '../types';
 
 // Define ValidAssociation locally
 interface ValidAssociation {
@@ -170,7 +162,7 @@ function getValidAssociations(
 }
 
 export default function TextEditorRow({ row, index }: { row: TextEditorRowProps; index: number }) {
-  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
+  const queryBuilder = useQueryBuilderContext();
   const { model } = useContext(BiolinkContext) as BiolinkContextType;
   const [isOpen, setIsOpen] = useState(false);
   if (!model) return 'Loading...';

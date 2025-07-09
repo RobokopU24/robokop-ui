@@ -1,7 +1,6 @@
-import React, { useContext } from "react";
-import QueryBuilderContext from "../../../../context/queryBuilder";
-import { TextField, Autocomplete } from "@mui/material";
-import { QueryBuilderContextType } from "../types";
+import React from 'react';
+import { useQueryBuilderContext } from '../../../../context/queryBuilder';
+import { TextField, Autocomplete } from '@mui/material';
 
 // Types for the query builder context
 interface TreeNode {
@@ -99,7 +98,7 @@ const getQualifierOptions = ({ range, subpropertyOf }: QualifierOption): string[
 // };
 
 export default function QualifiersSelector({ id, associations }: QualifiersSelectorProps) {
-  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
+  const queryBuilder = useQueryBuilderContext();
 
   const associationOptions: AssociationOption[] = associations
     .filter((a: AssociationData) => a.qualifiers.length > 0)
@@ -115,22 +114,27 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
   const [value, setValue] = React.useState<AssociationOption | null>(associationOptions[0] || null);
   const [qualifiers, setQualifiers] = React.useState<Record<string, string | null>>({});
   React.useEffect(() => {
-    queryBuilder.dispatch({ type: "editQualifiers", payload: { id, qualifiers } });
+    queryBuilder.dispatch({ type: 'editQualifiers', payload: { id, qualifiers } });
   }, [qualifiers]);
 
   if (associationOptions.length === 0) return null;
-  if (associationOptions.length === 1 && associationOptions[0].name === "association") return null;
+  if (associationOptions.length === 1 && associationOptions[0].name === 'association') return null;
 
   if (!value) return null;
 
-  const subjectQualfiers = value.qualifiers.filter(({ name }) => name.includes("subject"));
-  const predicateQualifiers = value.qualifiers.filter(({ name }) => name.includes("predicate"));
-  const objectQualifiers = value.qualifiers.filter(({ name }) => name.includes("object"));
-  const otherQualifiers = value.qualifiers.filter((q) => !subjectQualfiers.includes(q) && !predicateQualifiers.includes(q) && !objectQualifiers.includes(q));
+  const subjectQualfiers = value.qualifiers.filter(({ name }) => name.includes('subject'));
+  const predicateQualifiers = value.qualifiers.filter(({ name }) => name.includes('predicate'));
+  const objectQualifiers = value.qualifiers.filter(({ name }) => name.includes('object'));
+  const otherQualifiers = value.qualifiers.filter(
+    (q) =>
+      !subjectQualfiers.includes(q) &&
+      !predicateQualifiers.includes(q) &&
+      !objectQualifiers.includes(q)
+  );
 
   return (
     <div className="qualifiers-dropdown">
-      <div style={{ marginRight: "2rem" }}>
+      <div style={{ marginRight: '2rem' }}>
         <Autocomplete
           value={value}
           onChange={(_, newValue) => {
@@ -147,12 +151,28 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
 
         {otherQualifiers.length > 0 && <hr />}
 
-        <QualifiersList value={otherQualifiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
+        <QualifiersList
+          value={otherQualifiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
       </div>
 
-      <QualifiersList value={subjectQualfiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
-      <QualifiersList value={predicateQualifiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
-      <QualifiersList value={objectQualifiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
+      <QualifiersList
+        value={subjectQualfiers}
+        qualifiers={qualifiers}
+        setQualifiers={setQualifiers}
+      />
+      <QualifiersList
+        value={predicateQualifiers}
+        qualifiers={qualifiers}
+        setQualifiers={setQualifiers}
+      />
+      <QualifiersList
+        value={objectQualifiers}
+        qualifiers={qualifiers}
+        setQualifiers={setQualifiers}
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const api = axios.create({
   //TODO: replace with your actual base URL
-  baseURL: 'http://localhost:5173/',
+  baseURL: 'http://localhost:4000/',
 });
 
 export const authApi = axios.create({

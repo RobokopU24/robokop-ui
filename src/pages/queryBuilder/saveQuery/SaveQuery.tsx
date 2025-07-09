@@ -12,14 +12,14 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import queryGraphUtils from '../../../utils/queryGraph';
 import routes from '../../../API/routes';
-import useQueryBuilder from '../useQueryBuilder';
+import { useQueryBuilderContext } from '../../../context/queryBuilder';
 import { authApi } from '../../../API/baseUrlProxy';
 import { useAlert } from '../../../components/AlertProvider';
 
 function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
   const { displayAlert } = useAlert();
 
-  const queryBuilder = useQueryBuilder();
+  const queryBuilder = useQueryBuilderContext();
   const prunedQueryGraph = queryGraphUtils.prune(queryBuilder.query_graph);
 
   const [queryName, setQueryName] = useState('');

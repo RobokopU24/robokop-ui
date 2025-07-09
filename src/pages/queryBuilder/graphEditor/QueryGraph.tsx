@@ -5,7 +5,7 @@ import nodeUtils from '../../../utils/d3/nodes';
 import edgeUtils from '../../../utils/d3/edges';
 import highlighter from '../../../utils/d3/highlighter';
 import BiolinkContext from '../../../context/biolink';
-import QueryBuilderContext from '../../../context/queryBuilder';
+import { useQueryBuilderContext } from '../../../context/queryBuilder';
 import queryGraphUtils from '../../../utils/queryGraph';
 
 const nodeRadius = 48;
@@ -59,15 +59,6 @@ interface QueryGraph {
   edges: Record<string, QueryGraphEdge>;
 }
 
-interface QueryBuilderContextType {
-  query_graph: QueryGraph;
-  state: {
-    isValid: boolean;
-    [key: string]: any;
-  };
-  dispatch: (action: { type: string; payload: any }) => void;
-}
-
 interface ClickState {
   clickedId: string;
   creatingConnection: boolean;
@@ -103,7 +94,7 @@ export default function QueryGraph({
   const symmetricPredicates = predicates
     ?.filter((predicate: BiolinkPredicate) => predicate?.symmetric)
     ?.map((predicate: BiolinkPredicate) => predicate?.predicate);
-  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
+  const queryBuilder = useQueryBuilderContext();
   const { query_graph } = queryBuilder;
   const { nodes, edges } = useMemo(
     () => queryGraphUtils.getNodeAndEdgeListsForDisplay(query_graph),

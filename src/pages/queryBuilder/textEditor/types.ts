@@ -36,6 +36,16 @@ export interface QueryGraph {
 }
 
 export interface QueryBuilderContextType {
+  state: {
+    message: {
+      message: {
+        query_graph: QueryGraph;
+      };
+    };
+    rootNode: string | null;
+    isValid: boolean;
+    errMessage: string;
+  };
   query_graph: QueryGraph;
   dispatch: (action: { type: string; payload: any }) => void;
   textEditorRows?: TextEditorRowProps[];

@@ -1,32 +1,42 @@
-import React, { useContext, useEffect, useState } from "react";
-import NodeSelector from "../textEditor/textEditorRow/NodeSelector";
-import { authApi } from "../../../API/baseUrlProxy";
-import examples from "./templates.json";
+import React, { useContext, useEffect, useState } from 'react';
+import NodeSelector from '../textEditor/textEditorRow/NodeSelector';
+import { authApi } from '../../../API/baseUrlProxy';
+import examples from './templates.json';
 
-import { Button, Chip, Divider, IconButton, List, ListItemText, ListSubheader, Modal, ListItemButton } from "@mui/material";
-import Close from "@mui/icons-material/Close";
-import QueryBuilderContext from "../../../context/queryBuilder";
-import API from "../../../API/routes";
-import { makeStyles } from "@mui/styles";
-import { Theme } from "@mui/material/styles";
-import { QueryBuilderContextType, NodeOption, QueryGraph } from "../textEditor/types";
+import {
+  Button,
+  Chip,
+  Divider,
+  IconButton,
+  List,
+  ListItemText,
+  ListSubheader,
+  Modal,
+  ListItemButton,
+} from '@mui/material';
+import Close from '@mui/icons-material/Close';
+import { useQueryBuilderContext } from '../../../context/queryBuilder';
+import API from '../../../API/routes';
+import { makeStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { QueryBuilderContextType, NodeOption, QueryGraph } from '../textEditor/types';
 
 // Types for template/example structure
 interface TemplateTextPart {
-  type: "text";
+  type: 'text';
   text: string;
   // Allow extra properties for compatibility with imported JSON
   [key: string]: any;
 }
 interface TemplateNodePart {
-  type: "node";
+  type: 'node';
   id: string;
   name: string;
   filterType?: string;
   [key: string]: any;
 }
 interface TemplateJsonTextPart {
-  type: "json_text";
+  type: 'json_text';
   text: string;
   [key: string]: any;
 }
@@ -57,18 +67,18 @@ interface BookmarkedQuery {
 
 const useStyles = makeStyles((theme: Theme) => ({
   modal: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paper: {
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
-    display: "flex",
-    flexDirection: "row",
+    display: 'flex',
+    flexDirection: 'row',
     width: 1200,
     height: 900,
-    borderRadius: "8px",
+    borderRadius: '8px',
   },
 }));
 
@@ -76,10 +86,10 @@ function createTemplateDisplay(template: TemplatePart[]) {
   return (
     <span>
       {template.map((part, i) => {
-        if (part.type === "text") {
+        if (part.type === 'text') {
           return <span key={i}>{part.text}</span>;
         }
-        if (part.type === "node") {
+        if (part.type === 'node') {
           return <code key={i}>{part.name}</code>;
         }
         return null;
@@ -92,13 +102,13 @@ function PleaseSelectAnExampleText() {
   return (
     <div
       style={{
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "2.5rem",
-        fontStyle: "italic",
-        color: "#acacac",
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '2.5rem',
+        fontStyle: 'italic',
+        color: '#acacac',
       }}
     >
       Please select an example from the list
@@ -107,7 +117,9 @@ function PleaseSelectAnExampleText() {
 }
 
 function exampleToTrapiFormat(example: ExampleTemplate) {
-  const templateNodes = example.template.filter((part): part is TemplateNodePart => part.type === "node").reduce((obj, { id }) => ({ ...obj, [id]: { categories: [] } }), {} as Record<string, any>);
+  const templateNodes = example.template
+    .filter((part): part is TemplateNodePart => part.type === 'node')
+    .reduce((obj, { id }) => ({ ...obj, [id]: { categories: [] } }), {} as Record<string, any>);
 
   const structureNodes = Object.entries(example.structure.nodes).reduce(
     (obj, [id, n]) => ({
@@ -146,7 +158,7 @@ interface TemplatedQueriesModalProps {
 
 export default function TemplatedQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
   const classes = useStyles();
-  const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
+  const queryBuilder = useQueryBuilderContext();
   const [selectedExample, setSelectedExample] = useState<ExampleTemplate | null>(null);
   const [queries, setQueries] = useState<BookmarkedQuery[]>([]);
   const handleClose = () => {
@@ -158,26 +170,26 @@ export default function TemplatedQueriesModal({ open, setOpen }: TemplatedQuerie
     // Accept any, but cast to ExampleTemplate for dispatch
     setSelectedExample(example as ExampleTemplate);
     const payload = exampleToTrapiFormat(example as ExampleTemplate);
-    queryBuilder.dispatch({ type: "saveGraph", payload });
+    queryBuilder.dispatch({ type: 'saveGraph', payload });
   };
 
   const editNode = (id: string, node: NodeOption | null) => {
-    queryBuilder.dispatch({ type: "editNode", payload: { id, node } });
+    queryBuilder.dispatch({ type: 'editNode', payload: { id, node } });
   };
 
   const handleSelectBookmarkedQuery = (query_graph: BookmarkedQuery) => {
     const example: ExampleTemplate = {
-      type: "example",
+      type: 'example',
       template: [
         {
           text: JSON.stringify(query_graph.query.message.query_graph, null, 2),
-          type: "json_text",
+          type: 'json_text',
         } as TemplateJsonTextPart,
       ],
       structure: { nodes: {}, edges: {} },
     };
     setSelectedExample(example);
-    queryBuilder.dispatch({ type: "saveGraph", payload: query_graph.query });
+    queryBuilder.dispatch({ type: 'saveGraph', payload: query_graph.query });
   };
 
   useEffect(() => {
@@ -195,13 +207,13 @@ export default function TemplatedQueriesModal({ open, setOpen }: TemplatedQuerie
     <Modal open={open} onClose={handleClose} className={classes.modal}>
       <div className={classes.paper}>
         <List
-          style={{ flexBasis: 350, overflowY: "auto" }}
+          style={{ flexBasis: 350, overflowY: 'auto' }}
           subheader={
             <ListSubheader
               component="div"
               style={{
-                background: "white",
-                borderBottom: "2px solid rgba(0, 0, 0, 0.12)",
+                background: 'white',
+                borderBottom: '2px solid rgba(0, 0, 0, 0.12)',
               }}
             >
               Please select an example below
@@ -221,7 +233,7 @@ export default function TemplatedQueriesModal({ open, setOpen }: TemplatedQuerie
                   <>
                     {example.tags && (
                       <>
-                        <Chip size="small" label={example.tags} />{" "}
+                        <Chip size="small" label={example.tags} />{' '}
                       </>
                     )}
                     {createTemplateDisplay(example.template as TemplatePart[])}
@@ -251,39 +263,39 @@ export default function TemplatedQueriesModal({ open, setOpen }: TemplatedQuerie
         <Divider orientation="vertical" flexItem />
         <div
           style={{
-            display: "flex",
-            flex: "1",
-            padding: "1rem",
-            flexDirection: "column",
+            display: 'flex',
+            flex: '1',
+            padding: '1rem',
+            flexDirection: 'column',
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <IconButton size="small" onClick={handleClose}>
               <Close />
             </IconButton>
           </div>
-          <div style={{ flex: "1" }}>
+          <div style={{ flex: '1' }}>
             {selectedExample === null ? (
               <PleaseSelectAnExampleText />
             ) : (
               selectedExample.template.map((part, i) => {
-                if (part.type === "text") {
+                if (part.type === 'text') {
                   return (
-                    <span key={i} style={{ fontSize: "16px" }}>
+                    <span key={i} style={{ fontSize: '16px' }}>
                       {part.text}
                     </span>
                   );
                 }
-                if (part.type === "node") {
+                if (part.type === 'node') {
                   return (
                     <div
                       key={i}
                       style={{
-                        maxWidth: "300px",
-                        display: "inline-flex",
-                        transform: "translateY(-16px)",
-                        marginLeft: "-1ch",
-                        marginRight: "-1ch",
+                        maxWidth: '300px',
+                        display: 'inline-flex',
+                        transform: 'translateY(-16px)',
+                        marginLeft: '-1ch',
+                        marginRight: '-1ch',
                       }}
                     >
                       <NodeSelector
@@ -304,14 +316,14 @@ export default function TemplatedQueriesModal({ open, setOpen }: TemplatedQuerie
                     </div>
                   );
                 }
-                if (part.type === "json_text") {
+                if (part.type === 'json_text') {
                   return <pre id="resultJSONContainer">{part.text}</pre>;
                 }
                 return null;
               })
             )}
           </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <Button variant="contained" color="primary" onClick={handleClose}>
               Done
             </Button>
