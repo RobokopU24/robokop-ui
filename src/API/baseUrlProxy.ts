@@ -1,12 +1,13 @@
 import axios from 'axios';
+import { baseAPI, baseAuthURL } from './routes';
 
 export const api = axios.create({
   //TODO: replace with your actual base URL
-  baseURL: 'http://localhost:4000/',
+  baseURL: baseAPI,
 });
 
 export const authApi = axios.create({
-  baseURL: 'https://localhost:4000/api',
+  baseURL: baseAuthURL,
   withCredentials: true,
 });
 

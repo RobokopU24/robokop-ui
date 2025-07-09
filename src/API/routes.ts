@@ -1,4 +1,5 @@
-const baseAuthURL = 'http://localhost:4000/api';
+export const baseAPI = 'http://localhost:4000';
+export const baseAuthURL = `${baseAPI}/api`;
 
 const authEndpoint = `${baseAuthURL}/auth`;
 const authRoutes = {
