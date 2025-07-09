@@ -104,6 +104,7 @@ export default function DrugDiseasePairs() {
   const navigate = useNavigate();
 
   const handleStartQuery = (pair: DrugDiseasePair) => {
+    console.log('Starting query with pair:', pair);
     const query = {
       message: {
         query_graph: {
@@ -117,8 +118,9 @@ export default function DrugDiseasePairs() {
         },
       },
     };
+    console.log('Dispatching query:', query);
     queryBuilder.dispatch({ type: 'saveGraph', payload: query });
-    navigate({ to: '/' });
+    navigate({ to: '/question-builder' });
   };
 
   const classes = useStyles();

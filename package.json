@@ -21,14 +21,10 @@
     "@tanstack/react-start": "^1.124.0",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.10.0",
-    "body-parser": "^2.2.0",
     "d3": "^7.9.0",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0",
     "idb-keyval": "^6.2.2",
-    "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "morgan": "^1.10.0",
     "papaparse": "^5.5.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -36,7 +32,6 @@
     "react-json-view": "^1.21.3",
     "react-table": "^7.8.0",
     "shortid": "^2.2.17",
-    "sqlite3": "^5.1.7",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "devDependencies": {

@@ -1,19 +1,27 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
-import { IconButton, Collapse } from "@mui/material";
+import { IconButton, Collapse } from '@mui/material';
 
-import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
-import IndeterminateCheckBoxOutlinedIcon from "@mui/icons-material/IndeterminateCheckBoxOutlined";
+import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
+import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
 
-import BiolinkContext from "../../../../context/biolink";
-import QueryBuilderContext from "../../../../context/queryBuilder";
-import NodeSelector from "./NodeSelector";
-import { NodeOption } from "../types";
-import PredicateSelector from "./PredicateSelector";
-import QualifiersSelector from "./QualifiersSelector";
+import BiolinkContext from '../../../../context/biolink';
+import QueryBuilderContext from '../../../../context/queryBuilder';
+import NodeSelector from './NodeSelector';
+import { NodeOption } from '../types';
+import PredicateSelector from './PredicateSelector';
+import QualifiersSelector from './QualifiersSelector';
 
-import "./textEditorRow.css";
-import { BiolinkModel, QueryGraphNode, QueryGraphEdge, QueryGraph, QueryBuilderContextType, BiolinkContextType, TextEditorRowProps } from "../types";
+import './textEditorRow.css';
+import {
+  BiolinkModel,
+  QueryGraphNode,
+  QueryGraphEdge,
+  QueryGraph,
+  QueryBuilderContextType,
+  BiolinkContextType,
+  TextEditorRowProps,
+} from '../types';
 
 // Define ValidAssociation locally
 interface ValidAssociation {
@@ -23,7 +31,12 @@ interface ValidAssociation {
   qualifiers: any[];
 }
 
-function getValidAssociations(s: string, p: string, o: string, model: BiolinkModel): ValidAssociation[] {
+function getValidAssociations(
+  s: string,
+  p: string,
+  o: string,
+  model: BiolinkModel
+): ValidAssociation[] {
   const validAssociations: ValidAssociation[] = [];
 
   const subject = model.classes.lookup.get(s);
@@ -67,8 +80,8 @@ function getValidAssociations(s: string, p: string, o: string, model: BiolinkMod
    * Get the inherited subject/predicate/object ranges for an association
    */
   const getInheritedSPORanges = (association: any) => {
-    const namedThing = model.classes.lookup.get("named thing");
-    const relatedTo = model.slots.lookup.get("related to");
+    const namedThing = model.classes.lookup.get('named thing');
+    const relatedTo = model.slots.lookup.get('related to');
 
     const traverse = (nodes: any[], part: string): any => {
       for (const node of nodes) {
@@ -85,9 +98,9 @@ function getValidAssociations(s: string, p: string, o: string, model: BiolinkMod
       return null;
     };
 
-    const sub = traverse([association], "subject") || namedThing;
-    const pred = traverse([association], "predicate") || relatedTo;
-    const obj = traverse([association], "object") || namedThing;
+    const sub = traverse([association], 'subject') || namedThing;
+    const pred = traverse([association], 'predicate') || relatedTo;
+    const obj = traverse([association], 'object') || namedThing;
 
     return { subject: sub, predicate: pred, object: obj };
   };
@@ -98,9 +111,12 @@ function getValidAssociations(s: string, p: string, o: string, model: BiolinkMod
       if (association.slotUsage && !association.abstract) {
         const inherited = getInheritedSPORanges(association);
 
-        const validSubject = isInRange(subject, inherited.subject) || isInDomain(subject, inherited.subject);
-        const validObject = isInRange(object, inherited.object) || isInDomain(object, inherited.object);
-        const validPredicate = isInRange(predicate, inherited.predicate) || isInDomain(predicate, inherited.predicate);
+        const validSubject =
+          isInRange(subject, inherited.subject) || isInDomain(subject, inherited.subject);
+        const validObject =
+          isInRange(object, inherited.object) || isInDomain(object, inherited.object);
+        const validPredicate =
+          isInRange(predicate, inherited.predicate) || isInDomain(predicate, inherited.predicate);
 
         const qualifiers = Object.entries(association.slotUsage)
           .map(([qualifierName, properties]: [string, any]) => {
@@ -118,7 +134,11 @@ function getValidAssociations(s: string, p: string, o: string, model: BiolinkMod
             }
 
             let subpropertyOf;
-            if (properties && properties.subproperty_of && model.slots.lookup.has(properties.subproperty_of)) {
+            if (
+              properties &&
+              properties.subproperty_of &&
+              model.slots.lookup.has(properties.subproperty_of)
+            ) {
               subpropertyOf = model.slots.lookup.get(properties.subproperty_of);
             }
 
@@ -153,7 +173,7 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
   const queryBuilder = useContext(QueryBuilderContext) as QueryBuilderContextType;
   const { model } = useContext(BiolinkContext) as BiolinkContextType;
   const [isOpen, setIsOpen] = useState(false);
-  if (!model) return "Loading...";
+  if (!model) return 'Loading...';
   const { query_graph } = queryBuilder;
   const edge = query_graph.edges[row.edgeId];
   if (!edge) return null;
@@ -165,63 +185,72 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
   const { edgeId, subjectIsReference, objectIsReference } = row;
 
   function getNodeCategory(nodeId: string | undefined): string {
-    if (!nodeId) return "biolink:NamedThing";
+    if (!nodeId) return 'biolink:NamedThing';
     const node = query_graph.nodes[nodeId];
     if (node && Array.isArray(node.categories) && node.categories[0]) {
       return node.categories[0];
     }
-    return "biolink:NamedThing";
+    return 'biolink:NamedThing';
   }
 
   const subject =
     getNodeCategory(edge.subject)
-      .replace("biolink:", "")
+      .replace('biolink:', '')
       .match(/[A-Z][a-z]+/g)
-      ?.join(" ")
-      .toLowerCase() || "named thing";
-  const predicate = ((edge.subject && query_graph.nodes[edge.subject]?.categories && edge.predicates?.[0]) || "biolink:related_to").replace("biolink:", "").replace(/_/g, " ");
+      ?.join(' ')
+      .toLowerCase() || 'named thing';
+  const predicate = (
+    (edge.subject && query_graph.nodes[edge.subject]?.categories && edge.predicates?.[0]) ||
+    'biolink:related_to'
+  )
+    .replace('biolink:', '')
+    .replace(/_/g, ' ');
   const object =
     getNodeCategory(edge.object)
-      .replace("biolink:", "")
+      .replace('biolink:', '')
       .match(/[A-Z][a-z]+/g)
-      ?.join(" ")
-      .toLowerCase() || "named thing";
+      ?.join(' ')
+      .toLowerCase() || 'named thing';
 
   const validAssociations = getValidAssociations(subject, predicate, object, model);
 
   function deleteEdge() {
-    queryBuilder.dispatch({ type: "deleteEdge", payload: { id: edgeId } });
+    queryBuilder.dispatch({ type: 'deleteEdge', payload: { id: edgeId } });
   }
 
-  function setReference(edgeEnd: "subject" | "object", nodeId: string | null) {
-    queryBuilder.dispatch({ type: "editEdge", payload: { edgeId, endpoint: edgeEnd, nodeId } });
+  function setReference(edgeEnd: 'subject' | 'object', nodeId: string | null) {
+    queryBuilder.dispatch({ type: 'editEdge', payload: { edgeId, endpoint: edgeEnd, nodeId } });
   }
 
   function editNode(id: string, value: NodeOption | null) {
     if (!value) return;
-    queryBuilder.dispatch({ type: "editNode", payload: { id, node: value } });
+    queryBuilder.dispatch({ type: 'editNode', payload: { id, node: value } });
   }
 
   function addHop() {
-    queryBuilder.dispatch({ type: "addHop", payload: { nodeId: edge.object } });
+    queryBuilder.dispatch({ type: 'addHop', payload: { nodeId: edge.object } });
   }
 
   return (
     <div className="editor-row-wrapper">
       <div className="textEditorRow">
-        <IconButton onClick={deleteEdge} className="textEditorIconButton" disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}>
+        <IconButton
+          onClick={deleteEdge}
+          className="textEditorIconButton"
+          disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
+        >
           <IndeterminateCheckBoxOutlinedIcon />
         </IconButton>
         <p>
-          {index === 0 && "Find"}
-          {index === 1 && "where"}
-          {index > 1 && "and where"}
+          {index === 0 && 'Find'}
+          {index === 1 && 'where'}
+          {index > 1 && 'and where'}
         </p>
         <NodeSelector
-          id={edge.subject}
-          properties={query_graph.nodes[edge.subject]}
-          setReference={(nodeId: string | null) => setReference("subject", nodeId)}
-          update={subjectIsReference ? () => setReference("subject", null) : editNode}
+          id={edge.subject as string}
+          properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
+          setReference={(nodeId: string | null) => setReference('subject', nodeId)}
+          update={subjectIsReference ? () => setReference('subject', null) : editNode}
           isReference={subjectIsReference}
           options={{
             includeCuries: !subjectIsReference,
@@ -238,10 +267,10 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
         />
         <PredicateSelector id={edgeId} />
         <NodeSelector
-          id={edge.object}
-          properties={query_graph.nodes[edge.object]}
-          setReference={(nodeId: string | null) => setReference("object", nodeId)}
-          update={objectIsReference ? () => setReference("object", null) : editNode}
+          id={edge.object as string}
+          properties={edge.object ? query_graph.nodes[edge.object] : ''}
+          setReference={(nodeId: string | null) => setReference('object', nodeId)}
+          update={objectIsReference ? () => setReference('object', null) : editNode}
           isReference={objectIsReference}
           options={{
             includeCuries: !objectIsReference,
@@ -273,21 +302,21 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
         onClick={() => {
           setIsOpen((p) => !p);
         }}
-        style={{ color: "#333" }}
+        style={{ color: '#333' }}
       >
-        <span style={{ fontSize: "0.8em" }}>{isOpen ? "▲" : "▼"}</span>
+        <span style={{ fontSize: '0.8em' }}>{isOpen ? '▲' : '▼'}</span>
         <span
           style={
             hasQualifiers
               ? {
-                  fontWeight: "bold",
-                  fontStyle: "italic",
+                  fontWeight: 'bold',
+                  fontStyle: 'italic',
                 }
               : undefined
           }
         >
-          {" Qualifiers"}
-          {hasQualifiers && "*"}
+          {' Qualifiers'}
+          {hasQualifiers && '*'}
         </span>
       </button>
     </div>

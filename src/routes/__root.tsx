@@ -1,23 +1,6 @@
-// import { createRootRoute, Outlet } from '@tanstack/react-router';
-
-// import RootComponentWrapper from '../components/RootComponentWrapper';
-
-// export const Route = createRootRoute({
-//   component: () => {
-//     return (
-//       <RootComponentWrapper>
-//         <Outlet />
-//       </RootComponentWrapper>
-//     );
-//   },
-// });
-
-// src/routes/__root.tsx
 /// <reference types="vite/client" />
 import type { ReactNode } from 'react';
 import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
-import RootComponentWrapper from '../components/RootComponentWrapper';
-import AlertProvider from '../components/AlertProvider';
 
 import '../index.css';
 

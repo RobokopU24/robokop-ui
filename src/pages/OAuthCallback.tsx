@@ -19,7 +19,7 @@ function OAuthCallback() {
 
         if (!token) {
           // TODO: Handle the case where no token is provided
-          navigate({ to: '/' });
+          navigate({ to: '/question-builder' });
           return;
         }
 
@@ -31,15 +31,15 @@ function OAuthCallback() {
 
         if (response.status === 200 && response.data.message === 'Token is valid') {
           login(response.data.user, token);
-          navigate({ to: '/' });
+          navigate({ to: '/question-builder' });
         } else {
           // TODO: Handle invalid token case
-          navigate({ to: '/' });
+          navigate({ to: '/question-builder' });
         }
       } catch (error) {
         console.log('Error validating token:', error);
         // TODO: Handle errors, such as network issues or server errors
-        navigate({ to: '/' });
+        navigate({ to: '/question-builder' });
       }
     };
 

@@ -199,9 +199,6 @@ export default function LandingPage() {
           .
         </p>
       </Section>
-      <Section title="Contact" index={6}>
-        {/* <ContactForm /> */}
-      </Section>
     </MainGrid>
   );
 }

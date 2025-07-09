@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle, Input, Button } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
-import { useLocation, useNavigate, Navigate } from '@tanstack/react-router';
+import { useNavigate, Navigate, useSearch } from '@tanstack/react-router';
 import axios from 'axios';
 import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
 
 function ActivateUser() {
+  const search = useSearch({ from: '/_appLayout/activate-user/' });
+  console.log(search);
   const { user } = useAuth();
-  const location = useLocation();
   const navigate = useNavigate();
   const { displayAlert } = useAlert();
 
@@ -19,9 +20,7 @@ function ActivateUser() {
 
   useEffect(() => {
     axios
-      .get(
-        `${routes.authRoutes.activateUserTokenHandler}/?token=${location.search.split('token=')[1]}`
-      )
+      .get(`${routes.authRoutes.activateUserTokenHandler}/?token=${search.token}`)
       .then((response) => {
         setEmail(response.data.email);
         setExpiryTime(response.data.exp);
@@ -29,7 +28,7 @@ function ActivateUser() {
       .catch((error) => {
         console.error('Error fetching activation data:', error);
         displayAlert('error', 'Invalid or expired activation link. Please try again.');
-        navigate({ to: '/' });
+        navigate({ to: '/question-builder' });
       });
   }, []);
 
