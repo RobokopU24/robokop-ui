@@ -270,5 +270,5 @@ const YobokopLogo = (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGEleme
   </svg>
 );
 
-//TODO: Yobokop or Robokop?
-export default RobokopLogo;
+console.log(import.meta.env.VITE_DEPLOYMENT, 'VITE_DEPLOYMENT');
+export default import.meta.env.VITE_DEPLOYMENT === 'YOBOKOP' ? YobokopLogo : RobokopLogo;

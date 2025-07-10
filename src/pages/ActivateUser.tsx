@@ -8,7 +8,6 @@ import { useAlert } from '../components/AlertProvider';
 
 function ActivateUser() {
   const search = useSearch({ from: '/_appLayout/activate-user/' });
-  console.log(search);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { displayAlert } = useAlert();

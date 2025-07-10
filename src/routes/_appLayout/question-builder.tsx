@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useLoaderData } from '@tanstack/react-router';
 
 import QueryBuilder from '../../pages/queryBuilder/QueryBuilder';
 

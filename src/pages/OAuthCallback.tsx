@@ -15,7 +15,6 @@ function OAuthCallback() {
       try {
         const params = new URLSearchParams(location.search);
         const token = params.get('token');
-        console.log('OAuth token:', token);
 
         if (!token) {
           // TODO: Handle the case where no token is provided

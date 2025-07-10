@@ -105,14 +105,11 @@ export default function GraphEditor() {
   }
 
   function addHop() {
-    console.log('Adding hop to query graph', query_graph);
     if (!Object.keys(query_graph.nodes).length) {
       // add a node to an empty graph
-      console.log('Adding first node to empty graph');
       queryBuilder.dispatch({ type: 'addNode', payload: {} });
     } else {
       // add a node and edge
-      console.log('Adding hop to existing graph');
       queryBuilder.dispatch({ type: 'addHop', payload: {} });
     }
   }

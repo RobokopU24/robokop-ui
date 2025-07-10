@@ -28,6 +28,7 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  console.log(import.meta.env, process.env);
   return (
     <RootDocument>
       <Outlet />
