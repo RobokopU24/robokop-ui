@@ -1,14 +1,16 @@
 import React, { useMemo } from 'react';
 import {
-  useTable,
-  usePagination,
-  useSortBy,
-  useFilters,
-  Column,
-  TableInstance,
-  Row,
-  HeaderGroup,
-} from 'react-table';
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  ColumnDef,
+  SortingState,
+  ColumnFiltersState,
+  PaginationState,
+} from '@tanstack/react-table';
 
 import {
   Paper,
@@ -66,7 +68,7 @@ interface AnswerStoreType {
     };
     result?: any;
   };
-  tableHeaders: Column<any>[];
+  tableHeaders: any[];
   message: {
     results: any[];
     [key: string]: any;
@@ -83,112 +85,88 @@ interface ResultsTableProps {
  * @param {object} answerStore - answer store hook
  */
 export default function ResultsTable({ answerStore }: ResultsTableProps) {
-  const columns = useMemo<Column<any>[]>(
-    () => answerStore.tableHeaders,
-    [answerStore.tableHeaders]
-  );
+  const [sorting, setSorting] = React.useState<SortingState>([
+    {
+      id: 'score',
+      desc: true,
+    },
+  ]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 15,
+  });
+
   const data = useMemo<any[]>(() => answerStore.message.results, [answerStore.message]);
 
-  // This is a custom filter UI for selecting
-  // a unique option from a list
-  function SelectColumnFilterFn({
-    column: { filterValue, setFilter, preFilteredRows, id },
-  }: {
-    column: {
-      filterValue: any;
-      setFilter: (val: any) => void;
-      preFilteredRows: Row<any>[];
-      id: string;
-    };
-  }) {
-    // Calculate the options for filtering
-    // using the preFilteredRows
-    const options = useMemo(() => {
-      const o = new Set<string | null>();
-      preFilteredRows.forEach((row) => {
-        o.add(row.values[id] ? String(row.values[id]) : null);
-      });
-      return [...o.values()];
-    }, [id, preFilteredRows]);
+  // Convert react-table column definitions to TanStack React Table format
+  const columns = useMemo<ColumnDef<any, any>[]>(() => {
+    return answerStore.tableHeaders.map((header) => {
+      const columnDef: ColumnDef<any, any> = {
+        id: header.id || (typeof header.accessor === 'string' ? header.accessor : header.id),
+        header: header.Header,
+        cell: header.Cell ? (info) => header.Cell({ value: info.getValue() }) : undefined,
+        enableSorting: !header.disableSortBy,
+        enableColumnFilter: !header.disableFilters,
+        meta: {
+          color: header.color,
+          width: header.width,
+        } as any,
+      };
 
-    // Render a multi-select box
-    return (
-      <select
-        value={filterValue || ''}
-        onChange={(e) => {
-          setFilter(e.target.value || undefined);
-        }}
-        className="resultsFilterSelect"
-      >
-        <option value="">All</option>
-        {options.map((option, i) => (
-          <option key={i} value={option ?? ''}>
-            {option ?? '—'}
-          </option>
-        ))}
-      </select>
-    );
-  }
+      // Handle accessor - could be a function or string
+      if (typeof header.accessor === 'function') {
+        (columnDef as any).accessorFn = header.accessor;
+      } else if (typeof header.accessor === 'string') {
+        (columnDef as any).accessorKey = header.accessor;
+      }
 
-  // Let's set up our default Filter UI
-  const defaultColumn = useMemo(() => ({ Filter: SelectColumnFilterFn }), []) as any;
+      // Add custom filter function if specified
+      if (header.filter === 'equals') {
+        columnDef.filterFn = 'equals';
+      }
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    page,
-    prepareRow,
-    state,
-    canPreviousPage,
-    canNextPage,
-    setPageSize,
-    nextPage,
-    previousPage,
-    gotoPage,
-    pageCount,
-  } = useTable<any>(
-    {
-      columns,
-      data,
-      defaultColumn,
-      initialState: {
+      return columnDef;
+    });
+  }, [answerStore.tableHeaders]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+      pagination,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
+    initialState: {
+      pagination: {
         pageIndex: 0,
         pageSize: 15,
-        sortBy: [
-          {
-            id: 'score',
-            desc: true,
-          },
-        ],
-      } as any, // react-table's types are not always up to date with plugins
+      },
+      sorting: [
+        {
+          id: 'score',
+          desc: true,
+        },
+      ],
     },
-    useFilters,
-    useSortBy,
-    usePagination
-  ) as TableInstance<any> & {
-    page: Row<any>[];
-    canPreviousPage: boolean;
-    canNextPage: boolean;
-    setPageSize: (size: number) => void;
-    nextPage: () => void;
-    previousPage: () => void;
-    gotoPage: (page: number) => void;
-    pageCount: number;
-    state: any;
-  };
-
-  // react-table's state shape
-  const pageIndex = state.pageIndex ?? 0;
-  const pageSize = state.pageSize ?? 15;
+  });
 
   // MUI TablePagination expects onPageChange
   const handleChangePage = (_event: unknown, newPage: number) => {
-    gotoPage(newPage);
+    table.setPageIndex(newPage);
   };
 
   const handleChangeRowsPerPage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPageSize(Number(e.target.value));
+    const newPageSize = Number(e.target.value);
+    table.setPageSize(newPageSize);
   };
 
   return (
@@ -196,58 +174,86 @@ export default function ResultsTable({ answerStore }: ResultsTableProps) {
       <div id="resultsContainer">
         <Paper id="resultsTable" elevation={3}>
           <TableContainer>
-            <Table {...getTableProps()}>
+            <Table>
               <TableHead>
-                {headerGroups.map((headerGroup: HeaderGroup<any>) => (
-                  <TableRow {...headerGroup.getHeaderGroupProps()}>
-                    {headerGroup.headers.map((column: any) => (
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
                       <TableCell
+                        key={header.id}
                         className="resultsTableHeader"
-                        {...column.getHeaderProps(
-                          column.getSortByToggleProps({
-                            style: {
-                              backgroundColor: column.color,
-                              cursor: column.canSort ? 'pointer' : '',
-                              width: column.width,
-                            },
-                          })
-                        )}
+                        style={{
+                          backgroundColor: (header.column.columnDef.meta as any)?.color,
+                          cursor: header.column.getCanSort() ? 'pointer' : '',
+                          width: (header.column.columnDef.meta as any)?.width,
+                        }}
                       >
-                        {column.canSort ? (
-                          <TableSortLabel
-                            active={column.isSorted}
-                            direction={column.isSortedDesc ? 'desc' : 'asc'}
-                          >
-                            {column.render('Header')}
-                          </TableSortLabel>
-                        ) : (
-                          <>{column.render('Header')}</>
+                        {header.isPlaceholder ? null : (
+                          <>
+                            {header.column.getCanSort() ? (
+                              <TableSortLabel
+                                active={!!header.column.getIsSorted()}
+                                direction={header.column.getIsSorted() === 'desc' ? 'desc' : 'asc'}
+                                onClick={header.column.getToggleSortingHandler()}
+                              >
+                                {flexRender(header.column.columnDef.header, header.getContext())}
+                              </TableSortLabel>
+                            ) : (
+                              <>{flexRender(header.column.columnDef.header, header.getContext())}</>
+                            )}
+                            <div>
+                              {header.column.getCanFilter() && (
+                                <select
+                                  value={(header.column.getFilterValue() as string) || ''}
+                                  onChange={(e) => {
+                                    header.column.setFilterValue(e.target.value || undefined);
+                                  }}
+                                  className="resultsFilterSelect"
+                                >
+                                  <option value="">All</option>
+                                  {Array.from(
+                                    new Set(
+                                      table
+                                        .getPreFilteredRowModel()
+                                        .rows.map((row) => {
+                                          const value = row.getValue(header.column.id);
+                                          return value ? String(value) : null;
+                                        })
+                                        .filter(Boolean)
+                                    )
+                                  ).map((option, i) => (
+                                    <option key={i} value={option ?? ''}>
+                                      {option ?? '—'}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+                            </div>
+                          </>
                         )}
-                        <div>{column.canFilter ? column.render('Filter') : null}</div>
                       </TableCell>
                     ))}
                   </TableRow>
                 ))}
               </TableHead>
-              <TableBody style={{ position: 'relative' }} {...getTableBodyProps()}>
-                {page.length > 0 ? (
+              <TableBody style={{ position: 'relative' }}>
+                {table.getRowModel().rows.length > 0 ? (
                   <>
-                    {page.map((row: Row<any>) => {
-                      prepareRow(row);
-                      return (
-                        <TableRow
-                          {...row.getRowProps()}
-                          hover
-                          selected={answerStore.selectedRowId === row.id}
-                          onClick={() => answerStore.selectRow(row.original, row.id)}
-                          role="button"
-                        >
-                          {row.cells.map((cell: any) => (
-                            <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
-                          ))}
-                        </TableRow>
-                      );
-                    })}
+                    {table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        hover
+                        selected={answerStore.selectedRowId === row.id}
+                        onClick={() => answerStore.selectRow(row.original, row.id)}
+                        role="button"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
                   </>
                 ) : (
                   <EmptyTable numRows={15} numCells={columns.length} text="No Results" />
@@ -258,8 +264,8 @@ export default function ResultsTable({ answerStore }: ResultsTableProps) {
           <TablePagination
             rowsPerPageOptions={[5, 10, 15, 50, 100]}
             count={data.length}
-            rowsPerPage={pageSize}
-            page={pageIndex}
+            rowsPerPage={table.getState().pagination.pageSize}
+            page={table.getState().pagination.pageIndex}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
             component="div"
