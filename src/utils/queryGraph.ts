@@ -201,7 +201,7 @@ function getNodeAndEdgeListsForDisplay(query_graph: QueryGraph) {
       name =
         node.ids && node.ids.length
           ? node.ids.join(', ')
-          : stringUtils.displayCategory(node.categories);
+          : stringUtils.displayCategory(node.categories!);
     }
     if (!name) {
       name = 'Something';
