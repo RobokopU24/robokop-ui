@@ -6,9 +6,9 @@ type Category = string;
 
 type ConceptColorMap = { [category: string]: string };
 
-const undefinedColor = '#FFEEA3';
+export const undefinedColor = '#FFEEA3';
 
-const conceptColorMap: ConceptColorMap = {
+export const conceptColorMap: ConceptColorMap = {
   'biolink:AnatomicalEntity': '#e5d8bd', // Brown
   'biolink:BiologicalEntity': '#c1a25a', // Darker Brown
   'biolink:BiologicalProcess': '#b3cde3', // Blue
@@ -38,7 +38,7 @@ const conceptColorMap: ConceptColorMap = {
   'biolink:PopulationOfIndividualOrganisms': '#dde26a', // Bored Accent Green
   'biolink:Protein': '#ccebc5', // Green like gene
   'biolink:SequenceVariant': '#00c4e6', // Light teal
-  // 'biolink:SmallMolecule': '#7b68ee', // Medium Slate Blue
+  'biolink:SmallMolecule': '#7b68ee', // Medium Slate Blue
 };
 
 export default function getNodeCategoryColorMap(hierarchies: Hierarchies) {
@@ -71,4 +71,12 @@ export default function getNodeCategoryColorMap(hierarchies: Hierarchies) {
     // only if we have no predefined color in the hierarchy
     return [null, undefinedColor];
   };
+}
+
+export function getContrastColor(hex: string): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness > 128 ? '#000000' : '#FFFFFF';
 }

@@ -54,7 +54,7 @@ function edgeFromBiolink(type: string) {
  * @param {string|array} arg - string or array of wanted pretty display
  * will only grab the first item in array
  */
-function displayCategory(arg: any) {
+function displayCategory(arg: string | string[]) {
   if (!arg) {
     return '';
   }
@@ -79,7 +79,7 @@ function displayCategory(arg: any) {
  * @param {string} category - node category
  * @returns Set of {category}
  */
-function setify(category: any) {
+function setify(category: string) {
   let pluralCategory = displayCategory(category);
   if (pluralCategory.endsWith('ay')) {
     // Pathway
@@ -97,7 +97,8 @@ function setify(category: any) {
   return `Set of ${pluralCategory}`;
 }
 
-function displayPredicate(arg: any) {
+function displayPredicate(arg: string) {
+  console.log('displayPredicate', arg);
   if (!arg) {
     return '';
   }
@@ -107,10 +108,10 @@ function displayPredicate(arg: any) {
   }
   try {
     // remove 'biolink:'
-    const [, snake_type] = label.split(':');
+    const [, snake_type] = label?.split(':');
     // split snake case
-    const out = snake_type.split(/_/g);
-    return out.join(' ');
+    const out = snake_type?.split(/_/g);
+    return out?.join(' ');
   } catch (err) {
     console.error('Error in displayPredicate:', err);
     return '';
@@ -122,7 +123,7 @@ function displayPredicate(arg: any) {
  * @param {string|array} arg string or array of wanted pretty display
  * will only grab the first item in array
  */
-function prettyDisplay(arg: any) {
+function prettyDisplay(arg: string | string[]) {
   if (!arg) {
     return '';
   }

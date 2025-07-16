@@ -22,6 +22,7 @@ import { Route as AppLayoutExploreIndexRouteImport } from './routes/_appLayout/e
 import { Route as AppLayoutAnswerIndexRouteImport } from './routes/_appLayout/answer/index'
 import { Route as AppLayoutActivateUserIndexRouteImport } from './routes/_appLayout/activate-user/index'
 import { Route as AppLayoutExploreDrugChemicalIndexRouteImport } from './routes/_appLayout/explore/drug-chemical/index'
+import { Route as AppLayoutDetailsDetails_idIndexRouteImport } from './routes/_appLayout/details/$details_id/index'
 import { Route as AppLayoutAnswerAnswer_idIndexRouteImport } from './routes/_appLayout/answer/$answer_id/index'
 
 const AppLayoutRoute = AppLayoutRouteImport.update({
@@ -91,6 +92,12 @@ const AppLayoutExploreDrugChemicalIndexRoute =
     path: '/explore/drug-chemical/',
     getParentRoute: () => AppLayoutRoute,
   } as any)
+const AppLayoutDetailsDetails_idIndexRoute =
+  AppLayoutDetailsDetails_idIndexRouteImport.update({
+    id: '/details/$details_id/',
+    path: '/details/$details_id/',
+    getParentRoute: () => AppLayoutRoute,
+  } as any)
 const AppLayoutAnswerAnswer_idIndexRoute =
   AppLayoutAnswerAnswer_idIndexRouteImport.update({
     id: '/answer/$answer_id/',
@@ -111,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AppLayoutExploreIndexRoute
   '/profile': typeof AppLayoutProfileIndexRoute
   '/answer/$answer_id': typeof AppLayoutAnswerAnswer_idIndexRoute
+  '/details/$details_id': typeof AppLayoutDetailsDetails_idIndexRoute
   '/explore/drug-chemical': typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 export interface FileRoutesByTo {
@@ -126,6 +134,7 @@ export interface FileRoutesByTo {
   '/explore': typeof AppLayoutExploreIndexRoute
   '/profile': typeof AppLayoutProfileIndexRoute
   '/answer/$answer_id': typeof AppLayoutAnswerAnswer_idIndexRoute
+  '/details/$details_id': typeof AppLayoutDetailsDetails_idIndexRoute
   '/explore/drug-chemical': typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 export interface FileRoutesById {
@@ -143,6 +152,7 @@ export interface FileRoutesById {
   '/_appLayout/explore/': typeof AppLayoutExploreIndexRoute
   '/_appLayout/profile/': typeof AppLayoutProfileIndexRoute
   '/_appLayout/answer/$answer_id/': typeof AppLayoutAnswerAnswer_idIndexRoute
+  '/_appLayout/details/$details_id/': typeof AppLayoutDetailsDetails_idIndexRoute
   '/_appLayout/explore/drug-chemical/': typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 export interface FileRouteTypes {
@@ -160,6 +170,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/profile'
     | '/answer/$answer_id'
+    | '/details/$details_id'
     | '/explore/drug-chemical'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -175,6 +186,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/profile'
     | '/answer/$answer_id'
+    | '/details/$details_id'
     | '/explore/drug-chemical'
   id:
     | '__root__'
@@ -191,6 +203,7 @@ export interface FileRouteTypes {
     | '/_appLayout/explore/'
     | '/_appLayout/profile/'
     | '/_appLayout/answer/$answer_id/'
+    | '/_appLayout/details/$details_id/'
     | '/_appLayout/explore/drug-chemical/'
   fileRoutesById: FileRoutesById
 }
@@ -292,6 +305,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLayoutExploreDrugChemicalIndexRouteImport
       parentRoute: typeof AppLayoutRoute
     }
+    '/_appLayout/details/$details_id/': {
+      id: '/_appLayout/details/$details_id/'
+      path: '/details/$details_id'
+      fullPath: '/details/$details_id'
+      preLoaderRoute: typeof AppLayoutDetailsDetails_idIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
     '/_appLayout/answer/$answer_id/': {
       id: '/_appLayout/answer/$answer_id/'
       path: '/answer/$answer_id'
@@ -314,6 +334,7 @@ interface AppLayoutRouteChildren {
   AppLayoutExploreIndexRoute: typeof AppLayoutExploreIndexRoute
   AppLayoutProfileIndexRoute: typeof AppLayoutProfileIndexRoute
   AppLayoutAnswerAnswer_idIndexRoute: typeof AppLayoutAnswerAnswer_idIndexRoute
+  AppLayoutDetailsDetails_idIndexRoute: typeof AppLayoutDetailsDetails_idIndexRoute
   AppLayoutExploreDrugChemicalIndexRoute: typeof AppLayoutExploreDrugChemicalIndexRoute
 }
 
@@ -329,6 +350,7 @@ const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppLayoutExploreIndexRoute: AppLayoutExploreIndexRoute,
   AppLayoutProfileIndexRoute: AppLayoutProfileIndexRoute,
   AppLayoutAnswerAnswer_idIndexRoute: AppLayoutAnswerAnswer_idIndexRoute,
+  AppLayoutDetailsDetails_idIndexRoute: AppLayoutDetailsDetails_idIndexRoute,
   AppLayoutExploreDrugChemicalIndexRoute:
     AppLayoutExploreDrugChemicalIndexRoute,
 }

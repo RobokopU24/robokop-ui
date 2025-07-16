@@ -270,5 +270,4 @@ const YobokopLogo = (props: JSX.IntrinsicAttributes & React.SVGProps<SVGSVGEleme
   </svg>
 );
 
-console.log(import.meta.env.VITE_DEPLOYMENT, 'VITE_DEPLOYMENT');
 export default import.meta.env.VITE_DEPLOYMENT === 'YOBOKOP' ? YobokopLogo : RobokopLogo;
