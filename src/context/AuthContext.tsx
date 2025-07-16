@@ -3,6 +3,7 @@ import { useNavigate } from '@tanstack/react-router';
 import axios from 'axios';
 import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
+import posthog from 'posthog-js';
 
 interface AuthContextType {
   user: User | null;
@@ -47,7 +48,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const response = await axios.post(routes.authRoutes.validateToken, {
           token,
         });
-        setUser(response.data.user);
+        const userData: User = response.data.user;
+        setUser(userData);
+        posthog.identify(userData.id, { email: userData.email, name: userData.name });
       } catch (error) {
         console.log(error);
         // TODO: Handle token validation errors
@@ -63,14 +66,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (userData: User, token: string) => {
     setUser(userData);
+    posthog.identify(userData.id, { email: userData.email, name: userData.name });
     localStorage.setItem('authToken', token);
     displayAlert('success', 'You have successfully logged in.');
   };
 
   const logout = async () => {
     setUser(null);
+    posthog.reset();
     localStorage.removeItem('authToken');
-    await new Promise((resolve) => setTimeout(resolve, 0));
     displayAlert('success', 'You have successfully logged out.');
     navigate({ to: '/' });
   };

@@ -9,6 +9,7 @@ import { ThemeProvider as StylesThemeProvider } from '@mui/styles';
 import { AuthProvider } from '../context/AuthContext';
 import Header from './header/Header';
 import Footer from './footer/Footer';
+import { PostHogProvider } from 'posthog-js/react';
 
 interface RootComponentWrapperProps {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ interface RootComponentWrapperProps {
 function RootComponentWrapper({ children }: RootComponentWrapperProps) {
   const biolink = useBiolinkModel();
   const { displayAlert } = useAlert();
+
   async function fetchBiolink() {
     const response = await API.biolink.getModelSpecification();
     if (response.status === 'error') {
@@ -28,25 +30,37 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
     }
     biolink.setBiolinkModel(response);
   }
+
   useEffect(() => {
     fetchBiolink();
   }, []);
+
   return (
-    <AlertProvider>
-      <AuthProvider>
-        <BiolinkContext.Provider value={biolink}>
-          <MuiThemeProvider theme={theme}>
-            <StylesThemeProvider theme={theme}>
-              <div id="pageContainer">
-                <Header />
-                <div id="contentContainer">{children}</div>
-                <Footer />
-              </div>
-            </StylesThemeProvider>
-          </MuiThemeProvider>
-        </BiolinkContext.Provider>
-      </AuthProvider>
-    </AlertProvider>
+    <PostHogProvider
+      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
+      options={{
+        api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
+        defaults: '2025-05-24',
+        capture_exceptions: true,  // This enables capturing exceptions using Error Tracking
+        debug: import.meta.env.MODE === 'development',
+      }}
+    >
+      <AlertProvider>
+        <AuthProvider>
+          <BiolinkContext.Provider value={biolink}>
+            <MuiThemeProvider theme={theme}>
+              <StylesThemeProvider theme={theme}>
+                <div id="pageContainer">
+                  <Header />
+                  <div id="contentContainer">{children}</div>
+                  <Footer />
+                </div>
+              </StylesThemeProvider>
+            </MuiThemeProvider>
+          </BiolinkContext.Provider>
+        </AuthProvider>
+      </AlertProvider>
+    </PostHogProvider>
   );
 }
 

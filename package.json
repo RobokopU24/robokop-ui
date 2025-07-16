@@ -26,6 +26,7 @@
     "idb-keyval": "^6.2.2",
     "lodash": "^4.17.21",
     "papaparse": "^5.5.3",
+    "posthog-js": "^1.257.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.59.0",

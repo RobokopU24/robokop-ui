@@ -1,12 +1,12 @@
-import { defineConfig } from "vite";
-import tsConfigPaths from "vite-tsconfig-paths";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { defineConfig } from 'vite';
+import tsConfigPaths from 'vite-tsconfig-paths';
+import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 
 export default defineConfig({
   server: {
     proxy: {
-      "/api": {
-        target: "http://localhost:4000",
+      '/api': {
+        target: 'http://localhost:4000',
         changeOrigin: true,
         secure: false,
       },
@@ -14,7 +14,7 @@ export default defineConfig({
   },
   plugins: [
     tsConfigPaths({
-      projects: ["./tsconfig.json"],
+      projects: ['./tsconfig.json'],
     }),
     tanstackStart({
       defaultRouteOptions: {
@@ -22,4 +22,7 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    sourcemap: true,
+  },
 });
