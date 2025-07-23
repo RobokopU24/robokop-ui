@@ -13,7 +13,6 @@ export default function ShowNode({
     id: string;
   };
 }) {
-  console.log(node.id, 'ShowNode component');
   return (
     <Box>
       <Box

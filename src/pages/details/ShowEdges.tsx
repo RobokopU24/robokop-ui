@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
+import TablePagination from '@mui/material/TablePagination';
 
 import API from '../../API';
 
@@ -29,8 +30,10 @@ interface ShowEdgesProps {
   nodeId: string;
   selectedPredicate: string;
   setPredicateSelection: React.Dispatch<React.SetStateAction<string>>;
-  selectedCategory: string[];
-  setCategorySelection: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedCategory: string;
+  setCategorySelection: React.Dispatch<React.SetStateAction<string>>;
+  totalCount?: number;
+  resetTotalCount?: () => void;
 }
 
 export default function ShowEdges({
@@ -40,6 +43,8 @@ export default function ShowEdges({
   setPredicateSelection,
   selectedCategory,
   setCategorySelection,
+  totalCount = 0,
+  resetTotalCount = () => {},
 }: ShowEdgesProps) {
   const biolink = useBiolinkModel();
   const { displayAlert } = useAlert();
@@ -55,6 +60,7 @@ export default function ShowEdges({
   const [currentPageNumber, setCurrentPageNumber] = useState(0);
 
   const [edgeData, setEdgeData] = useState([]);
+  console.log('edgeData', edgeData);
 
   // Load biolink on page load
   async function fetchBiolink() {
@@ -70,15 +76,16 @@ export default function ShowEdges({
   }
 
   async function fetchEdges() {
+    console.log('Fetching edges for node:', selectedCategory);
     const edgeResponse = await API.details.getNodeEdges(
       nodeId,
       pageSize,
       currentPageNumber,
       selectedPredicate,
-      selectedCategory.length > 0 ? selectedCategory[0] : undefined
+      selectedCategory
     );
 
-    setHasNextPage(edgeResponse.length === pageSize);
+    // setHasNextPage(edgeResponse.length === pageSize);
 
     if (edgeResponse.status === 'error') {
       setHasEdgesDataError(true);
@@ -120,6 +127,7 @@ export default function ShowEdges({
   };
 
   const ShowEdgeInfo = ({ edge }: { edge: any }) => {
+    console.log('edge', edge);
     const isIncoming = edge.edge.direction === '<';
     const predicate =
       propertyFriendlyNames[edge.edge.predicate as keyof typeof propertyFriendlyNames] ??
@@ -198,8 +206,9 @@ export default function ShowEdges({
             <Link
               onClick={() => {
                 setPredicateSelection('all');
-                setCategorySelection([]);
+                setCategorySelection('');
                 setCurrentPageNumber(0);
+                resetTotalCount();
               }}
               sx={{ fontSize: 'small', cursor: 'pointer' }}
             >
@@ -240,8 +249,18 @@ export default function ShowEdges({
               </Table>
             </TableContainer>
           )}
-
-          <Box
+          <TablePagination
+            component="div"
+            count={totalCount}
+            page={currentPageNumber}
+            onPageChange={(_, newPage) => setCurrentPageNumber(newPage)}
+            rowsPerPage={pageSize}
+            onRowsPerPageChange={(event) => {
+              setPageSize(parseInt(event.target.value, 10));
+              setCurrentPageNumber(0);
+            }}
+          />
+          {/* <Box
             sx={{
               display: 'flex',
               justifyContent: 'flex-end',
@@ -288,7 +307,7 @@ export default function ShowEdges({
                 Next
               </Button>
             </Box>
-          </Box>
+          </Box> */}
         </Box>
       )}
     </Box>

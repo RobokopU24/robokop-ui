@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -17,17 +17,23 @@ import ShowPropertyValue from './ShowPropertyValue';
 
 import API from '../../API';
 
-import propertyFriendlyNames from './property-friendly-names.json';
 import ShowEdges from './ShowEdges';
 
 export default function ShowEdgesSummary({ nodeId, node }: { nodeId: string; node: any }) {
   const [selectedPredicate, setPredicateSelection] = useState('all');
-  const [selectedCategory, setCategorySelection] = useState<string[]>([]);
+  const [selectedCategory, setCategorySelection] = useState<string>('');
   const [hasEdgesSummaryError, setHasEdgesSummaryError] = useState(false);
   const [edgeSummary, setEdgeSummary] = useState([]);
+  const [edgeCount, setEdgeCount] = useState(0);
+  const defaultEdgeCountRef = useRef(0);
 
   async function fetchEdgesSummary() {
     const edgeSummaryResponse = await API.details.getNodeEdgeSummary(nodeId);
+    const edgeCountResponse = await API.details.getNodeEdgeCount(nodeId);
+
+    const totalCount = edgeCountResponse.pagination.count;
+    setEdgeCount(totalCount);
+    defaultEdgeCountRef.current = totalCount;
 
     if (edgeSummaryResponse.status === 'error') {
       setHasEdgesSummaryError(true);
@@ -37,6 +43,10 @@ export default function ShowEdgesSummary({ nodeId, node }: { nodeId: string; nod
       setEdgeSummary(edgeSummaryResponse.edge_types);
     }
   }
+
+  const resetTotalCount = () => {
+    setEdgeCount(defaultEdgeCountRef.current);
+  };
 
   useEffect(() => {
     fetchEdgesSummary();
@@ -48,6 +58,7 @@ export default function ShowEdgesSummary({ nodeId, node }: { nodeId: string; nod
         onClick={() => {
           setPredicateSelection(edgeSummaryItem.predicate);
           setCategorySelection(edgeSummaryItem.category);
+          setEdgeCount(edgeSummaryItem.count);
         }}
         sx={{
           cursor: 'pointer',
@@ -126,6 +137,8 @@ export default function ShowEdgesSummary({ nodeId, node }: { nodeId: string; nod
                 setPredicateSelection={setPredicateSelection}
                 selectedCategory={selectedCategory}
                 setCategorySelection={setCategorySelection}
+                totalCount={edgeCount}
+                resetTotalCount={resetTotalCount}
               />
             </div>
           </Grid>

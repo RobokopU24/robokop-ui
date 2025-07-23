@@ -28,6 +28,50 @@
         "text": "?"
       }
     ],
+    "sub_examples": [
+      {
+        "n0": {
+          "name": "Biotin",
+          "category": ["biolink:SmallMolecule", "biolink:MolecularEntity"],
+          "ids": ["CHEBI:15956"],
+          "taxa": []
+        },
+        "n4": {
+          "name": "Chemical Burns",
+          "category": ["biolink:Disease", "biolink:DiseaseOrPhenotypicFeature"],
+          "ids": ["UMLS:C0006435"],
+          "taxa": []
+        }
+      },
+      {
+        "n0": {
+          "name": "2,3,7,8-tetrochlorodibenzo-p-dioxin",
+          "category": ["biolink:MolecularEntity"],
+          "ids": ["CHEBI:17996"],
+          "taxa": []
+        },
+        "n4": {
+          "name": "Disease",
+          "category": ["biolink:DiseaseOrPhenotypicFeature"],
+          "ids": ["UMLS:C0006435"],
+          "taxa": []
+        }
+      },
+      {
+        "n0": {
+          "name": "Lead",
+          "category": ["biolink:SmallMolecule", "biolink:MolecularEntity"],
+          "ids": ["CHEBI:29101"],
+          "taxa": []
+        },
+        "n4": {
+          "name": "Disease",
+          "category": ["biolink:DiseaseOrPhenotypicFeature"],
+          "ids": ["UMLS:C0006435"],
+          "taxa": []
+        }
+      }
+    ],
     "structure": {
       "nodes": {
         "n1": {

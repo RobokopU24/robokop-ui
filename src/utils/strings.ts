@@ -98,7 +98,6 @@ function setify(category: string) {
 }
 
 function displayPredicate(arg: string) {
-  console.log('displayPredicate', arg);
   if (!arg) {
     return '';
   }

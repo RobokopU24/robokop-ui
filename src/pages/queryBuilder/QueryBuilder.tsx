@@ -20,6 +20,7 @@ import TemplatedQueriesModal from './templatedQueries/TemplatedQueriesModal';
 import JsonEditor from './jsonEditor/JsonEditor';
 import DownloadDialog from '../../components/DownloadDialog';
 import './queryBuilder.css';
+import TemplateQueriesModal from './templatedQueries/TemplateQueriesModal';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
@@ -114,7 +115,11 @@ export default function QueryBuilder() {
                 <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
                   Load Example
                 </Button>
-                <TemplatedQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} />
+                {/* <TemplatedQueriesModal
+                  open={exampleQueriesOpen}
+                  setOpen={setExampleQueriesOpen}
+                /> */}
+                <TemplateQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} />
                 <Button onClick={() => toggleJson(true)} variant="outlined">
                   Edit JSON
                 </Button>
