@@ -54,6 +54,7 @@ type QueryBuilderAction =
   | { type: 'editNode'; payload: { id: string; node?: QueryGraphNode } }
   | { type: 'deleteNode'; payload: { id: string } }
   | { type: 'saveGraph'; payload: { message: { query_graph: QueryGraph } } }
+  | { type: 'restoreGraph'; payload: QueryGraph }
   | { type: string; payload?: any };
 
 interface TextEditorRow {
@@ -205,6 +206,14 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
       newState.message.message.query_graph = queryGraphUtils.toCurrentTRAPI(
         action.payload.message.query_graph
       );
+      newState.rootNode = queryBuilderUtils.getRootNode(
+        newState.message.message.query_graph as any,
+        null
+      );
+      break;
+    }
+    case 'restoreGraph': {
+      newState.message.message.query_graph = action.payload;
       newState.rootNode = queryBuilderUtils.getRootNode(
         newState.message.message.query_graph as any,
         null

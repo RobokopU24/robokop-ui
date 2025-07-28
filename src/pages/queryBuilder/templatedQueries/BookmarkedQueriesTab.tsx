@@ -38,7 +38,7 @@ function BookmarkedQueriesTab() {
       .catch(() => {
         // TODO: Handle error appropriately
       });
-  }, [open]);
+  }, []);
 
   return (
     <div>
