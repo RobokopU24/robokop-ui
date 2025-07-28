@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import examples from './templates.json';
 import {
   Accordion,
@@ -46,16 +46,49 @@ interface ExampleTemplate {
   structure: ExampleStructure;
 }
 
-function ExampleQueriesTab() {
+interface ExampleQueriesTabProps {
+  onTemplateCompletionChange?: (isComplete: boolean) => void;
+}
+
+function ExampleQueriesTab({ onTemplateCompletionChange }: ExampleQueriesTabProps) {
   const queryBuilder = useQueryBuilderContext();
   const [expanded, setExpanded] = React.useState<string | false>(false);
   const [exampleSearch, setExampleSearch] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState<any>(null);
+
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false);
   };
+
   const editNode = (id: string, node: NodeOption | null) => {
     queryBuilder.dispatch({ type: 'editNode', payload: { id, node } });
+    checkTemplateCompletion();
   };
+
+  const checkTemplateCompletion = () => {
+    if (!selectedTemplate) {
+      onTemplateCompletionChange?.(false);
+      return;
+    }
+
+    const templateNodes = selectedTemplate.template.filter((part: any) => part.type === 'node');
+    const allNodesFilled = templateNodes.every((nodePart: any) => {
+      const nodeId = nodePart.id;
+      const nodeData = queryBuilder.query_graph.nodes[nodeId];
+      return (
+        nodeData &&
+        ((nodeData.ids && nodeData.ids.length > 0) ||
+          (nodeData.categories && nodeData.categories.length > 0))
+      );
+    });
+
+    onTemplateCompletionChange?.(allNodesFilled);
+  };
+
+  useEffect(() => {
+    checkTemplateCompletion();
+  }, [queryBuilder.query_graph]);
+
   function exampleToTrapiFormat(example: ExampleTemplate) {
     const templateNodes = example.template
       .filter((part): part is TemplateNodePart => part.type === 'node')
@@ -90,16 +123,26 @@ function ExampleQueriesTab() {
       },
     };
   }
+
   const handleSelectExample = (example: any) => {
     const payload = exampleToTrapiFormat(example as ExampleTemplate);
     queryBuilder.dispatch({ type: 'saveGraph', payload });
+    setSelectedTemplate(example);
+    if (example.type !== 'template') {
+      onTemplateCompletionChange?.(true);
+    } else {
+      onTemplateCompletionChange?.(false);
+    }
   };
+
   const handleSubExampleSelect = (subExample: SubExample) => {
     const nodes = Object.entries(subExample).map(([id, node]) => ({ id, node }));
     nodes.forEach(({ id, node }) => {
       queryBuilder.dispatch({ type: 'editNode', payload: { id, node } });
     });
+    onTemplateCompletionChange?.(true);
   };
+
   function createTemplateDisplay(template: TemplatePart[], isExpanded: boolean = false) {
     console.log(template, 'template');
     if (isExpanded) {

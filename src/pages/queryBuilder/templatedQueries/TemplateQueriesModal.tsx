@@ -1,4 +1,4 @@
-import { Box, Modal, Tab, Tabs, Button, Stack } from '@mui/material';
+import { Box, Modal, Tab, Tabs, Button, Stack, Tooltip } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import BookmarkedQueriesTab from './BookmarkedQueriesTab';
 import ExampleQueriesTab from './ExampleQueriesTab';
@@ -46,10 +46,12 @@ function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
   const [selectedTab, setSelectedTab] = useState<'examples' | 'bookmarked'>('examples');
   const queryBuilder = useQueryBuilderContext();
   const [savedState, setSavedState] = useState<any>(null);
+  const [isTemplateComplete, setIsTemplateComplete] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSavedState(cloneDeep(queryBuilder.query_graph));
+      setIsTemplateComplete(false);
     }
   }, [open]);
 
@@ -65,6 +67,10 @@ function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
 
   const handleSave = () => {
     setOpen(false);
+  };
+
+  const handleTemplateCompletionChange = (isComplete: boolean) => {
+    setIsTemplateComplete(isComplete);
   };
 
   return (
@@ -103,15 +109,25 @@ function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
         </Tabs>
         <Box sx={{ flex: 1, overflowY: 'auto' }}>
           {selectedTab === 'bookmarked' && <BookmarkedQueriesTab />}
-          {selectedTab === 'examples' && <ExampleQueriesTab />}
+          {selectedTab === 'examples' && (
+            <ExampleQueriesTab onTemplateCompletionChange={handleTemplateCompletionChange} />
+          )}
         </Box>
         <Stack direction="row" spacing={2} sx={{ mt: 2, justifyContent: 'flex-end' }}>
           <Button variant="outlined" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button variant="contained" onClick={handleSave}>
-            Save
-          </Button>
+          <Tooltip title={!isTemplateComplete ? 'Please select all the nodes' : ''}>
+            <span>
+              <Button
+                variant="contained"
+                onClick={handleSave}
+                disabled={selectedTab === 'examples' && !isTemplateComplete}
+              >
+                Save
+              </Button>
+            </span>
+          </Tooltip>
         </Stack>
       </Box>
     </Modal>
