@@ -52,6 +52,8 @@ function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
           left: '50%',
           width: '100%',
           maxWidth: 600,
+          height: '80%',
+          overflowY: 'auto',
           transform: 'translate(-50%, -50%)',
           bgcolor: 'background.paper',
           boxShadow: 24,

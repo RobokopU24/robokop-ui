@@ -100,20 +100,67 @@ function ExampleQueriesTab() {
       queryBuilder.dispatch({ type: 'editNode', payload: { id, node } });
     });
   };
-  function createTemplateDisplay(template: TemplatePart[]) {
-    return (
-      <span>
-        {template.map((part, i) => {
-          if (part.type === 'text') {
-            return <span key={i}>{part.text}</span>;
-          }
-          if (part.type === 'node') {
-            return <code key={i}>{part.name}</code>;
-          }
-          return null;
-        })}
-      </span>
-    );
+  function createTemplateDisplay(template: TemplatePart[], isExpanded: boolean = false) {
+    console.log(template, 'template');
+    if (isExpanded) {
+      return template.map((part, i) => {
+        if (part.type === 'text') {
+          return (
+            <span key={i} style={{ fontSize: '16px', lineHeight: 2 }}>
+              {part.text}
+            </span>
+          );
+        }
+        if (part.type === 'node') {
+          return (
+            <div
+              key={i}
+              style={{
+                maxWidth: '300px',
+                display: 'inline-flex',
+                transform: 'translateY(-16px)',
+                marginLeft: '-1ch',
+                marginRight: '-1ch',
+              }}
+            >
+              <NodeSelector
+                id={part.id}
+                title={part.name}
+                size="small"
+                properties={queryBuilder.query_graph.nodes[part.id]}
+                nameresCategoryFilter={part.filterType}
+                update={editNode}
+                isReference={false}
+                setReference={() => {}}
+                options={{
+                  includeCuries: true,
+                  includeCategories: false,
+                  includeExistingNodes: false,
+                }}
+              />
+            </div>
+          );
+        }
+        if (part.type === 'json_text') {
+          return <pre id="resultJSONContainer">{part.text}</pre>;
+        }
+        return null;
+      });
+    } else {
+      return (
+        <span>
+          {template.map((part, i) => {
+            if (part.type === 'text') {
+              return <span key={i}>{part.text}</span>;
+            }
+            if (part.type === 'node') {
+              return <code key={i}>{part.name}</code>;
+            }
+            return null;
+          })}
+        </span>
+      );
+    }
   }
 
   const SubExample = ({ subExample, mainNodesTemplate }: SubExampleProps) => {
@@ -169,7 +216,10 @@ function ExampleQueriesTab() {
               onClick={() => handleSelectExample(example)}
             >
               <Typography component="span" mb={0}>
-                {createTemplateDisplay(example.template as TemplatePart[])}
+                {createTemplateDisplay(
+                  example.template as TemplatePart[],
+                  expanded === `panel${index + 1}`
+                )}
               </Typography>
             </AccordionSummary>
             <AccordionDetails>
@@ -191,31 +241,6 @@ function ExampleQueriesTab() {
                       />
                     </ListItem>
                   ))}
-                <ListItem sx={{ py: 0 }}>
-                  {example.template.map((part: any, i) => {
-                    if (part.type === 'node' && queryBuilder.query_graph.nodes[part.id!]) {
-                      return (
-                        <div key={i}>
-                          <NodeSelector
-                            id={part.id!}
-                            title={part.name}
-                            size="small"
-                            properties={queryBuilder.query_graph.nodes[part.id!]}
-                            nameresCategoryFilter={part.filterType}
-                            update={editNode}
-                            isReference={false}
-                            setReference={() => {}}
-                            options={{
-                              includeCuries: true,
-                              includeCategories: false,
-                              includeExistingNodes: false,
-                            }}
-                          />
-                        </div>
-                      );
-                    }
-                  })}
-                </ListItem>
               </List>
             </AccordionDetails>
           </Accordion>

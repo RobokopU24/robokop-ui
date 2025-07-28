@@ -1,21 +1,28 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
-import axios, { CancelTokenSource } from "axios";
+import React, { useState, useEffect, useContext, useMemo } from 'react';
+import axios, { CancelTokenSource } from 'axios';
 
-import BiolinkContext from "../../../../context/biolink";
-import strings from "../../../../utils/strings";
-import useDebounce from "../../../../stores/useDebounce";
+import BiolinkContext from '../../../../context/biolink';
+import strings from '../../../../utils/strings';
+import useDebounce from '../../../../stores/useDebounce';
 
-import fetchCuries from "../../../../utils/fetchCuries";
-import highlighter from "../../../../utils/d3/highlighter";
+import fetchCuries from '../../../../utils/fetchCuries';
+import highlighter from '../../../../utils/d3/highlighter';
 
-import taxaCurieLookup from "./taxon-curie-lookup.json";
-import { useAlert } from "../../../../components/AlertProvider";
-import { Autocomplete, IconButton, Tooltip, TextField, CircularProgress, AutocompleteRenderOptionState } from "@mui/material";
-import Check from "@mui/icons-material/Check";
-import FileCopy from "@mui/icons-material/FileCopy";
-import { withStyles } from "@mui/styles";
-import { Theme } from "@mui/material/styles";
-import { NodeOption } from "../types";
+import taxaCurieLookup from './taxon-curie-lookup.json';
+import { useAlert } from '../../../../components/AlertProvider';
+import {
+  Autocomplete,
+  IconButton,
+  Tooltip,
+  TextField,
+  CircularProgress,
+  AutocompleteRenderOptionState,
+} from '@mui/material';
+import Check from '@mui/icons-material/Check';
+import FileCopy from '@mui/icons-material/FileCopy';
+import { withStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
+import { NodeOption } from '../types';
 
 interface NodeSelectorProps {
   id: string;
@@ -24,7 +31,7 @@ interface NodeSelectorProps {
   setReference: (key: string | null) => void;
   update: (id: string, value: NodeOption | null) => void;
   title?: string;
-  size?: "small" | "medium";
+  size?: 'small' | 'medium';
   nameresCategoryFilter?: string;
   options?: {
     includeCuries?: boolean;
@@ -37,7 +44,10 @@ interface NodeSelectorProps {
 }
 
 function isValidNode(properties: any): boolean {
-  return (properties.categories && properties.categories.length > 0) || (properties.ids && properties.ids.length > 0);
+  return (
+    (properties.categories && properties.categories.length > 0) ||
+    (properties.ids && properties.ids.length > 0)
+  );
 }
 
 /**
@@ -73,10 +83,27 @@ let cancel: CancelTokenSource | undefined;
  * @param {boolean} nodeOptions.includeExistingNodes - node selector can include existing nodes
  * @param {boolean} nodeOptions.includeCategories - node selector can include general categories
  */
-export default function NodeSelector({ id, properties, isReference, setReference, update, title, size, nameresCategoryFilter, options: nodeOptions = {} }: NodeSelectorProps) {
-  const { includeCuries = true, includeExistingNodes = true, existingNodes = [], includeCategories = true, clearable = true, includeSets = false } = nodeOptions;
+export default function NodeSelector({
+  id,
+  properties,
+  isReference,
+  setReference,
+  update,
+  title,
+  size,
+  nameresCategoryFilter,
+  options: nodeOptions = {},
+}: NodeSelectorProps) {
+  const {
+    includeCuries = true,
+    includeExistingNodes = true,
+    existingNodes = [],
+    includeCategories = true,
+    clearable = true,
+    includeSets = false,
+  } = nodeOptions;
   const [loading, toggleLoading] = useState<boolean>(false);
-  const [inputText, updateInputText] = useState<string>("");
+  const [inputText, updateInputText] = useState<string>('');
   const [open, toggleOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<NodeOption[]>([]);
   const { displayAlert } = useAlert();
@@ -89,7 +116,7 @@ export default function NodeSelector({ id, properties, isReference, setReference
    */
   async function getOptions() {
     toggleLoading(true);
-    const newOptions: NodeOption[] = isReference ? [{ name: "New Term", key: null }] : [];
+    const newOptions: NodeOption[] = isReference ? [{ name: 'New Term', key: null }] : [];
     // allow user to select an existing node
     if (includeExistingNodes) {
       newOptions.push(...existingNodes);
@@ -98,7 +125,10 @@ export default function NodeSelector({ id, properties, isReference, setReference
     if (includeCategories) {
       let includedCategories: NodeOption[] = concepts
         .filter((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()))
-        .map((category: string) => ({ categories: [category], name: strings.displayCategory(category) }));
+        .map((category: string) => ({
+          categories: [category],
+          name: strings.displayCategory(category),
+        }));
       if (includeSets) {
         includedCategories = concepts
           .filter((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -118,7 +148,7 @@ export default function NodeSelector({ id, properties, isReference, setReference
     }
     // fetch matching curies from external services
     if (includeCuries) {
-      if (searchTerm.includes(":")) {
+      if (searchTerm.includes(':')) {
         // user is typing a specific curie
         newOptions.push({ name: searchTerm, ids: [searchTerm] });
       }
@@ -126,7 +156,12 @@ export default function NodeSelector({ id, properties, isReference, setReference
         cancel.cancel();
       }
       cancel = CancelToken.source();
-      const curies: NodeOption[] = await fetchCuries(searchTerm, displayAlert as (arg0: string, arg1: string) => void, cancel.token, nameresCategoryFilter);
+      const curies: NodeOption[] = await fetchCuries(
+        searchTerm,
+        displayAlert as (arg0: string, arg1: string) => void,
+        cancel.token,
+        nameresCategoryFilter
+      );
       newOptions.push(...curies);
     }
     toggleLoading(false);
@@ -164,7 +199,7 @@ export default function NodeSelector({ id, properties, isReference, setReference
    * @returns {string} Label to display
    */
   function getOptionLabel(opt: NodeOption): string {
-    let label = "";
+    let label = '';
     if (opt.key) {
       label += `${opt.key}: `;
     }
@@ -172,15 +207,15 @@ export default function NodeSelector({ id, properties, isReference, setReference
       return label + opt.name;
     }
     if (opt.ids && Array.isArray(opt.ids) && opt.ids.length) {
-      return label + opt.ids.join(", ");
+      return label + opt.ids.join(', ');
     }
     if (opt.categories && Array.isArray(opt.categories)) {
       if (opt.categories.length) {
-        return label + opt.categories.join(", ");
+        return label + opt.categories.join(', ');
       }
       return `${label} Something`;
     }
-    return "";
+    return '';
   }
 
   /**
@@ -190,8 +225,8 @@ export default function NodeSelector({ id, properties, isReference, setReference
    */
   function handleUpdate(e: React.SyntheticEvent<Element, Event>, v: NodeOption | null) {
     // reset search term back when user selects something
-    updateInputText("");
-    if (v && "key" in v) {
+    updateInputText('');
+    if (v && 'key' in v) {
       // key will only be in v when switching to existing node
       setReference(v.key ?? null);
     } else {
@@ -214,7 +249,7 @@ export default function NodeSelector({ id, properties, isReference, setReference
     <Autocomplete
       options={options}
       loading={loading}
-      className={`textEditorSelector${isReference ? " referenceNode" : ""} highlight-${id}`}
+      className={`textEditorSelector${isReference ? ' referenceNode' : ''} highlight-${id}`}
       getOptionLabel={getOptionLabel}
       filterOptions={(x) => x}
       autoComplete
@@ -227,10 +262,18 @@ export default function NodeSelector({ id, properties, isReference, setReference
       isOptionEqualToValue={(option: NodeOption, value: NodeOption) => option.name === value.name}
       open={open}
       onChange={handleUpdate}
-      onOpen={() => toggleOpen(true)}
-      onClose={() => toggleOpen(false)}
+      onOpen={(e) => {
+        e.stopPropagation();
+        toggleOpen(true);
+      }}
+      onClose={(e) => {
+        e.stopPropagation();
+        toggleOpen(false);
+      }}
       onInputChange={(_e, v) => updateInputText(v)}
-      renderOption={(props, option: NodeOption, state: AutocompleteRenderOptionState) => <Option {...option} {...props} />}
+      renderOption={(props, option: NodeOption, state: AutocompleteRenderOptionState) => (
+        <Option {...option} {...props} />
+      )}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -238,6 +281,9 @@ export default function NodeSelector({ id, properties, isReference, setReference
           className="nodeDropdown"
           label={title || id}
           margin="dense"
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
           onFocus={() => {
             highlighter.highlightGraphNode(id);
             highlighter.highlightTextEditorNode(id);
@@ -260,7 +306,7 @@ export default function NodeSelector({ id, properties, isReference, setReference
           }}
         />
       )}
-      size={size || "medium"}
+      size={size || 'medium'}
     />
   );
 }
@@ -315,7 +361,11 @@ function CopyButton({ textToCopy }: CopyButtonProps) {
     setHasCopied(true);
   };
 
-  if (typeof navigator.clipboard === "undefined" || typeof navigator.clipboard.writeText !== "function" || typeof textToCopy !== "string") {
+  if (
+    typeof navigator.clipboard === 'undefined' ||
+    typeof navigator.clipboard.writeText !== 'function' ||
+    typeof textToCopy !== 'string'
+  ) {
     return null;
   }
 
