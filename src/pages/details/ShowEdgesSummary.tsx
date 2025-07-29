@@ -129,7 +129,7 @@ export default function ShowEdgesSummary({ nodeId, node }: { nodeId: string; nod
             )}
           </Grid>
           <Grid size={6}>
-            <div style={{ position: 'sticky', top: '20px' }}>
+            <div style={{ position: 'sticky', top: '20px', marginTop: '15px' }}>
               <ShowEdges
                 nodeId={nodeId}
                 node={node}
