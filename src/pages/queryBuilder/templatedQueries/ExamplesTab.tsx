@@ -7,16 +7,16 @@ interface ExampleQueriesTabProps {
   onTemplateCompletionChange?: (isComplete: boolean) => void;
 }
 
-function ExampleQueriesTab({ onTemplateCompletionChange }: ExampleQueriesTabProps) {
-  const templateQueries = (examples as unknown as TemplatesArray).filter(
-    (example) => example.type === 'template'
+function ExamplesTab({ onTemplateCompletionChange }: ExampleQueriesTabProps) {
+  const exampleQueries = (examples as unknown as TemplatesArray).filter(
+    (example) => example.type === 'example'
   );
   return (
     <ExampleQueryView
-      examples={templateQueries}
+      examples={exampleQueries}
       onTemplateCompletionChange={onTemplateCompletionChange}
     />
   );
 }
 
-export default ExampleQueriesTab;
+export default ExamplesTab;

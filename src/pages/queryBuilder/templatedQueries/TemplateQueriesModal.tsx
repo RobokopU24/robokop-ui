@@ -4,6 +4,7 @@ import BookmarkedQueriesTab from './BookmarkedQueriesTab';
 import ExampleQueriesTab from './ExampleQueriesTab';
 import { useQueryBuilderContext } from '../../../context/queryBuilder';
 import cloneDeep from 'lodash/cloneDeep';
+import ExamplesTab from './ExamplesTab';
 
 interface TemplatedQueriesModalProps {
   open: boolean;
@@ -43,7 +44,9 @@ export interface ExampleTemplateInterface {
 }
 
 function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
-  const [selectedTab, setSelectedTab] = useState<'examples' | 'bookmarked'>('examples');
+  const [selectedTab, setSelectedTab] = useState<'templates' | 'bookmarked' | 'queries'>(
+    'templates'
+  );
   const queryBuilder = useQueryBuilderContext();
   const [savedState, setSavedState] = useState<any>(null);
   const [isTemplateComplete, setIsTemplateComplete] = useState(false);
@@ -104,13 +107,17 @@ function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
           centered
           sx={{ mb: 2 }}
         >
-          <Tab label="Examples" value="examples" />
+          <Tab label="Example Templates" value="templates" />
+          <Tab label="Example Queries" value="queries" />
           <Tab label="Bookmarked" value="bookmarked" />
         </Tabs>
         <Box sx={{ flex: 1, overflowY: 'auto' }}>
           {selectedTab === 'bookmarked' && <BookmarkedQueriesTab />}
-          {selectedTab === 'examples' && (
+          {selectedTab === 'templates' && (
             <ExampleQueriesTab onTemplateCompletionChange={handleTemplateCompletionChange} />
+          )}
+          {selectedTab === 'queries' && (
+            <ExamplesTab onTemplateCompletionChange={handleTemplateCompletionChange} />
           )}
         </Box>
         <Stack direction="row" spacing={2} sx={{ mt: 2, justifyContent: 'flex-end' }}>
@@ -122,7 +129,9 @@ function TemplateQueriesModal({ open, setOpen }: TemplatedQueriesModalProps) {
               <Button
                 variant="contained"
                 onClick={handleSave}
-                disabled={selectedTab === 'examples' && !isTemplateComplete}
+                disabled={
+                  (selectedTab === 'templates' || selectedTab === 'queries') && !isTemplateComplete
+                }
               >
                 Save
               </Button>

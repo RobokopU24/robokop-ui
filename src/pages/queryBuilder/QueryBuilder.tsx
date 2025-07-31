@@ -16,7 +16,6 @@ import { set as idbSet } from 'idb-keyval';
 import RegisterPasskeyDialog from '../../components/RegisterPasskeyDialog';
 import TextEditor from './textEditor/TextEditor';
 import GraphEditor from './graphEditor/GraphEditor';
-import TemplatedQueriesModal from './templatedQueries/TemplatedQueriesModal';
 import JsonEditor from './jsonEditor/JsonEditor';
 import DownloadDialog from '../../components/DownloadDialog';
 import './queryBuilder.css';
@@ -113,7 +112,7 @@ export default function QueryBuilder() {
               <GraphEditor />
               <div id="queryBuilderButtons">
                 <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
-                  Load Example
+                  Load Query
                 </Button>
                 {/* <TemplatedQueriesModal
                   open={exampleQueriesOpen}
