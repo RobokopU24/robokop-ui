@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppLayoutRouteImport } from './routes/_appLayout'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppLayoutWelcomeRouteImport } from './routes/_appLayout/welcome'
 import { Route as AppLayoutTutorialRouteImport } from './routes/_appLayout/tutorial'
 import { Route as AppLayoutTermsofserviceRouteImport } from './routes/_appLayout/termsofservice'
 import { Route as AppLayoutQuestionBuilderRouteImport } from './routes/_appLayout/question-builder'
@@ -33,6 +34,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AppLayoutWelcomeRoute = AppLayoutWelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => AppLayoutRoute,
 } as any)
 const AppLayoutTutorialRoute = AppLayoutTutorialRouteImport.update({
   id: '/tutorial',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/question-builder': typeof AppLayoutQuestionBuilderRoute
   '/termsofservice': typeof AppLayoutTermsofserviceRoute
   '/tutorial': typeof AppLayoutTutorialRoute
+  '/welcome': typeof AppLayoutWelcomeRoute
   '/activate-user': typeof AppLayoutActivateUserIndexRoute
   '/answer': typeof AppLayoutAnswerIndexRoute
   '/explore': typeof AppLayoutExploreIndexRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/question-builder': typeof AppLayoutQuestionBuilderRoute
   '/termsofservice': typeof AppLayoutTermsofserviceRoute
   '/tutorial': typeof AppLayoutTutorialRoute
+  '/welcome': typeof AppLayoutWelcomeRoute
   '/activate-user': typeof AppLayoutActivateUserIndexRoute
   '/answer': typeof AppLayoutAnswerIndexRoute
   '/explore': typeof AppLayoutExploreIndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/_appLayout/question-builder': typeof AppLayoutQuestionBuilderRoute
   '/_appLayout/termsofservice': typeof AppLayoutTermsofserviceRoute
   '/_appLayout/tutorial': typeof AppLayoutTutorialRoute
+  '/_appLayout/welcome': typeof AppLayoutWelcomeRoute
   '/_appLayout/activate-user/': typeof AppLayoutActivateUserIndexRoute
   '/_appLayout/answer/': typeof AppLayoutAnswerIndexRoute
   '/_appLayout/explore/': typeof AppLayoutExploreIndexRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/question-builder'
     | '/termsofservice'
     | '/tutorial'
+    | '/welcome'
     | '/activate-user'
     | '/answer'
     | '/explore'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/question-builder'
     | '/termsofservice'
     | '/tutorial'
+    | '/welcome'
     | '/activate-user'
     | '/answer'
     | '/explore'
@@ -198,6 +209,7 @@ export interface FileRouteTypes {
     | '/_appLayout/question-builder'
     | '/_appLayout/termsofservice'
     | '/_appLayout/tutorial'
+    | '/_appLayout/welcome'
     | '/_appLayout/activate-user/'
     | '/_appLayout/answer/'
     | '/_appLayout/explore/'
@@ -227,6 +239,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_appLayout/welcome': {
+      id: '/_appLayout/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof AppLayoutWelcomeRouteImport
+      parentRoute: typeof AppLayoutRoute
     }
     '/_appLayout/tutorial': {
       id: '/_appLayout/tutorial'
@@ -329,6 +348,7 @@ interface AppLayoutRouteChildren {
   AppLayoutQuestionBuilderRoute: typeof AppLayoutQuestionBuilderRoute
   AppLayoutTermsofserviceRoute: typeof AppLayoutTermsofserviceRoute
   AppLayoutTutorialRoute: typeof AppLayoutTutorialRoute
+  AppLayoutWelcomeRoute: typeof AppLayoutWelcomeRoute
   AppLayoutActivateUserIndexRoute: typeof AppLayoutActivateUserIndexRoute
   AppLayoutAnswerIndexRoute: typeof AppLayoutAnswerIndexRoute
   AppLayoutExploreIndexRoute: typeof AppLayoutExploreIndexRoute
@@ -345,6 +365,7 @@ const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppLayoutQuestionBuilderRoute: AppLayoutQuestionBuilderRoute,
   AppLayoutTermsofserviceRoute: AppLayoutTermsofserviceRoute,
   AppLayoutTutorialRoute: AppLayoutTutorialRoute,
+  AppLayoutWelcomeRoute: AppLayoutWelcomeRoute,
   AppLayoutActivateUserIndexRoute: AppLayoutActivateUserIndexRoute,
   AppLayoutAnswerIndexRoute: AppLayoutAnswerIndexRoute,
   AppLayoutExploreIndexRoute: AppLayoutExploreIndexRoute,

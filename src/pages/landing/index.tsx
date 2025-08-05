@@ -33,12 +33,7 @@ export default function LandingPage() {
         <AcronymTagline />
         <OverviewSummary />
         <CardContainer>
-          <Card
-            title="Ask a Question"
-            href="/question-builder"
-            icon={<QueryIcon />}
-            gradient="blue"
-          >
+          <Card title="Ask a Question" href="/welcome" icon={<QueryIcon />} gradient="blue">
             <p>
               Use the ROBOKOP Question Builder to construct a new query, then use the visualization
               tool to explore relevant publications.

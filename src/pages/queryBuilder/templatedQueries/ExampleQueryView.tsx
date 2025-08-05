@@ -26,11 +26,11 @@ interface NodeInfo {
   taxa?: string[];
 }
 
-interface SubExample {
+export interface SubExample {
   [nodeKey: string]: NodeInfo;
 }
 
-interface SubExampleProps {
+export interface SubExampleProps {
   subExample: SubExample;
   mainNodesTemplate: TemplatePart[];
 }
@@ -146,7 +146,6 @@ function ExampleQueryView({ onTemplateCompletionChange, examples }: ExampleQueri
   };
 
   function createTemplateDisplay(template: TemplatePart[], isExpanded: boolean = false) {
-    console.log(template, 'template');
     if (isExpanded) {
       return template.map((part, i) => {
         if (part.type === 'text') {

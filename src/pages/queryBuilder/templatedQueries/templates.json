@@ -1,5 +1,6 @@
 [
   {
+    "id": 1,
     "type": "template",
     "tags": "AOP",
     "template": [
@@ -112,6 +113,7 @@
     }
   },
   {
+    "id": 2,
     "type": "template",
     "tags": "COP",
     "template": [
@@ -180,6 +182,7 @@
     }
   },
   {
+    "id": 3,
     "type": "template",
     "tags": "AOP",
     "template": [
@@ -230,6 +233,7 @@
     }
   },
   {
+    "id": 4,
     "type": "template",
     "tags": "COP",
     "template": [
@@ -280,6 +284,7 @@
     }
   },
   {
+    "id": 5,
     "type": "example",
     "template": [
       {
@@ -309,6 +314,7 @@
     }
   },
   {
+    "id": 6,
     "type": "example",
     "template": [
       {
@@ -347,6 +353,7 @@
     }
   },
   {
+    "id": 7,
     "type": "example",
     "template": [
       {
@@ -390,6 +397,7 @@
     }
   },
   {
+    "id": 8,
     "type": "example",
     "template": [
       {

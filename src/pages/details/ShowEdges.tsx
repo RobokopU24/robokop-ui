@@ -4,7 +4,7 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
-import TablePagination from '@mui/material/TablePagination';
+import Button from '@mui/material/Button';
 
 import API from '../../API';
 
@@ -88,6 +88,40 @@ export default function ShowEdges({
     }
   }
 
+  const handleNextPage = async () => {
+    const nextPageNumber = currentPageNumber + 1;
+
+    const nextPageResponse = await API.details.getNodeEdges(
+      nodeId,
+      pageSize,
+      nextPageNumber,
+      selectedPredicate,
+      selectedCategory
+    );
+
+    if (nextPageResponse.status === 'error') {
+      displayAlert('error', 'Failed to fetch next page data');
+      return;
+    }
+
+    if (nextPageResponse.edges.length === 0) {
+      displayAlert('info', 'Next page is empty');
+      return;
+    }
+
+    setCurrentPageNumber(nextPageNumber);
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPageNumber > 0) {
+      setCurrentPageNumber(currentPageNumber - 1);
+    }
+  };
+
+  useEffect(() => {
+    setCurrentPageNumber(0);
+  }, [selectedPredicate, selectedCategory, pageSize]);
+
   useEffect(() => {
     fetchBiolink();
     fetchEdges().finally(() => {
@@ -99,17 +133,7 @@ export default function ShowEdges({
     fetchEdges();
   }, [currentPageNumber, pageSize, selectedPredicate, selectedCategory]);
 
-  const goOnPrevPage = () => {
-    if (currentPageNumber < 1) return;
-    setCurrentPageNumber((prev) => prev - 1);
-  };
-
-  const goOnNextPage = () => {
-    setCurrentPageNumber((prev) => prev + 1);
-  };
-
   const ShowEdgeInfo = ({ edge }: { edge: any }) => {
-    console.log('edge', edge);
     const isIncoming = edge.edge.direction === '<';
     const predicate =
       propertyFriendlyNames[edge.edge.predicate as keyof typeof propertyFriendlyNames] ??
@@ -247,17 +271,42 @@ export default function ShowEdges({
               </Table>
             </TableContainer>
           )}
-          <TablePagination
-            component="div"
-            count={totalCount}
-            page={currentPageNumber}
-            onPageChange={(_, newPage) => setCurrentPageNumber(newPage)}
-            rowsPerPage={pageSize}
-            onRowsPerPageChange={(event) => {
-              setPageSize(parseInt(event.target.value, 10));
-              setCurrentPageNumber(0);
-            }}
-          />
+
+          {edgeData.length > 0 && (
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2">Page size: {pageSize}</Typography>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(parseInt(e.target.value, 10));
+                    setCurrentPageNumber(0);
+                  }}
+                  style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={20}>20</option>
+                  <option value={50}>50</option>
+                </select>
+              </Box>
+
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant="outlined"
+                  onClick={handlePreviousPage}
+                  disabled={currentPageNumber === 0}
+                >
+                  Previous
+                </Button>
+                <Button variant="outlined" onClick={handleNextPage}>
+                  Next
+                </Button>
+              </Box>
+            </Box>
+          )}
         </Box>
       )}
     </Box>

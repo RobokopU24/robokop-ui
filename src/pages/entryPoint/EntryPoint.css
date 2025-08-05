@@ -1,0 +1,61 @@
+.example-box {
+    margin-top: 16px;
+    padding: 8px;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.example-box-unselected {
+    background-color: white;
+}
+
+.example-box-selected {
+    background-color: #F0F0F0;
+}
+
+.example-box:hover {
+    background-color: #F0F0F0;
+}
+
+.button-default {
+    background: linear-gradient(89deg, #627DFF 0%, #7A5AFB 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 16px;
+}
+
+.button-cancel {
+    border: 1px solid #D9D9D9;
+    border-radius: 8px;
+    background: white;
+    color: #5E5E5E;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 16px;
+}
+
+.button-default:disabled {
+    background: #D9D9D9;
+    cursor: not-allowed;
+}
+
+.css-lo78ge-MuiPaper-root-MuiAccordion-root::before {
+    display: none !important;
+}
+
+.css-2jqy5w-MuiPaper-root-MuiAccordion-root::before {
+    display: none !important;
+}
+
+.css-yfrx4k-MuiAccordionSummary-content {
+    margin: 0 !important;
+}
+
+.css-xanwcj-MuiFormControl-root-MuiTextField-root {
+    width: 100% !important;
+    min-width: 180px !important;
+}

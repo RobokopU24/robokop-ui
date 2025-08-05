@@ -42,6 +42,7 @@ export interface QueryStructure {
 
 export interface TemplateQuery {
   type: 'template';
+  id: number;
   tags: string;
   template: TemplatePart[];
   sub_examples?: SubExample[];
@@ -50,6 +51,7 @@ export interface TemplateQuery {
 
 export interface ExampleQuery {
   type: 'example';
+  id: number;
   template: TemplatePart[];
   structure: QueryStructure;
 }
