@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Table, TableBody, TableCell, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { Link } from '@tanstack/react-router';
 
 const StyledTableBody = styled(TableBody)(() => ({
   '& .MuiTableRow-root:last-of-type .MuiTableCell-root': {
@@ -52,7 +53,11 @@ const NodeAttributesTable: React.FC<NodeAttributesTableProps> = ({ nodeData }) =
           {Boolean(id) && (
             <TableRow style={{ verticalAlign: 'top' }}>
               <TableCell>ID</TableCell>
-              <ValueCell value={id} />
+              <TableCell>
+                <Link to="/details/$details_id" params={{ details_id: String(id) }}>
+                  {id}
+                </Link>
+              </TableCell>
             </TableRow>
           )}
 
