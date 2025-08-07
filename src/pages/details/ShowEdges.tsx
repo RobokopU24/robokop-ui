@@ -144,7 +144,15 @@ export default function ShowEdges({
         <TableCell>
           {isIncoming ? (
             <Link href={'./' + edge.adj_node.id} underline="hover">
-              {edge.adj_node.name} ({edge.adj_node.id})
+              {edge.adj_node.name}
+              <Chip
+                label={edge.adj_node.id}
+                size="small"
+                sx={{
+                  backgroundColor: conceptColorMap[edge.adj_node.category] || undefinedColor,
+                  ml: 1,
+                }}
+              />
             </Link>
           ) : (
             node.name
@@ -156,7 +164,15 @@ export default function ShowEdges({
             node.name
           ) : (
             <Link href={'./' + edge.adj_node.id} underline="hover">
-              {edge.adj_node.name} ({edge.adj_node.id})
+              {edge.adj_node.name}
+              <Chip
+                label={edge.adj_node.id}
+                size="small"
+                sx={{
+                  backgroundColor: conceptColorMap[edge.adj_node.category] || undefinedColor,
+                  ml: 1,
+                }}
+              />
             </Link>
           )}
         </TableCell>

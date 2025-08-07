@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Cards from './Cards';
 import ExampleModal from './ExampleModal';
 import { useQueryBuilderContext } from '../../context/queryBuilder';
-import { cloneDeep } from 'lodash';
+import cloneDeep from 'lodash/cloneDeep';
 import { useNavigate } from '@tanstack/react-router';
 import TemplateModal from './TemplateModal';
 
