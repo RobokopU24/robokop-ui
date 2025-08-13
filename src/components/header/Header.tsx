@@ -47,6 +47,7 @@ function Header() {
         </Link>
         <div className="grow" />
         <Link to="/question-builder">Question Builder</Link>
+        <Link to="/details">Details</Link>
         <Link to="/explore">Explore</Link>
         <Link to="/about">About</Link>
         <Link to="/guide">Guide</Link>

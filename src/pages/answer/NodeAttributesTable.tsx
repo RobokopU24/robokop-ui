@@ -53,10 +53,15 @@ const NodeAttributesTable: React.FC<NodeAttributesTableProps> = ({ nodeData }) =
           {Boolean(id) && (
             <TableRow style={{ verticalAlign: 'top' }}>
               <TableCell>ID</TableCell>
+              {/* <ValueCell value={id} /> */}
               <TableCell>
-                <Link to="/details/$details_id" params={{ details_id: String(id) }}>
-                  {id}
-                </Link>
+                {id && typeof id === 'string' ? (
+                  <Link to="/details/$details_id" params={{ details_id: id }}>
+                    {id}
+                  </Link>
+                ) : (
+                  <ValueCell value={id} />
+                )}
               </TableCell>
             </TableRow>
           )}

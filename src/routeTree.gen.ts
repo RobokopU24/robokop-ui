@@ -20,6 +20,7 @@ import { Route as AppLayoutGuideRouteImport } from './routes/_appLayout/guide'
 import { Route as AppLayoutAboutRouteImport } from './routes/_appLayout/about'
 import { Route as AppLayoutProfileIndexRouteImport } from './routes/_appLayout/profile/index'
 import { Route as AppLayoutExploreIndexRouteImport } from './routes/_appLayout/explore/index'
+import { Route as AppLayoutDetailsIndexRouteImport } from './routes/_appLayout/details/index'
 import { Route as AppLayoutAnswerIndexRouteImport } from './routes/_appLayout/answer/index'
 import { Route as AppLayoutActivateUserIndexRouteImport } from './routes/_appLayout/activate-user/index'
 import { Route as AppLayoutExploreDrugChemicalIndexRouteImport } from './routes/_appLayout/explore/drug-chemical/index'
@@ -81,6 +82,11 @@ const AppLayoutExploreIndexRoute = AppLayoutExploreIndexRouteImport.update({
   path: '/explore/',
   getParentRoute: () => AppLayoutRoute,
 } as any)
+const AppLayoutDetailsIndexRoute = AppLayoutDetailsIndexRouteImport.update({
+  id: '/details/',
+  path: '/details/',
+  getParentRoute: () => AppLayoutRoute,
+} as any)
 const AppLayoutAnswerIndexRoute = AppLayoutAnswerIndexRouteImport.update({
   id: '/answer/',
   path: '/answer/',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof AppLayoutWelcomeRoute
   '/activate-user': typeof AppLayoutActivateUserIndexRoute
   '/answer': typeof AppLayoutAnswerIndexRoute
+  '/details': typeof AppLayoutDetailsIndexRoute
   '/explore': typeof AppLayoutExploreIndexRoute
   '/profile': typeof AppLayoutProfileIndexRoute
   '/answer/$answer_id': typeof AppLayoutAnswerAnswer_idIndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof AppLayoutWelcomeRoute
   '/activate-user': typeof AppLayoutActivateUserIndexRoute
   '/answer': typeof AppLayoutAnswerIndexRoute
+  '/details': typeof AppLayoutDetailsIndexRoute
   '/explore': typeof AppLayoutExploreIndexRoute
   '/profile': typeof AppLayoutProfileIndexRoute
   '/answer/$answer_id': typeof AppLayoutAnswerAnswer_idIndexRoute
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/_appLayout/welcome': typeof AppLayoutWelcomeRoute
   '/_appLayout/activate-user/': typeof AppLayoutActivateUserIndexRoute
   '/_appLayout/answer/': typeof AppLayoutAnswerIndexRoute
+  '/_appLayout/details/': typeof AppLayoutDetailsIndexRoute
   '/_appLayout/explore/': typeof AppLayoutExploreIndexRoute
   '/_appLayout/profile/': typeof AppLayoutProfileIndexRoute
   '/_appLayout/answer/$answer_id/': typeof AppLayoutAnswerAnswer_idIndexRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/activate-user'
     | '/answer'
+    | '/details'
     | '/explore'
     | '/profile'
     | '/answer/$answer_id'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/activate-user'
     | '/answer'
+    | '/details'
     | '/explore'
     | '/profile'
     | '/answer/$answer_id'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/_appLayout/welcome'
     | '/_appLayout/activate-user/'
     | '/_appLayout/answer/'
+    | '/_appLayout/details/'
     | '/_appLayout/explore/'
     | '/_appLayout/profile/'
     | '/_appLayout/answer/$answer_id/'
@@ -303,6 +315,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppLayoutExploreIndexRouteImport
       parentRoute: typeof AppLayoutRoute
     }
+    '/_appLayout/details/': {
+      id: '/_appLayout/details/'
+      path: '/details'
+      fullPath: '/details'
+      preLoaderRoute: typeof AppLayoutDetailsIndexRouteImport
+      parentRoute: typeof AppLayoutRoute
+    }
     '/_appLayout/answer/': {
       id: '/_appLayout/answer/'
       path: '/answer'
@@ -351,6 +370,7 @@ interface AppLayoutRouteChildren {
   AppLayoutWelcomeRoute: typeof AppLayoutWelcomeRoute
   AppLayoutActivateUserIndexRoute: typeof AppLayoutActivateUserIndexRoute
   AppLayoutAnswerIndexRoute: typeof AppLayoutAnswerIndexRoute
+  AppLayoutDetailsIndexRoute: typeof AppLayoutDetailsIndexRoute
   AppLayoutExploreIndexRoute: typeof AppLayoutExploreIndexRoute
   AppLayoutProfileIndexRoute: typeof AppLayoutProfileIndexRoute
   AppLayoutAnswerAnswer_idIndexRoute: typeof AppLayoutAnswerAnswer_idIndexRoute
@@ -368,6 +388,7 @@ const AppLayoutRouteChildren: AppLayoutRouteChildren = {
   AppLayoutWelcomeRoute: AppLayoutWelcomeRoute,
   AppLayoutActivateUserIndexRoute: AppLayoutActivateUserIndexRoute,
   AppLayoutAnswerIndexRoute: AppLayoutAnswerIndexRoute,
+  AppLayoutDetailsIndexRoute: AppLayoutDetailsIndexRoute,
   AppLayoutExploreIndexRoute: AppLayoutExploreIndexRoute,
   AppLayoutProfileIndexRoute: AppLayoutProfileIndexRoute,
   AppLayoutAnswerAnswer_idIndexRoute: AppLayoutAnswerAnswer_idIndexRoute,
