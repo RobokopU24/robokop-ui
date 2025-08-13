@@ -147,7 +147,6 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
       return mainNodesTemplate.filter((node) => node.type === 'node').map((node) => node.name);
     };
     const nodeHeaders = getNodes();
-    console.log(nodeHeaders, 'nodeHeaders');
     return (
       <Box
         sx={{

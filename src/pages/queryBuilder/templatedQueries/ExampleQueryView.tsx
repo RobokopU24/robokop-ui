@@ -213,7 +213,6 @@ function ExampleQueryView({ onTemplateCompletionChange, examples }: ExampleQueri
       return mainNodesTemplate.filter((node) => node.type === 'node').map((node) => node.name);
     };
     const nodeHeaders = getNodes();
-    console.log(nodeHeaders, 'nodeHeaders');
     return (
       <Box
         sx={{
