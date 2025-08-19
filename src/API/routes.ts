@@ -26,6 +26,7 @@ const passkeyRoutes = {
 const queryEndpoint = `${baseAuthURL}/queries`;
 const queryRoutes = {
   base: queryEndpoint,
+  share: `${queryEndpoint}/share`,
 };
 
 export default { authRoutes, passkeyRoutes, queryRoutes };

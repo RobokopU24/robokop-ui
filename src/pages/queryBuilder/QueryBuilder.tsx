@@ -1,7 +1,7 @@
-import { Button } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { blue } from '@mui/material/colors';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import usePageStatus from '../../stores/usePageStatus';
 import { useAuth } from '../../context/AuthContext';
 import { usePasskey } from '../../hooks/usePasskey';
@@ -20,6 +20,13 @@ import JsonEditor from './jsonEditor/JsonEditor';
 import DownloadDialog from '../../components/DownloadDialog';
 import './queryBuilder.css';
 import TemplateQueriesModal from './templatedQueries/TemplateQueriesModal';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Paper from '@mui/material/Paper';
+import Popper from '@mui/material/Popper';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
@@ -38,6 +45,32 @@ const SubmitButton = withStyles((theme) => ({
  * Displays the text, graph, and json editors
  */
 export default function QueryBuilder() {
+  const options = ['Load Template', 'Load Example', 'Load Bookmark'];
+  const [openMenu, setOpenMenu] = useState(false);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState(1);
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    index: number
+  ) => {
+    setSelectedIndex(index);
+    setOpenMenu(false);
+  };
+  const handleToggle = () => {
+    setOpenMenu((prevOpen) => !prevOpen);
+  };
+  const handleClose = (event: Event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+      return;
+    }
+
+    setOpenMenu(false);
+  };
+  const handleClick = () => {
+    console.info(`You clicked ${options[selectedIndex]}`);
+  };
+
   const queryBuilder = useQueryBuilderContext();
   const pageStatus = usePageStatus(false);
   const { user } = useAuth();
@@ -111,13 +144,59 @@ export default function QueryBuilder() {
             <div>
               <GraphEditor />
               <div id="queryBuilderButtons">
-                <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
+                {/* <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
                   Load Query
-                </Button>
-                {/* <TemplatedQueriesModal
-                  open={exampleQueriesOpen}
-                  setOpen={setExampleQueriesOpen}
-                /> */}
+                </Button> */}
+                <ButtonGroup
+                  variant="contained"
+                  ref={anchorRef}
+                  aria-label="Button group with a nested menu"
+                >
+                  <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+                  <Button
+                    size="small"
+                    aria-controls={openMenu ? 'split-button-menu' : undefined}
+                    aria-expanded={openMenu ? 'true' : undefined}
+                    aria-label="select merge strategy"
+                    aria-haspopup="menu"
+                    onClick={handleToggle}
+                  >
+                    <ArrowDropDownIcon />
+                  </Button>
+                </ButtonGroup>
+                <Popper
+                  sx={{ zIndex: 1 }}
+                  open={openMenu}
+                  anchorEl={anchorRef.current}
+                  role={undefined}
+                  transition
+                  disablePortal
+                >
+                  {({ TransitionProps, placement }) => (
+                    <Grow
+                      {...TransitionProps}
+                      style={{
+                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
+                      }}
+                    >
+                      <Paper>
+                        <ClickAwayListener onClickAway={handleClose}>
+                          <MenuList id="split-button-menu" autoFocusItem>
+                            {options.map((option, index) => (
+                              <MenuItem
+                                key={option}
+                                selected={index === selectedIndex}
+                                onClick={(event) => handleMenuItemClick(event, index)}
+                              >
+                                {option}
+                              </MenuItem>
+                            ))}
+                          </MenuList>
+                        </ClickAwayListener>
+                      </Paper>
+                    </Grow>
+                  )}
+                </Popper>
                 <TemplateQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} />
                 <Button onClick={() => toggleJson(true)} variant="outlined">
                   Edit JSON

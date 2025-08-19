@@ -8,10 +8,14 @@ import { NodeOption } from '../textEditor/types';
 import QueryGraph from './QueryGraph';
 import NodeSelector from '../textEditor/textEditorRow/NodeSelector';
 import PredicateSelector from '../textEditor/textEditorRow/PredicateSelector';
+import queryGraphUtils from '../../../utils/queryGraph';
 
 import './graphEditor.css';
 import SaveQuery from '../saveQuery/SaveQuery';
 import { useAuth } from '../../../context/AuthContext';
+import API from '../../../API/routes';
+import axios from 'axios';
+import ShareQuery from '../shareQuery/ShareQuery';
 
 const width = 600;
 const height = 400;
@@ -90,6 +94,7 @@ export default function GraphEditor() {
   const { query_graph } = queryBuilder;
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [showSaveQuery, toggleSaveQuery] = useState(false);
+  const [showShareQuery, toggleShareQuery] = useState(false);
 
   const [clickState, clickDispatch] = useReducer(clickReducer, {
     creatingConnection: false,
@@ -116,12 +121,6 @@ export default function GraphEditor() {
 
   function editNode(id: string, node: NodeOption | null) {
     queryBuilder.dispatch({ type: 'editNode', payload: { id, node } });
-  }
-
-  function clickNode() {
-    const nodeIds = Object.keys(query_graph);
-    const lastNodeId = nodeIds[nodeIds.length - 1];
-    nodeUtils.clickNode(lastNodeId);
   }
 
   /**
@@ -173,6 +172,7 @@ export default function GraphEditor() {
               </Button>
             </span>
           </Tooltip>
+          <Button onClick={() => toggleShareQuery(true)}>Share Graph</Button>
         </div>
         <Popover
           open={Boolean(clickState.popoverAnchor)}
@@ -213,6 +213,7 @@ export default function GraphEditor() {
           download_type="query"
         />
         <SaveQuery show={showSaveQuery} close={() => toggleSaveQuery(false)} />
+        <ShareQuery show={showShareQuery} close={() => toggleShareQuery(false)} />
       </div>
     </div>
   );

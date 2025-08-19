@@ -6,6 +6,7 @@ import API from '../../../API/routes';
 import { useQueryBuilderContext } from '../../../context/queryBuilder';
 
 import DeleteIcon from '@mui/icons-material/Delete';
+import ShareIcon from '@mui/icons-material/Share';
 import { useAlert } from '../../../components/AlertProvider';
 
 interface BookmarkedQuery {
@@ -63,24 +64,39 @@ function BookmarkedQueriesTab() {
                   handleSelectBookmarkedQuery(query);
                 }}
                 secondaryAction={
-                  <IconButton
-                    edge="end"
-                    aria-label="delete"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      authApi
-                        .delete(API.queryRoutes.base + '/' + query.id)
-                        .then(() => {
-                          setQueries((prev) => prev.filter((q) => q.id !== query.id));
-                          displayAlert('success', 'Query deleted successfully');
-                        })
-                        .catch(() => {
-                          console.error('Error deleting query:', query.id);
-                        });
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <IconButton
+                      edge="end"
+                      aria-label="share"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(
+                          `${window.location.origin}/share/${query.id}?type=bookmark`
+                        );
+                        displayAlert('success', 'Link copied to clipboard');
+                      }}
+                    >
+                      <ShareIcon />
+                    </IconButton>
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        authApi
+                          .delete(API.queryRoutes.base + '/' + query.id)
+                          .then(() => {
+                            setQueries((prev) => prev.filter((q) => q.id !== query.id));
+                            displayAlert('success', 'Query deleted successfully');
+                          })
+                          .catch(() => {
+                            console.error('Error deleting query:', query.id);
+                          });
+                      }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </div>
                 }
               >
                 <ListItemText

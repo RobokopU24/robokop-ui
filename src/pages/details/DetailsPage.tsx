@@ -64,7 +64,7 @@ function DetailsPage() {
         textAlign: 'center',
       }}
     >
-      <h2 style={{ fontWeight: 500 }}>Details Search</h2>
+      <h2 style={{ fontWeight: 500 }}>Node Search</h2>
       <p
         style={{
           color: '#5E5E5E',
