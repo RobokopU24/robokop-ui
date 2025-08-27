@@ -1,7 +1,7 @@
 import { Modal } from '@mui/material';
 import React, { useEffect } from 'react';
 import { QueryTemplate, TemplatesArray } from '../queryBuilder/templatedQueries/types';
-import examples from '../queryBuilder/templatedQueries/templates.json';
+// import examples from '../queryBuilder/templatedQueries/templates.json';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
   Accordion,
@@ -24,6 +24,7 @@ import { useNavigate } from '@tanstack/react-router';
 import NodeSelector from '../queryBuilder/textEditor/textEditorRow/NodeSelector';
 import { NodeOption } from '../queryBuilder/textEditor/types';
 import { SubExample, SubExampleProps } from '../queryBuilder/templatedQueries/ExampleQueryView';
+import { parse } from 'yaml';
 
 interface ExampleModalProps {
   isOpen: boolean;
@@ -43,13 +44,23 @@ interface ExampleTemplate {
 }
 
 function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
+  const [examples, setExamples] = React.useState<TemplatesArray>([]);
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/templates.yaml');
+        const text = await res.text();
+        const data = parse(text) as TemplatesArray;
+        setExamples(data);
+      } catch (e: any) {
+        console.log(e.message);
+      }
+    })();
+  }, []);
   const queryBuilder = useQueryBuilderContext();
   const navigate = useNavigate();
 
   const [expanded, setExpanded] = React.useState<string | false>(false);
-  const [selectedExamples, setSelectedExamples] = React.useState<QueryTemplate>(
-    {} as QueryTemplate
-  );
   const [selectedTemplate, setSelectedTemplate] = React.useState<any>(null);
   const [isTemplateComplete, setIsTemplateComplete] = React.useState(false);
 
@@ -60,7 +71,7 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
     setExpanded(newExpanded ? panel : false);
   };
   const onModalClose = () => {
-    setSelectedExamples({} as QueryTemplate);
+    setExpanded(false);
     onCancel();
     onClose();
   };
@@ -310,11 +321,15 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
             Cancel
           </button>
           <button
-            onClick={() => navigate({ to: '/question-builder' })}
+            onClick={() => {
+              setExpanded(false);
+              onClose();
+              navigate({ to: '/question-builder' });
+            }}
             className="button-default"
             disabled={!isTemplateComplete}
           >
-            Run Query
+            Select Query
           </button>
         </div>
       </div>

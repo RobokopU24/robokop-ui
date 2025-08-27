@@ -1,0 +1,389 @@
+- id: 1
+  type: template
+  tags: AOP
+  template:
+    - type: text
+      text: 'What adverse outcome pathways (AOPs) may explain the relationship between '
+    - type: node
+      id: n0
+      name: 'chemical exposure'
+      filterType: 'biolink:ChemicalEntity'
+    - type: text
+      text: ' and '
+    - type: node
+      id: n4
+      name: disease
+      filterType: 'biolink:DiseaseOrPhenotypicFeature'
+    - type: text
+      text: '?'
+  sub_examples:
+    - n0:
+        name: Particulate Matter
+        category:
+          [
+            'biolink:ComplexMolecularMixture',
+            'biolink:ChemicalMixture',
+            'biolink:ChemicalEntity',
+            'biolink:PhysicalEssence',
+            'biolink:ChemicalOrDrugOrTreatment',
+            'biolink:ChemicalEntityOrGeneOrGeneProduct',
+            'biolink:ChemicalEntityOrProteinOrPolypeptide',
+            'biolink:NamedThing',
+            'biolink:Entity',
+            'biolink:PhysicalEssenceOrOccurrent',
+          ]
+        ids: ['MESH:D052638']
+        taxa: []
+      n4:
+        name: 'cardiovascular disorder'
+        category:
+          [
+            'biolink:Disease',
+            'biolink:DiseaseOrPhenotypicFeature',
+            'biolink:BiologicalEntity',
+            'biolink:ThingWithTaxon',
+            'biolink:NamedThing',
+            'biolink:Entity',
+          ]
+        ids: ['MONDO:0004995']
+        taxa: []
+  structure:
+    nodes:
+      n1:
+        name: Gene
+        category: 'biolink:Gene'
+      n2:
+        name: 'Biological Process'
+        category: 'biolink:BiologicalProcessOrActivity'
+      n3:
+        name: 'Phenotypic Feature'
+        category: 'biolink:PhenotypicFeature'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:related_to'
+      e1:
+        subject: n1
+        object: n2
+        predicate: 'biolink:related_to'
+      e3:
+        subject: n2
+        object: n3
+        predicate: 'biolink:related_to'
+      e4:
+        subject: n3
+        object: n4
+        predicate: 'biolink:related_to'
+
+- id: 2
+  type: template
+  tags: COP
+  template:
+    - type: text
+      text: 'What clinical outcome pathways (COPs) may explain the relationship between '
+    - type: node
+      id: n0
+      name: drug
+      filterType: 'biolink:Drug'
+    - type: text
+      text: ' and '
+    - type: node
+      id: n4
+      name: disease
+      filterType: 'biolink:DiseaseOrPhenotypicFeature'
+    - type: text
+      text: '?'
+  sub_examples:
+    - n0:
+        name: Nifedipine
+        category:
+          [
+            'biolink:SmallMolecule',
+            'biolink:MolecularEntity',
+            'biolink:ChemicalEntity',
+            'biolink:PhysicalEssence',
+            'biolink:ChemicalOrDrugOrTreatment',
+            'biolink:ChemicalEntityOrGeneOrGeneProduct',
+            'biolink:ChemicalEntityOrProteinOrPolypeptide',
+            'biolink:NamedThing',
+            'biolink:Entity',
+            'biolink:PhysicalEssenceOrOccurrent',
+            'biolink:Drug',
+            'biolink:OntologyClass',
+            'biolink:MolecularMixture',
+            'biolink:ChemicalMixture',
+          ]
+        ids: ['CHEBI:7565']
+        taxa: []
+      n4:
+        name: 'cardiovascular disorder'
+        category:
+          [
+            'biolink:Disease',
+            'biolink:DiseaseOrPhenotypicFeature',
+            'biolink:BiologicalEntity',
+            'biolink:ThingWithTaxon',
+            'biolink:NamedThing',
+            'biolink:Entity',
+          ]
+        ids: ['MONDO:0004995']
+        taxa: []
+  structure:
+    nodes:
+      n1:
+        name: Gene
+        category: 'biolink:Gene'
+      n2:
+        name: 'Biological Process'
+        category: 'biolink:BiologicalProcessOrActivity'
+      n3:
+        name: 'Phenotypic Feature'
+        category: 'biolink:PhenotypicFeature'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:related_to'
+      e1:
+        subject: n1
+        object: n2
+        predicate: 'biolink:related_to'
+      e3:
+        subject: n2
+        object: n3
+        predicate: 'biolink:related_to'
+      e4:
+        subject: n3
+        object: n4
+        predicate: 'biolink:related_to'
+
+- id: 3
+  type: template
+  tags: AOP
+  template:
+    - type: text
+      text: 'What genes may relate '
+    - type: node
+      id: n0
+      name: 'chemical exposure'
+      filterType: 'biolink:ChemicalEntity'
+    - type: text
+      text: ' and '
+    - type: node
+      id: n2
+      name: disease
+      filterType: 'biolink:DiseaseOrPhenotypicFeature'
+    - type: text
+      text: '?'
+  sub_examples:
+    - n0:
+        name: Particulate Matter
+        category:
+          [
+            'biolink:ComplexMolecularMixture',
+            'biolink:ChemicalMixture',
+            'biolink:ChemicalEntity',
+            'biolink:PhysicalEssence',
+            'biolink:ChemicalOrDrugOrTreatment',
+            'biolink:ChemicalEntityOrGeneOrGeneProduct',
+            'biolink:ChemicalEntityOrProteinOrPolypeptide',
+            'biolink:NamedThing',
+            'biolink:Entity',
+            'biolink:PhysicalEssenceOrOccurrent',
+          ]
+        ids: ['MESH:D052638']
+        taxa: []
+      n2:
+        name: 'cardiovascular disorder'
+        category:
+          [
+            'biolink:Disease',
+            'biolink:DiseaseOrPhenotypicFeature',
+            'biolink:BiologicalEntity',
+            'biolink:ThingWithTaxon',
+            'biolink:NamedThing',
+            'biolink:Entity',
+          ]
+        ids: ['MONDO:0004995']
+        taxa: []
+  structure:
+    nodes:
+      n1:
+        name: Gene
+        category: 'biolink:Gene'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:related_to'
+      e1:
+        subject: n1
+        object: n2
+        predicate: 'biolink:related_to'
+
+- id: 4
+  type: template
+  tags: COP
+  template:
+    - type: text
+      text: 'What genes may relate '
+    - type: node
+      id: n0
+      name: drug
+      filterType: 'biolink:Drug'
+    - type: text
+      text: ' and '
+    - type: node
+      id: n2
+      name: disease
+      filterType: 'biolink:DiseaseOrPhenotypicFeature'
+    - type: text
+      text: '?'
+  sub_examples:
+    - n0:
+        name: Nifedipine
+        category:
+          [
+            'biolink:SmallMolecule',
+            'biolink:MolecularEntity',
+            'biolink:ChemicalEntity',
+            'biolink:PhysicalEssence',
+            'biolink:ChemicalOrDrugOrTreatment',
+            'biolink:ChemicalEntityOrGeneOrGeneProduct',
+            'biolink:ChemicalEntityOrProteinOrPolypeptide',
+            'biolink:NamedThing',
+            'biolink:Entity',
+            'biolink:PhysicalEssenceOrOccurrent',
+            'biolink:Drug',
+            'biolink:OntologyClass',
+            'biolink:MolecularMixture',
+            'biolink:ChemicalMixture',
+          ]
+        ids: ['CHEBI:7565']
+        taxa: []
+      n2:
+        name: 'cardiovascular disorder'
+        category:
+          [
+            'biolink:Disease',
+            'biolink:DiseaseOrPhenotypicFeature',
+            'biolink:BiologicalEntity',
+            'biolink:ThingWithTaxon',
+            'biolink:NamedThing',
+            'biolink:Entity',
+          ]
+        ids: ['MONDO:0004995']
+        taxa: []
+  structure:
+    nodes:
+      n1:
+        name: Gene
+        category: 'biolink:Gene'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:related_to'
+      e1:
+        subject: n1
+        object: n2
+        predicate: 'biolink:related_to'
+
+- id: 5
+  type: example
+  template:
+    - type: text
+      text: "Chemicals that might ameliorate Huntington's Disease"
+  structure:
+    nodes:
+      n0:
+        name: 'Chemical Entity'
+        category: 'biolink:ChemicalEntity'
+      n1:
+        name: 'Huntington disease'
+        category: 'biolink:Disease'
+        id: 'MONDO:0007739'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:treats'
+
+- id: 6
+  type: example
+  template:
+    - type: text
+      text: 'Chemicals that interact with a gene related to Castleman disease'
+  structure:
+    nodes:
+      n0:
+        name: 'Chemical Entity'
+        category: 'biolink:ChemicalEntity'
+      n1:
+        name: Gene
+        category: 'biolink:Gene'
+      n2:
+        name: 'Castleman disease'
+        category: 'biolink:DiseaseOrPhenotypicFeature'
+        id: 'MONDO:0015564'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:interacts_with'
+      e1:
+        subject: n1
+        object: n2
+        predicate: 'biolink:related_to'
+
+- id: 7
+  type: example
+  template:
+    - type: text
+      text: 'Genes and chemicals related to GLUT 1 deficiency, and to each other'
+  structure:
+    nodes:
+      n0:
+        name: 'Chemical Entity'
+        category: 'biolink:ChemicalEntity'
+      n1:
+        name: Gene
+        category: 'biolink:Gene'
+      n2:
+        name: 'GLUT 1 deficiency syndrome'
+        category: 'biolink:DiseaseOrPhenotypicFeature'
+        id: 'MONDO:0000188'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:related_to'
+      e1:
+        subject: n1
+        object: n2
+        predicate: 'biolink:related_to'
+      e2:
+        subject: n2
+        object: n0
+        predicate: 'biolink:related_to'
+
+- id: 8
+  type: example
+  template:
+    - type: text
+      text: 'Diseases associated with 2,3,7,8-tetrochlorodibenzo-p-dioxin'
+  structure:
+    nodes:
+      n0:
+        name: '2,3,7,8-tetrochlorodibenzo-p-dioxin'
+        category: 'biolink:MolecularEntity'
+        id: 'PUBCHEM.COMPOUND:15625'
+      n1:
+        name: Disease
+        category: 'biolink:Disease'
+    edges:
+      e0:
+        subject: n0
+        object: n1
+        predicate: 'biolink:associated_with'

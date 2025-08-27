@@ -1,7 +1,8 @@
 import { Modal } from '@mui/material';
 import React from 'react';
 import { QueryTemplate, TemplatesArray } from '../queryBuilder/templatedQueries/types';
-import examples from '../queryBuilder/templatedQueries/templates.json';
+// import examples from '../queryBuilder/templatedQueries/templates.json';
+import { parse } from 'yaml';
 
 import './EntryPoint.css';
 import {
@@ -10,7 +11,6 @@ import {
 } from '../queryBuilder/templatedQueries/TemplateQueriesModal';
 import { useQueryBuilderContext } from '../../context/queryBuilder';
 import { useNavigate } from '@tanstack/react-router';
-
 interface ExampleModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,6 +29,19 @@ interface ExampleTemplate {
 }
 
 function ExampleModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
+  const [examples, setExamples] = React.useState<TemplatesArray>([]);
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/templates.yaml');
+        const text = await res.text();
+        const data = parse(text) as TemplatesArray;
+        setExamples(data);
+      } catch (e: any) {
+        console.log(e.message);
+      }
+    })();
+  }, []);
   const queryBuilder = useQueryBuilderContext();
   const navigate = useNavigate();
 
@@ -143,11 +156,14 @@ function ExampleModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
             Cancel
           </button>
           <button
-            onClick={() => navigate({ to: '/question-builder' })}
+            onClick={() => {
+              onClose();
+              navigate({ to: '/question-builder' });
+            }}
             className="button-default"
             disabled={!selectedExamples.id}
           >
-            Run Query
+            Select Query
           </button>
         </div>
       </div>

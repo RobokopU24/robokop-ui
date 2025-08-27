@@ -11,6 +11,7 @@ import { useNavigate } from '@tanstack/react-router';
 import queryGraphUtils from '../../utils/queryGraph';
 import API from '../../API';
 import { useQueryBuilderContext } from '../../context/queryBuilder';
+import cloneDeep from 'lodash/cloneDeep';
 
 import { set as idbSet } from 'idb-keyval';
 import RegisterPasskeyDialog from '../../components/RegisterPasskeyDialog';
@@ -27,6 +28,9 @@ import Paper from '@mui/material/Paper';
 import Popper from '@mui/material/Popper';
 import MenuItem from '@mui/material/MenuItem';
 import MenuList from '@mui/material/MenuList';
+import ExampleModal from '../entryPoint/ExampleModal';
+import TemplateModal from '../entryPoint/TemplateModal';
+import BookmarkModal from '../entryPoint/BookmarkModal';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
@@ -45,7 +49,38 @@ const SubmitButton = withStyles((theme) => ({
  * Displays the text, graph, and json editors
  */
 export default function QueryBuilder() {
-  const options = ['Load Template', 'Load Example', 'Load Bookmark'];
+  const queryBuilder = useQueryBuilderContext();
+  const { user } = useAuth();
+
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [exampleModalOpen, setExampleModalOpen] = useState(false);
+  const [bookmarkModalOpen, setBookmarkModalOpen] = useState(false);
+  const buttonOptions = [
+    {
+      label: 'Load Template',
+      onClick: () => {
+        setSavedState(cloneDeep(queryBuilder.query_graph));
+        setTemplateModalOpen(true);
+      },
+      disabled: false,
+    },
+    {
+      label: 'Load Example',
+      onClick: () => {
+        setSavedState(cloneDeep(queryBuilder.query_graph));
+        setExampleModalOpen(true);
+      },
+      disabled: false,
+    },
+    {
+      label: 'Load Bookmark',
+      onClick: () => {
+        setSavedState(cloneDeep(queryBuilder.query_graph));
+        setBookmarkModalOpen(true);
+      },
+      disabled: !user,
+    },
+  ];
   const [openMenu, setOpenMenu] = useState(false);
   const anchorRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(1);
@@ -68,12 +103,10 @@ export default function QueryBuilder() {
     setOpenMenu(false);
   };
   const handleClick = () => {
-    console.info(`You clicked ${options[selectedIndex]}`);
+    buttonOptions[selectedIndex].onClick();
   };
 
-  const queryBuilder = useQueryBuilderContext();
   const pageStatus = usePageStatus(false);
-  const { user } = useAuth();
   const { browserSupport } = usePasskey();
   const [showJson, toggleJson] = useState(false);
   const [registerPasskeyOpen, setRegisterPasskeyOpen] = useState(false);
@@ -82,6 +115,7 @@ export default function QueryBuilder() {
   const { displayAlert } = useAlert();
   const navigate = useNavigate();
   const [exampleQueriesOpen, setExampleQueriesOpen] = useState(false);
+  const [savedState, setSavedState] = useState<any>(null);
 
   const passkeyPopupDenied = localStorage.getItem('passkeyPopupDenied');
 
@@ -128,6 +162,15 @@ export default function QueryBuilder() {
     }
   }
 
+  const handleCancel = () => {
+    if (savedState) {
+      queryBuilder.dispatch({
+        type: 'restoreGraph',
+        payload: savedState,
+      });
+    }
+  };
+
   return (
     <>
       <pageStatus.Display />
@@ -152,7 +195,7 @@ export default function QueryBuilder() {
                   ref={anchorRef}
                   aria-label="Button group with a nested menu"
                 >
-                  <Button onClick={handleClick}>{options[selectedIndex]}</Button>
+                  <Button onClick={handleClick}>{buttonOptions[selectedIndex].label}</Button>
                   <Button
                     size="small"
                     aria-controls={openMenu ? 'split-button-menu' : undefined}
@@ -182,13 +225,14 @@ export default function QueryBuilder() {
                       <Paper>
                         <ClickAwayListener onClickAway={handleClose}>
                           <MenuList id="split-button-menu" autoFocusItem>
-                            {options.map((option, index) => (
+                            {buttonOptions.map((option, index) => (
                               <MenuItem
-                                key={option}
+                                key={option.label}
                                 selected={index === selectedIndex}
                                 onClick={(event) => handleMenuItemClick(event, index)}
+                                disabled={option.disabled}
                               >
-                                {option}
+                                {option.label}
                               </MenuItem>
                             ))}
                           </MenuList>
@@ -197,7 +241,22 @@ export default function QueryBuilder() {
                     </Grow>
                   )}
                 </Popper>
-                <TemplateQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} />
+                {/* <TemplateQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} /> */}
+                <ExampleModal
+                  isOpen={exampleModalOpen}
+                  onClose={() => setExampleModalOpen(false)}
+                  onCancel={handleCancel}
+                />
+                <TemplateModal
+                  isOpen={templateModalOpen}
+                  onClose={() => setTemplateModalOpen(false)}
+                  onCancel={handleCancel}
+                />
+                <BookmarkModal
+                  isOpen={bookmarkModalOpen}
+                  onClose={() => setBookmarkModalOpen(false)}
+                  onCancel={handleCancel}
+                />
                 <Button onClick={() => toggleJson(true)} variant="outlined">
                   Edit JSON
                 </Button>
