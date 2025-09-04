@@ -22,6 +22,25 @@ export const Route = createRootRoute({
       {
         title: 'ROBOKOP',
       },
+      {
+        name: 'description',
+        content:
+          'ROBOKOP is an open-source biomedical knowledge graph that integrates and semantically harmonizes important knowledge sources.',
+      },
+      {
+        property: 'og:image',
+        content: 'https://robokop.renci.org/opengraph-image.png',
+      },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:title', content: 'ROBOKOP' },
+      {
+        property: 'og:description',
+        content:
+          'ROBOKOP is an open-source biomedical knowledge graph that integrates and semantically harmonizes important knowledge sources.',
+      },
+
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:image', content: 'https://robokop.renci.org/opengraph-image.png' },
     ],
   }),
   component: RootComponent,

@@ -4,6 +4,13 @@ import LandingPage from '../pages/landing';
 export const Route = createFileRoute('/')({
   component: Home,
   ssr: true,
+  head: () => ({
+    meta: [
+      {
+        title: 'ROBOKOP',
+      },
+    ],
+  }),
 });
 
 function Home() {

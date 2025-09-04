@@ -48,7 +48,7 @@ export default function ShowEdges({
   const biolink = useBiolinkModel();
   const { displayAlert } = useAlert();
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [hasEdgesDataError, setHasEdgesDataError] = useState(false);
 
   const [pageSize, setPageSize] = useState(10);
@@ -124,13 +124,22 @@ export default function ShowEdges({
 
   useEffect(() => {
     fetchBiolink();
-    fetchEdges().finally(() => {
-      setLoading(false);
-    });
+    // if (selectedPredicate !== 'all') {
+    //   fetchEdges()
+    //   .finally(() => {
+    //     setLoading(false);
+    //   });
+    // }
+    // setLoading(false);
   }, []);
 
   useEffect(() => {
-    fetchEdges();
+    if (selectedPredicate !== 'all') {
+      setLoading(true);
+      fetchEdges().finally(() => {
+        setLoading(false);
+      });
+    }
   }, [currentPageNumber, pageSize, selectedPredicate, selectedCategory]);
 
   const ShowEdgeInfo = ({ edge }: { edge: any }) => {
@@ -179,6 +188,8 @@ export default function ShowEdges({
       </TableRow>
     );
   };
+
+  console.log(selectedPredicate, 'selectedPredicate', selectedCategory);
 
   return loading ? (
     <Box display="flex" justifyContent="center" alignItems="center" height="100%">
@@ -241,21 +252,35 @@ export default function ShowEdges({
                 )}
               </Typography>
             </Box>
-            <Link
+            <p
               onClick={() => {
                 setPredicateSelection('all');
+                setEdgeData([]);
                 setCategorySelection('');
                 setCurrentPageNumber(0);
                 resetTotalCount();
               }}
-              sx={{ fontSize: 'small', cursor: 'pointer' }}
+              style={{ fontSize: 'small', cursor: 'pointer', textDecoration: 'underline' }}
             >
               Clear Filters
-            </Link>
+            </p>
           </Box>
           {edgeData.length === 0 ? (
-            <Box sx={{ py: 2 }}>
-              <Typography>No edges found for this node.</Typography>
+            <Box
+              sx={{
+                py: 2,
+                height: '100%',
+                minHeight: '200px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Typography>
+                {selectedPredicate === 'all'
+                  ? 'Select an edge from the table'
+                  : 'No edges found for this node.'}
+              </Typography>
             </Box>
           ) : (
             <TableContainer component={Paper}>

@@ -41,6 +41,7 @@ function ShareQuery({ show, close }: { show: boolean; close: () => void }) {
       .then((res) => {
         displayAlert('success', 'Query link copied to clipboard successfully');
         navigator.clipboard.writeText(`${window.location.origin}/share/${res.data.id}?type=share`);
+        console.log(`Shared query link: ${window.location.origin}/share/${res.data.id}?type=share`);
         close();
       })
       .catch((error) => {

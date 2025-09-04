@@ -5,6 +5,29 @@ import Profile from '../../../pages/Profile';
 export const Route = createFileRoute('/_appLayout/profile/')({
   component: RouteComponent,
   ssr: false,
+  head: () => ({
+    meta: [
+      {
+        title: 'Profile - ROBOKOP',
+      },
+      {
+        name: 'description',
+        content: 'View your profile information.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:title',
+        content: 'Profile - ROBOKOP',
+      },
+      {
+        property: 'og:description',
+        content: 'View your profile information.',
+      },
+    ],
+  }),
 });
 
 function RouteComponent() {

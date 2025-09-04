@@ -16,6 +16,29 @@ export const Route = createFileRoute('/_appLayout/details/')({
       type: (search.type as TypeOptions) || 'id',
     };
   },
+  head: () => ({
+    meta: [
+      {
+        title: 'Node Explorer - ROBOKOP',
+      },
+      {
+        name: 'description',
+        content: 'View and manage details for all the nodes in ROBOKOP.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:title',
+        content: 'Node Explorer - ROBOKOP',
+      },
+      {
+        property: 'og:description',
+        content: 'View and manage details for all the nodes in ROBOKOP.',
+      },
+    ],
+  }),
 });
 
 function RouteComponent() {
