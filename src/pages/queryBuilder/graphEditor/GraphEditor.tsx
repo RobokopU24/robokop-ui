@@ -61,7 +61,9 @@ function clickReducer(state: ClickState, action: ClickAction): ClickState {
     }
     case 'connectTerm': {
       const { id } = action.payload;
-      state.chosenTerms = [...state.chosenTerms, id];
+      if (!state.chosenTerms.includes(id)) {
+        state.chosenTerms = [...state.chosenTerms, id];
+      }
       break;
     }
     case 'connectionMade': {

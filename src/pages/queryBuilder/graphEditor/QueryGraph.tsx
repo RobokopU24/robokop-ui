@@ -459,6 +459,7 @@ export default function QueryGraph({
       const addNodeToConnection = (id: string) =>
         updateClickState({ type: 'connectTerm', payload: { id } });
 
+      nodeUtils.removeClicks();
       nodeUtils.attachConnectionClick(addNodeToConnection);
       nodeUtils.removeMouseHover();
 
