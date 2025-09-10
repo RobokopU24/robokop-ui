@@ -54,22 +54,12 @@ interface QueryGraphEdge {
   [key: string]: any;
 }
 
-interface QueryGraph {
-  nodes: Record<string, QueryGraphNode>;
-  edges: Record<string, QueryGraphEdge>;
-}
-
-interface ClickState {
-  clickedId: string;
-  creatingConnection: boolean;
-  [key: string]: any;
-}
-
 interface QueryGraphProps {
   height: number;
   width: number;
-  clickState: ClickState;
+  clickState: { clickedId: string; creatingConnection: boolean; [key: string]: any };
   updateClickState: (action: { type: string; payload: any }) => void;
+  graphRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 interface NodeArgs {
@@ -79,79 +69,95 @@ interface NodeArgs {
 
 /**
  * Main D3 query graph component
- * @param {int} height - height of the query graph element
- * @param {int} width - width of the query graph element
- * @param {obj} clickState - dict of graph click state properties
- * @param {func} updateClickState - reducer to update graph click state
  */
 export default function QueryGraph({
   height,
   width,
   clickState,
   updateClickState,
+  graphRef,
 }: QueryGraphProps) {
+  // Local dimensions that track the parent container’s actual size
+  const [dimensions, setDimensions] = React.useState({ height, width });
+
+  // Keep the latest dimensions in a ref for closures (ticked, drag handlers, etc.)
+  const sizeRef = useRef({ width, height });
+  useEffect(() => {
+    sizeRef.current = { width: dimensions.width, height: dimensions.height };
+  }, [dimensions]);
+
+  // Observe the parent container for resizes
+  useEffect(() => {
+    if (!graphRef?.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentBoxSize) {
+          const newWidth = entry.contentRect.width;
+          const newHeight = entry.contentRect.height;
+          setDimensions({ width: newWidth, height: newHeight });
+        }
+      }
+    });
+    observer.observe(graphRef.current);
+    return () => observer.disconnect();
+  }, [graphRef]);
+
   const { colorMap, predicates = [] } = useContext(BiolinkContext) as BiolinkContextType;
-  const symmetricPredicates = predicates
-    ?.filter((predicate: BiolinkPredicate) => predicate?.symmetric)
-    ?.map((predicate: BiolinkPredicate) => predicate?.predicate);
+  const symmetricPredicates = predicates?.filter((p) => p?.symmetric)?.map((p) => p?.predicate);
+
   const queryBuilder = useQueryBuilderContext();
   const { query_graph } = queryBuilder;
+
   const { nodes, edges } = useMemo(
     () => queryGraphUtils.getNodeAndEdgeListsForDisplay(query_graph),
-    [queryBuilder.state]
+    [queryBuilder.state] // state changes when graph changes
   );
-  const node = useRef<any>(null);
-  const edge = useRef<any>(null);
+
+  // D3 refs
   const svgRef = useRef<SVGSVGElement>(null);
-  const svg = useRef<any>(null);
-  const simulation = useRef<any>(null);
-  /**
-   * Node args
-   * @property {int} nodeRadius - radius of node circles
-   * @property {func} colorMap - function to get node background color
-   */
+  const svgSel = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
+  const node = useRef<d3.Selection<SVGGElement, QueryGraphNode, SVGGElement, unknown> | any>(null);
+  const edge = useRef<d3.Selection<SVGGElement, QueryGraphEdge, SVGGElement, unknown> | any>(null);
+  const simulation = useRef<d3.Simulation<QueryGraphNode, QueryGraphEdge> | null>(null);
+
   const nodeArgs: NodeArgs = {
     nodeRadius,
     colorMap: colorMap || (() => ['', '']),
   };
 
   /**
-   * Initialize the svg
+   * Initialize once: svg, defs, containers, simulation, and tick handler
    */
   useEffect(() => {
-    svg.current = d3
-      .select(svgRef.current)
-      .attr('width', width)
-      .attr('height', height)
-      .attr('border', '1px solid black')
+    if (!svgRef.current) return;
+
+    // Base SVG selection
+    svgSel.current = d3.select(svgRef.current);
+    svgSel.current
+      .attr('width', dimensions.width)
+      .attr('height', dimensions.height)
       .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', [0, 0, width, height]);
-  }, []);
+      .attr('viewBox', [0, 0, dimensions.width, dimensions.height] as any);
 
-  /**
-   * Initialize node and edge containers
-   */
-  useEffect(() => {
-    if (svg.current.select('#nodeContainer').empty()) {
-      svg.current.append('g').attr('id', 'nodeContainer');
+    // Containers
+    if (svgSel.current.select('#edgeContainer').empty()) {
+      svgSel.current.append('g').attr('id', 'edgeContainer');
     }
-    if (svg.current.select('#edgeContainer').empty()) {
-      svg.current.append('g').attr('id', 'edgeContainer');
+    if (svgSel.current.select('#nodeContainer').empty()) {
+      svgSel.current.append('g').attr('id', 'nodeContainer');
     }
-    edge.current = svg.current.select('#edgeContainer').selectAll('g');
-    node.current = svg.current.select('#nodeContainer').selectAll('g');
-  }, []);
+    edge.current = svgSel.current
+      .select('#edgeContainer')
+      .selectAll<SVGGElement, QueryGraphEdge>('g');
+    node.current = svgSel.current
+      .select('#nodeContainer')
+      .selectAll<SVGGElement, QueryGraphNode>('g');
 
-  /**
-   * Create special svg effects on initialization
-   *
-   * - Edge arrows
-   * - Shading for 'Set' nodes
-   */
-  useEffect(() => {
-    if (svg.current.select('defs').empty()) {
-      // edge arrow
-      const defs = svg.current.append('defs');
+    // Defs (arrows, shadows) – only once
+    if (svgSel.current.select('defs').empty()) {
+      const defs = svgSel.current.append('defs');
+
+      // Arrow marker
       defs
         .append('marker')
         .attr('id', 'arrow')
@@ -168,11 +174,11 @@ export default function QueryGraph({
             [0, 0],
             [0, 13],
             [25, 6.5],
-          ])
+          ] as any)
         )
         .attr('fill', '#999');
-      // set nodes shadow
-      // http://bl.ocks.org/cpbotha/5200394
+
+      // Set nodes shadow
       const shadow = defs
         .append('filter')
         .attr('id', 'setShadow')
@@ -189,10 +195,11 @@ export default function QueryGraph({
         .attr('dx', 0)
         .attr('dy', 0)
         .attr('result', 'offsetBlur');
-      let feMerge = shadow.append('feMerge');
+      const feMerge = shadow.append('feMerge');
       feMerge.append('feMergeNode').attr('in', 'offsetBlur');
       feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
 
+      // Button shadow
       const buttonShadow = defs
         .append('filter')
         .attr('id', 'buttonShadow')
@@ -209,19 +216,15 @@ export default function QueryGraph({
         .attr('dx', 2)
         .attr('dy', 2)
         .attr('result', 'offsetBlur');
-      feMerge = buttonShadow.append('feMerge');
-      feMerge.append('feMergeNode').attr('in', 'offsetBlur');
-      feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+      const feMergeBtn = buttonShadow.append('feMerge');
+      feMergeBtn.append('feMergeNode').attr('in', 'offsetBlur');
+      feMergeBtn.append('feMergeNode').attr('in', 'SourceGraphic');
     }
-  }, []);
 
-  /**
-   * Base d3 force simulation initialization
-   */
-  useEffect(() => {
+    // Simulation (create once)
     simulation.current = d3
-      .forceSimulation()
-      .force('collide', d3.forceCollide().radius(nodeRadius))
+      .forceSimulation<QueryGraphNode, QueryGraphEdge>()
+      .force('collide', d3.forceCollide<QueryGraphNode>().radius(nodeRadius))
       .force(
         'link',
         d3
@@ -230,23 +233,61 @@ export default function QueryGraph({
           .distance(edgeLength)
           .strength(1)
       )
-      .force('center', d3.forceCenter(width / 2, height / 2).strength(0.05))
+      .force(
+        'center',
+        d3.forceCenter<QueryGraphNode>(dimensions.width / 2, dimensions.height / 2).strength(0.05)
+      )
       .on('tick', ticked);
-  }, []);
+
+    // Global SVG click for clearing highlights, etc.
+    svgSel.current.on('click', (e: MouseEvent) => {
+      d3.selectAll('.deleteRect,.deleteLabel,.editRect,.editLabel').style('display', 'none');
+      d3.select('#edgeContainer').raise();
+      highlighter.clearAllNodes();
+      highlighter.clearAllEdges();
+      if (clickState.clickedId !== '') {
+        updateClickState({ type: 'click', payload: { id: '' } });
+      }
+      // prevent bubbling out of the svg
+      e.stopPropagation();
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // init once
 
   /**
-   * Move all nodes and edges on each simulation 'tick'
+   * When the SVG's container size changes, update svg size + center force
+   */
+  useEffect(() => {
+    if (!svgSel.current || !simulation.current) return;
+
+    svgSel.current
+      .attr('width', dimensions.width)
+      .attr('height', dimensions.height)
+      .attr('viewBox', [0, 0, dimensions.width, dimensions.height] as any);
+
+    const center = simulation.current.force('center') as d3.ForceCenter<QueryGraphNode>;
+    center.x(dimensions.width / 2).y(dimensions.height / 2);
+
+    // Nudge the simulation so nodes move toward the new center
+    simulation.current.alpha(0.5).restart();
+  }, [dimensions]);
+
+  /**
+   * Tick handler — uses the latest dimensions from sizeRef
    */
   function ticked() {
+    const { width: W, height: H } = sizeRef.current;
+
     if (node.current) {
       node.current.attr('transform', (d: QueryGraphNode) => {
         let padding = nodeRadius;
-        // 70% of node radius so a dragged node can push into the graph bounds a little
+        // Allow dragged (fixed) nodes to push slightly into bounds
         if (d.fx !== null && d.fx !== undefined) {
           padding *= 0.5;
         }
-        d.x = graphUtils.getBoundedValue(d.x || 0, width - padding, padding);
-        d.y = graphUtils.getBoundedValue(d.y || 0, height - padding, padding);
+        d.x = graphUtils.getBoundedValue(d.x ?? 0, W - padding, padding);
+        d.y = graphUtils.getBoundedValue(d.y ?? 0, H - padding, padding);
         return `translate(${d.x},${d.y})`;
       });
     }
@@ -254,12 +295,12 @@ export default function QueryGraph({
     if (edge.current) {
       edge.current.select('.edgePath').attr('d', (d: QueryGraphEdge) => {
         const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
-          d.source?.x || 0,
-          d.source?.y || 0,
-          d.target?.x || 0,
-          d.target?.y || 0,
-          d.numEdges || 1,
-          d.index || 0,
+          d.source?.x ?? 0,
+          d.source?.y ?? 0,
+          d.target?.x ?? 0,
+          d.target?.y ?? 0,
+          d.numEdges ?? 1,
+          d.index ?? 0,
           nodeRadius
         );
         return `M${x1},${y1}Q${qx},${qy} ${x2},${y2}`;
@@ -267,15 +308,14 @@ export default function QueryGraph({
 
       edge.current.select('.edgeTransparent').attr('d', (d: QueryGraphEdge) => {
         const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
-          d.source?.x || 0,
-          d.source?.y || 0,
-          d.target?.x || 0,
-          d.target?.y || 0,
-          d.numEdges || 1,
-          d.index || 0,
+          d.source?.x ?? 0,
+          d.source?.y ?? 0,
+          d.target?.x ?? 0,
+          d.target?.y ?? 0,
+          d.numEdges ?? 1,
+          d.index ?? 0,
           nodeRadius
         );
-        // if necessary, flip transparent path so text is always right side up
         const leftNode = x1 > x2 ? `${x2},${y2}` : `${x1},${y1}`;
         const rightNode = x1 > x2 ? `${x1},${y1}` : `${x2},${y2}`;
         return `M${leftNode}Q${qx},${qy} ${rightNode}`;
@@ -285,32 +325,30 @@ export default function QueryGraph({
         .select('.source')
         .attr('cx', (d: QueryGraphEdge) => {
           const { x1 } = graphUtils.getCurvedEdgePos(
-            d.source?.x || 0,
-            d.source?.y || 0,
-            d.target?.x || 0,
-            d.target?.y || 0,
-            d.numEdges || 1,
-            d.index || 0,
+            d.source?.x ?? 0,
+            d.source?.y ?? 0,
+            d.target?.x ?? 0,
+            d.target?.y ?? 0,
+            d.numEdges ?? 1,
+            d.index ?? 0,
             nodeRadius
           );
-          const boundedVal = graphUtils.getBoundedValue(x1, width);
-          // set internal x value of edge end
-          d.x = boundedVal;
+          const boundedVal = graphUtils.getBoundedValue(x1, W);
+          d.x = boundedVal; // store internal x
           return boundedVal;
         })
         .attr('cy', (d: QueryGraphEdge) => {
           const { y1 } = graphUtils.getCurvedEdgePos(
-            d.source?.x || 0,
-            d.source?.y || 0,
-            d.target?.x || 0,
-            d.target?.y || 0,
-            d.numEdges || 1,
-            d.index || 0,
+            d.source?.x ?? 0,
+            d.source?.y ?? 0,
+            d.target?.x ?? 0,
+            d.target?.y ?? 0,
+            d.numEdges ?? 1,
+            d.index ?? 0,
             nodeRadius
           );
-          const boundedVal = graphUtils.getBoundedValue(y1, height);
-          // set internal y value of edge end
-          d.y = boundedVal;
+          const boundedVal = graphUtils.getBoundedValue(y1, H);
+          d.y = boundedVal; // store internal y
           return boundedVal;
         });
 
@@ -318,31 +356,29 @@ export default function QueryGraph({
         .select('.target')
         .attr('cx', (d: QueryGraphEdge) => {
           const { x2 } = graphUtils.getCurvedEdgePos(
-            d.source?.x || 0,
-            d.source?.y || 0,
-            d.target?.x || 0,
-            d.target?.y || 0,
-            d.numEdges || 1,
-            d.index || 0,
+            d.source?.x ?? 0,
+            d.source?.y ?? 0,
+            d.target?.x ?? 0,
+            d.target?.y ?? 0,
+            d.numEdges ?? 1,
+            d.index ?? 0,
             nodeRadius
           );
-          const boundedVal = graphUtils.getBoundedValue(x2, width);
-          // set internal x value of edge end
+          const boundedVal = graphUtils.getBoundedValue(x2, W);
           d.x = boundedVal;
           return boundedVal;
         })
         .attr('cy', (d: QueryGraphEdge) => {
           const { y2 } = graphUtils.getCurvedEdgePos(
-            d.source?.x || 0,
-            d.source?.y || 0,
-            d.target?.x || 0,
-            d.target?.y || 0,
-            d.numEdges || 1,
-            d.index || 0,
+            d.source?.x ?? 0,
+            d.source?.y ?? 0,
+            d.target?.x ?? 0,
+            d.target?.y ?? 0,
+            d.numEdges ?? 1,
+            d.index ?? 0,
             nodeRadius
           );
-          const boundedVal = graphUtils.getBoundedValue(y2, height);
-          // set internal y value of edge end
+          const boundedVal = graphUtils.getBoundedValue(y2, H);
           d.y = boundedVal;
           return boundedVal;
         });
@@ -355,29 +391,32 @@ export default function QueryGraph({
   }
 
   /**
-   * Update displayed query graph
+   * Update displayed query graph when node/edge arrays change
    */
   useEffect(() => {
-    // preserve node position by using the already existing nodes
-    const oldNodes = new Map(
-      node.current.data().map((d: QueryGraphNode) => [d.id, { x: d.x, y: d.y }])
-    );
-    const newNodes = nodes.map((d: QueryGraphNode) =>
-      Object.assign(
-        oldNodes.get(d.id) || { x: Math.random() * width, y: Math.random() * height },
-        d
-      )
-    );
-    // edges need to preserve some internal properties
-    const newEdges = edges.map((d: any) => ({ ...d }));
+    if (!simulation.current) return;
 
-    // simulation adds x and y properties to nodes
+    // Preserve node positions by mapping previous nodes by id
+    const oldPositions = new Map(
+      node.current?.data?.().map?.((d: QueryGraphNode) => [d.id, { x: d.x, y: d.y }]) ?? []
+    );
+
+    const { width: W, height: H } = sizeRef.current;
+
+    const newNodes: QueryGraphNode[] = nodes.map((d: QueryGraphNode) =>
+      Object.assign(oldPositions.get(d.id) || { x: Math.random() * W, y: Math.random() * H }, d)
+    );
+
+    // Shallow copy edges to preserve internal props the utils may mutate
+    const newEdges: QueryGraphEdge[] = edges.map((e: any) => ({ ...e }));
+
+    // Hook up simulation data
     simulation.current.nodes(newNodes);
-    // simulation converts source and target properties of
-    // edges to node objects
-    simulation.current.force('link')?.links(newEdges);
-    simulation.current.alpha(1).restart();
+    (simulation.current.force('link') as d3.ForceLink<QueryGraphNode, QueryGraphEdge>).links(
+      newEdges
+    );
 
+    // Selections
     node.current = node.current
       .data(newNodes, (d: QueryGraphNode) => d.id)
       .join(
@@ -386,10 +425,7 @@ export default function QueryGraph({
         (n: any) => nodeUtils.exit(n)
       );
 
-    // edge ends need the x and y of their attached nodes
-    // must come after simulation
     const edgesWithCurves = edgeUtils.addEdgeCurveProperties(newEdges);
-    // add symmetricPredicates to each edgesWithCurves
     edgesWithCurves.forEach((e: QueryGraphEdge) => {
       e.symmetric = symmetricPredicates;
     });
@@ -397,27 +433,33 @@ export default function QueryGraph({
     edge.current = edge.current
       .data(edgesWithCurves, (d: QueryGraphEdge) => d.id)
       .join(edgeUtils.enter, edgeUtils.update, edgeUtils.exit);
-  }, [nodes, edges]);
+
+    // Kick the layout to settle with new data
+    simulation.current.alpha(1).restart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, edges, symmetricPredicates]);
 
   function updateEdge(edgeId: string, endpoint: string, nodeId: string) {
     queryBuilder.dispatch({ type: 'editEdge', payload: { edgeId, endpoint, nodeId } });
     if (!queryBuilder.state.isValid) {
-      // hacky, calls the tick function which moves the edge ends back
+      // Nudge to recompute positions (e.g., after invalid state temporarily)
       simulation.current?.alpha(0.001).restart();
     }
   }
 
   /**
-   * Set click and hover listeners when clickState or query graph changes
+   * Click / hover / drag handlers — refresh when interaction state or data changes
    */
   useEffect(() => {
+    const { width: W, height: H } = sizeRef.current;
+
     if (clickState.creatingConnection) {
-      // creating a new edge
       const addNodeToConnection = (id: string) =>
         updateClickState({ type: 'connectTerm', payload: { id } });
+
       nodeUtils.attachConnectionClick(addNodeToConnection);
       nodeUtils.removeMouseHover();
-      // edges shouldn't react when creating a new edge
+
       edgeUtils.removeClicks();
       edgeUtils.removeMouseHover();
     } else {
@@ -425,6 +467,7 @@ export default function QueryGraph({
       const setClickedId = (id: string) => updateClickState({ type: 'click', payload: { id } });
       const openEditor = (id: string, anchor: any, type: string) =>
         updateClickState({ type: 'openEditor', payload: { id, anchor, type } });
+
       nodeUtils.attachNodeClick(clickedId, setClickedId);
       nodeUtils.attachEditClick(openEditor, setClickedId);
       nodeUtils.attachDeleteClick(
@@ -432,7 +475,9 @@ export default function QueryGraph({
         setClickedId
       );
       nodeUtils.attachMouseHover(clickedId);
-      nodeUtils.attachDrag(simulation.current, width, height, nodeRadius);
+
+      // Important: pass current canvas size to drag so bounds are up-to-date
+      nodeUtils.attachDrag(simulation.current, W, H, nodeRadius);
 
       edgeUtils.attachEdgeClick(clickedId, setClickedId);
       edgeUtils.attachEditClick(openEditor, setClickedId);
@@ -441,22 +486,9 @@ export default function QueryGraph({
         setClickedId
       );
       edgeUtils.attachMouseHover(clickedId);
-      edgeUtils.attachDrag(simulation.current, width, height, nodeRadius, updateEdge);
+      edgeUtils.attachDrag(simulation.current, W, H, nodeRadius, updateEdge);
     }
-    // set svg global click listener for highlighting
-    svg.current.on('click', (e: any) => {
-      d3.selectAll('.deleteRect,.deleteLabel,.editRect,.editLabel').style('display', 'none');
-      d3.select('#edgeContainer').raise();
-      highlighter.clearAllNodes();
-      highlighter.clearAllEdges();
-      if (clickState.clickedId !== '') {
-        updateClickState({ type: 'click', payload: { id: '' } });
-      }
-      // stop click events from leaving svg area.
-      // clicks were closing any alerts immediately.
-      e.stopPropagation();
-    });
-  }, [clickState, nodes, edges]);
+  }, [clickState, nodes, edges, updateClickState, queryBuilder]);
 
   return <svg ref={svgRef} />;
 }

@@ -185,7 +185,10 @@ export default function QueryBuilder() {
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </div>
             <div>
-              <GraphEditor />
+              <GraphEditor
+                editJson={() => toggleJson(true)}
+                downloadQuery={() => setDownloadOpen(true)}
+              />
               <div id="queryBuilderButtons">
                 {/* <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
                   Load Query
@@ -257,12 +260,12 @@ export default function QueryBuilder() {
                   onClose={() => setBookmarkModalOpen(false)}
                   onCancel={handleCancel}
                 />
-                <Button onClick={() => toggleJson(true)} variant="outlined">
+                {/* <Button onClick={() => toggleJson(true)} variant="outlined">
                   Edit JSON
                 </Button>
                 <Button onClick={() => setDownloadOpen(true)} variant="outlined">
                   Download Query
-                </Button>
+                </Button> */}
                 <div style={{ flexGrow: 1 }}></div>
                 <SubmitButton onClick={() => onQuickSubmit()} variant="contained">
                   Submit
