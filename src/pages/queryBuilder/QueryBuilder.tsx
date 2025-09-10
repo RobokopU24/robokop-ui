@@ -57,18 +57,18 @@ export default function QueryBuilder() {
   const [bookmarkModalOpen, setBookmarkModalOpen] = useState(false);
   const buttonOptions = [
     {
-      label: 'Load Template',
-      onClick: () => {
-        setSavedState(cloneDeep(queryBuilder.query_graph));
-        setTemplateModalOpen(true);
-      },
-      disabled: false,
-    },
-    {
       label: 'Load Example',
       onClick: () => {
         setSavedState(cloneDeep(queryBuilder.query_graph));
         setExampleModalOpen(true);
+      },
+      disabled: false,
+    },
+    {
+      label: 'Load Template',
+      onClick: () => {
+        setSavedState(cloneDeep(queryBuilder.query_graph));
+        setTemplateModalOpen(true);
       },
       disabled: false,
     },
@@ -188,12 +188,14 @@ export default function QueryBuilder() {
               <GraphEditor
                 editJson={() => toggleJson(true)}
                 downloadQuery={() => setDownloadOpen(true)}
+                onSubmit={() => onQuickSubmit()}
+                buttonOptions={buttonOptions}
               />
               <div id="queryBuilderButtons">
                 {/* <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
                   Load Query
                 </Button> */}
-                <ButtonGroup
+                {/* <ButtonGroup
                   variant="contained"
                   ref={anchorRef}
                   aria-label="Button group with a nested menu"
@@ -243,7 +245,7 @@ export default function QueryBuilder() {
                       </Paper>
                     </Grow>
                   )}
-                </Popper>
+                </Popper> */}
                 {/* <TemplateQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} /> */}
                 <ExampleModal
                   isOpen={exampleModalOpen}
@@ -267,9 +269,9 @@ export default function QueryBuilder() {
                   Download Query
                 </Button> */}
                 <div style={{ flexGrow: 1 }}></div>
-                <SubmitButton onClick={() => onQuickSubmit()} variant="contained">
+                {/* <SubmitButton onClick={() => onQuickSubmit()} variant="contained">
                   Submit
-                </SubmitButton>
+                </SubmitButton> */}
               </div>
             </div>
             <JsonEditor show={showJson} close={() => toggleJson(false)} />

@@ -11,6 +11,8 @@ import queryGraphUtils from '../../../utils/queryGraph';
 const nodeRadius = 48;
 const edgeLength = 225;
 
+const EXTRA_PADDING = 0;
+
 // Type definitions
 interface BiolinkPredicate {
   predicate: string;
@@ -94,7 +96,7 @@ export default function QueryGraph({
         if (entry.contentBoxSize) {
           const newWidth = entry.contentRect.width;
           const newHeight = entry.contentRect.height;
-          setDimensions({ width: newWidth, height: newHeight });
+          setDimensions({ width: newWidth, height: newHeight - EXTRA_PADDING });
         }
       }
     });
@@ -135,9 +137,9 @@ export default function QueryGraph({
     svgSel.current = d3.select(svgRef.current);
     svgSel.current
       .attr('width', dimensions.width)
-      .attr('height', dimensions.height)
+      .attr('height', dimensions.height - EXTRA_PADDING)
       .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', [0, 0, dimensions.width, dimensions.height] as any);
+      .attr('viewBox', [0, 0, dimensions.width, dimensions.height - EXTRA_PADDING] as any);
 
     // Containers
     if (svgSel.current.select('#edgeContainer').empty()) {

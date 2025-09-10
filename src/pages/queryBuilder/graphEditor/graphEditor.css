@@ -14,7 +14,8 @@
 
 .buttons-container {
     position: absolute;
-    top: 20%;
+    top: 50%;
+    transform: translateY(-50%);
     left: 10px;
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
     border-radius: 20px;

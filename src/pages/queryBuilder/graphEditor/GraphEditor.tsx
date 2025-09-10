@@ -24,6 +24,9 @@ import ShareIcon from '@mui/icons-material/Share';
 import EditIcon from '@mui/icons-material/Edit';
 import DownloadIcon from '@mui/icons-material/Download';
 
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+
 const width = 600;
 const height = 400;
 
@@ -94,12 +97,28 @@ function clickReducer(state: ClickState, action: ClickAction): ClickState {
 interface GraphEditorProps {
   editJson?: () => void;
   downloadQuery: () => void;
+  onSubmit?: () => void;
+  buttonOptions?: { label: string; onClick: () => void; disabled: boolean }[];
 }
 
 /**
  * Query Builder graph editor interface
  */
-export default function GraphEditor({ editJson, downloadQuery }: GraphEditorProps) {
+export default function GraphEditor({
+  editJson,
+  downloadQuery,
+  onSubmit,
+  buttonOptions,
+}: GraphEditorProps) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const queryBuilder = useQueryBuilderContext();
   const { user } = useAuth();
 
@@ -169,6 +188,18 @@ export default function GraphEditor({ editJson, downloadQuery }: GraphEditorProp
       disabled: false,
     },
     {
+      tooltip: 'Edit JSON',
+      onClick: editJson,
+      icon: <EditIcon />,
+      disabled: false,
+    },
+    {
+      tooltip: 'Download Query',
+      onClick: downloadQuery,
+      icon: <DownloadIcon />,
+      disabled: false,
+    },
+    {
       icon: 'divider',
     },
     {
@@ -181,18 +212,6 @@ export default function GraphEditor({ editJson, downloadQuery }: GraphEditorProp
       tooltip: 'Share Graph',
       onClick: () => toggleShareQuery(true),
       icon: <ShareIcon />,
-      disabled: false,
-    },
-    {
-      tooltip: 'Edit JSON',
-      onClick: editJson,
-      icon: <EditIcon />,
-      disabled: false,
-    },
-    {
-      tooltip: 'Download Query',
-      onClick: downloadQuery,
-      icon: <DownloadIcon />,
       disabled: false,
     },
     // {
@@ -348,6 +367,52 @@ export default function GraphEditor({ editJson, downloadQuery }: GraphEditorProp
         />
         <SaveQuery show={showSaveQuery} close={() => toggleSaveQuery(false)} />
         <ShareQuery show={showShareQuery} close={() => toggleShareQuery(false)} />
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 10,
+            right: '50%',
+            transform: 'translateX(50%)',
+            display: 'flex',
+            gap: '10px',
+            // backgroundColor: 'white',
+            // borderRadius: '4px',
+            // padding: '4px',
+            // fontSize: '12px',
+            // boxShadow: '0px 0px 5px rgba(0,0,0,0.1)',
+          }}
+        >
+          <Button
+            id="demo-positioned-button"
+            aria-controls={open ? 'demo-positioned-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+            onClick={handleClick}
+            sx={{
+              backgroundColor: 'white',
+            }}
+          >
+            Load a query
+          </Button>
+          <Menu
+            id="demo-positioned-menu"
+            aria-labelledby="demo-positioned-button"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
+            {buttonOptions?.map((option, index) => (
+              <MenuItem key={index} onClick={option.onClick} disabled={option.disabled}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Menu>
+          <Button variant="contained" onClick={onSubmit}>
+            Submit
+          </Button>
+        </div>
       </div>
     </div>
   );
