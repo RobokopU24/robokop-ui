@@ -35,18 +35,7 @@ function Cards({ icon, title, description, buttonText, action }: CardsProps) {
       </div>
       <h3 style={{ margin: '20px 0 0 0', fontWeight: 500 }}>{title}</h3>
       <p style={{ color: '#5E5E5E', fontSize: '14px', margin: '12px 0 32px 0' }}>{description}</p>
-      <button
-        onClick={action}
-        style={{
-          width: '100%',
-          background: 'linear-gradient(89deg, #627DFF 0%, #7A5AFB 100%)',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          padding: '8px 0',
-          cursor: 'pointer',
-        }}
-      >
+      <button onClick={action} className="primary-button">
         <p style={{ margin: 0, fontWeight: 400, fontSize: '14px' }}>{buttonText}</p>
       </button>
     </div>

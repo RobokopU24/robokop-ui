@@ -2,6 +2,10 @@
     margin-left: 10px;
 }
 
+#queryBuilderContainer {
+    height: 80vh;
+}
+
 #queryEditorContainer {
     display: flex;
     column-gap: 2rem;
@@ -9,15 +13,14 @@
 
 #queryTextEditor {
     width: 100%;
-    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 10px;
 }
 
 #queryGraphEditor {
-    width: 40%;
-    padding: 20px;
+    /* padding: 20px; */
+    height: 100%;
 }
 
 .textEditorRow {
@@ -57,6 +60,30 @@
     gap: 16px;
 }
 
+/* backgroundColor: '#f0f0f0',
+                borderRadius: '4px', */
+
+.resize-container {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.resize-container:hover {
+    background-color: #e0e0e0;
+}
+
+.resize-handle {
+    width: 10px;
+    cursor: col-resize;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    color: #999;
+}
+
 @media (max-width: 1450px) {
     #queryEditorContainer {
         flex-direction: column;
@@ -64,7 +91,7 @@
     }
 
     #queryGraphEditor {
-        width: 100%;
+        /* width: 100%; */
     }
 
     #graphContainer {

@@ -26,6 +26,10 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { useAlert } from '../../../components/AlertProvider';
+import { RestartAlt } from '@mui/icons-material';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
 const width = 600;
 const height = 400;
@@ -123,6 +127,7 @@ export default function GraphEditor({
 
   const queryBuilder = useQueryBuilderContext();
   const { user } = useAuth();
+  const { displayAlert } = useAlert();
 
   const { query_graph } = queryBuilder;
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -154,6 +159,10 @@ export default function GraphEditor({
 
   function editNode(id: string, node: NodeOption | null) {
     queryBuilder.dispatch({ type: 'editNode', payload: { id, node } });
+  }
+
+  function resetGraph() {
+    queryBuilder.dispatch({ type: 'resetGraph', payload: {} });
   }
 
   /**
@@ -202,6 +211,12 @@ export default function GraphEditor({
       disabled: false,
     },
     {
+      tooltip: 'Reset Graph',
+      onClick: resetGraph,
+      icon: <RestartAlt />,
+      disabled: false,
+    },
+    {
       icon: 'divider',
     },
     {
@@ -227,10 +242,10 @@ export default function GraphEditor({
   const divRef = React.createRef<HTMLDivElement>();
 
   return (
-    <div id="queryGraphEditor" style={{ width: '100%' }}>
+    <div id="queryGraphEditor">
       <div
         id="graphContainer"
-        style={{ height: height, width, position: 'relative', overflow: 'hidden' }}
+        style={{ height: '100%', width: '100%', position: 'relative', overflow: 'hidden' }}
         ref={divRef}
       >
         <div className="buttons-container">
@@ -240,7 +255,13 @@ export default function GraphEditor({
                 <div
                   className="button-icon"
                   key={index}
-                  onClick={action.onClick}
+                  onClick={
+                    action.disabled
+                      ? () => {
+                          displayAlert('info', 'Please log in to use this feature.');
+                        }
+                      : action.onClick
+                  }
                   style={{ opacity: action.disabled ? 0.5 : 1 }}
                 >
                   <div className="icon">{cloneElement(action.icon, { className: '' })}</div>
@@ -384,18 +405,31 @@ export default function GraphEditor({
             // boxShadow: '0px 0px 5px rgba(0,0,0,0.1)',
           }}
         >
-          <Button
+          <button
             id="demo-positioned-button"
             aria-controls={open ? 'demo-positioned-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
-            sx={{
+            style={{
               backgroundColor: 'white',
+              width: '260px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            Load a query
-          </Button>
+            Load a query{' '}
+            {open ? (
+              <UnfoldLessIcon style={{ marginLeft: '8px' }} />
+            ) : (
+              <UnfoldMoreIcon style={{ marginLeft: '8px' }} />
+            )}
+          </button>
           <Menu
             id="demo-positioned-menu"
             aria-labelledby="demo-positioned-button"
@@ -411,9 +445,9 @@ export default function GraphEditor({
               </MenuItem>
             ))}
           </Menu>
-          <Button variant="contained" onClick={onSubmit}>
+          <button className="primary-button" onClick={onSubmit}>
             Submit
-          </Button>
+          </button>
         </div>
       </div>
     </div>
