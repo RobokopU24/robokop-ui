@@ -1,17 +1,13 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import API from '../../../../../API'
+import { Download, OpenInNew } from '@mui/icons-material';
 import { Button, ButtonGroup, Container, Paper, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import API from '../../../../../API';
 import { formatFileSize, getFileSize } from '../../../../../utils/getFileSize';
-import { ChevronRight, Download, HorizontalRule, OpenInNew } from '@mui/icons-material';
 import stringUtils from '../../../../../utils/strings';
-import { Fragment } from 'react/jsx-runtime';
 
 export const Route = createFileRoute('/_appLayout/explore/graphs/$graph_id/')({
   component: RouteComponent,
-  head: () => ({
-    meta: [{ title: `ROBOKOP` }]
-  }),
-  loader: async({ params }) => {
+  loader: async ({ params }) => {
     const graphData = await API.graphMetadata.metadata(params.graph_id);
 
     let fileSize = null;
@@ -24,7 +20,9 @@ export const Route = createFileRoute('/_appLayout/explore/graphs/$graph_id/')({
       fileSize
     }
   },
-  
+  head: ({ loaderData }) => ({
+    meta: [{ title: `${loaderData?.graphData.graph_name} | ROBOKOP` }]
+  }),
 })
 
 function RouteComponent() {
