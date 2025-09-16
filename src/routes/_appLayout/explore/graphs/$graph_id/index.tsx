@@ -142,7 +142,7 @@ function RouteComponent() {
       </Table>
     </TableContainer>
 
-    <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>Node CURIE Prefixes</Typography>
+    <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>Edge Properties</Typography>
     <TableContainer component={Paper} elevation={2} sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}>
       <Table size="small">
         <TableHead>
