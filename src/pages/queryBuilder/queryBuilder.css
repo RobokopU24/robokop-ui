@@ -4,6 +4,7 @@
 
 #queryBuilderContainer {
     height: 80vh;
+    margin-top: 20px;
 }
 
 #queryEditorContainer {
