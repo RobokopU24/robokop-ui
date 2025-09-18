@@ -238,7 +238,14 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
   return (
     <Paper elevation={0} className="editor-row-wrapper">
       <Box className="textEditorRow">
-        <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          flexWrap="wrap"
+          width="100%"
+          display="flex"
+        >
           <IconButton
             onClick={deleteEdge}
             className="textEditorIconButton"
@@ -253,48 +260,51 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
             {index === 1 && 'where'}
             {index > 1 && 'and where'}
           </Typography>
-
-          <NodeSelector
-            id={edge.subject as string}
-            properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
-            setReference={(nodeId: string | null) => setReference('subject', nodeId)}
-            update={subjectIsReference ? () => setReference('subject', null) : editNode}
-            isReference={subjectIsReference}
-            options={{
-              includeCuries: !subjectIsReference,
-              includeCategories: !subjectIsReference,
-              includeExistingNodes: index !== 0,
-              existingNodes: Object.keys(query_graph.nodes)
-                .filter((key) => key !== edge.object)
-                .map((key) => ({
-                  ...query_graph.nodes[key],
-                  key,
-                  name: query_graph.nodes[key].name || key,
-                })),
-            }}
-          />
-
-          <PredicateSelector id={edgeId} />
-
-          <NodeSelector
-            id={edge.object as string}
-            properties={edge.object ? query_graph.nodes[edge.object] : ''}
-            setReference={(nodeId: string | null) => setReference('object', nodeId)}
-            update={objectIsReference ? () => setReference('object', null) : editNode}
-            isReference={objectIsReference}
-            options={{
-              includeCuries: !objectIsReference,
-              includeCategories: !objectIsReference,
-              includeExistingNodes: index !== 0,
-              existingNodes: Object.keys(query_graph.nodes)
-                .filter((key) => key !== edge.subject)
-                .map((key) => ({
-                  ...query_graph.nodes[key],
-                  key,
-                  name: query_graph.nodes[key].name || key,
-                })),
-            }}
-          />
+          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <NodeSelector
+              id={edge.subject as string}
+              properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
+              setReference={(nodeId: string | null) => setReference('subject', nodeId)}
+              update={subjectIsReference ? () => setReference('subject', null) : editNode}
+              isReference={subjectIsReference}
+              options={{
+                includeCuries: !subjectIsReference,
+                includeCategories: !subjectIsReference,
+                includeExistingNodes: index !== 0,
+                existingNodes: Object.keys(query_graph.nodes)
+                  .filter((key) => key !== edge.object)
+                  .map((key) => ({
+                    ...query_graph.nodes[key],
+                    key,
+                    name: query_graph.nodes[key].name || key,
+                  })),
+              }}
+            />
+          </div>
+          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <PredicateSelector id={edgeId} />
+          </div>
+          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <NodeSelector
+              id={edge.object as string}
+              properties={edge.object ? query_graph.nodes[edge.object] : ''}
+              setReference={(nodeId: string | null) => setReference('object', nodeId)}
+              update={objectIsReference ? () => setReference('object', null) : editNode}
+              isReference={objectIsReference}
+              options={{
+                includeCuries: !objectIsReference,
+                includeCategories: !objectIsReference,
+                includeExistingNodes: index !== 0,
+                existingNodes: Object.keys(query_graph.nodes)
+                  .filter((key) => key !== edge.subject)
+                  .map((key) => ({
+                    ...query_graph.nodes[key],
+                    key,
+                    name: query_graph.nodes[key].name || key,
+                  })),
+              }}
+            />
+          </div>
 
           <IconButton onClick={addHop} className="textEditorIconButton" aria-label="Add hop">
             <AddBoxOutlinedIcon />
