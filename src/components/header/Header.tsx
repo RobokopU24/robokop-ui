@@ -91,6 +91,7 @@ function Header() {
           open={exploreMenuOpen}
           onClose={closeExploreMenu}
           items={[
+            { to: '/explore/graphs', label: 'Graphs' },
             { to: '/details', label: 'Node Explorer' },
             { to: '/explore/enrichment-analysis', label: 'Enrichment Analysis' },
             { to: '/explore/drug-chemical', label: 'Drug to Disease Pair' },
