@@ -27,7 +27,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAlert } from '../../../components/AlertProvider';
-import { RestartAlt } from '@mui/icons-material';
+import RestartAlt from '@mui/icons-material/RestartAlt';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 
