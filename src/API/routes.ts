@@ -29,4 +29,9 @@ const queryRoutes = {
   share: `${queryEndpoint}/share`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes };
+const filesEndpoint = `${baseAuthURL}/files`;
+export const fileRoutes = {
+  base: filesEndpoint,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes };

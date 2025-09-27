@@ -2,12 +2,18 @@ import { createFileRoute } from '@tanstack/react-router';
 import API from '../../../../../API';
 import GraphId from '../../../../../pages/graphId/GraphId';
 import { getFileSize } from '../../../../../utils/getFileSize';
+import { useQuery } from '@tanstack/react-query';
+import { queryClient } from '../../../../../utils/queryClient';
 
 export const Route = createFileRoute('/_appLayout/explore/graphs/$graph_id/')({
   component: RouteComponent,
   ssr: false,
   loader: async ({ params }) => {
-    const graphData = await API.graphMetadata.metadata(params.graph_id);
+    console.log('params in loader', params);
+    const graphData = await queryClient.ensureQueryData({
+      queryKey: ['graph-metadata', params.graph_id],
+      queryFn: () => API.graphMetadata.metadata(params.graph_id!),
+    });
 
     let fileSize;
     if (graphData?.neo4j_dump) {
@@ -19,13 +25,32 @@ export const Route = createFileRoute('/_appLayout/explore/graphs/$graph_id/')({
       fileSize,
     };
   },
-  head: ({ loaderData }) => ({
-    meta: [{ title: `${loaderData?.graphData.graph_name} | ROBOKOP` }],
-  }),
+  head: ({ params }) => {
+    const cachedData: any = queryClient.getQueryData(['graph-metadata', params.graph_id]);
+    return {
+      meta: [
+        {
+          title: cachedData ? `${cachedData.graph_name} | ROBOKOP` : 'Graph | ROBOKOP',
+        },
+      ],
+    };
+  },
 });
 
 function RouteComponent() {
-  const { graphData, fileSize } = Route.useLoaderData();
+  const { graph_id } = Route.useParams();
+  console.log('graph_id', graph_id);
+  const { data, isPending } = useQuery({
+    queryKey: ['graph-metadata', graph_id],
+    queryFn: () => {
+      console.log('fetching graph metadata for', graph_id);
+      return API.graphMetadata.metadata(graph_id!);
+    },
+    enabled: !!graph_id,
+  });
 
-  return <GraphId graphData={graphData} fileSize={fileSize} />;
+  const { fileSize } = Route.useLoaderData();
+  if (isPending) return 'Loading...';
+
+  return <GraphId graphData={data} fileSize={fileSize} />;
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import useBiolinkModel from '../stores/useBiolinkModel';
 import API from '../API';
-import AlertProvider, { useAlert } from './AlertProvider';
+import { useAlert } from './AlertProvider';
 import theme from '../theme';
 import BiolinkContext from '../context/biolink';
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
@@ -10,23 +10,15 @@ import { AuthProvider } from '../context/AuthContext';
 import Header from './header/Header';
 import Footer from './footer/Footer';
 import { PostHogProvider } from 'posthog-js/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '../utils/queryClient';
 
 interface RootComponentWrapperProps {
   children: React.ReactNode;
 }
 
-declare global {
-  interface Window {
-    __TANSTACK_QUERY_CLIENT__: import('@tanstack/query-core').QueryClient;
-  }
-}
-
 function RootComponentWrapper({ children }: RootComponentWrapperProps) {
   const biolink = useBiolinkModel();
   const { displayAlert } = useAlert();
-  window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
   async function fetchBiolink() {
     const response = await API.biolink.getModelSpecification();
@@ -54,21 +46,19 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
         debug: import.meta.env.MODE === 'development',
       }}
     >
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <BiolinkContext.Provider value={biolink}>
-            <MuiThemeProvider theme={theme}>
-              <StylesThemeProvider theme={theme}>
-                <div id="pageContainer">
-                  <Header />
-                  <div id="contentContainer">{children}</div>
-                  <Footer />
-                </div>
-              </StylesThemeProvider>
-            </MuiThemeProvider>
-          </BiolinkContext.Provider>
-        </AuthProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <BiolinkContext.Provider value={biolink}>
+          <MuiThemeProvider theme={theme}>
+            <StylesThemeProvider theme={theme}>
+              <div id="pageContainer">
+                <Header />
+                <div id="contentContainer">{children}</div>
+                <Footer />
+              </div>
+            </StylesThemeProvider>
+          </MuiThemeProvider>
+        </BiolinkContext.Provider>
+      </AuthProvider>
     </PostHogProvider>
   );
 }

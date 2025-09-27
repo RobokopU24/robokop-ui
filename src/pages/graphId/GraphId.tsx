@@ -5,6 +5,7 @@ import {
   Button,
   ButtonGroup,
   Container,
+  Grid,
   Paper,
   styled,
   Table,
@@ -16,8 +17,9 @@ import {
   Typography,
 } from '@mui/material';
 import { Link } from '@tanstack/react-router';
-import { formatFileSize, getFileSize } from '../../utils/getFileSize';
+import { formatFileSize } from '../../utils/getFileSize';
 import stringUtils from '../../utils/strings';
+import DownloadSection from './Download';
 
 interface GraphIdProps {
   graphData: any;
@@ -25,91 +27,78 @@ interface GraphIdProps {
 }
 
 function GraphId({ graphData, fileSize }: GraphIdProps) {
-  // const [fileSize, setFileSize] = useState<number | null>(null);
-
-  console.log(graphData, 'graphData in GraphId');
-
-  // useEffect(() => {
-  //   const fetchFileSize = async () => {
-  //     if (graphData?.neo4j_dump) {
-  //       const size = await getFileSize(graphData.neo4j_dump);
-  //       setFileSize(size);
-  //     }
-  //   };
-  //   fetchFileSize();
-  // }, [graphData]);
-
   return (
-    <Container sx={{ my: 6 }}>
-      <Typography variant="body2" component={Link} to="/explore/graphs">
-        ← View all graphs
-      </Typography>
-      <HeadingWrapper>
-        <Typography variant="h4" component="h1" my={2}>
-          {graphData.graph_name}
+    <Grid container spacing={4} sx={{ width: '100%', maxWidth: 1600, my: 8, mx: 'auto' }}>
+      <Grid size={8}>
+        <Typography variant="body2" component={Link} to="/explore/graphs">
+          ← View all graphs
         </Typography>
-        <span>
-          {stringUtils.formatNumber(graphData.final_node_count)} nodes,{' '}
-          {stringUtils.formatNumber(graphData.final_edge_count)} edges
-        </span>
-      </HeadingWrapper>
-      <Typography variant="body1">{graphData.graph_description}</Typography>
-      <ButtonGroup color="inherit" sx={{ mt: 1 }}>
-        {graphData.graph_url && (
-          <Button
-            endIcon={<OpenInNew />}
-            href={graphData.graph_url}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Graph website
+        <HeadingWrapper>
+          <Typography variant="h4" component="h1" my={2}>
+            {graphData.graph_name}
+          </Typography>
+          <span>
+            {stringUtils.formatNumber(graphData.final_node_count)} nodes,{' '}
+            {stringUtils.formatNumber(graphData.final_edge_count)} edges
+          </span>
+        </HeadingWrapper>
+        <Typography variant="body1">{graphData.graph_description}</Typography>
+        <ButtonGroup color="inherit" sx={{ mt: 1 }}>
+          {graphData.graph_url && (
+            <Button
+              endIcon={<OpenInNew />}
+              href={graphData.graph_url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Graph website
+            </Button>
+          )}
+          <Button endIcon={<Download />} component={'a'} href={graphData.neo4j_dump}>
+            Download Graph {fileSize !== null && ` (${formatFileSize(fileSize || 0, 1)})`}
           </Button>
-        )}
-        <Button endIcon={<Download />} component={'a'} href={graphData.neo4j_dump}>
-          Download Graph {fileSize !== null && ` (${formatFileSize(fileSize || 0, 1)})`}
-        </Button>
-      </ButtonGroup>
-      <p>
-        Graph version <code>{graphData.graph_version}</code>, built{' '}
-        <code>{new Date(graphData.build_time).toLocaleDateString()}</code>
-      </p>
+        </ButtonGroup>
+        <p>
+          Graph version <code>{graphData.graph_version}</code>, built{' '}
+          <code>{new Date(graphData.build_time).toLocaleDateString()}</code>
+        </p>
 
-      <Hr />
+        <Hr />
 
-      <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>
-        Predicates Counts
-      </Typography>
-      <TableContainer
-        component={Paper}
-        elevation={2}
-        sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Predicate</TableCell>
-              <TableCell align="right">Count</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {[...Object.entries(graphData.qc_results.predicate_totals)]
-              .sort((a: any, b: any) => b[1] - a[1])
-              .map(([predicate, count]) => (
-                <TableRow
-                  key={predicate}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {predicate}
-                  </TableCell>
-                  <TableCell align="right">{(count as number).toLocaleString()}</TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>
+          Predicates Counts
+        </Typography>
+        <TableContainer
+          component={Paper}
+          elevation={2}
+          sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Predicate</TableCell>
+                <TableCell align="right">Count</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[...Object.entries(graphData.qc_results.predicate_totals)]
+                .sort((a: any, b: any) => b[1] - a[1])
+                .map(([predicate, count]) => (
+                  <TableRow
+                    key={predicate}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {predicate}
+                    </TableCell>
+                    <TableCell align="right">{(count as number).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      {/* {
+        {/* {
       Object.entries(graphData.qc_results.predicates_by_knowledge_sources).map(([ks, counts]: any) => (
         <Fragment key={ks}>
           <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>Predicates in {ks}</Typography>
@@ -140,67 +129,71 @@ function GraphId({ graphData, fileSize }: GraphIdProps) {
       ))
     } */}
 
-      <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>
-        Node CURIE Prefixes
-      </Typography>
-      <TableContainer
-        component={Paper}
-        elevation={2}
-        sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Prefix</TableCell>
-              <TableCell align="right">Count</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {[...Object.entries(graphData.qc_results.node_curie_prefixes)]
-              .sort((a: any, b: any) => b[1] - a[1])
-              .map(([predicate, count]) => (
-                <TableRow
-                  key={predicate}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
+        <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>
+          Node CURIE Prefixes
+        </Typography>
+        <TableContainer
+          component={Paper}
+          elevation={2}
+          sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Prefix</TableCell>
+                <TableCell align="right">Count</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {[...Object.entries(graphData.qc_results.node_curie_prefixes)]
+                .sort((a: any, b: any) => b[1] - a[1])
+                .map(([predicate, count]) => (
+                  <TableRow
+                    key={predicate}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {predicate}
+                    </TableCell>
+                    <TableCell align="right">{(count as number).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>
+          Edge Properties
+        </Typography>
+        <TableContainer
+          component={Paper}
+          elevation={2}
+          sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>Property</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {graphData.qc_results.edge_properties.map((property: any) => (
+                <TableRow key={property} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell component="th" scope="row">
-                    {predicate}
+                    {property}
                   </TableCell>
-                  <TableCell align="right">{(count as number).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 2 }}>
-        Edge Properties
-      </Typography>
-      <TableContainer
-        component={Paper}
-        elevation={2}
-        sx={{ border: `1px solid rgba(0, 0, 0, 0.24)` }}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Property</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {graphData.qc_results.edge_properties.map((property: any) => (
-              <TableRow key={property} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                <TableCell component="th" scope="row">
-                  {property}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* <pre>{JSON.stringify(graphData, null, 2)}</pre> */}
-    </Container>
+        {/* <pre>{JSON.stringify(graphData, null, 2)}</pre> */}
+      </Grid>
+      <Grid size={4}>
+        <DownloadSection />
+      </Grid>
+    </Grid>
   );
 }
 
