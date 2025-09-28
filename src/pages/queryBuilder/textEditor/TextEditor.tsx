@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import TextEditorRow from "./textEditorRow/TextEditorRow";
-import { TextEditorRowProps } from "./types";
+import TextEditorRow from './textEditorRow/TextEditorRow';
+import { TextEditorRowProps } from './types';
 
 /**
  * Query Builder text editor interface

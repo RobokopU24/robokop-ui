@@ -52,6 +52,7 @@ type QueryBuilderAction =
   | { type: 'addHop'; payload: { nodeId?: string } }
   | { type: 'addNode' }
   | { type: 'editNode'; payload: { id: string; node?: QueryGraphNode } }
+  | { type: 'resetGraph' }
   | { type: 'deleteNode'; payload: { id: string } }
   | { type: 'saveGraph'; payload: { message: { query_graph: QueryGraph } } }
   | { type: 'restoreGraph'; payload: QueryGraph }
@@ -183,6 +184,11 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
     case 'editNode': {
       const { id, node }: { id: string; node?: QueryGraphNode } = action.payload;
       newState.message.message.query_graph.nodes[id] = node || getDefaultNode();
+      break;
+    }
+    case 'resetGraph': {
+      newState.message.message.query_graph = defaultQueryGraph;
+      newState.rootNode = 'n0';
       break;
     }
     case 'deleteNode': {

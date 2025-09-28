@@ -1,10 +1,75 @@
 #graphContainer {
-    border: 1px solid black;
+    border: 1px solid rgb(200, 200, 200);
     position: relative;
     border-radius: 5px;
+    width: 100%;
 }
+
 #graphBottomButtons {
     border-top: 1px solid grey;
     display: flex;
     height: 43px;
+}
+
+.buttons-container {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 10px;
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2px;
+    z-index: 999;
+    background-color: white;
+}
+
+/* collapsed state */
+.button-icon {
+    cursor: pointer;
+    text-align: start;
+    border-radius: 18px;
+    padding: 6px;
+    height: 24px;
+    width: auto;
+    max-width: 24px;
+    /* show only icon */
+    display: inline-flex;
+    align-items: center;
+    overflow: hidden;
+    -webkit-transition: max-width 0.5s;
+    transition: max-width 0.5s;
+}
+
+/* expand all buttons when container is hovered */
+.buttons-container:hover .button-icon {
+    max-width: 500px;
+    /* show icon + label */
+}
+
+/* highlight effect for individual button on hover */
+.button-icon:hover {
+    background-color: rgb(13, 46, 178);
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.icon {
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.icon-label {
+    white-space: nowrap;
+    padding-right: 15px;
+    font-size: 14px;
+}
+
+.divider {
+    border-top: 1px solid rgb(217, 217, 217);
+    margin: 5px 0;
 }

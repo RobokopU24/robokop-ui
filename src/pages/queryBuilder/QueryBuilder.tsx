@@ -31,6 +31,7 @@ import MenuList from '@mui/material/MenuList';
 import ExampleModal from '../entryPoint/ExampleModal';
 import TemplateModal from '../entryPoint/TemplateModal';
 import BookmarkModal from '../entryPoint/BookmarkModal';
+import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
@@ -57,18 +58,18 @@ export default function QueryBuilder() {
   const [bookmarkModalOpen, setBookmarkModalOpen] = useState(false);
   const buttonOptions = [
     {
-      label: 'Load Template',
-      onClick: () => {
-        setSavedState(cloneDeep(queryBuilder.query_graph));
-        setTemplateModalOpen(true);
-      },
-      disabled: false,
-    },
-    {
       label: 'Load Example',
       onClick: () => {
         setSavedState(cloneDeep(queryBuilder.query_graph));
         setExampleModalOpen(true);
+      },
+      disabled: false,
+    },
+    {
+      label: 'Load Template',
+      onClick: () => {
+        setSavedState(cloneDeep(queryBuilder.query_graph));
+        setTemplateModalOpen(true);
       },
       disabled: false,
     },
@@ -176,107 +177,49 @@ export default function QueryBuilder() {
       <pageStatus.Display />
       {pageStatus.displayPage && (
         <div id="queryBuilderContainer">
-          <div id="queryEditorContainer">
-            <RegisterPasskeyDialog
-              open={registerPasskeyOpen}
-              onClose={() => setRegisterPasskeyOpen(false)}
-            />
-            <div style={{ flex: 1 }}>
+          <RegisterPasskeyDialog
+            open={registerPasskeyOpen}
+            onClose={() => setRegisterPasskeyOpen(false)}
+          />
+          <JsonEditor show={showJson} close={() => toggleJson(false)} />
+          <DownloadDialog
+            open={downloadOpen}
+            setOpen={setDownloadOpen}
+            message={queryBuilder.query_graph}
+            download_type="all_queries"
+          />
+          <PanelGroup direction="horizontal">
+            <Panel defaultSize={60} minSize={30} style={{ padding: '20px 20px 20px 0' }}>
               <TextEditor rows={queryBuilder.textEditorRows || []} />
-            </div>
-            <div>
-              <GraphEditor />
-              <div id="queryBuilderButtons">
-                {/* <Button onClick={() => setExampleQueriesOpen(true)} variant="outlined">
-                  Load Query
-                </Button> */}
-                <ButtonGroup
-                  variant="contained"
-                  ref={anchorRef}
-                  aria-label="Button group with a nested menu"
-                >
-                  <Button onClick={handleClick}>{buttonOptions[selectedIndex].label}</Button>
-                  <Button
-                    size="small"
-                    aria-controls={openMenu ? 'split-button-menu' : undefined}
-                    aria-expanded={openMenu ? 'true' : undefined}
-                    aria-label="select merge strategy"
-                    aria-haspopup="menu"
-                    onClick={handleToggle}
-                  >
-                    <ArrowDropDownIcon />
-                  </Button>
-                </ButtonGroup>
-                <Popper
-                  sx={{ zIndex: 1 }}
-                  open={openMenu}
-                  anchorEl={anchorRef.current}
-                  role={undefined}
-                  transition
-                  disablePortal
-                >
-                  {({ TransitionProps, placement }) => (
-                    <Grow
-                      {...TransitionProps}
-                      style={{
-                        transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom',
-                      }}
-                    >
-                      <Paper>
-                        <ClickAwayListener onClickAway={handleClose}>
-                          <MenuList id="split-button-menu" autoFocusItem>
-                            {buttonOptions.map((option, index) => (
-                              <MenuItem
-                                key={option.label}
-                                selected={index === selectedIndex}
-                                onClick={(event) => handleMenuItemClick(event, index)}
-                                disabled={option.disabled}
-                              >
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                          </MenuList>
-                        </ClickAwayListener>
-                      </Paper>
-                    </Grow>
-                  )}
-                </Popper>
-                {/* <TemplateQueriesModal open={exampleQueriesOpen} setOpen={setExampleQueriesOpen} /> */}
-                <ExampleModal
-                  isOpen={exampleModalOpen}
-                  onClose={() => setExampleModalOpen(false)}
-                  onCancel={handleCancel}
-                />
-                <TemplateModal
-                  isOpen={templateModalOpen}
-                  onClose={() => setTemplateModalOpen(false)}
-                  onCancel={handleCancel}
-                />
-                <BookmarkModal
-                  isOpen={bookmarkModalOpen}
-                  onClose={() => setBookmarkModalOpen(false)}
-                  onCancel={handleCancel}
-                />
-                <Button onClick={() => toggleJson(true)} variant="outlined">
-                  Edit JSON
-                </Button>
-                <Button onClick={() => setDownloadOpen(true)} variant="outlined">
-                  Download Query
-                </Button>
-                <div style={{ flexGrow: 1 }}></div>
-                <SubmitButton onClick={() => onQuickSubmit()} variant="contained">
-                  Submit
-                </SubmitButton>
-              </div>
-            </div>
-            <JsonEditor show={showJson} close={() => toggleJson(false)} />
-            <DownloadDialog
-              open={downloadOpen}
-              setOpen={setDownloadOpen}
-              message={queryBuilder.query_graph}
-              download_type="all_queries"
+            </Panel>
+            <PanelResizeHandle
+              className="resize-container"
+              children={<div className="resize-handle">||</div>}
             />
-          </div>
+            <Panel minSize={20} defaultSize={40} style={{ padding: '20px 2px 20px 20px' }}>
+              <GraphEditor
+                editJson={() => toggleJson(true)}
+                downloadQuery={() => setDownloadOpen(true)}
+                onSubmit={() => onQuickSubmit()}
+                buttonOptions={buttonOptions}
+              />
+            </Panel>
+          </PanelGroup>
+          <ExampleModal
+            isOpen={exampleModalOpen}
+            onClose={() => setExampleModalOpen(false)}
+            onCancel={handleCancel}
+          />
+          <TemplateModal
+            isOpen={templateModalOpen}
+            onClose={() => setTemplateModalOpen(false)}
+            onCancel={handleCancel}
+          />
+          <BookmarkModal
+            isOpen={bookmarkModalOpen}
+            onClose={() => setBookmarkModalOpen(false)}
+            onCancel={handleCancel}
+          />
         </div>
       )}
     </>
