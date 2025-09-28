@@ -75,7 +75,7 @@ function RouteComponent() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Graph website
+                  Data Source
                 </Button>
               )}
               <Button
