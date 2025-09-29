@@ -35,7 +35,7 @@
     --form-response-border-color: #009d0088;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
     :root {
         --first-gradient: linear-gradient(180deg, #8358f6 0%, #3b90ed 100%);
         --second-gradient: linear-gradient(180deg, #964ff0 0%, #cb6feb 100%);
@@ -65,7 +65,7 @@
         --form-response-background-color: #00ff511b;
         --form-response-border-color: #00ff5185;
     }
-}
+} */
 
 @media (max-width: 850px) {
     :root {

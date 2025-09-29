@@ -66,11 +66,6 @@ function EntryPoint() {
         <p style={{ fontSize: '30px', fontWeight: 400, margin: '0 8px 0 0' }}>Welcome to </p>
         <img src="/logo.svg" alt="Logo" />
       </div>
-      <p style={{ color: '#5E5E5E', fontSize: '16px', textAlign: 'center', maxWidth: '900px' }}>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-        laboris nisi ut aliquip ex ea commodo consequat.
-      </p>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '32px', marginTop: '48px' }}>
         {cardsData.map((card, index) => (
           <Cards

@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite';
-import tsConfigPaths from 'vite-tsconfig-paths';
-import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
+// https://vite.dev/config/
 export default defineConfig({
   server: {
     proxy: {
@@ -13,16 +14,14 @@ export default defineConfig({
     },
   },
   plugins: [
-    tsConfigPaths({
-      projects: ['./tsconfig.json'],
+    tanstackRouter({
+      target: 'react',
+      autoCodeSplitting: false,
     }),
-    tanstackStart({
-      defaultRouteOptions: {
-        ssr: false,
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler']],
       },
     }),
   ],
-  build: {
-    sourcemap: true,
-  },
-});
+})

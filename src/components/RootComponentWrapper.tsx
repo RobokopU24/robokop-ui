@@ -10,6 +10,7 @@ import { AuthProvider } from '../context/AuthContext';
 import Header from './header/Header';
 import Footer from './footer/Footer';
 import { PostHogProvider } from 'posthog-js/react';
+import { QueryBuilderProvider } from '../context/queryBuilder';
 
 interface RootComponentWrapperProps {
   children: React.ReactNode;
@@ -50,11 +51,13 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
           <BiolinkContext.Provider value={biolink}>
             <MuiThemeProvider theme={theme}>
               <StylesThemeProvider theme={theme}>
-                <div id="pageContainer">
-                  <Header />
-                  <div id="contentContainer">{children}</div>
-                  <Footer />
-                </div>
+                <QueryBuilderProvider>
+                  <div id="pageContainer">
+                    <Header />
+                    <div id="contentContainer">{children}</div>
+                    <Footer />
+                  </div>
+                </QueryBuilderProvider>
               </StylesThemeProvider>
             </MuiThemeProvider>
           </BiolinkContext.Provider>

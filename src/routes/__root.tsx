@@ -1,4 +1,5 @@
 /// <reference types="vite/client" />
+
 import type { ReactNode } from 'react';
 import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
 
@@ -8,6 +9,18 @@ import '@fontsource/roboto/latin-300.css';
 import '@fontsource/roboto/latin-400.css';
 import '@fontsource/roboto/latin-500.css';
 import '@fontsource/roboto/latin-700.css';
+import RootComponentWrapper from '../components/RootComponentWrapper';
+import AlertProvider from '../components/AlertProvider';
+
+const RootLayout = () => {
+  return (
+    <AlertProvider>
+      <RootComponentWrapper>
+        <Outlet />
+      </RootComponentWrapper>
+    </AlertProvider>
+  )
+}
 
 export const Route = createRootRoute({
   head: () => ({
@@ -43,27 +56,6 @@ export const Route = createRootRoute({
       { name: 'twitter:image', content: 'https://robokop.renci.org/opengraph-image.png' },
     ],
   }),
-  component: RootComponent,
+  component: RootLayout,
 });
 
-function RootComponent() {
-  return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
-  );
-}
-
-function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
-  return (
-    <html>
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}

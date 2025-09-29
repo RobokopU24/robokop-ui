@@ -14,9 +14,7 @@ dist-ssr
 *.local
 vite-report.html
 
-.nitro
-.output
-.tanstack
+.tanstack/
 
 # Editor directories and files
 .vscode/*

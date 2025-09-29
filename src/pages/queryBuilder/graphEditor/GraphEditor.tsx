@@ -385,7 +385,7 @@ export default function GraphEditor({
         <DownloadDialog
           open={downloadOpen}
           setOpen={setDownloadOpen}
-          message={queryBuilder.query_graph}
+          message={queryBuilder.state.message}
           download_type="query"
         />
         <SaveQuery show={showSaveQuery} close={() => toggleSaveQuery(false)} />
@@ -413,7 +413,7 @@ export default function GraphEditor({
             onClick={handleClick}
             style={{
               backgroundColor: 'white',
-              width: '260px',
+              width: '270px',
               border: '1px solid #ccc',
               borderRadius: '4px',
               padding: '8px 12px',
