@@ -33,9 +33,9 @@
     text-align: start;
     border-radius: 18px;
     padding: 6px;
-    height: 24px;
+    height: 32px;
     width: auto;
-    max-width: 24px;
+    max-width: 36px;
     /* show only icon */
     display: inline-flex;
     align-items: center;

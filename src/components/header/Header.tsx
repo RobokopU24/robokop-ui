@@ -8,7 +8,7 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import LoginDialog from '../LoginDialog';
 import { useAuth } from '../../context/AuthContext';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import DropdownMenu, { MenuItemConfig } from '../shared/DropdownMenu';
+import DropdownMenu, { type MenuItemConfig } from '../shared/DropdownMenu';
 
 function Header() {
   const { user, logout } = useAuth();

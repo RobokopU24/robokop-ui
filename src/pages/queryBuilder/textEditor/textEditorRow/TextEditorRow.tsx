@@ -24,7 +24,7 @@ import { NodeOption } from '../types';
 import PredicateSelector from './PredicateSelector';
 import QualifiersSelector from './QualifiersSelector';
 
-import './TextEditorRow.css';
+import './textEditorRow.css';
 import { BiolinkModel, BiolinkContextType, TextEditorRowProps } from '../types';
 
 // Define ValidAssociation locally

@@ -7,7 +7,7 @@ import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
 
 function ActivateUser() {
-  const search = useSearch({ from: '/_appLayout/activate-user/' });
+  const search = useSearch({ from: '/activate-user/' });
   const { user } = useAuth();
   const navigate = useNavigate();
   const { displayAlert } = useAlert();

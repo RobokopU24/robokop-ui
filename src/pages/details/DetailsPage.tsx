@@ -7,7 +7,7 @@ import NameResults from './NameResults';
 import { Link, useSearch } from '@tanstack/react-router';
 
 function DetailsPage() {
-  const searchParams = useSearch({ from: '/_appLayout/details/' });
+  const searchParams = useSearch({ from: '/details/' });
   const [selectedOption, setSelectedOption] = React.useState<'id' | 'name'>(
     searchParams.type || 'id'
   );
