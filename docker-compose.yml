@@ -1,0 +1,12 @@
+services:
+  robokop-ui:
+    image: containers.renci.org/comms/robokop-ui-frontend:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_DEPLOYMENT: "ROBOKOP"
+        VITE_BACKEND_API_URL: "https://robokop-ui-api.apps.renci.org"
+    ports:
+      - "8080:80"
+    restart: unless-stopped
