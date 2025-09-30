@@ -1,0 +1,1 @@
+function r(t,n=166){let e;function o(...i){const u=()=>{t.apply(this,i)};clearTimeout(e),e=setTimeout(u,n)}return o.clear=()=>{clearTimeout(e)},o}function c(t){return typeof t=="string"}export{r as d,c as i};
