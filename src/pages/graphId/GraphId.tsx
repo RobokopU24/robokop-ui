@@ -20,13 +20,24 @@ import { Link } from '@tanstack/react-router';
 import { formatFileSize } from '../../utils/getFileSize';
 import stringUtils from '../../utils/strings';
 import DownloadSection from './Download';
+import { useQuery } from '@tanstack/react-query';
+import { fileRoutes } from '../../API/routes';
+import axios from 'axios';
 
 interface GraphIdProps {
   graphData: any;
-  fileSize?: number | null;
 }
 
-function GraphId({ graphData, fileSize }: GraphIdProps) {
+function GraphId({ graphData }: GraphIdProps) {
+  const { data: fileSize } = useQuery({
+    queryKey: ['graph-metadata', graphData.graph_id, 'file-size'],
+    queryFn: async () => {
+      const results = await axios.post(fileRoutes.fileSize, {
+        fileUrl: graphData.neo4j_dump,
+      });
+      return results.data.size;
+    },
+  });
   return (
     <Grid container spacing={4} sx={{ width: '100%', maxWidth: 1600, my: 8, mx: 'auto' }}>
       <Grid size={8}>

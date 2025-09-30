@@ -15,14 +15,8 @@ export const Route = createFileRoute('/_appLayout/explore/graphs/$graph_id/')({
       queryFn: () => API.graphMetadata.metadata(params.graph_id!),
     });
 
-    let fileSize;
-    if (graphData?.neo4j_dump) {
-      fileSize = await getFileSize(graphData.neo4j_dump);
-    }
-
     return {
       graphData,
-      fileSize,
     };
   },
   head: ({ params }) => {
@@ -49,8 +43,7 @@ function RouteComponent() {
     enabled: !!graph_id,
   });
 
-  const { fileSize } = Route.useLoaderData();
   if (isPending) return 'Loading...';
 
-  return <GraphId graphData={data} fileSize={fileSize} />;
+  return <GraphId graphData={data} />;
 }
