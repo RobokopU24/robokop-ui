@@ -1,15 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
 
 export async function getFileSize(url: string): Promise<number | null> {
   try {
-    const response = await axios.head(url);
-    const contentLength = response.headers["content-length"];
+    // const response = await axios.head(url);
+    const response = await fetch(url, { method: 'HEAD', credentials: 'omit' });
+    console.log(response.headers, 'HEAD response headers');
+    const contentLength = response.headers.get('content-length');
     if (!contentLength) return null;
 
     const size = parseInt(String(contentLength), 10);
     return isNaN(size) ? null : size;
   } catch (error) {
-    console.error("Error fetching file size:", error);
+    console.error('Error fetching file size:', error);
     return null;
   }
 }
@@ -17,7 +19,7 @@ export async function getFileSize(url: string): Promise<number | null> {
 export function formatFileSize(bytes: number, decimals: number = 0): string {
   if (bytes < 1024) return `${bytes} B`;
 
-  const units = ["KB", "MB", "GB", "TB", "PB"];
+  const units = ['KB', 'MB', 'GB', 'TB', 'PB'];
   let size = bytes / 1024;
   let unitIndex = 0;
 

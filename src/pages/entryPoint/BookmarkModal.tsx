@@ -79,57 +79,58 @@ function BookmarkModal({ isOpen, onClose, onCancel }: BookmarkModalProps) {
         <p style={{ color: '#5E5E5E', fontSize: '14px', margin: '8px 0 0 0' }}>
           Select one of the existing queries you have bookmarked
         </p>
-        {queries.map((query) => (
-          <div
-            key={query.id}
-            className={`example-box ${selectedBookmark?.id === query.id ? 'example-box-selected' : 'example-box-unselected'}`}
-            style={{ display: 'flex' }}
-            onClick={() => {
-              setSelectedBookmark(query);
-              handleSelectBookmarkedQuery(query);
-            }}
-          >
-            <div style={{ flex: 1 }}>
-              <h4 style={{ fontWeight: 500, margin: 0 }}>{query.name}</h4>
-              <p style={{ margin: 0, color: '#5E5E5E', fontSize: '14px', marginTop: '4px' }}>
-                Bookmarked on {new Date(query.createdAt).toLocaleDateString()}
-              </p>
+        {queries.length > 0 &&
+          queries.map((query) => (
+            <div
+              key={query.id}
+              className={`example-box ${selectedBookmark?.id === query.id ? 'example-box-selected' : 'example-box-unselected'}`}
+              style={{ display: 'flex' }}
+              onClick={() => {
+                setSelectedBookmark(query);
+                handleSelectBookmarkedQuery(query);
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <h4 style={{ fontWeight: 500, margin: 0 }}>{query.name}</h4>
+                <p style={{ margin: 0, color: '#5E5E5E', fontSize: '14px', marginTop: '4px' }}>
+                  Bookmarked on {new Date(query.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+              <div style={{ paddingRight: '10px', gap: '10px', display: 'flex' }}>
+                <IconButton
+                  edge="end"
+                  aria-label="share"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigator.clipboard.writeText(
+                      `${window.location.origin}/share/${query.id}?type=bookmark`
+                    );
+                    displayAlert('success', 'Link copied to clipboard');
+                  }}
+                >
+                  <ShareIcon />
+                </IconButton>
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    authApi
+                      .delete(API.queryRoutes.base + '/' + query.id)
+                      .then(() => {
+                        setQueries((prev) => prev.filter((q) => q.id !== query.id));
+                        displayAlert('success', 'Query deleted successfully');
+                      })
+                      .catch(() => {
+                        console.error('Error deleting query:', query.id);
+                      });
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
             </div>
-            <div style={{ paddingRight: '10px', gap: '10px', display: 'flex' }}>
-              <IconButton
-                edge="end"
-                aria-label="share"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigator.clipboard.writeText(
-                    `${window.location.origin}/share/${query.id}?type=bookmark`
-                  );
-                  displayAlert('success', 'Link copied to clipboard');
-                }}
-              >
-                <ShareIcon />
-              </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="delete"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  authApi
-                    .delete(API.queryRoutes.base + '/' + query.id)
-                    .then(() => {
-                      setQueries((prev) => prev.filter((q) => q.id !== query.id));
-                      displayAlert('success', 'Query deleted successfully');
-                    })
-                    .catch(() => {
-                      console.error('Error deleting query:', query.id);
-                    });
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </div>
-          </div>
-        ))}
+          ))}
         <div style={{ display: 'flex', justifyContent: 'end', marginTop: '32px', gap: '8px' }}>
           <button onClick={onModalClose} className="button-cancel">
             Cancel

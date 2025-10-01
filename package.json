@@ -17,6 +17,8 @@
     "@mui/material": "^7.1.2",
     "@mui/styles": "^6.4.12",
     "@simplewebauthn/browser": "^13.1.0",
+    "@tanstack/react-query": "^5.89.0",
+    "@tanstack/react-query-devtools": "^5.90.2",
     "@tanstack/react-router": "^1.132.23",
     "@tanstack/react-router-devtools": "^1.132.23",
     "@tanstack/react-table": "^8.21.3",

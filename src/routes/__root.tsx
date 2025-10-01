@@ -1,5 +1,4 @@
-import type { ReactNode } from 'react';
-import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+import { Outlet, createRootRoute } from '@tanstack/react-router';
 
 import '../index.css';
 
@@ -9,16 +8,22 @@ import '@fontsource/roboto/latin-500.css';
 import '@fontsource/roboto/latin-700.css';
 import RootComponentWrapper from '../components/RootComponentWrapper';
 import AlertProvider from '../components/AlertProvider';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '../utils/queryClient';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const RootLayout = () => {
   return (
-    <AlertProvider>
-      <RootComponentWrapper>
-        <Outlet />
-      </RootComponentWrapper>
-    </AlertProvider>
-  )
-}
+    <QueryClientProvider client={queryClient}>
+      <AlertProvider>
+        <RootComponentWrapper>
+          <Outlet />
+        </RootComponentWrapper>
+      </AlertProvider>
+      {import.meta.env.MODE === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
+  );
+};
 
 export const Route = createRootRoute({
   head: () => ({
@@ -56,4 +61,3 @@ export const Route = createRootRoute({
   }),
   component: RootLayout,
 });
-

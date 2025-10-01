@@ -1,4 +1,4 @@
-import { ChevronRight, OpenInNew } from "@mui/icons-material";
+import { ChevronRight, OpenInNew } from '@mui/icons-material';
 import {
   Button,
   Container,
@@ -6,150 +6,119 @@ import {
   Paper,
   styled,
   Typography,
-} from "@mui/material";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import API from "../../../API";
-import stringUtils from "../../../utils/strings";
+} from '@mui/material';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import API from '../../../API';
+import stringUtils from '../../../utils/strings';
+import { queryClient } from '../../../utils/queryClient';
+import { useQuery } from '@tanstack/react-query';
+import Graph from '../../../pages/graph/Graph';
 
-export const Route = createFileRoute("/explore/graphs/")({
+export const Route = createFileRoute('/explore/graphs/')({
   component: RouteComponent,
   head: () => ({
-    meta: [{ title: "Graphs | ROBOKOP" }],
+    meta: [{ title: 'Graphs | ROBOKOP' }],
   }),
+  // loader: async () => {
+  //   const registry = await API.graphMetadata.registry();
+
+  //   if (!Array.isArray(registry)) {
+  //     throw new Error(registry.message || 'Failed to fetch graph registry');
+  //   }
+
+  //   const graphData = await Promise.all(
+  //     registry.map((graphId) =>
+  //       API.graphMetadata.metadata(graphId).then((data) => ({ ...data, graph_id: graphId }))
+  //     ) // doesn't include id matching registry, so include it here manually
+  //   );
+
+  //   const sortedGraphData = graphData.sort((a, b) => b.final_node_count - a.final_node_count);
+
+  //   for (const graph of sortedGraphData) {
+  //     queryClient.setQueryData(['graph-metadata', graph.graph_id], graph);
+  //   }
+
+  //   queryClient.setQueryData(['graphs'], sortedGraphData);
+
+  //   return { graphData: sortedGraphData };
+  // },
   loader: async () => {
-    const registry = await API.graphMetadata.registry();
+    const registry = await queryClient.ensureQueryData({
+      queryKey: ['graphs'],
+      queryFn: async () => {
+        const r = await API.graphMetadata.registry();
+        if (!Array.isArray(r)) throw new Error(r.message || 'Failed to fetch graph registry');
+        return r;
+      },
+    });
 
-    if (!Array.isArray(registry)) {
-      throw new Error(registry.message || "Failed to fetch graph registry");
-    }
-
-    const graphData = await Promise.all(
+    const items = await Promise.all(
       registry.map((graphId) =>
-        API.graphMetadata
-          .metadata(graphId)
-          .then((data) => ({ ...data, graph_id: graphId }))
+        API.graphMetadata.metadata(graphId).then((data) => ({ ...data, graph_id: graphId }))
       ) // doesn't include id matching registry, so include it here manually
     );
 
-    const sortedGraphData = graphData.sort(
-      (a, b) => b.final_node_count - a.final_node_count
-    );
+    const sortedGraphData = items.sort((a, b) => b.final_node_count - a.final_node_count);
 
-    return { graphData: sortedGraphData };
+    for (const graph of sortedGraphData) {
+      queryClient.setQueryData(['graph-metadata', graph.graph_id], graph);
+    }
+
+    queryClient.setQueryData(['graphs:list:sorted'], sortedGraphData);
+    return null;
   },
 });
 
 function RouteComponent() {
-  const { graphData } = Route.useLoaderData();
+  // const { graphData } = Route.useLoaderData();
+  const { data: graphData, isLoading } = useQuery({
+    queryKey: ['graphs:list:sorted'],
+    queryFn: async () => {
+      const registry = await API.graphMetadata.registry();
+      if (!Array.isArray(registry)) {
+        throw new Error(registry.message || 'Failed to fetch graph registry');
+      }
+      const items = await Promise.all(
+        registry.map((id: string) =>
+          API.graphMetadata.metadata(id).then((d: any) => ({ ...d, graph_id: id }))
+        )
+      );
+      return items.sort((a, b) => b.final_node_count - a.final_node_count);
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+  console.log(graphData, 'data in RouteComponent');
 
-  return (
-    <Container sx={{ my: 6 }}>
-      <Typography variant="h4" component="h1" mb={2}>
-        ROBOKOP Graphs
-      </Typography>
-      <Typography variant="body1" gutterBottom my={2}>
-        Browse the available ROBOKOP knowledge graphs below. Click "Details" to
-        see more information about each graph, including download links and
-        statistics.
-      </Typography>
-      <Grid>
-        {graphData.map((graph) => (
-          <Tile key={graph.graph_id} elevation={3}>
-            <div id="tile-content">
-              <div>
-                <h2>{graph.graph_name}</h2>
-                <span>
-                  {stringUtils.formatNumber(graph.final_node_count)} nodes,{" "}
-                  {stringUtils.formatNumber(graph.final_edge_count)} edges
-                </span>
-              </div>
-              <hr />
-              <p>{graph.graph_description}</p>
-            </div>
+  // const { data } = useQuery({
+  //   queryKey: ['graphs'],
+  //   queryFn: async () => {
+  //     const registry = await API.graphMetadata.registry();
 
-            <ButtonGroup fullWidth variant="text" color="inherit">
-              {graph.graph_url && (
-                <Button
-                  endIcon={<OpenInNew />}
-                  href={graph.graph_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Data Source
-                </Button>
-              )}
-              <Button
-                endIcon={<ChevronRight />}
-                component={Link}
-                to={`/explore/graphs/${graph.graph_id}`}
-              >
-                Details
-              </Button>
-            </ButtonGroup>
-          </Tile>
-        ))}
-      </Grid>
-    </Container>
-  );
+  //     if (!Array.isArray(registry)) {
+  //       throw new Error(registry.message || 'Failed to fetch graph registry');
+  //     }
+
+  //     const graphData = await Promise.all(
+  //       registry.map((graphId) =>
+  //         API.graphMetadata.metadata(graphId).then((data) => ({ ...data, graph_id: graphId }))
+  //       ) // doesn't include id matching registry, so include it here manually
+  //     );
+
+  //     const sortedGraphData = graphData.sort((a, b) => b.final_node_count - a.final_node_count);
+
+  //     for (const graph of sortedGraphData) {
+  //       queryClient.setQueryData(['graph-metadata', graph.graph_id], graph);
+  //     }
+
+  //     return sortedGraphData;
+  //   },
+  // });
+  // console.log(data, 'data in RouteComponent');
+
+  if (isLoading) return 'Loading...';
+  return <Graph graphData={graphData!} />;
 }
-
-const Grid = styled("div")`
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: 1fr 1fr;
-`;
-
-const Tile = styled(Paper)`
-  border-radius: 8px;
-  border: 1px solid #ddd;
-
-  display: flex;
-  flex-direction: column;
-
-  & h2 {
-    margin: 0;
-    display: inline-block;
-    font-size: 1.3rem;
-    font-weight: 400;
-    font-family: "Roboto";
-  }
-
-  & #tile-content {
-    flex: 1;
-    padding: 1rem;
-
-    & div {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.25rem;
-    }
-
-    & span {
-      font-size: 1rem;
-      white-space: nowrap;
-      color: #767676;
-    }
-
-    & p {
-      margin: 0;
-    }
-  }
-
-  & hr {
-    border: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.23);
-    margin: 1rem 0;
-  }
-`;
-
-const ButtonGroup = styled(MuiButtonGroup)`
-  color: #767676;
-  border-top: 1px solid rgba(0, 0, 0, 0.23);
-  border-radius: 0px;
-
-  & .MuiButton-root {
-    border-radius: 0px;
-  }
-`;
