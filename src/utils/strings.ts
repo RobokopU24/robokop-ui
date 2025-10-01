@@ -137,6 +137,23 @@ function prettyDisplay(arg: string | string[]) {
   );
 }
 
+function formatNumber(num: number, decimals = 0) {
+  const absNum = Math.abs(num);
+
+  const format = (value: number, divisor: number, suffix: string) =>
+    (value / divisor).toFixed(decimals).replace(/\.0+$/, '') + suffix;
+
+  if (absNum >= 1_000_000_000) {
+    return format(num, 1_000_000_000, 'B');
+  } else if (absNum >= 1_000_000) {
+    return format(num, 1_000_000, 'M');
+  } else if (absNum >= 1_000) {
+    return format(num, 1_000, 'k');
+  }
+
+  return num.toFixed(decimals).replace(/\.0+$/, '');
+};
+
 export default {
   nodeFromBiolink,
   edgeFromBiolink,
@@ -148,4 +165,5 @@ export default {
   displayPredicate,
   displayCategory,
   setify,
+  formatNumber,
 };

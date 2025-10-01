@@ -8,7 +8,7 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import LoginDialog from '../LoginDialog';
 import { useAuth } from '../../context/AuthContext';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import DropdownMenu, { MenuItemConfig } from '../shared/DropdownMenu';
+import DropdownMenu, { type MenuItemConfig } from '../shared/DropdownMenu';
 
 function Header() {
   const { user, logout } = useAuth();
@@ -91,6 +91,7 @@ function Header() {
           open={exploreMenuOpen}
           onClose={closeExploreMenu}
           items={[
+            { to: '/explore/graphs', label: 'Graphs' },
             { to: '/details', label: 'Node Explorer' },
             { to: '/explore/enrichment-analysis', label: 'Enrichment Analysis' },
             { to: '/explore/drug-chemical', label: 'Drug to Disease Pair' },

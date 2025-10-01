@@ -260,7 +260,12 @@ export default function ShowEdges({
                 setCurrentPageNumber(0);
                 resetTotalCount();
               }}
-              style={{ fontSize: 'small', cursor: 'pointer', textDecoration: 'underline' }}
+              style={{
+                fontSize: 'small',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                margin: 0,
+              }}
             >
               Clear Filters
             </p>

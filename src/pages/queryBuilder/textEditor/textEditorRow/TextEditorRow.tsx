@@ -1,9 +1,21 @@
 import React, { useContext, useState } from 'react';
 
-import { IconButton, Collapse } from '@mui/material';
+import {
+  IconButton,
+  Collapse,
+  Paper,
+  Stack,
+  Typography,
+  Divider,
+  Button,
+  Chip,
+  Box,
+} from '@mui/material';
 
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
 import IndeterminateCheckBoxOutlinedIcon from '@mui/icons-material/IndeterminateCheckBoxOutlined';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 import BiolinkContext from '../../../../context/biolink';
 import { useQueryBuilderContext } from '../../../../context/queryBuilder';
@@ -224,93 +236,104 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
   }
 
   return (
-    <div className="editor-row-wrapper">
-      <div className="textEditorRow">
-        <IconButton
-          onClick={deleteEdge}
-          className="textEditorIconButton"
-          disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
+    <Paper elevation={0} className="editor-row-wrapper">
+      <Box className="textEditorRow">
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          flexWrap="wrap"
+          width="100%"
+          display="flex"
         >
-          <IndeterminateCheckBoxOutlinedIcon />
-        </IconButton>
-        <p>
-          {index === 0 && 'Find'}
-          {index === 1 && 'where'}
-          {index > 1 && 'and where'}
-        </p>
-        <NodeSelector
-          id={edge.subject as string}
-          properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
-          setReference={(nodeId: string | null) => setReference('subject', nodeId)}
-          update={subjectIsReference ? () => setReference('subject', null) : editNode}
-          isReference={subjectIsReference}
-          options={{
-            includeCuries: !subjectIsReference,
-            includeCategories: !subjectIsReference,
-            includeExistingNodes: index !== 0,
-            existingNodes: Object.keys(query_graph.nodes)
-              .filter((key) => key !== edge.object)
-              .map((key) => ({
-                ...query_graph.nodes[key],
-                key,
-                name: query_graph.nodes[key].name || key,
-              })),
-          }}
-        />
-        <PredicateSelector id={edgeId} />
-        <NodeSelector
-          id={edge.object as string}
-          properties={edge.object ? query_graph.nodes[edge.object] : ''}
-          setReference={(nodeId: string | null) => setReference('object', nodeId)}
-          update={objectIsReference ? () => setReference('object', null) : editNode}
-          isReference={objectIsReference}
-          options={{
-            includeCuries: !objectIsReference,
-            includeCategories: !objectIsReference,
-            includeExistingNodes: index !== 0,
-            existingNodes: Object.keys(query_graph.nodes)
-              .filter((key) => key !== edge.subject)
-              .map((key) => ({
-                ...query_graph.nodes[key],
-                key,
-                name: query_graph.nodes[key].name || key,
-              })),
-          }}
-        />
-        <IconButton onClick={addHop} className="textEditorIconButton">
-          <AddBoxOutlinedIcon />
-        </IconButton>
-      </div>
+          <IconButton
+            onClick={deleteEdge}
+            className="textEditorIconButton"
+            disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
+            aria-label="Remove condition"
+          >
+            <IndeterminateCheckBoxOutlinedIcon />
+          </IconButton>
+
+          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 64 }}>
+            {index === 0 && 'Find'}
+            {index === 1 && 'where'}
+            {index > 1 && 'and where'}
+          </Typography>
+          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <NodeSelector
+              id={edge.subject as string}
+              properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
+              setReference={(nodeId: string | null) => setReference('subject', nodeId)}
+              update={subjectIsReference ? () => setReference('subject', null) : editNode}
+              isReference={subjectIsReference}
+              options={{
+                includeCuries: !subjectIsReference,
+                includeCategories: !subjectIsReference,
+                includeExistingNodes: index !== 0,
+                existingNodes: Object.keys(query_graph.nodes)
+                  .filter((key) => key !== edge.object)
+                  .map((key) => ({
+                    ...query_graph.nodes[key],
+                    key,
+                    name: query_graph.nodes[key].name || key,
+                  })),
+              }}
+            />
+          </div>
+          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <PredicateSelector id={edgeId} />
+          </div>
+          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <NodeSelector
+              id={edge.object as string}
+              properties={edge.object ? query_graph.nodes[edge.object] : ''}
+              setReference={(nodeId: string | null) => setReference('object', nodeId)}
+              update={objectIsReference ? () => setReference('object', null) : editNode}
+              isReference={objectIsReference}
+              options={{
+                includeCuries: !objectIsReference,
+                includeCategories: !objectIsReference,
+                includeExistingNodes: index !== 0,
+                existingNodes: Object.keys(query_graph.nodes)
+                  .filter((key) => key !== edge.subject)
+                  .map((key) => ({
+                    ...query_graph.nodes[key],
+                    key,
+                    name: query_graph.nodes[key].name || key,
+                  })),
+              }}
+            />
+          </div>
+
+          <IconButton onClick={addHop} className="textEditorIconButton" aria-label="Add hop">
+            <AddBoxOutlinedIcon />
+          </IconButton>
+
+          <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+
+          {hasQualifiers && (
+            <Chip size="small" color="primary" label="Qualifiers set" variant="filled" />
+          )}
+
+          <Button
+            size="small"
+            variant="text"
+            onClick={() => setIsOpen((p) => !p)}
+            endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            aria-expanded={isOpen}
+            aria-controls={`qualifiers-${edgeId}`}
+          >
+            Qualifiers
+          </Button>
+        </Stack>
+      </Box>
 
       <Collapse in={isOpen}>
-        <div className="qualifiers-wrapper">
+        <div id={`qualifiers-${edgeId}`} className="qualifiers-wrapper">
           <QualifiersSelector id={edgeId} associations={validAssociations} />
         </div>
       </Collapse>
-
-      <button
-        type="button"
-        className="dropdown-toggle"
-        onClick={() => {
-          setIsOpen((p) => !p);
-        }}
-        style={{ color: '#333' }}
-      >
-        <span style={{ fontSize: '0.8em' }}>{isOpen ? '▲' : '▼'}</span>
-        <span
-          style={
-            hasQualifiers
-              ? {
-                  fontWeight: 'bold',
-                  fontStyle: 'italic',
-                }
-              : undefined
-          }
-        >
-          {' Qualifiers'}
-          {hasQualifiers && '*'}
-        </span>
-      </button>
-    </div>
+    </Paper>
   );
 }

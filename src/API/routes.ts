@@ -1,4 +1,4 @@
-export const baseAPI = 'http://localhost:4000';
+export const baseAPI = import.meta.env.VITE_BACKEND_API_URL;
 export const baseAuthURL = `${baseAPI}/api`;
 
 const authEndpoint = `${baseAuthURL}/auth`;
@@ -29,4 +29,10 @@ const queryRoutes = {
   share: `${queryEndpoint}/share`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes };
+const filesEndpoint = `${baseAuthURL}/files`;
+export const fileRoutes = {
+  base: filesEndpoint,
+  fileSize: `${filesEndpoint}/file-size`,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes };

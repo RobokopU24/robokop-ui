@@ -38,16 +38,13 @@ interface ResultMetaDataProps {
 function expansionReducer(state: ExpansionState, action: ExpansionAction): ExpansionState {
   switch (action.type) {
     case 'toggle':
-      if (action.key) {
-        state[action.key] = !state[action.key];
-      }
-      break;
+      if (!action.key) return state;
+      return { ...state, [action.key]: !state[action.key] };
     case 'clear':
       return {};
     default:
-      break;
+      return state;
   }
-  return { ...state };
 }
 
 /**
@@ -75,19 +72,21 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
         <h4>Supporting Publications</h4>
         {hasSupportPublications ? (
           <List>
-            {Object.entries(metaData).map(([key, publications]) => (
-              <React.Fragment key={shortid.generate()}>
+            {Object.entries(metaData).map(([metaKey, publications]) => (
+              <React.Fragment key={metaKey}>
                 {publications.length > 0 && (
                   <>
-                    <ListItemButton onClick={() => updateExpanded({ type: 'toggle', key })}>
-                      <ListItemText primary={key} />
-                      {expanded[key] ? <ExpandLess /> : <ExpandMore />}
+                    <ListItemButton
+                      onClick={() => updateExpanded({ type: 'toggle', key: metaKey })}
+                    >
+                      <ListItemText primary={metaKey} />
+                      {expanded[metaKey] ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
-                    <Collapse in={expanded[key]} timeout="auto" unmountOnExit>
+                    <Collapse in={!!expanded[metaKey]} timeout="auto" unmountOnExit>
                       <List component="div">
-                        {publications.map((publication: string) => (
+                        {publications.map((publication) => (
                           <ListItem
-                            key={shortid.generate()}
+                            key={`${metaKey}:${publication}`}
                             component="a"
                             href={publication}
                             target="_blank"

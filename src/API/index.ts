@@ -5,6 +5,7 @@ import biolink from './biolink';
 import nameResolver from './nameResolver';
 import nodeNormalization from './nodeNormalization';
 import details from './details';
+import graphMetadata from './graphMetadata';
 
 export default {
   cache,
@@ -14,4 +15,5 @@ export default {
   biolink,
   nameResolver,
   nodeNormalization,
+  graphMetadata,
 };
