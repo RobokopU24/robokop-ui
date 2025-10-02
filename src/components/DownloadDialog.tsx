@@ -153,69 +153,89 @@ export default function DownloadDialog({
 }: DownloadDialogProps) {
   const [type, setType] = React.useState('json');
   const [fileName, setFileName] = React.useState('ROBOKOP_message');
-  const [queryHistory, setQueryHistory] = useLocalStorage('query_history', {});
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleClickDownload = async () => {
-    switch (download_type) {
-      case 'answer': {
-        let blob;
-        if (type === 'json') {
-          blob = new Blob([JSON.stringify({ message }, null, 2)], { type: 'application/json' });
-        }
-        if (type === 'csv') {
-          const csvString = await jsonToCsvString(constructCsvObj(message));
-          blob = new Blob([csvString], { type: 'text/csv' });
-        }
+    // switch (download_type) {
+    //   case 'answer': {
+    //     let blob;
+    //     if (type === 'json') {
+    //       blob = new Blob([JSON.stringify({ message }, null, 2)], { type: 'application/json' });
+    //     }
+    //     if (type === 'csv') {
+    //       const csvString = await jsonToCsvString(constructCsvObj(message));
+    //       blob = new Blob([csvString], { type: 'text/csv' });
+    //     }
 
-        if (!blob) {
-          // If blob is undefined, do not proceed
-          break;
-        }
-        const a = document.createElement('a');
-        a.download = `${fileName}.${type}`;
-        a.href = window.URL.createObjectURL(blob);
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        break;
-      }
-      case 'all_queries': {
-        const raw = window.localStorage.getItem('query_history');
-        const parsed = raw ? JSON.parse(raw) : {};
-        const blob = new Blob([JSON.stringify({ bookmarked_queries: parsed }, null, 2)], {
-          type: 'application/json',
-        });
-        // const blob = new Blob([JSON.stringify({ queryHistory }, null, 2)], { type: 'application/json' });
-        const a = document.createElement('a');
-        a.download = `${fileName}.${type}`;
-        a.href = window.URL.createObjectURL(blob);
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        break;
-      }
-      case 'query': {
-        // Bookmark the query with the filename that's given.
-        if (!(fileName in queryHistory)) {
-          setQueryHistory((prev: any) => ({
-            ...prev,
-            [fileName]: {
-              query_graph: message,
-            },
-          }));
-        }
-        break;
-      }
-      default: {
-        handleClose();
-      }
+    //     if (!blob) {
+    //       // If blob is undefined, do not proceed
+    //       break;
+    //     }
+    //     const a = document.createElement('a');
+    //     a.download = `${fileName}.${type}`;
+    //     a.href = window.URL.createObjectURL(blob);
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     a.remove();
+    //     break;
+    //   }
+    //   case 'all_queries': {
+    //     const raw = window.localStorage.getItem('query_history');
+    //     const parsed = raw ? JSON.parse(raw) : {};
+    //     const blob = new Blob([JSON.stringify({ bookmarked_queries: parsed }, null, 2)], {
+    //       type: 'application/json',
+    //     });
+    //     // const blob = new Blob([JSON.stringify({ queryHistory }, null, 2)], { type: 'application/json' });
+    //     const a = document.createElement('a');
+    //     a.download = `${fileName}.${type}`;
+    //     a.href = window.URL.createObjectURL(blob);
+    //     document.body.appendChild(a);
+    //     a.click();
+    //     a.remove();
+    //     break;
+    //   }
+    //   case 'query': {
+    //     // Bookmark the query with the filename that's given.
+    //     if (!(fileName in queryHistory)) {
+    //       setQueryHistory((prev: any) => ({
+    //         ...prev,
+    //         [fileName]: {
+    //           query_graph: message,
+    //         },
+    //       }));
+    //     }
+    //     break;
+    //   }
+    //   default: {
+    //     handleClose();
+    //   }
+    // }
+    let blob;
+    if (type === 'json') {
+      blob = new Blob([JSON.stringify({ message }, null, 2)], { type: 'application/json' });
+    }
+    if (type === 'csv') {
+      const csvString = await jsonToCsvString(constructCsvObj(message));
+      blob = new Blob([csvString], { type: 'text/csv' });
     }
 
+    if (!blob) {
+      // If blob is undefined, do not proceed
+      handleClose();
+      return;
+    }
+    const a = document.createElement('a');
+    a.download = `${fileName}.${type}`;
+    a.href = window.URL.createObjectURL(blob);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
     handleClose();
+
+    // handleClose();
   };
 
   return (

@@ -110,6 +110,11 @@ export default function NodeSelector({
   // @ts-ignore: context type is not strict
   const { concepts } = useContext(BiolinkContext) as { concepts: string[] };
   const searchTerm = useDebounce(inputText, 500) as string;
+  const trimmedSearchTerm = useMemo(() => searchTerm.trim(), [searchTerm]);
+  const loweredTrimmedSearchTerm = useMemo(
+    () => trimmedSearchTerm.toLowerCase(),
+    [trimmedSearchTerm]
+  );
 
   /**
    * Get dropdown options for node selector
@@ -118,20 +123,28 @@ export default function NodeSelector({
     toggleLoading(true);
     const newOptions: NodeOption[] = isReference ? [{ name: 'New Term', key: null }] : [];
     // allow user to select an existing node
+    console.log('includeCategories includeExistingNodes:', includeExistingNodes, existingNodes);
     if (includeExistingNodes) {
       newOptions.push(...existingNodes);
     }
     // add general concepts to options
+    console.log('includeCategories includeCategories:', includeCategories);
     if (includeCategories) {
+      const matchesCategory = (category: string) => {
+        const raw = category.toLowerCase();
+        const display = strings.displayCategory(category).toLowerCase();
+        return raw.includes(loweredTrimmedSearchTerm) || display.includes(loweredTrimmedSearchTerm);
+      };
+
       let includedCategories: NodeOption[] = concepts
-        .filter((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter((category: string) => matchesCategory(category))
         .map((category: string) => ({
           categories: [category],
           name: strings.displayCategory(category),
         }));
       if (includeSets) {
         includedCategories = concepts
-          .filter((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()))
+          .filter((category: string) => matchesCategory(category))
           .flatMap((category: string) => [
             {
               categories: [category],
@@ -144,20 +157,21 @@ export default function NodeSelector({
             },
           ]);
       }
+      console.log('includeCategories Included categories:', includedCategories);
       newOptions.push(...includedCategories);
     }
     // fetch matching curies from external services
     if (includeCuries) {
-      if (searchTerm.includes(':')) {
+      if (trimmedSearchTerm.includes(':')) {
         // user is typing a specific curie
-        newOptions.push({ name: searchTerm, ids: [searchTerm] });
+        newOptions.push({ name: trimmedSearchTerm, ids: [trimmedSearchTerm] });
       }
       if (cancel) {
         cancel.cancel();
       }
       cancel = CancelToken.source();
       const curies: NodeOption[] = await fetchCuries(
-        searchTerm,
+        trimmedSearchTerm,
         displayAlert as (arg0: string, arg1: string) => void,
         cancel.token,
         nameresCategoryFilter
@@ -165,6 +179,7 @@ export default function NodeSelector({
       newOptions.push(...curies);
     }
     toggleLoading(false);
+    console.log('includeCategories New options:', newOptions);
     setOptions(newOptions);
   }
 
@@ -173,13 +188,13 @@ export default function NodeSelector({
    * after debounce
    */
   useEffect(() => {
-    if (open && searchTerm.length >= 3) {
+    if (open && trimmedSearchTerm.length >= 3) {
       getOptions();
     } else {
       setOptions([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, searchTerm]);
+  }, [open, trimmedSearchTerm]);
 
   /**
    * Cancel any api calls on unmount

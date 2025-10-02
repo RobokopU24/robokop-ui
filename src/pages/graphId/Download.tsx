@@ -46,10 +46,10 @@ function DownloadSection() {
 
   const renderSkeleton = () => (
     <Box>
-      {Array(3)
+      {Array(5)
         .fill('')
         .map((_, i) => (
-          <Skeleton key={i} variant="rounded" height={120} sx={{ mb: 2 }} />
+          <Skeleton key={i} variant="rounded" height={48} sx={{ mb: 2 }} />
         ))}
     </Box>
   );
@@ -76,22 +76,7 @@ function DownloadSection() {
   );
 
   return (
-    <Box mt={6}>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        columnGap={2}
-        borderBottom={1}
-        borderColor="divider"
-        pb={2}
-        mb={4}
-      >
-        <Typography variant="h5" component="h2">
-          Download Options
-        </Typography>
-      </Box>
-
+    <Box>
       {isLoadingDownload ? (
         renderSkeleton()
       ) : downloadData?.data?.length > 0 ? (
@@ -105,6 +90,7 @@ function DownloadSection() {
                 mb: 2,
                 '&:before': { display: 'none' },
                 '&.Mui-expanded': { margin: '0 0 16px 0' },
+                borderRadius: '4px',
               }}
             >
               <AccordionSummary
@@ -118,10 +104,36 @@ function DownloadSection() {
                   },
                 }}
               >
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Typography variant="h6" component="span" fontWeight={400}>
-                    {file.version}
-                  </Typography>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  width="100%"
+                  py={1}
+                >
+                  {/* <Typography variant="h6" component="span" fontWeight={400}>
+                    {file.id}, {file.version}, build date {file.build_date || "Unknown"}
+                  </Typography> */}
+                  <Box>
+                    <Typography variant="body1" fontWeight={500}>
+                      {file.id}
+                    </Typography>
+
+                    <Typography variant="body2" color="text.secondary">
+                      Build Date:{' '}
+                      {file.build_date ? new Date(file.build_date).toLocaleDateString() : 'Unknown'}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    {file.version && (
+                      <Chip
+                        label={file.version}
+                        size="small"
+                        color="primary"
+                        sx={{ mr: 1, height: 24 }}
+                      />
+                    )}
+                  </Box>
                 </Box>
               </AccordionSummary>
               <AccordionDetails sx={{ pt: 0 }}>
@@ -194,26 +206,6 @@ function DownloadSection() {
                                 {link.time ? new Date(link.time).toLocaleDateString() : 'Unknown'}
                               </Typography>
                             </TableCell>
-                            {/* <TableCell align="center">
-                              <Link
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                sx={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 0.5,
-                                  textDecoration: 'none',
-                                  color: 'primary.main',
-                                  '&:hover': {
-                                    textDecoration: 'underline',
-                                  },
-                                }}
-                              >
-                                <OpenInNewIcon fontSize="small" />
-                                <Typography variant="body2">Download</Typography>
-                              </Link>
-                            </TableCell> */}
                           </TableRow>
                         ))}
                       </TableBody>
