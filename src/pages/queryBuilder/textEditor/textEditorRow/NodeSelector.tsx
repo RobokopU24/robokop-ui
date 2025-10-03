@@ -123,12 +123,10 @@ export default function NodeSelector({
     toggleLoading(true);
     const newOptions: NodeOption[] = isReference ? [{ name: 'New Term', key: null }] : [];
     // allow user to select an existing node
-    console.log('includeCategories includeExistingNodes:', includeExistingNodes, existingNodes);
     if (includeExistingNodes) {
       newOptions.push(...existingNodes);
     }
     // add general concepts to options
-    console.log('includeCategories includeCategories:', includeCategories);
     if (includeCategories) {
       const matchesCategory = (category: string) => {
         const raw = category.toLowerCase();
@@ -157,7 +155,6 @@ export default function NodeSelector({
             },
           ]);
       }
-      console.log('includeCategories Included categories:', includedCategories);
       newOptions.push(...includedCategories);
     }
     // fetch matching curies from external services
@@ -179,7 +176,6 @@ export default function NodeSelector({
       newOptions.push(...curies);
     }
     toggleLoading(false);
-    console.log('includeCategories New options:', newOptions);
     setOptions(newOptions);
   }
 

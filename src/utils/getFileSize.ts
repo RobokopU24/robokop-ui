@@ -4,7 +4,6 @@ export async function getFileSize(url: string): Promise<number | null> {
   try {
     // const response = await axios.head(url);
     const response = await fetch(url, { method: 'HEAD', credentials: 'omit' });
-    console.log(response.headers, 'HEAD response headers');
     const contentLength = response.headers.get('content-length');
     if (!contentLength) return null;
 

@@ -25,7 +25,6 @@ export const Route = createFileRoute('/explore/graphs/$graph_id/')({
   component: RouteComponent,
   ssr: false,
   loader: async ({ params }) => {
-    console.log('params in loader', params);
     const graphData = await queryClient.ensureQueryData({
       queryKey: ['graph-metadata', params.graph_id],
       queryFn: () => API.graphMetadata.metadata(params.graph_id!),
@@ -49,11 +48,9 @@ export const Route = createFileRoute('/explore/graphs/$graph_id/')({
 
 function RouteComponent() {
   const { graph_id } = Route.useParams();
-  console.log('graph_id', graph_id);
   const { data, isPending } = useQuery({
     queryKey: ['graph-metadata', graph_id],
     queryFn: () => {
-      console.log('fetching graph metadata for', graph_id);
       return API.graphMetadata.metadata(graph_id!);
     },
     enabled: !!graph_id,

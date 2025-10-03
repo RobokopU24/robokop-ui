@@ -7,7 +7,7 @@ export default async function fetchCuries(
   biolinkType: any
 ) {
   // Get list of curies that match this search term
-  const response = await API.nameResolver.entityLookup(entity, 1000, cancel, biolinkType);
+  const response = await API.nameResolver.entityLookup(entity, 100, cancel, biolinkType);
   if (response.status === 'error') {
     displayAlert(
       'error',
