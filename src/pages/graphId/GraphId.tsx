@@ -31,6 +31,9 @@ import DownloadSection from './Download';
 import { useQuery } from '@tanstack/react-query';
 import { fileRoutes } from '../../API/routes';
 import axios from 'axios';
+import PredicateCount from './PredicateCount';
+import NodeCuriePrefixes from './NodeCuriePrefixes';
+import EdgeProperties from './EdgeProperties';
 
 interface GraphIdProps {
   graphData: any;
@@ -127,132 +130,21 @@ function GraphId({ graphData }: GraphIdProps) {
           <Grid size={8}>
             <Grid container spacing={2}>
               <Grid size={12}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    height: '1000px',
-                    overflowY: 'auto',
-                    '&::-webkit-scrollbar': {
-                      width: '4px',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: 'rgba(0,0,0,.2)',
-                      borderRadius: '2px',
-                    },
-                  }}
-                >
+                <Card variant="outlined">
                   <CardHeader title="Predicate Counts" sx={{ pb: 0 }} />
-                  <CardContent sx={{ p: 1 }}>
-                    <Divider sx={{ mb: 2 }} />
-                    <TableContainer component={Paper} elevation={0}>
-                      <Table size="small" aria-label="predicate counts">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Predicate</TableCell>
-                            <TableCell align="right">Count</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {[...Object.entries(graphData.qc_results.predicate_totals)]
-                            .sort((a: any, b: any) => (b[1] as number) - (a[1] as number))
-                            .map(([predicate, count]) => (
-                              <TableRow key={predicate} hover>
-                                <TableCell component="th" scope="row">
-                                  {predicate}
-                                </TableCell>
-                                <TableCell align="right">
-                                  {(count as number).toLocaleString()}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </CardContent>
+                  <PredicateCount graphData={graphData} />
                 </Card>
               </Grid>
               <Grid size={12}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    height: '1000px',
-                    overflowY: 'auto',
-                    '&::-webkit-scrollbar': {
-                      width: '4px',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: 'rgba(0,0,0,.2)',
-                      borderRadius: '2px',
-                    },
-                  }}
-                >
+                <Card variant="outlined">
                   <CardHeader title="Node CURIE Prefixes" sx={{ pb: 0 }} />
-                  <CardContent sx={{ p: 1 }}>
-                    <Divider sx={{ mb: 2 }} />
-                    <TableContainer component={Paper} elevation={0}>
-                      <Table size="small" aria-label="node curie prefixes">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Prefix</TableCell>
-                            <TableCell align="right">Count</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {[...Object.entries(graphData.qc_results.node_curie_prefixes)]
-                            .sort((a: any, b: any) => (b[1] as number) - (a[1] as number))
-                            .map(([predicate, count]) => (
-                              <TableRow key={predicate} hover>
-                                <TableCell component="th" scope="row">
-                                  {predicate}
-                                </TableCell>
-                                <TableCell align="right">
-                                  {(count as number).toLocaleString()}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </CardContent>
+                  <NodeCuriePrefixes graphData={graphData} />
                 </Card>
               </Grid>
-              <Grid size={12}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    height: '1000px',
-                    overflowY: 'auto',
-                    '&::-webkit-scrollbar': {
-                      width: '4px',
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      backgroundColor: 'rgba(0,0,0,.2)',
-                      borderRadius: '2px',
-                    },
-                  }}
-                >
+              <Grid size={6}>
+                <Card variant="outlined">
                   <CardHeader title="Edge Properties" sx={{ pb: 0 }} />
-                  <CardContent sx={{ p: 1 }}>
-                    <Divider sx={{ mb: 2 }} />
-                    <TableContainer component={Paper} elevation={0}>
-                      <Table size="small" aria-label="edge properties">
-                        <TableHead>
-                          <TableRow>
-                            <TableCell>Property</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          {graphData.qc_results.edge_properties.map((property: any) => (
-                            <TableRow key={property} hover>
-                              <TableCell component="th" scope="row">
-                                {property}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </TableContainer>
-                  </CardContent>
+                  <EdgeProperties graphData={graphData} />
                 </Card>
               </Grid>
             </Grid>

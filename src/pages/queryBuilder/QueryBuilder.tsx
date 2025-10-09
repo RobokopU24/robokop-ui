@@ -20,29 +20,10 @@ import GraphEditor from './graphEditor/GraphEditor';
 import JsonEditor from './jsonEditor/JsonEditor';
 import DownloadDialog from '../../components/DownloadDialog';
 import './queryBuilder.css';
-import TemplateQueriesModal from './templatedQueries/TemplateQueriesModal';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
 import ExampleModal from '../entryPoint/ExampleModal';
 import TemplateModal from '../entryPoint/TemplateModal';
 import BookmarkModal from '../entryPoint/BookmarkModal';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-
-const SubmitButton = withStyles((theme) => ({
-  root: {
-    marginLeft: 'auto',
-    color: theme.palette.getContrastText(blue[600]),
-    backgroundColor: blue[600],
-    '&:hover': {
-      backgroundColor: blue[700],
-    },
-  },
-}))(Button);
 
 /**
  * Query Builder parent component
@@ -82,30 +63,6 @@ export default function QueryBuilder() {
       disabled: !user,
     },
   ];
-  const [openMenu, setOpenMenu] = useState(false);
-  const anchorRef = useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(1);
-
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    index: number
-  ) => {
-    setSelectedIndex(index);
-    setOpenMenu(false);
-  };
-  const handleToggle = () => {
-    setOpenMenu((prevOpen) => !prevOpen);
-  };
-  const handleClose = (event: Event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
-      return;
-    }
-
-    setOpenMenu(false);
-  };
-  const handleClick = () => {
-    buttonOptions[selectedIndex].onClick();
-  };
 
   const pageStatus = usePageStatus(false);
   const { browserSupport } = usePasskey();
@@ -115,7 +72,6 @@ export default function QueryBuilder() {
   const [ara] = useState(ARAs[0]);
   const { displayAlert } = useAlert();
   const navigate = useNavigate();
-  const [exampleQueriesOpen, setExampleQueriesOpen] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
 
   const passkeyPopupDenied = localStorage.getItem('passkeyPopupDenied');

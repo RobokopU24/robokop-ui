@@ -440,7 +440,14 @@ export default function GraphEditor({
             transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
             {buttonOptions?.map((option, index) => (
-              <MenuItem key={index} onClick={option.onClick} disabled={option.disabled}>
+              <MenuItem
+                key={index}
+                onClick={() => {
+                  option.onClick();
+                  handleClose();
+                }}
+                disabled={option.disabled}
+              >
                 {option.label}
               </MenuItem>
             ))}
