@@ -398,11 +398,6 @@ export default function GraphEditor({
             transform: 'translateX(50%)',
             display: 'flex',
             gap: '10px',
-            // backgroundColor: 'white',
-            // borderRadius: '4px',
-            // padding: '4px',
-            // fontSize: '12px',
-            // boxShadow: '0px 0px 5px rgba(0,0,0,0.1)',
           }}
         >
           <button

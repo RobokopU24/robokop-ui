@@ -15,7 +15,10 @@ import {
   Select,
   MenuItem,
   FormControl,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   createColumnHelper,
   flexRender,
@@ -42,10 +45,17 @@ function EdgeProperties({ graphData }: { graphData: any }) {
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'property', desc: false }]);
   const [pageSize, setPageSize] = useState(50);
   const [pageIndex, setPageIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
     return (graphData?.qc_results?.edge_properties || []).map((property: string) => ({ property }));
   }, [graphData?.qc_results?.edge_properties]);
+
+  const filteredData = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return data;
+    return data.filter((row: EdgePropertyRow) => row.property.toLowerCase().includes(q));
+  }, [data, searchQuery]);
 
   useEffect(() => {
     setPageIndex(0);
@@ -62,7 +72,7 @@ function EdgeProperties({ graphData }: { graphData: any }) {
   );
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       sorting,
@@ -90,9 +100,28 @@ function EdgeProperties({ graphData }: { graphData: any }) {
 
   return (
     <CardContent sx={{ p: 1 }}>
-      <Divider sx={{ mb: 2 }} />
       <Box>
-        {data.length === 0 ? (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography variant="h6">Edge Properties</Typography>
+          <TextField
+            size="small"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPageIndex(0);
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+        <Divider sx={{ mb: 2 }} />
+        {filteredData.length === 0 ? (
           <Box
             sx={{
               py: 2,
@@ -170,7 +199,7 @@ function EdgeProperties({ graphData }: { graphData: any }) {
               </Table>
             </TableContainer>
 
-            {data.length > 0 && (
+            {filteredData.length > 0 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -201,11 +230,12 @@ function EdgeProperties({ graphData }: { graphData: any }) {
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Typography variant="body2">
-                    Showing {pageIndex * pageSize + 1} to{' '}
-                    {Math.min((pageIndex + 1) * pageSize, data.length)} of {data.length} results
+                    Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
+                    {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
+                    {filteredData.length} results
                   </Typography>
                   <Pagination
-                    count={Math.ceil(data.length / pageSize)}
+                    count={Math.ceil(filteredData.length / pageSize)}
                     page={pageIndex + 1}
                     onChange={(event, page) => {
                       setPageIndex(page - 1);

@@ -29,9 +29,8 @@ import {
   getPaginationRowModel,
 } from '@tanstack/react-table';
 
-type PrefixData = {
-  prefix: string;
-  count: number;
+type RowType = {
+  property: string;
 };
 
 declare module '@tanstack/react-table' {
@@ -40,46 +39,33 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const columnHelper = createColumnHelper<PrefixData>();
+const columnHelper = createColumnHelper<RowType>();
 
-function NodeCuriePrefixes({ graphData }: { graphData: any }) {
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'count', desc: true }]);
-  const [pageSize, setPageSize] = useState(10);
+function StringTableDisplay({ tableData, title }: { tableData: any; title: string }) {
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'property', desc: false }]);
+  const [pageSize, setPageSize] = useState(50);
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
-    return [...Object.entries(graphData?.qc_results?.node_curie_prefixes || {})].map(
-      ([prefix, count]) => ({
-        prefix,
-        count: count as number,
-      })
-    );
-  }, [graphData?.qc_results?.node_curie_prefixes]);
+    return (tableData || []).map((property: string) => ({ property }));
+  }, [tableData]);
 
   const filteredData = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return data;
-    return data.filter((row) => row.prefix.toLowerCase().includes(q));
+    return data.filter((row: RowType) => row.property.toLowerCase().includes(q));
   }, [data, searchQuery]);
 
-  // Reset page index when page size changes
   useEffect(() => {
     setPageIndex(0);
   }, [pageSize]);
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('prefix', {
-        header: 'Prefix',
+      columnHelper.accessor('property', {
+        header: 'Property',
         cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor('count', {
-        header: 'Count',
-        cell: (info) => info.getValue().toLocaleString(),
-        meta: {
-          align: 'right' as const,
-        },
       }),
     ],
     []
@@ -116,7 +102,7 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
     <CardContent sx={{ p: 1 }}>
       <Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="h6">Node CURIE Prefixes</Typography>
+          <Typography variant="h6">{title}</Typography>
           <TextField
             size="small"
             placeholder="Search"
@@ -146,7 +132,7 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
               justifyContent: 'center',
             }}
           >
-            <Typography>No prefix data available.</Typography>
+            <Typography>No properties available.</Typography>
           </Box>
         ) : (
           <>
@@ -170,7 +156,7 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
                 },
               }}
             >
-              <Table stickyHeader>
+              <Table stickyHeader size="small" aria-label="edge properties">
                 <TableHead sx={{ backgroundColor: 'action.hover' }}>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
@@ -200,8 +186,8 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          component={cell.column.id === 'prefix' ? 'th' : 'td'}
-                          scope={cell.column.id === 'prefix' ? 'row' : undefined}
+                          component={cell.column.id === 'property' ? 'th' : 'td'}
+                          scope={cell.column.id === 'property' ? 'row' : undefined}
                           align={cell.column.columnDef.meta?.align}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -217,7 +203,8 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
               <Box
                 sx={{
                   display: 'flex',
-                  justifyContent: 'space-between',
+                  flexDirection: 'column',
+                  gap: 2,
                   alignItems: 'center',
                   mt: 2,
                 }}
@@ -233,10 +220,10 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
                       }}
                       displayEmpty
                     >
-                      <MenuItem value={5}>5</MenuItem>
                       <MenuItem value={10}>10</MenuItem>
                       <MenuItem value={20}>20</MenuItem>
                       <MenuItem value={50}>50</MenuItem>
+                      <MenuItem value={100}>100</MenuItem>
                     </Select>
                   </FormControl>
                 </Box>
@@ -268,4 +255,4 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
   );
 }
 
-export default NodeCuriePrefixes;
+export default StringTableDisplay;

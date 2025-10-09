@@ -15,7 +15,10 @@ import {
   Select,
   MenuItem,
   FormControl,
+  TextField,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   createColumnHelper,
   flexRender,
@@ -43,13 +46,22 @@ function PredicateCount({ graphData }: { graphData: any }) {
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'count', desc: true }]);
   const [pageSize, setPageSize] = useState(10);
   const [pageIndex, setPageIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
-    return [...Object.entries(graphData.qc_results.predicate_totals)].map(([predicate, count]) => ({
-      predicate,
-      count: count as number,
-    }));
-  }, [graphData.qc_results.predicate_totals]);
+    return [...Object.entries(graphData?.qc_results?.predicate_totals || {})].map(
+      ([predicate, count]) => ({
+        predicate,
+        count: count as number,
+      })
+    );
+  }, [graphData?.qc_results?.predicate_totals]);
+
+  const filteredData = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return data;
+    return data.filter((row) => row.predicate.toLowerCase().includes(q));
+  }, [data, searchQuery]);
 
   // Reset page index when page size changes
   useEffect(() => {
@@ -74,7 +86,7 @@ function PredicateCount({ graphData }: { graphData: any }) {
   );
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       sorting,
@@ -102,9 +114,28 @@ function PredicateCount({ graphData }: { graphData: any }) {
 
   return (
     <CardContent sx={{ p: 1 }}>
-      <Divider sx={{ mb: 2 }} />
       <Box>
-        {data.length === 0 ? (
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography variant="h6">Predicate Counts</Typography>
+          <TextField
+            size="small"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPageIndex(0);
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
+        <Divider sx={{ mb: 2 }} />
+        {filteredData.length === 0 ? (
           <Box
             sx={{
               py: 2,
@@ -182,7 +213,7 @@ function PredicateCount({ graphData }: { graphData: any }) {
               </Table>
             </TableContainer>
 
-            {data.length > 0 && (
+            {filteredData.length > 0 && (
               <Box
                 sx={{
                   display: 'flex',
@@ -212,11 +243,12 @@ function PredicateCount({ graphData }: { graphData: any }) {
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Typography variant="body2">
-                    Showing {pageIndex * pageSize + 1} to{' '}
-                    {Math.min((pageIndex + 1) * pageSize, data.length)} of {data.length} results
+                    Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
+                    {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
+                    {filteredData.length} results
                   </Typography>
                   <Pagination
-                    count={Math.ceil(data.length / pageSize)}
+                    count={Math.ceil(filteredData.length / pageSize)}
                     page={pageIndex + 1}
                     onChange={(event, page) => {
                       setPageIndex(page - 1);

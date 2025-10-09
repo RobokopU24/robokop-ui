@@ -34,6 +34,8 @@ import axios from 'axios';
 import PredicateCount from './PredicateCount';
 import NodeCuriePrefixes from './NodeCuriePrefixes';
 import EdgeProperties from './EdgeProperties';
+import PrimaryKnowledgeSources from './PrimaryKnowledgeSources';
+import StringTableDisplay from './StringTableDisplay';
 
 interface GraphIdProps {
   graphData: any;
@@ -102,26 +104,56 @@ function GraphId({ graphData }: GraphIdProps) {
               {graphData.graph_description}
             </Typography>
 
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 2 }}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1.5}
+              sx={{ mt: 2 }}
+              // width="fit-content"
+            >
               {graphData.graph_url && (
-                <Button
-                  endIcon={<OpenInNew />}
+                <a
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    maxWidth: '200px',
+                  }}
+                  className="details-card-secondary-button"
                   href={graphData.graph_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  variant="outlined"
                 >
-                  Graph website
-                </Button>
+                  Graph website <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                </a>
               )}
-              <Button
-                endIcon={<Download />}
-                component={'a'}
-                href={graphData.neo4j_dump}
-                variant="contained"
+              <a
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  maxWidth: '200px',
+                }}
+                className="details-card-secondary-button"
+                href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Download Graph {formatFileSize(fileSize || 0, 2)}
-              </Button>
+                Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+              </a>
+              <a
+                className="details-card-button"
+                href={graphData.neo4j_dump}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  maxWidth: '300px',
+                }}
+              >
+                <span>Download Graph {formatFileSize(fileSize || 0, 2)}</span> <Download />
+              </a>
             </Stack>
           </CardContent>
         </Card>
@@ -131,20 +163,45 @@ function GraphId({ graphData }: GraphIdProps) {
             <Grid container spacing={2}>
               <Grid size={12}>
                 <Card variant="outlined">
-                  <CardHeader title="Predicate Counts" sx={{ pb: 0 }} />
                   <PredicateCount graphData={graphData} />
                 </Card>
               </Grid>
               <Grid size={12}>
                 <Card variant="outlined">
-                  <CardHeader title="Node CURIE Prefixes" sx={{ pb: 0 }} />
                   <NodeCuriePrefixes graphData={graphData} />
                 </Card>
               </Grid>
               <Grid size={6}>
                 <Card variant="outlined">
-                  <CardHeader title="Edge Properties" sx={{ pb: 0 }} />
-                  <EdgeProperties graphData={graphData} />
+                  {/* <EdgeProperties graphData={graphData} /> */}
+                  <StringTableDisplay
+                    tableData={graphData?.qc_results?.edge_properties || []}
+                    title="Edge Properties"
+                  />
+                </Card>
+              </Grid>
+              <Grid size={6}>
+                <Card variant="outlined">
+                  <StringTableDisplay
+                    tableData={graphData?.qc_results?.primary_knowledge_sources}
+                    title="Primary Knowledge Sources"
+                  />
+                </Card>
+              </Grid>
+              <Grid size={6}>
+                <Card variant="outlined">
+                  <StringTableDisplay
+                    tableData={graphData?.qc_results?.aggregator_knowledge_sources}
+                    title="Aggregator Knowledge Sources"
+                  />
+                </Card>
+              </Grid>
+              <Grid size={6}>
+                <Card variant="outlined">
+                  <StringTableDisplay
+                    tableData={graphData?.qc_results?.node_properties}
+                    title="Node Properties"
+                  />
                 </Card>
               </Grid>
             </Grid>
