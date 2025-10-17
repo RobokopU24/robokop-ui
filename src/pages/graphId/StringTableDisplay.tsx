@@ -185,6 +185,7 @@ function StringTableDisplay({ tableData, title }: { tableData: any; title: strin
                     <TableRow key={row.id} hover>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
+                          sx={{ py: 2 }}
                           key={cell.id}
                           component={cell.column.id === 'property' ? 'th' : 'td'}
                           scope={cell.column.id === 'property' ? 'row' : undefined}
@@ -203,9 +204,10 @@ function StringTableDisplay({ tableData, title }: { tableData: any; title: strin
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
+                  //   flexDirection: 'column',
+                  //   gap: 2,
                   alignItems: 'center',
+                  justifyContent: 'space-between',
                   mt: 2,
                 }}
               >

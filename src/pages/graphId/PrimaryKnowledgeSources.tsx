@@ -29,8 +29,17 @@ import {
   getPaginationRowModel,
 } from '@tanstack/react-table';
 
+import Accordion from '@mui/material/Accordion';
+import AccordionActions from '@mui/material/AccordionActions';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Button from '@mui/material/Button';
+import ExpandableRows from './ExpandableRows';
+
 type PrimaryKnowledgeSourcesRow = {
-  property: string;
+  key: string;
+  value: any;
 };
 
 declare module '@tanstack/react-table' {
@@ -42,22 +51,26 @@ declare module '@tanstack/react-table' {
 const columnHelper = createColumnHelper<PrimaryKnowledgeSourcesRow>();
 
 function PrimaryKnowledgeSources({ graphData }: { graphData: any }) {
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'property', desc: false }]);
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'key', desc: false }]);
   const [pageSize, setPageSize] = useState(50);
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
-    return (graphData?.qc_results?.primary_knowledge_sources || []).map((property: string) => ({
-      property,
+    const obj = graphData?.qc_results?.predicates_by_knowledge_source || {};
+    return Object.keys(obj).map((key) => ({
+      key,
+      value: obj[key],
     }));
-  }, [graphData?.qc_results?.primary_knowledge_sources]);
+  }, [graphData?.qc_results?.predicates_by_knowledge_source]);
 
   const filteredData = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return data;
-    return data.filter((row: PrimaryKnowledgeSourcesRow) => row.property.toLowerCase().includes(q));
+    return data.filter((row: any) => row.key.toLowerCase().includes(q));
   }, [data, searchQuery]);
+
+  console.log('key,value data', data);
 
   useEffect(() => {
     setPageIndex(0);
@@ -65,7 +78,7 @@ function PrimaryKnowledgeSources({ graphData }: { graphData: any }) {
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor('property', {
+      columnHelper.accessor('key', {
         header: 'Property',
         cell: (info) => info.getValue(),
       }),
@@ -188,11 +201,12 @@ function PrimaryKnowledgeSources({ graphData }: { graphData: any }) {
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          component={cell.column.id === 'property' ? 'th' : 'td'}
-                          scope={cell.column.id === 'property' ? 'row' : undefined}
+                          component={cell.column.id === 'key' ? 'th' : 'td'}
+                          scope={cell.column.id === 'key' ? 'row' : undefined}
                           align={cell.column.columnDef.meta?.align}
+                          sx={{ p: 0, m: 0 }}
                         >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          <ExpandableRows sourceKey={row.original.key} value={row.original.value} />
                         </TableCell>
                       ))}
                     </TableRow>
@@ -205,9 +219,10 @@ function PrimaryKnowledgeSources({ graphData }: { graphData: any }) {
               <Box
                 sx={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  flexDirection: 'row',
                   gap: 2,
                   alignItems: 'center',
+                  justifyContent: 'space-between',
                   mt: 2,
                 }}
               >

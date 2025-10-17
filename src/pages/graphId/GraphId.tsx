@@ -36,6 +36,7 @@ import NodeCuriePrefixes from './NodeCuriePrefixes';
 import EdgeProperties from './EdgeProperties';
 import PrimaryKnowledgeSources from './PrimaryKnowledgeSources';
 import StringTableDisplay from './StringTableDisplay';
+import Sidebar from './Sidebar';
 
 interface GraphIdProps {
   graphData: any;
@@ -52,8 +53,9 @@ function GraphId({ graphData }: GraphIdProps) {
     },
   });
   return (
-    <Container sx={{ my: 6, maxWidth: '1600px !important' }}>
-      <Stack spacing={3}>
+    <Container sx={{ my: 6, maxWidth: '1920px !important', display: 'flex', gap: 4 }}>
+      <Sidebar />
+      <Box>
         <Breadcrumbs aria-label="graph breadcrumbs">
           <Typography
             component={Link}
@@ -68,8 +70,7 @@ function GraphId({ graphData }: GraphIdProps) {
             {graphData.graph_name}
           </Typography>
         </Breadcrumbs>
-
-        <Card variant="outlined">
+        <Card variant="outlined" sx={{ mt: 2 }} id="description">
           <CardContent>
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
@@ -157,66 +158,56 @@ function GraphId({ graphData }: GraphIdProps) {
             </Stack>
           </CardContent>
         </Card>
-
-        <Grid container spacing={2}>
-          <Grid size={8}>
-            <Grid container spacing={2}>
-              <Grid size={12}>
-                <Card variant="outlined">
-                  <PredicateCount graphData={graphData} />
-                </Card>
-              </Grid>
-              <Grid size={12}>
-                <Card variant="outlined">
-                  <NodeCuriePrefixes graphData={graphData} />
-                </Card>
-              </Grid>
-              <Grid size={6}>
-                <Card variant="outlined">
-                  {/* <EdgeProperties graphData={graphData} /> */}
-                  <StringTableDisplay
-                    tableData={graphData?.qc_results?.edge_properties || []}
-                    title="Edge Properties"
-                  />
-                </Card>
-              </Grid>
-              <Grid size={6}>
-                <Card variant="outlined">
-                  <StringTableDisplay
-                    tableData={graphData?.qc_results?.primary_knowledge_sources}
-                    title="Primary Knowledge Sources"
-                  />
-                </Card>
-              </Grid>
-              <Grid size={6}>
-                <Card variant="outlined">
-                  <StringTableDisplay
-                    tableData={graphData?.qc_results?.aggregator_knowledge_sources}
-                    title="Aggregator Knowledge Sources"
-                  />
-                </Card>
-              </Grid>
-              <Grid size={6}>
-                <Card variant="outlined">
-                  <StringTableDisplay
-                    tableData={graphData?.qc_results?.node_properties}
-                    title="Node Properties"
-                  />
-                </Card>
-              </Grid>
+        <Grid size={8} sx={{ mt: 2 }}>
+          <Grid container spacing={2}>
+            <Grid size={12} id="predicate-counts">
+              <Card variant="outlined">
+                <PredicateCount graphData={graphData} />
+              </Card>
+            </Grid>
+            <Grid size={12} id="node-curie-prefixes">
+              <Card variant="outlined">
+                <NodeCuriePrefixes graphData={graphData} />
+              </Card>
+            </Grid>
+            <Grid size={12}>
+              <Card variant="outlined" id="edge-properties">
+                {/* <EdgeProperties graphData={graphData} /> */}
+                <StringTableDisplay
+                  tableData={graphData?.qc_results?.edge_properties || []}
+                  title="Edge Properties"
+                />
+              </Card>
+            </Grid>
+            <Grid size={12}>
+              <Card variant="outlined" id="primary-knowledge-sources">
+                {/* <StringTableDisplay
+                  tableData={graphData?.qc_results?.primary_knowledge_sources}
+                  title="Primary Knowledge Sources"
+                /> */}
+                <PrimaryKnowledgeSources graphData={graphData} />
+              </Card>
+            </Grid>
+            <Grid size={12}>
+              <Card variant="outlined" id="aggregator-knowledge-sources">
+                <StringTableDisplay
+                  tableData={graphData?.qc_results?.aggregator_knowledge_sources}
+                  title="Aggregator Knowledge Sources"
+                />
+              </Card>
+            </Grid>
+            <Grid size={12}>
+              <Card variant="outlined" id="node-properties">
+                <StringTableDisplay
+                  tableData={graphData?.qc_results?.node_properties}
+                  title="Node Properties"
+                />
+              </Card>
             </Grid>
           </Grid>
-
-          <Grid size={4}>
-            <Card variant="outlined">
-              <CardHeader title="Downloads" />
-              <CardContent>
-                <DownloadSection />
-              </CardContent>
-            </Card>
-          </Grid>
         </Grid>
-      </Stack>
+      </Box>
+      <DownloadSection />
     </Container>
   );
 }

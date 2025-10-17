@@ -29,9 +29,13 @@ import {
   getPaginationRowModel,
 } from '@tanstack/react-table';
 
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 type PredicateData = {
   predicate: string;
   count: number;
+  value: { property: string; count: number }[];
 };
 
 declare module '@tanstack/react-table' {
@@ -43,19 +47,31 @@ declare module '@tanstack/react-table' {
 const columnHelper = createColumnHelper<PredicateData>();
 
 function PredicateCount({ graphData }: { graphData: any }) {
+  let hashmap: Record<string, { property: string; count: number }[]> = {};
+  for (const [property, objectList] of Object.entries(
+    graphData?.qc_results?.predicates_by_knowledge_source || {}
+  )) {
+    for (const [predicate, count] of Object.entries(objectList as object)) {
+      if (hashmap[predicate]) {
+        hashmap[predicate].push({ property, count });
+      } else {
+        hashmap[predicate] = [{ property, count }];
+      }
+    }
+  }
+
   const [sorting, setSorting] = React.useState<SortingState>([{ id: 'count', desc: true }]);
   const [pageSize, setPageSize] = useState(10);
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
-    return [...Object.entries(graphData?.qc_results?.predicate_totals || {})].map(
-      ([predicate, count]) => ({
-        predicate,
-        count: count as number,
-      })
-    );
-  }, [graphData?.qc_results?.predicate_totals]);
+    return Object.keys(hashmap).map((predicate) => ({
+      predicate,
+      count: hashmap[predicate].reduce((sum, item) => sum + item.count, 0),
+      value: hashmap[predicate],
+    }));
+  }, [hashmap]);
 
   const filteredData = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
@@ -72,11 +88,19 @@ function PredicateCount({ graphData }: { graphData: any }) {
     () => [
       columnHelper.accessor('predicate', {
         header: 'Predicate',
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <ExpandableRows
+            sourceKey={info.getValue()}
+            value={info.row.original.value}
+            count={info.row.original.count}
+          />
+        ),
       }),
       columnHelper.accessor('count', {
         header: 'Count',
-        cell: (info) => info.getValue().toLocaleString(),
+        cell: () => null,
+        enableSorting: true,
+        size: 0,
         meta: {
           align: 'right' as const,
         },
@@ -90,6 +114,7 @@ function PredicateCount({ graphData }: { graphData: any }) {
     columns,
     state: {
       sorting,
+      // columnVisibility: { count: false },
       pagination: {
         pageSize,
         pageIndex,
@@ -199,12 +224,27 @@ function PredicateCount({ graphData }: { graphData: any }) {
                     <TableRow key={row.id} hover>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
+                          colSpan={2}
                           key={cell.id}
-                          component={cell.column.id === 'predicate' ? 'th' : 'td'}
-                          scope={cell.column.id === 'predicate' ? 'row' : undefined}
+                          component="td"
+                          scope="row"
                           align={cell.column.columnDef.meta?.align}
+                          sx={{
+                            p: 0,
+                            m: 0,
+                            ...(cell.column.id === 'count' && {
+                              width: 0,
+                              maxWidth: 0,
+                              minWidth: 0,
+                              border: 'none',
+                              padding: 0,
+                              m: 0,
+                              overflow: 'hidden',
+                            }),
+                          }}
                         >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {cell.column.id !== 'count' &&
+                            flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
                     </TableRow>
@@ -269,3 +309,61 @@ function PredicateCount({ graphData }: { graphData: any }) {
 }
 
 export default PredicateCount;
+
+function ExpandableRows({
+  sourceKey,
+  value,
+  count,
+}: {
+  sourceKey: string;
+  value: { property: string; count: number }[];
+  count: number;
+}) {
+  return (
+    <Accordion sx={{ boxShadow: 'none', width: '100%', p: 0, m: 0 }}>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1-content"
+        id="panel1-header"
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+          }}
+        >
+          <Typography component="span">{sourceKey}</Typography>
+          <Typography component="span" sx={{ ml: 2, fontSize: 14 }}>
+            {typeof count === 'number' ? count.toLocaleString() : JSON.stringify(count)}
+          </Typography>
+        </Box>
+      </AccordionSummary>
+      <AccordionDetails>
+        <Table size="small" aria-label="predicates table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Property</TableCell>
+              <TableCell align="right">Count</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Object.entries(value || {}).map(([predicate, count]) => (
+              <TableRow key={predicate} hover>
+                <TableCell component="th" scope="row">
+                  {count.property}
+                </TableCell>
+                <TableCell align="right">
+                  {typeof count.count === 'number'
+                    ? count.count.toLocaleString()
+                    : JSON.stringify(count.count)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </AccordionDetails>
+    </Accordion>
+  );
+}
