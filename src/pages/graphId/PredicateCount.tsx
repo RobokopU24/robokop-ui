@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   CardContent,
   Divider,
@@ -28,9 +28,7 @@ import {
   SortingState,
   getPaginationRowModel,
 } from '@tanstack/react-table';
-
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import PredicateCountDetailsModal from './PredicateCountDetailsModal';
 
 type PredicateData = {
   predicate: string;
@@ -47,22 +45,22 @@ declare module '@tanstack/react-table' {
 const columnHelper = createColumnHelper<PredicateData>();
 
 function PredicateCount({ graphData }: { graphData: any }) {
-  let hashmap: Record<string, { property: string; count: number }[]> = {};
+  const hashmap: Record<string, { property: string; count: number }[]> = {};
   for (const [property, objectList] of Object.entries(
     graphData?.qc_results?.predicates_by_knowledge_source || {}
   )) {
     for (const [predicate, count] of Object.entries(objectList as object)) {
       if (hashmap[predicate]) {
-        hashmap[predicate].push({ property, count });
+        hashmap[predicate].push({ property, count: Number(count) });
       } else {
-        hashmap[predicate] = [{ property, count }];
+        hashmap[predicate] = [{ property, count: Number(count) }];
       }
     }
   }
 
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'count', desc: true }]);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageIndex, setPageIndex] = useState(0);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'count', desc: true }]);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const { pageIndex, pageSize } = pagination;
   const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
@@ -78,11 +76,6 @@ function PredicateCount({ graphData }: { graphData: any }) {
     if (!q) return data;
     return data.filter((row) => row.predicate.toLowerCase().includes(q));
   }, [data, searchQuery]);
-
-  // Reset page index when page size changes
-  useEffect(() => {
-    setPageIndex(0);
-  }, [pageSize]);
 
   const columns = useMemo(
     () => [
@@ -101,9 +94,7 @@ function PredicateCount({ graphData }: { graphData: any }) {
         cell: () => null,
         enableSorting: true,
         size: 0,
-        meta: {
-          align: 'right' as const,
-        },
+        meta: { align: 'right' as const },
       }),
     ],
     []
@@ -114,27 +105,13 @@ function PredicateCount({ graphData }: { graphData: any }) {
     columns,
     state: {
       sorting,
-      // columnVisibility: { count: false },
-      pagination: {
-        pageSize,
-        pageIndex,
-      },
+      pagination,
     },
     onSortingChange: setSorting,
-    onPaginationChange: (updater) => {
-      if (typeof updater === 'function') {
-        const newState = updater({ pageIndex, pageSize });
-        setPageIndex(newState.pageIndex);
-        setPageSize(newState.pageSize);
-      } else {
-        setPageIndex(updater.pageIndex);
-        setPageSize(updater.pageSize);
-      }
-    },
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    manualPagination: false,
   });
 
   return (
@@ -148,7 +125,7 @@ function PredicateCount({ graphData }: { graphData: any }) {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setPageIndex(0);
+              setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
             InputProps={{
               startAdornment: (
@@ -180,19 +157,9 @@ function PredicateCount({ graphData }: { graphData: any }) {
               sx={{
                 height: 600,
                 overflow: 'auto',
-                '&::-webkit-scrollbar': {
-                  width: '8px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  backgroundColor: '#f1f1f1',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#c1c1c1',
-                  borderRadius: '4px',
-                },
-                '&::-webkit-scrollbar-thumb:hover': {
-                  backgroundColor: '#a8a8a8',
-                },
+                '&::-webkit-scrollbar': { width: '8px' },
+                '&::-webkit-scrollbar-thumb': { backgroundColor: '#c1c1c1', borderRadius: '4px' },
+                '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#a8a8a8' },
               }}
             >
               <Table stickyHeader>
@@ -220,14 +187,12 @@ function PredicateCount({ graphData }: { graphData: any }) {
                   ))}
                 </TableHead>
                 <TableBody>
-                  {table.getRowModel().rows.map((row) => (
+                  {table.getPaginationRowModel().rows.map((row) => (
                     <TableRow key={row.id} hover>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
-                          colSpan={2}
                           key={cell.id}
-                          component="td"
-                          scope="row"
+                          colSpan={2}
                           align={cell.column.columnDef.meta?.align}
                           sx={{
                             p: 0,
@@ -238,7 +203,6 @@ function PredicateCount({ graphData }: { graphData: any }) {
                               minWidth: 0,
                               border: 'none',
                               padding: 0,
-                              m: 0,
                               overflow: 'hidden',
                             }),
                           }}
@@ -253,54 +217,55 @@ function PredicateCount({ graphData }: { graphData: any }) {
               </Table>
             </TableContainer>
 
-            {filteredData.length > 0 && (
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mt: 2,
-                }}
-              >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2">Page size:</Typography>
-                  <FormControl size="small" sx={{ minWidth: 80 }}>
-                    <Select
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPageIndex(0);
-                      }}
-                      displayEmpty
-                    >
-                      <MenuItem value={5}>5</MenuItem>
-                      <MenuItem value={10}>10</MenuItem>
-                      <MenuItem value={20}>20</MenuItem>
-                      <MenuItem value={50}>50</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Typography variant="body2">
-                    Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
-                    {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
-                    {filteredData.length} results
-                  </Typography>
-                  <Pagination
-                    count={Math.ceil(filteredData.length / pageSize)}
-                    page={pageIndex + 1}
-                    onChange={(event, page) => {
-                      setPageIndex(page - 1);
-                    }}
-                    color="primary"
-                    size="small"
-                    showFirstButton
-                    showLastButton
-                  />
-                </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mt: 2,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="body2">Page size:</Typography>
+                <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <Select
+                    value={pageSize}
+                    onChange={(e) =>
+                      setPagination((prev) => ({
+                        ...prev,
+                        pageSize: Number(e.target.value),
+                        pageIndex: 0,
+                      }))
+                    }
+                    displayEmpty
+                  >
+                    <MenuItem value={5}>5</MenuItem>
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                  </Select>
+                </FormControl>
               </Box>
-            )}
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography variant="body2">
+                  Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
+                  {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
+                  {filteredData.length} results
+                </Typography>
+                <Pagination
+                  count={Math.ceil(filteredData.length / pageSize)}
+                  page={pageIndex + 1}
+                  onChange={(_, page) =>
+                    setPagination((prev) => ({ ...prev, pageIndex: page - 1 }))
+                  }
+                  color="primary"
+                  size="small"
+                  showFirstButton
+                  showLastButton
+                />
+              </Box>
+            </Box>
           </>
         )}
       </Box>
@@ -319,51 +284,37 @@ function ExpandableRows({
   value: { property: string; count: number }[];
   count: number;
 }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
-    <Accordion sx={{ boxShadow: 'none', width: '100%', p: 0, m: 0 }}>
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="panel1-content"
-        id="panel1-header"
-      >
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            width: '100%',
-          }}
+    <Box
+      className="hover-row"
+      sx={{
+        padding: '8px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      {isModalOpen && (
+        <PredicateCountDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          value={value}
+          sourceKey={sourceKey}
+        />
+      )}
+      <Typography component="span">{sourceKey}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography
+          component="span"
+          sx={{ ml: 2, fontSize: 14, float: 'right', fontWeight: 'bold' }}
         >
-          <Typography component="span">{sourceKey}</Typography>
-          <Typography component="span" sx={{ ml: 2, fontSize: 14 }}>
-            {typeof count === 'number' ? count.toLocaleString() : JSON.stringify(count)}
-          </Typography>
-        </Box>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Table size="small" aria-label="predicates table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Property</TableCell>
-              <TableCell align="right">Count</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(value || {}).map(([predicate, count]) => (
-              <TableRow key={predicate} hover>
-                <TableCell component="th" scope="row">
-                  {count.property}
-                </TableCell>
-                <TableCell align="right">
-                  {typeof count.count === 'number'
-                    ? count.count.toLocaleString()
-                    : JSON.stringify(count.count)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </AccordionDetails>
-    </Accordion>
+          {typeof count === 'number' ? count.toLocaleString() : JSON.stringify(count)}
+        </Typography>
+        <button className="details-card-button" onClick={() => setIsModalOpen(true)}>
+          Details
+        </button>
+      </Box>
+    </Box>
   );
 }

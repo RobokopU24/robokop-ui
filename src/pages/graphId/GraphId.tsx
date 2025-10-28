@@ -4,24 +4,13 @@ import OpenInNew from '@mui/icons-material/OpenInNew';
 import {
   Box,
   Breadcrumbs,
-  Button,
-  ButtonGroup,
   Card,
   CardContent,
-  CardHeader,
   Chip,
   Container,
-  Divider,
   Grid,
-  Paper,
   Stack,
   styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
 } from '@mui/material';
 import { Link } from '@tanstack/react-router';
@@ -33,16 +22,20 @@ import { fileRoutes } from '../../API/routes';
 import axios from 'axios';
 import PredicateCount from './PredicateCount';
 import NodeCuriePrefixes from './NodeCuriePrefixes';
-import EdgeProperties from './EdgeProperties';
 import PrimaryKnowledgeSources from './PrimaryKnowledgeSources';
 import StringTableDisplay from './StringTableDisplay';
 import Sidebar from './Sidebar';
+import { Sankey } from './Sankey';
+
+import './GraphId.css';
+import SankeyGraphModal from './SankeyGraphModal';
 
 interface GraphIdProps {
   graphData: any;
 }
 
 function GraphId({ graphData }: GraphIdProps) {
+  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
   const { data: fileSize } = useQuery({
     queryKey: ['graph-metadata', graphData.graph_id, 'file-size'],
     queryFn: async () => {
@@ -52,10 +45,33 @@ function GraphId({ graphData }: GraphIdProps) {
       return results.data.size;
     },
   });
+
+  let nodeSet: Set<string> = new Set();
+  let links: Array<{ source: string; target: string; value: number }> = [];
+  for (const [key, value] of Object.entries(
+    graphData.qc_results.predicates_by_knowledge_source || {}
+  )) {
+    nodeSet.add(key);
+    for (const [predicate, count] of Object.entries(value as Record<string, number>)) {
+      nodeSet.add(predicate);
+      links.push({ source: key, target: predicate, value: count });
+    }
+  }
+
+  const graphDataset = {
+    nodes: Array.from(nodeSet).map((id) => ({ id })),
+    links,
+  };
+
   return (
     <Container sx={{ my: 6, maxWidth: '1920px !important', display: 'flex', gap: 4 }}>
       <Sidebar />
       <Box>
+        <SankeyGraphModal
+          isOpen={isSankeyGraphModalOpen}
+          onClose={() => setIsSankeyGraphModalOpen(false)}
+          graphData={graphDataset}
+        />
         <Breadcrumbs aria-label="graph breadcrumbs">
           <Typography
             component={Link}
@@ -104,14 +120,29 @@ function GraphId({ graphData }: GraphIdProps) {
             <Typography variant="body1" sx={{ mt: 2 }}>
               {graphData.graph_description}
             </Typography>
-
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={1.5}
-              sx={{ mt: 2 }}
-              // width="fit-content"
-            >
-              {graphData.graph_url && (
+            <Stack direction={'row'} justifyContent={'space-between'}>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                spacing={1.5}
+                sx={{ mt: 2 }}
+                // width="fit-content"
+              >
+                {graphData.graph_url && (
+                  <a
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      maxWidth: '200px',
+                    }}
+                    className="details-card-secondary-button"
+                    href={graphData.graph_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Graph website <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                  </a>
+                )}
                 <a
                   style={{
                     display: 'flex',
@@ -120,41 +151,41 @@ function GraphId({ graphData }: GraphIdProps) {
                     maxWidth: '200px',
                   }}
                   className="details-card-secondary-button"
-                  href={graphData.graph_url}
+                  href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Graph website <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                  Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
                 </a>
-              )}
-              <a
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  maxWidth: '200px',
-                }}
-                className="details-card-secondary-button"
-                href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
-              </a>
-              <a
-                className="details-card-button"
-                href={graphData.neo4j_dump}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  maxWidth: '300px',
-                }}
-              >
-                <span>Download Graph {formatFileSize(fileSize || 0, 2)}</span> <Download />
-              </a>
+                <a
+                  className="details-card-button"
+                  href={graphData.neo4j_dump}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    maxWidth: '300px',
+                  }}
+                >
+                  <span>Download Graph {formatFileSize(fileSize || 0, 2)}</span> <Download />
+                </a>
+              </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 2 }}>
+                <button
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    maxWidth: '200px',
+                  }}
+                  className="details-card-secondary-button"
+                  onClick={() => setIsSankeyGraphModalOpen(true)}
+                >
+                  Sankey Graph <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                </button>
+              </Stack>
             </Stack>
           </CardContent>
         </Card>
