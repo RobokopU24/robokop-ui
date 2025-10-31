@@ -11,8 +11,8 @@ type Data = {
 };
 
 type SankeyProps = {
-  width?: number; // optional: chart will resize to parent
-  height?: number; // can be auto-calculated
+  width?: number;
+  height?: number;
   data: Data;
   showValues?: boolean;
   labelInsideMinHeight?: number;
@@ -25,6 +25,15 @@ type Hovered =
   | { type: 'node'; x: number; y: number; id: string; value: number }
   | { type: 'link'; x: number; y: number; source: string; target: string; value: number }
   | null;
+
+const stringToColor = (str: string): string => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 65%, 55%)`;
+};
 
 const Tooltip = ({
   x,
@@ -43,9 +52,7 @@ const Tooltip = ({
   const tooltipWidth = 180;
   const tooltipHeight = 60;
 
-  // Flip horizontally if near right edge
   const flipX = x + tooltipWidth + OFFSET > containerWidth;
-  // Flip vertically if near bottom
   const flipY = y + tooltipHeight + OFFSET > containerHeight;
 
   return (
@@ -72,7 +79,6 @@ const Tooltip = ({
   );
 };
 
-// --- 🔹 Logarithmic Transformation Helper ---
 const transformDataLogarithmically = (data: Data, base = 10) => {
   if (!data.links.length) return data;
 
@@ -105,7 +111,6 @@ export const Sankey = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(width || 800);
 
-  // 🔹 Responsive width based on parent
   useEffect(() => {
     if (!width && containerRef.current) {
       const observer = new ResizeObserver(([entry]) => {
@@ -116,29 +121,27 @@ export const Sankey = ({
     }
   }, [width]);
 
-  // 🔹 Transform data before feeding into Sankey layout
   const transformedData = useMemo(
     () => transformDataLogarithmically(data, logScaleBase),
     [data, logScaleBase]
   );
 
-  // 🔹 Compute dynamic height based on number of nodes
   const nodeCount = data.nodes.length;
   const dynamicHeight = height ? height : Math.min(maxHeight, Math.max(minHeight, nodeCount * 80));
 
-  const sankeyGenerator = useMemo(
-    () =>
-      sankey<SankeyNodeMinimal<any>, any>()
-        .nodeWidth(26)
-        .nodePadding(29)
-        .extent([
-          [MARGIN_X, MARGIN_Y],
-          [containerWidth - MARGIN_X, dynamicHeight - MARGIN_Y],
-        ])
-        .nodeId((node: any) => node.id)
-        .nodeAlign(sankeyCenter),
-    [containerWidth, dynamicHeight]
-  );
+  const sankeyGenerator = useMemo(() => {
+    const padding = Math.max(10, Math.min(25, 200 / (data.nodes.length || 1)));
+
+    return sankey<SankeyNodeMinimal<any>, any>()
+      .nodeWidth(26)
+      .nodePadding(padding)
+      .extent([
+        [MARGIN_X, MARGIN_Y],
+        [containerWidth - MARGIN_X, dynamicHeight - MARGIN_Y],
+      ])
+      .nodeId((node: any) => node.id)
+      .nodeAlign(sankeyCenter);
+  }, [containerWidth, dynamicHeight, data.nodes.length]);
 
   const { nodes, links } = useMemo(() => {
     const layout = sankeyGenerator(transformedData as any);
@@ -159,6 +162,16 @@ export const Sankey = ({
 
     layout.nodes.forEach((n: any) => {
       n.rawValue = originalTotals[n.id] ?? n.value;
+      n.color = stringToColor(n.id);
+    });
+
+    layout.links.forEach((l: any, i: number) => {
+      const sourceNode = layout.nodes.find((n: any) => n.id === (l.source.id ?? l.source));
+      const targetNode = layout.nodes.find((n: any) => n.id === (l.target.id ?? l.target));
+
+      l.sourceColor = sourceNode?.color || '#a53253';
+      l.targetColor = targetNode?.color || '#a53253';
+      l.id = `link-${i}`;
     });
 
     return layout;
@@ -166,7 +179,8 @@ export const Sankey = ({
 
   const [hovered, setHovered] = useState<Hovered>(null);
 
-  const labelFor = (n: any) => (showValues ? `${n.id} (${n.rawValue ?? n.value ?? 0})` : n.id);
+  const labelFor = (n: any) =>
+    showValues ? `${n.id} (${n.rawValue?.toLocaleString?.() ?? n.value ?? 0})` : n.id;
 
   const svgRelativeCoords = (e: React.MouseEvent<Element, MouseEvent>) => {
     const svg = (e.currentTarget as Element).ownerSVGElement as SVGSVGElement;
@@ -191,8 +205,8 @@ export const Sankey = ({
           x={node.x0}
           y={node.y0}
           stroke="black"
-          fill="#a53253"
-          fillOpacity={0.8}
+          fill={node.color}
+          fillOpacity={0.85}
           rx={1}
           onMouseMove={(e) => {
             const { x, y } = svgRelativeCoords(e);
@@ -225,28 +239,44 @@ export const Sankey = ({
   const allLinks = links.map((link: any, i: number) => {
     const linkGenerator = sankeyLinkHorizontal<any, any>();
     const path = linkGenerator(link);
+
+    const gradientId = `grad-${link.id}`;
     return (
-      <path
-        key={i}
-        d={path!}
-        stroke="#a53253"
-        fill="none"
-        strokeOpacity={0.15}
-        strokeWidth={Math.max(1, link.width)}
-        style={{ pointerEvents: 'stroke' }}
-        onMouseMove={(e) => {
-          const { x, y } = svgRelativeCoords(e);
-          setHovered({
-            type: 'link',
-            x,
-            y,
-            source: (link.source as any).id,
-            target: (link.target as any).id,
-            value: link.rawValue ?? link.value,
-          });
-        }}
-        onMouseLeave={() => setHovered(null)}
-      />
+      <g key={i}>
+        <defs>
+          <linearGradient
+            id={gradientId}
+            gradientUnits="userSpaceOnUse"
+            x1={link.source.x1}
+            x2={link.target.x0}
+            y1={(link.source.y0 + link.source.y1) / 2}
+            y2={(link.target.y0 + link.target.y1) / 2}
+          >
+            <stop offset="0%" stopColor={link.sourceColor} />
+            <stop offset="100%" stopColor={link.targetColor} />
+          </linearGradient>
+        </defs>
+        <path
+          d={path!}
+          stroke={`url(#${gradientId})`}
+          fill="none"
+          strokeOpacity={0.4}
+          strokeWidth={Math.max(1, link.width)}
+          style={{ pointerEvents: 'stroke' }}
+          onMouseMove={(e) => {
+            const { x, y } = svgRelativeCoords(e);
+            setHovered({
+              type: 'link',
+              x,
+              y,
+              source: (link.source as any).id,
+              target: (link.target as any).id,
+              value: link.rawValue ?? link.value,
+            });
+          }}
+          onMouseLeave={() => setHovered(null)}
+        />
+      </g>
     );
   });
 

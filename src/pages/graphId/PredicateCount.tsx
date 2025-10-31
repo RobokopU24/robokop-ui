@@ -173,6 +173,9 @@ function PredicateCount({ graphData }: { graphData: any }) {
                           sx={{
                             cursor: header.column.getCanSort() ? 'pointer' : 'default',
                             userSelect: 'none',
+                            ...(header.column.id === 'count' && {
+                              pr: 12,
+                            }),
                           }}
                           onClick={header.column.getToggleSortingHandler()}
                         >
