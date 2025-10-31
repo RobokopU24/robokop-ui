@@ -98,6 +98,16 @@ const transformDataLogarithmically = (data: Data, base = 10) => {
   };
 };
 
+// Helper function to desaturate a color
+const desaturateColor = (color: string): string => {
+  const match = color.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
+  if (match) {
+    const [, hue, , lightness] = match;
+    return `hsl(${hue}, 15%, ${lightness}%)`;
+  }
+  return '#999999';
+};
+
 export const Sankey = ({
   width,
   height,
@@ -110,6 +120,8 @@ export const Sankey = ({
 }: SankeyProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(width || 800);
+  const [hovered, setHovered] = useState<Hovered>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!width && containerRef.current) {
@@ -132,7 +144,7 @@ export const Sankey = ({
   const sankeyGenerator = useMemo(() => {
     const padding = Math.max(10, Math.min(25, 200 / (data.nodes.length || 1)));
 
-    return sankey<SankeyNodeMinimal<any>, any>()
+    return sankey<SankeyNodeMinimal<any, any>, any>()
       .nodeWidth(26)
       .nodePadding(padding)
       .extent([
@@ -169,21 +181,54 @@ export const Sankey = ({
       const sourceNode = layout.nodes.find((n: any) => n.id === (l.source.id ?? l.source));
       const targetNode = layout.nodes.find((n: any) => n.id === (l.target.id ?? l.target));
 
-      l.sourceColor = sourceNode?.color || '#a53253';
-      l.targetColor = targetNode?.color || '#a53253';
+      l.sourceColor = (sourceNode as { color: string } | undefined)?.color || '#a53253';
+      l.targetColor = (targetNode as { color: string } | undefined)?.color || '#a53253';
       l.id = `link-${i}`;
     });
 
     return layout;
   }, [sankeyGenerator, transformedData, data]);
 
-  const [hovered, setHovered] = useState<Hovered>(null);
+  // Determine which links are connected to the selected node
+  const connectedLinks = useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    const connected = new Set<string>();
+    
+    links.forEach((link: any) => {
+      const sourceId = (link.source as any).id;
+      const targetId = (link.target as any).id;
+      if (sourceId === selectedNodeId || targetId === selectedNodeId) {
+        connected.add(link.id);
+      }
+    });
+    
+    return connected;
+  }, [selectedNodeId, links]);
+
+  // Determine which nodes are connected to the selected node
+  const connectedNodes = useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    const connected = new Set<string>();
+    connected.add(selectedNodeId); // Include the selected node itself
+    
+    links.forEach((link: any) => {
+      const sourceId = (link.source as any).id;
+      const targetId = (link.target as any).id;
+      if (sourceId === selectedNodeId) {
+        connected.add(targetId);
+      } else if (targetId === selectedNodeId) {
+        connected.add(sourceId);
+      }
+    });
+    
+    return connected;
+  }, [selectedNodeId, links]);
 
   const labelFor = (n: any) =>
     showValues ? `${n.id} (${n.rawValue?.toLocaleString?.() ?? n.value ?? 0})` : n.id;
 
   const svgRelativeCoords = (e: React.MouseEvent<Element, MouseEvent>) => {
-    const svg = (e.currentTarget as Element).ownerSVGElement as SVGSVGElement;
+    const svg = (e.currentTarget as any).ownerSVGElement as SVGSVGElement;
     const bounds = svg.getBoundingClientRect();
     return { x: e.clientX - bounds.left, y: e.clientY - bounds.top };
   };
@@ -197,6 +242,14 @@ export const Sankey = ({
     const outsideAnchor = placeOnRight ? 'start' : 'end';
     const insideX = node.x0! + 4;
 
+    // Determine if this node should be highlighted or desaturated
+    const isSelected = selectedNodeId === node.id;
+    const isHighlighted = !selectedNodeId || connectedNodes.has(node.id);
+    const nodeColor = isHighlighted ? node.color : desaturateColor(node.color);
+    const nodeOpacity = isHighlighted ? 0.85 : 0.3;
+    const textOpacity = isHighlighted ? 1 : 0.4;
+    const strokeWidth = isSelected ? 2 : 1;
+
     return (
       <g key={node.index}>
         <rect
@@ -204,10 +257,19 @@ export const Sankey = ({
           width={sankeyGenerator.nodeWidth()}
           x={node.x0}
           y={node.y0}
-          stroke="black"
-          fill={node.color}
-          fillOpacity={0.85}
+          stroke={isSelected ? '#000' : 'black'}
+          strokeWidth={strokeWidth}
+          fill={nodeColor}
+          fillOpacity={nodeOpacity}
           rx={1}
+          style={{ 
+            transition: 'fill 0.2s ease, fill-opacity 0.2s ease, stroke-width 0.2s ease',
+            cursor: 'pointer'
+          }}
+          onClick={() => {
+            // Toggle selection: if clicking the same node, deselect; otherwise select the new node
+            setSelectedNodeId(selectedNodeId === node.id ? null : node.id);
+          }}
           onMouseMove={(e) => {
             const { x, y } = svgRelativeCoords(e);
             setHovered({
@@ -218,7 +280,9 @@ export const Sankey = ({
               value: node.rawValue ?? node.value ?? 0,
             });
           }}
-          onMouseLeave={() => setHovered(null)}
+          onMouseLeave={() => {
+            setHovered(null);
+          }}
         />
         <text
           x={putInside ? insideX : outsideX}
@@ -226,9 +290,11 @@ export const Sankey = ({
           dominantBaseline="middle"
           textAnchor={putInside ? 'start' : outsideAnchor}
           fill={putInside ? 'white' : '#1f2937'}
+          opacity={textOpacity}
           fontSize={12}
           fontFamily="system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
           pointerEvents="none"
+          style={{ transition: 'opacity 0.2s ease' }}
         >
           {labelFor(node)}
         </text>
@@ -240,7 +306,15 @@ export const Sankey = ({
     const linkGenerator = sankeyLinkHorizontal<any, any>();
     const path = linkGenerator(link);
 
+    // Determine if this link should be highlighted or desaturated
+    const isHighlighted = !selectedNodeId || connectedLinks.has(link.id);
+    const strokeOpacity = isHighlighted ? 0.4 : 0.1;
+    
+    // Create gradient IDs for both normal and desaturated versions
     const gradientId = `grad-${link.id}`;
+    const desaturatedGradientId = `grad-desat-${link.id}`;
+    const activeGradientId = isHighlighted ? gradientId : desaturatedGradientId;
+
     return (
       <g key={i}>
         <defs>
@@ -255,14 +329,28 @@ export const Sankey = ({
             <stop offset="0%" stopColor={link.sourceColor} />
             <stop offset="100%" stopColor={link.targetColor} />
           </linearGradient>
+          <linearGradient
+            id={desaturatedGradientId}
+            gradientUnits="userSpaceOnUse"
+            x1={link.source.x1}
+            x2={link.target.x0}
+            y1={(link.source.y0 + link.source.y1) / 2}
+            y2={(link.target.y0 + link.target.y1) / 2}
+          >
+            <stop offset="0%" stopColor={desaturateColor(link.sourceColor)} />
+            <stop offset="100%" stopColor={desaturateColor(link.targetColor)} />
+          </linearGradient>
         </defs>
         <path
           d={path!}
-          stroke={`url(#${gradientId})`}
+          stroke={`url(#${activeGradientId})`}
           fill="none"
-          strokeOpacity={0.4}
+          strokeOpacity={strokeOpacity}
           strokeWidth={Math.max(1, link.width)}
-          style={{ pointerEvents: 'stroke' }}
+          style={{ 
+            pointerEvents: 'stroke',
+            transition: 'stroke-opacity 0.2s ease'
+          }}
           onMouseMove={(e) => {
             const { x, y } = svgRelativeCoords(e);
             setHovered({
@@ -274,7 +362,9 @@ export const Sankey = ({
               value: link.rawValue ?? link.value,
             });
           }}
-          onMouseLeave={() => setHovered(null)}
+          onMouseLeave={() => {
+            setHovered(null);
+          }}
         />
       </g>
     );
@@ -289,7 +379,16 @@ export const Sankey = ({
         height: dynamicHeight,
       }}
     >
-      <svg width={containerWidth} height={dynamicHeight}>
+      <svg 
+        width={containerWidth} 
+        height={dynamicHeight}
+        onClick={(e) => {
+          // Clear selection if clicking on empty space
+          if (e.target === e.currentTarget) {
+            setSelectedNodeId(null);
+          }
+        }}
+      >
         {allLinks}
         {allNodes}
       </svg>
