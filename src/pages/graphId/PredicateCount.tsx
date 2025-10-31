@@ -45,31 +45,30 @@ declare module '@tanstack/react-table' {
 const columnHelper = createColumnHelper<PredicateData>();
 
 function PredicateCount({ graphData }: { graphData: any }) {
-  const hashmap: Record<string, { property: string; count: number }[]> = {};
-  for (const [property, objectList] of Object.entries(
-    graphData?.qc_results?.predicates_by_knowledge_source || {}
-  )) {
-    for (const [predicate, count] of Object.entries(objectList as object)) {
-      if (hashmap[predicate]) {
-        hashmap[predicate].push({ property, count: Number(count) });
-      } else {
-        hashmap[predicate] = [{ property, count: Number(count) }];
-      }
-    }
-  }
-
   const [sorting, setSorting] = useState<SortingState>([{ id: 'count', desc: true }]);
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const { pageIndex, pageSize } = pagination;
   const [searchQuery, setSearchQuery] = useState('');
 
   const data = useMemo(() => {
+    const hashmap: Record<string, { property: string; count: number }[]> = {};
+    for (const [property, objectList] of Object.entries(
+      graphData?.qc_results?.predicates_by_knowledge_source || {}
+    )) {
+      for (const [predicate, count] of Object.entries(objectList as object)) {
+        if (hashmap[predicate]) {
+          hashmap[predicate].push({ property, count: Number(count) });
+        } else {
+          hashmap[predicate] = [{ property, count: Number(count) }];
+        }
+      }
+    }
     return Object.keys(hashmap).map((predicate) => ({
       predicate,
       count: hashmap[predicate].reduce((sum, item) => sum + item.count, 0),
       value: hashmap[predicate],
     }));
-  }, [hashmap]);
+  }, [graphData]);
 
   const filteredData = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();

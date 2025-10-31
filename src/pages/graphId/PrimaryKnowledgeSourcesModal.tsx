@@ -23,27 +23,10 @@ function PrimaryKnowledgeSourcesModal({
   value: { property: string; count: number }[] | undefined;
   sourceKey: string;
 }) {
-  const data = {
-    nodes: [
-      { id: 'biolink:subclass_of' },
-      { id: 'infores:ubergraph' },
-      { id: 'infores:reactome' },
-      { id: 'infores:drugmechdb' },
-      { id: 'infores:test' },
-    ],
-    links: [
-      { source: 'infores:ubergraph', target: 'biolink:subclass_of', value: 98 },
-      { source: 'biolink:subclass_of', target: 'infores:test', value: 90 },
-      { source: 'infores:reactome', target: 'biolink:subclass_of', value: 2 },
-      { source: 'infores:drugmechdb', target: 'biolink:subclass_of', value: 1 },
-    ],
-  };
-
   let sankeyNodes = new Set<string>(sourceKey ? [sourceKey] : []);
 
   let sankeyLinks: Array<{ source: string; target: string; value: number }> = [];
   Object.entries(value || {}).forEach(([_, count]) => {
-    console.log('count in modal:', count, _, sourceKey);
     sankeyNodes.add(count.property);
     sankeyLinks.push({
       source: count.property,

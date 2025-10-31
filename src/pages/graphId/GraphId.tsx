@@ -25,8 +25,6 @@ import NodeCuriePrefixes from './NodeCuriePrefixes';
 import PrimaryKnowledgeSources from './PrimaryKnowledgeSources';
 import StringTableDisplay from './StringTableDisplay';
 import Sidebar from './Sidebar';
-import { Sankey } from './Sankey';
-
 import './GraphId.css';
 import SankeyGraphModal from './SankeyGraphModal';
 
@@ -183,7 +181,7 @@ function GraphId({ graphData }: GraphIdProps) {
                   className="details-card-secondary-button"
                   onClick={() => setIsSankeyGraphModalOpen(true)}
                 >
-                  Sankey Graph <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                  Sankey Graph
                 </button>
               </Stack>
             </Stack>
@@ -203,7 +201,6 @@ function GraphId({ graphData }: GraphIdProps) {
             </Grid>
             <Grid size={12}>
               <Card variant="outlined" id="edge-properties">
-                {/* <EdgeProperties graphData={graphData} /> */}
                 <StringTableDisplay
                   tableData={graphData?.qc_results?.edge_properties || []}
                   title="Edge Properties"
@@ -212,10 +209,6 @@ function GraphId({ graphData }: GraphIdProps) {
             </Grid>
             <Grid size={12}>
               <Card variant="outlined" id="primary-knowledge-sources">
-                {/* <StringTableDisplay
-                  tableData={graphData?.qc_results?.primary_knowledge_sources}
-                  title="Primary Knowledge Sources"
-                /> */}
                 <PrimaryKnowledgeSources graphData={graphData} />
               </Card>
             </Grid>
@@ -244,21 +237,3 @@ function GraphId({ graphData }: GraphIdProps) {
 }
 
 export default GraphId;
-const Hr = styled('hr')`
-  border: none;
-  border-top: 1px solid rgba(0, 0, 0, 0.23);
-  margin: 1rem 0;
-`;
-
-const HeadingWrapper = styled('div')`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-
-  & span {
-    font-size: 1rem;
-    white-space: nowrap;
-    color: #767676;
-  }
-`;
