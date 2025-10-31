@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo, useCallback, useRef } from 'react';
 import axios, { CancelTokenSource } from 'axios';
 
 import BiolinkContext from '../../../../context/biolink';
@@ -66,7 +66,6 @@ function lookupTaxaName(taxaIdArray: string[] | undefined): string | null {
 }
 
 const { CancelToken } = axios;
-let cancel: CancelTokenSource | undefined;
 
 /**
  * Generic node selector component
@@ -83,7 +82,7 @@ let cancel: CancelTokenSource | undefined;
  * @param {boolean} nodeOptions.includeExistingNodes - node selector can include existing nodes
  * @param {boolean} nodeOptions.includeCategories - node selector can include general categories
  */
-export default function NodeSelector({
+function NodeSelector({
   id,
   properties,
   isReference,
@@ -107,98 +106,140 @@ export default function NodeSelector({
   const [open, toggleOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<NodeOption[]>([]);
   const { displayAlert } = useAlert();
+
+  const cancelRef = useRef<CancelTokenSource | undefined>(undefined);
+  const lastSearchRef = useRef<string>('');
+
   // @ts-ignore: context type is not strict
   const { concepts } = useContext(BiolinkContext) as { concepts: string[] };
-  const searchTerm = useDebounce(inputText, 500) as string;
+  const searchTerm = useDebounce(inputText, 300) as string;
+  const trimmedSearchTerm = useMemo(() => searchTerm.trim(), [searchTerm]);
+  const loweredTrimmedSearchTerm = useMemo(
+    () => trimmedSearchTerm.toLowerCase(),
+    [trimmedSearchTerm]
+  );
 
-  /**
-   * Get dropdown options for node selector
-   */
-  async function getOptions() {
-    toggleLoading(true);
-    const newOptions: NodeOption[] = isReference ? [{ name: 'New Term', key: null }] : [];
-    // allow user to select an existing node
-    if (includeExistingNodes) {
-      newOptions.push(...existingNodes);
-    }
-    // add general concepts to options
-    if (includeCategories) {
-      let includedCategories: NodeOption[] = concepts
-        .filter((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()))
-        .map((category: string) => ({
+  // Memoize category filtering to avoid recalculation
+  const filteredCategories = useMemo(() => {
+    if (!includeCategories || !loweredTrimmedSearchTerm) return [];
+
+    const matchesCategory = (category: string) => {
+      const raw = category.toLowerCase();
+      const display = strings.displayCategory(category).toLowerCase();
+      return raw.includes(loweredTrimmedSearchTerm) || display.includes(loweredTrimmedSearchTerm);
+    };
+
+    const matchedCategories = concepts.filter(matchesCategory);
+
+    if (includeSets) {
+      return matchedCategories.flatMap((category: string) => [
+        {
           categories: [category],
           name: strings.displayCategory(category),
-        }));
-      if (includeSets) {
-        includedCategories = concepts
-          .filter((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()))
-          .flatMap((category: string) => [
-            {
-              categories: [category],
-              name: strings.displayCategory(category),
-            },
-            {
-              categories: [category],
-              name: strings.setify(category),
-              is_set: true,
-            },
-          ]);
-      }
-      newOptions.push(...includedCategories);
+        },
+        {
+          categories: [category],
+          name: strings.setify(category),
+          is_set: true,
+        },
+      ]);
     }
-    // fetch matching curies from external services
-    if (includeCuries) {
-      if (searchTerm.includes(':')) {
-        // user is typing a specific curie
-        newOptions.push({ name: searchTerm, ids: [searchTerm] });
-      }
-      if (cancel) {
-        cancel.cancel();
-      }
-      cancel = CancelToken.source();
-      const curies: NodeOption[] = await fetchCuries(
-        searchTerm,
-        displayAlert as (arg0: string, arg1: string) => void,
-        cancel.token,
-        nameresCategoryFilter
-      );
-      newOptions.push(...curies);
+
+    return matchedCategories.map((category: string) => ({
+      categories: [category],
+      name: strings.displayCategory(category),
+    }));
+  }, [concepts, loweredTrimmedSearchTerm, includeCategories, includeSets]);
+
+  /**
+   * Get dropdown options for node selector - optimized version
+   */
+  const getOptions = useCallback(async () => {
+    if (lastSearchRef.current === trimmedSearchTerm) {
+      return;
     }
-    toggleLoading(false);
-    setOptions(newOptions);
-  }
+    lastSearchRef.current = trimmedSearchTerm;
+
+    toggleLoading(true);
+
+    try {
+      const newOptions: NodeOption[] = isReference ? [{ name: 'New Term', key: null }] : [];
+
+      if (includeExistingNodes) {
+        newOptions.push(...existingNodes);
+      }
+
+      newOptions.push(...filteredCategories);
+
+      if (includeCuries && trimmedSearchTerm.length >= 3) {
+        if (cancelRef.current) {
+          cancelRef.current.cancel();
+        }
+
+        if (trimmedSearchTerm.includes(':')) {
+          newOptions.push({ name: trimmedSearchTerm, ids: [trimmedSearchTerm] });
+        }
+
+        cancelRef.current = CancelToken.source();
+        const curies: NodeOption[] = await fetchCuries(
+          trimmedSearchTerm,
+          displayAlert as (arg0: string, arg1: string) => void,
+          cancelRef.current.token,
+          nameresCategoryFilter
+        );
+        newOptions.push(...curies);
+      }
+
+      setOptions(newOptions);
+    } catch (error) {
+      if (!axios.isCancel(error)) {
+        console.error('Error fetching options:', error);
+      }
+    } finally {
+      toggleLoading(false);
+    }
+  }, [
+    trimmedSearchTerm,
+    isReference,
+    includeExistingNodes,
+    existingNodes,
+    filteredCategories,
+    includeCuries,
+    displayAlert,
+    nameresCategoryFilter,
+  ]);
 
   /**
    * Get node options when dropdown opens or search term changes
-   * after debounce
+   * after debounce - optimized version
    */
   useEffect(() => {
-    if (open && searchTerm.length >= 3) {
+    if (open && trimmedSearchTerm.length >= 3) {
       getOptions();
-    } else {
+    } else if (!open) {
+      // Clear options when closed to free memory
       setOptions([]);
+      lastSearchRef.current = '';
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, searchTerm]);
+  }, [open, trimmedSearchTerm, getOptions]);
 
   /**
    * Cancel any api calls on unmount
    */
-  useEffect(
-    () => () => {
-      if (cancel) {
-        cancel.cancel();
+  useEffect(() => {
+    return () => {
+      if (cancelRef.current) {
+        cancelRef.current.cancel();
       }
-    },
-    []
-  );
+    };
+  }, []);
 
   /**
-   * Create a human-readable label for every option
+   * Create a human-readable label for every option - memoized
    * @param {object} opt - autocomplete option
    * @returns {string} Label to display
    */
-  function getOptionLabel(opt: NodeOption): string {
+  const getOptionLabel = useCallback((opt: NodeOption): string => {
     let label = '';
     if (opt.key) {
       label += `${opt.key}: `;
@@ -216,27 +257,27 @@ export default function NodeSelector({
       return `${label} Something`;
     }
     return '';
-  }
+  }, []);
 
   /**
-   * Update query graph based on option selected
+   * Update query graph based on option selected - memoized
    * @param {*} e - click event
    * @param {object|null} v - value of selected option
    */
-  function handleUpdate(e: React.SyntheticEvent<Element, Event>, v: NodeOption | null) {
-    // reset search term back when user selects something
-    updateInputText('');
-    if (v && 'key' in v) {
-      // key will only be in v when switching to existing node
-      setReference(v.key ?? null);
-    } else {
-      // updating a node value
-      update(id, v);
-    }
-  }
+  const handleUpdate = useCallback(
+    (e: React.SyntheticEvent<Element, Event>, v: NodeOption | null) => {
+      updateInputText('');
+      if (v && 'key' in v) {
+        setReference(v.key ?? null);
+      } else {
+        update(id, v);
+      }
+    },
+    [setReference, update, id]
+  );
 
   /**
-   * Compute current value of selector
+   * Compute current value of selector - memoized
    */
   const selectorValue = useMemo(() => {
     if (isValidNode(properties)) {
@@ -244,6 +285,34 @@ export default function NodeSelector({
     }
     return null;
   }, [properties]);
+
+  const handleOpen = useCallback((e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    toggleOpen(true);
+  }, []);
+
+  const handleClose = useCallback((e: React.SyntheticEvent) => {
+    e.stopPropagation();
+    toggleOpen(false);
+  }, []);
+
+  const handleInputChange = useCallback((_e: React.SyntheticEvent, v: string) => {
+    updateInputText(v);
+  }, []);
+
+  const handleTextFieldClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
+
+  const handleTextFieldFocus = useCallback(() => {
+    highlighter.highlightGraphNode(id);
+    highlighter.highlightTextEditorNode(id);
+  }, [id]);
+
+  const handleTextFieldBlur = useCallback(() => {
+    highlighter.clearGraphNode(id);
+    highlighter.clearTextEditorNode(id);
+  }, [id]);
 
   return (
     <Autocomplete
@@ -262,15 +331,9 @@ export default function NodeSelector({
       isOptionEqualToValue={(option: NodeOption, value: NodeOption) => option.name === value.name}
       open={open}
       onChange={handleUpdate}
-      onOpen={(e) => {
-        e.stopPropagation();
-        toggleOpen(true);
-      }}
-      onClose={(e) => {
-        e.stopPropagation();
-        toggleOpen(false);
-      }}
-      onInputChange={(_e, v) => updateInputText(v)}
+      onOpen={handleOpen}
+      onClose={handleClose}
+      onInputChange={handleInputChange}
       renderOption={(props, option: NodeOption, state: AutocompleteRenderOptionState) => (
         <Option {...option} {...props} />
       )}
@@ -281,17 +344,9 @@ export default function NodeSelector({
           className="nodeDropdown"
           label={title || id}
           margin="dense"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          onFocus={() => {
-            highlighter.highlightGraphNode(id);
-            highlighter.highlightTextEditorNode(id);
-          }}
-          onBlur={() => {
-            highlighter.clearGraphNode(id);
-            highlighter.clearTextEditorNode(id);
-          }}
+          onClick={handleTextFieldClick}
+          onFocus={handleTextFieldFocus}
+          onBlur={handleTextFieldBlur}
           InputProps={{
             ...params.InputProps,
             classes: {
@@ -311,6 +366,8 @@ export default function NodeSelector({
   );
 }
 
+export default React.memo(NodeSelector);
+
 const CustomTooltip = withStyles((theme: Theme) => ({
   tooltip: {
     fontSize: theme.typography.pxToRem(14),
@@ -322,7 +379,7 @@ interface OptionProps extends NodeOption {
   [key: string]: any;
 }
 
-function Option({ name, ids, categories, taxa, ...props }: OptionProps) {
+const Option = React.memo(function Option({ name, ids, categories, taxa, ...props }: OptionProps) {
   const taxaName = lookupTaxaName(taxa);
 
   return (
@@ -346,20 +403,31 @@ function Option({ name, ids, categories, taxa, ...props }: OptionProps) {
       </div>
     </CustomTooltip>
   );
-}
+});
 
 interface CopyButtonProps {
   textToCopy: string;
 }
 
-function CopyButton({ textToCopy }: CopyButtonProps) {
+const CopyButton = React.memo(function CopyButton({ textToCopy }: CopyButtonProps) {
   const [hasCopied, setHasCopied] = useState(false);
 
-  const handleCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(textToCopy);
-    setHasCopied(true);
-  };
+  const handleCopy = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      navigator.clipboard.writeText(textToCopy);
+      setHasCopied(true);
+    },
+    [textToCopy]
+  );
+
+  // Reset copied state after a short delay
+  useEffect(() => {
+    if (hasCopied) {
+      const timer = setTimeout(() => setHasCopied(false), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasCopied]);
 
   if (
     typeof navigator.clipboard === 'undefined' ||
@@ -374,4 +442,4 @@ function CopyButton({ textToCopy }: CopyButtonProps) {
       {hasCopied ? <Check /> : <FileCopy />}
     </IconButton>
   );
-}
+});

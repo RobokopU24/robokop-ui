@@ -398,11 +398,6 @@ export default function GraphEditor({
             transform: 'translateX(50%)',
             display: 'flex',
             gap: '10px',
-            // backgroundColor: 'white',
-            // borderRadius: '4px',
-            // padding: '4px',
-            // fontSize: '12px',
-            // boxShadow: '0px 0px 5px rgba(0,0,0,0.1)',
           }}
         >
           <button
@@ -440,7 +435,14 @@ export default function GraphEditor({
             transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           >
             {buttonOptions?.map((option, index) => (
-              <MenuItem key={index} onClick={option.onClick} disabled={option.disabled}>
+              <MenuItem
+                key={index}
+                onClick={() => {
+                  option.onClick();
+                  handleClose();
+                }}
+                disabled={option.disabled}
+              >
                 {option.label}
               </MenuItem>
             ))}

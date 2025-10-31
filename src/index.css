@@ -241,4 +241,30 @@ a {
   border-radius: 8px;
   padding: 8px 0;
   cursor: pointer;
+  /* transition for hover effect */
+  transition-property: all;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+.secondary-button {
+  width: 100%;
+  background: white;
+  color: #627DFF;
+  border: 1px solid #627DFF;
+  border-radius: 8px;
+  padding: 8px 0;
+  cursor: pointer;
+  /* transition for hover effect */
+  transition-property: all;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+
+.primary-button:hover {
+  opacity: 0.9;
+}
+
+.secondary-button:hover {
+  opacity: 0.9;
 }

@@ -99,6 +99,23 @@
     background: #1d4ed8;
 }
 
+.details-card-secondary-button {
+    display: inline-block;
+    background: #f3f4f6;
+    color: #374151;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: 0.15s;
+    border: 1px solid #d1d5db;
+}
+
+.details-card-secondary-button:hover {
+    background: #e5e7eb;
+}
+
 .details-card-value--large strong {
     text-decoration: underline;
     text-underline-offset: 2px;

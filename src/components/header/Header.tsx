@@ -53,7 +53,7 @@ function Header() {
   const supportItems: MenuItemConfig[] = [
     { to: '/guide', label: 'Guide' },
     { to: '/tutorial', label: 'Tutorial' },
-    { to: '/', label: 'Help' },
+    { to: '/#contact', label: 'Help' },
   ];
 
   const accountItems: MenuItemConfig[] = user

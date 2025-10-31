@@ -42,10 +42,15 @@ export default function LandingPage() {
                 visualization tool to explore relevant publications.
               </p>
             </Card>
-            <Card title="Explore the Data" href="/api-docs" icon={<DataIcon />} gradient="purple">
+            <Card
+              title="Explore the Graphs"
+              href="/explore/graphs"
+              icon={<DataIcon />}
+              gradient="purple"
+            >
               <p>
-                Learn about the data in ROBOKOP and how to access it programmatically using the
-                Automat API.
+                Learn about the data in ROBOKOP and explore the knowledge graph using our data
+                browser.
               </p>
             </Card>
           </CardContainer>
@@ -79,6 +84,16 @@ export default function LandingPage() {
               <p>
                 A collection of notebooks and other documents to help users get the most out of
                 ROBOKOP.
+              </p>
+            </Card>
+            <Card
+              title="Automat API"
+              href="https://robokop-automat.apps.renci.org/"
+              target="_blank"
+            >
+              <p>
+                The Automat API provides programmatic access to the ROBOKOP knowledge graph. Use it
+                to submit queries and retrieve results in JSON format.
               </p>
             </Card>
           </CardContainer>

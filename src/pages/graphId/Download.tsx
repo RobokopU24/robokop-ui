@@ -16,10 +16,12 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Card,
+  CardHeader,
+  CardContent,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
-  Download as DownloadIcon,
   OpenInNew as OpenInNewIcon,
   CloudDownload as CloudDownloadIcon,
 } from '@mui/icons-material';
@@ -46,10 +48,10 @@ function DownloadSection() {
 
   const renderSkeleton = () => (
     <Box>
-      {Array(3)
+      {Array(5)
         .fill('')
         .map((_, i) => (
-          <Skeleton key={i} variant="rounded" height={120} sx={{ mb: 2 }} />
+          <Skeleton key={i} variant="rounded" height={48} sx={{ mb: 2 }} />
         ))}
     </Box>
   );
@@ -76,163 +78,166 @@ function DownloadSection() {
   );
 
   return (
-    <Box mt={6}>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        columnGap={2}
-        borderBottom={1}
-        borderColor="divider"
-        pb={2}
-        mb={4}
-      >
-        <Typography variant="h5" component="h2">
-          Download Options
-        </Typography>
-      </Box>
+    <Box sx={{ mt: 5 }} id="download">
+      <Card variant="outlined">
+        <CardHeader title="Downloads" sx={{ pb: 0 }} />
+        <CardContent>
+          <Box>
+            {isLoadingDownload ? (
+              renderSkeleton()
+            ) : downloadData?.data?.length > 0 ? (
+              <Box>
+                {[...downloadData.data].reverse().map((file: any, index: number) => (
+                  <Accordion
+                    key={index}
+                    expanded={expanded === file.id}
+                    onChange={handleChange(file.id)}
+                    sx={{
+                      mb: 2,
+                      '&:before': { display: 'none' },
+                      '&.Mui-expanded': { margin: '0 0 16px 0' },
+                      borderRadius: '4px',
+                    }}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon />}
+                      aria-controls={`${file.id}-content`}
+                      id={`${file.id}-header`}
+                      sx={{
+                        borderRadius: '12px',
+                        '&.Mui-expanded': {
+                          borderRadius: '12px 12px 0 0',
+                        },
+                      }}
+                    >
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        width="100%"
+                        py={1}
+                      >
+                        {/* <Typography variant="h6" component="span" fontWeight={400}>
+                    {file.id}, {file.version}, build date {file.build_date || "Unknown"}
+                  </Typography> */}
+                        <Box>
+                          <Typography variant="body1" fontWeight={500}>
+                            {file.id}
+                          </Typography>
 
-      {isLoadingDownload ? (
-        renderSkeleton()
-      ) : downloadData?.data?.length > 0 ? (
-        <Box>
-          {[...downloadData.data].reverse().map((file: any, index: number) => (
-            <Accordion
-              key={index}
-              expanded={expanded === file.id}
-              onChange={handleChange(file.id)}
-              sx={{
-                mb: 2,
-                '&:before': { display: 'none' },
-                '&.Mui-expanded': { margin: '0 0 16px 0' },
-              }}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`${file.id}-content`}
-                id={`${file.id}-header`}
-                sx={{
-                  borderRadius: '12px',
-                  '&.Mui-expanded': {
-                    borderRadius: '12px 12px 0 0',
-                  },
-                }}
-              >
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Typography variant="h6" component="span" fontWeight={400}>
-                    {file.version}
-                  </Typography>
-                </Box>
-              </AccordionSummary>
-              <AccordionDetails sx={{ pt: 0 }}>
-                {file?.links?.length > 0 ? (
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>
-                            <Typography variant="subtitle2" fontWeight="bold">
-                              File Name
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="subtitle2" fontWeight="bold">
-                              Size
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="subtitle2" fontWeight="bold">
-                              Upload Date
-                            </Typography>
-                          </TableCell>
-                          {/* <TableCell align="center">
+                          <Typography variant="body2" color="text.secondary">
+                            Build Date:{' '}
+                            {file.build_date
+                              ? new Date(file.build_date).toLocaleDateString()
+                              : 'Unknown'}
+                          </Typography>
+                        </Box>
+                        {/* <Box>
+                          {file.version && (
+                            <Chip
+                              label={file.version}
+                              size="small"
+                              color="primary"
+                              sx={{ mr: 1, height: 24 }}
+                            />
+                          )}
+                        </Box> */}
+                      </Box>
+                    </AccordionSummary>
+                    <AccordionDetails sx={{ pt: 0 }}>
+                      {file?.links?.length > 0 ? (
+                        <TableContainer>
+                          <Table size="small">
+                            <TableHead>
+                              <TableRow>
+                                <TableCell>
+                                  <Typography variant="subtitle2" fontWeight="bold">
+                                    File Name
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="subtitle2" fontWeight="bold">
+                                    Size
+                                  </Typography>
+                                </TableCell>
+                                <TableCell>
+                                  <Typography variant="subtitle2" fontWeight="bold">
+                                    Upload Date
+                                  </Typography>
+                                </TableCell>
+                                {/* <TableCell align="center">
                             <Typography variant="subtitle2" fontWeight="bold">
                               Action
                             </Typography>
                           </TableCell> */}
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {file.links.map((link: any, idx: number) => (
-                          <TableRow
-                            key={idx}
-                            sx={{
-                              '&:hover': {
-                                backgroundColor: 'action.hover',
-                              },
-                            }}
-                          >
-                            <TableCell>
-                              <Link
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                sx={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 0.5,
-                                  textDecoration: 'none',
-                                  color: 'primary.main',
-                                  '&:hover': {
-                                    textDecoration: 'underline',
-                                  },
-                                }}
-                              >
-                                <OpenInNewIcon fontSize="small" />
-                                <Typography variant="body2" fontWeight={500}>
-                                  {link.name || 'Download'}
-                                </Typography>
-                              </Link>
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="body2" color="text.secondary">
-                                {link.size ? formatFileSize(link.size) : 'Unknown'}
-                              </Typography>
-                            </TableCell>
-                            <TableCell>
-                              <Typography variant="body2" color="text.secondary">
-                                {link.time ? new Date(link.time).toLocaleDateString() : 'Unknown'}
-                              </Typography>
-                            </TableCell>
-                            {/* <TableCell align="center">
-                              <Link
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                sx={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 0.5,
-                                  textDecoration: 'none',
-                                  color: 'primary.main',
-                                  '&:hover': {
-                                    textDecoration: 'underline',
-                                  },
-                                }}
-                              >
-                                <OpenInNewIcon fontSize="small" />
-                                <Typography variant="body2">Download</Typography>
-                              </Link>
-                            </TableCell> */}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Box sx={{ textAlign: 'center', py: 2 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      No download links available for this version
-                    </Typography>
-                  </Box>
-                )}
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </Box>
-      ) : (
-        renderEmptyState()
-      )}
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {file.links.map((link: any, idx: number) => (
+                                <TableRow
+                                  key={idx}
+                                  sx={{
+                                    '&:hover': {
+                                      backgroundColor: 'action.hover',
+                                    },
+                                  }}
+                                >
+                                  <TableCell>
+                                    <Link
+                                      href={link.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      sx={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: 0.5,
+                                        textDecoration: 'none',
+                                        color: 'primary.main',
+                                        '&:hover': {
+                                          textDecoration: 'underline',
+                                        },
+                                      }}
+                                    >
+                                      <OpenInNewIcon fontSize="small" />
+                                      <Typography variant="body2" fontWeight={500}>
+                                        {link.name || 'Download'}
+                                      </Typography>
+                                    </Link>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography variant="body2" color="text.secondary">
+                                      {link.size ? formatFileSize(link.size) : 'Unknown'}
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography variant="body2" color="text.secondary">
+                                      {link.time
+                                        ? new Date(link.time).toLocaleDateString()
+                                        : 'Unknown'}
+                                    </Typography>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      ) : (
+                        <Box sx={{ textAlign: 'center', py: 2 }}>
+                          <Typography variant="body2" color="text.secondary">
+                            No download links available for this version
+                          </Typography>
+                        </Box>
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
+                ))}
+              </Box>
+            ) : (
+              renderEmptyState()
+            )}
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   );
 }

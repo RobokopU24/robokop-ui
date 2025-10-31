@@ -189,8 +189,6 @@ export default function ShowEdges({
     );
   };
 
-  console.log(selectedPredicate, 'selectedPredicate', selectedCategory);
-
   return loading ? (
     <Box display="flex" justifyContent="center" alignItems="center" height="100%">
       <CircularProgress />
