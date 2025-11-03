@@ -42,6 +42,7 @@ function SankeyGraphModal({
             <Close />
           </IconButton>
         </Box>
+        <p>To highlight connections in the Sankey diagram, click on any of the boxes to toggle to highlight mode on or off.</p>
         <Sankey data={graphData} height={3400} />
       </Box>
     </Modal>
