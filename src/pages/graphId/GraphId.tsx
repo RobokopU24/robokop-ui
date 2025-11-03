@@ -29,6 +29,7 @@ import { Sankey } from './Sankey';
 
 import './GraphId.css';
 import SankeyGraphModal from './SankeyGraphModal';
+import { formatBuildDate } from '../../utils/dateTime';
 
 interface GraphIdProps {
   graphData: any;
@@ -100,7 +101,7 @@ function GraphId({ graphData }: GraphIdProps) {
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                   Graph version <code>{graphData.graph_version}</code>, built{' '}
-                  <code>{new Date(graphData.build_time).toLocaleDateString()}</code>
+                  <code>{formatBuildDate(graphData.build_time)}</code>
                 </Typography>
               </Box>
               <Stack direction="row" spacing={1} flexWrap="wrap">
