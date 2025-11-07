@@ -10,6 +10,7 @@ import {
   Button,
   Chip,
   Box,
+  Grid,
 } from '@mui/material';
 
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
@@ -237,86 +238,110 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
 
   return (
     <Paper elevation={0} className="editor-row-wrapper">
-      <Box className="textEditorRow">
-        <Stack
+      <Box
+        className="textEditorRow"
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 1,
+          padding: 0,
+          paddingBottom: 0,
+        }}
+      >
+        {/* <Stack
           direction="row"
           alignItems="center"
           spacing={1}
           flexWrap="wrap"
           width="100%"
           display="flex"
-        >
-          <IconButton
-            onClick={deleteEdge}
-            className="textEditorIconButton"
-            disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
-            aria-label="Remove condition"
-          >
-            <IndeterminateCheckBoxOutlinedIcon />
-          </IconButton>
+          paddingTop={1}
+          paddingRight={1}
+          paddingLeft={1}
+        > */}
+        <Grid container width="100%" spacing={2} paddingTop={1} paddingRight={1} paddingLeft={1}>
+          <Grid size={2} display="flex" alignItems="center" spacing={1}>
+            <IconButton
+              onClick={deleteEdge}
+              className="textEditorIconButton"
+              disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
+              aria-label="Remove condition"
+            >
+              <IndeterminateCheckBoxOutlinedIcon />
+            </IconButton>
 
-          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 64 }}>
-            {index === 0 && 'Find'}
-            {index === 1 && 'where'}
-            {index > 1 && 'and where'}
-          </Typography>
-          <div style={{ flexGrow: 1, minWidth: 120 }}>
-            <NodeSelector
-              id={edge.subject as string}
-              properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
-              setReference={(nodeId: string | null) => setReference('subject', nodeId)}
-              update={subjectIsReference ? () => setReference('subject', null) : editNode}
-              isReference={subjectIsReference}
-              options={{
-                includeCuries: !subjectIsReference,
-                includeCategories: !subjectIsReference,
-                includeExistingNodes: index !== 0,
-                existingNodes: Object.keys(query_graph.nodes)
-                  .filter((key) => key !== edge.object)
-                  .map((key) => ({
-                    ...query_graph.nodes[key],
-                    key,
-                    name: query_graph.nodes[key].name || key,
-                  })),
-              }}
-            />
-          </div>
-          <div style={{ flexGrow: 1, minWidth: 120 }}>
-            <PredicateSelector id={edgeId} />
-          </div>
-          <div style={{ flexGrow: 1, minWidth: 120 }}>
-            <NodeSelector
-              id={edge.object as string}
-              properties={edge.object ? query_graph.nodes[edge.object] : ''}
-              setReference={(nodeId: string | null) => setReference('object', nodeId)}
-              update={objectIsReference ? () => setReference('object', null) : editNode}
-              isReference={objectIsReference}
-              options={{
-                includeCuries: !objectIsReference,
-                includeCategories: !objectIsReference,
-                includeExistingNodes: index !== 0,
-                existingNodes: Object.keys(query_graph.nodes)
-                  .filter((key) => key !== edge.subject)
-                  .map((key) => ({
-                    ...query_graph.nodes[key],
-                    key,
-                    name: query_graph.nodes[key].name || key,
-                  })),
-              }}
-            />
-          </div>
+            <Typography variant="body2" color="text.secondary" sx={{ minWidth: 64 }}>
+              {index === 0 && 'Find'}
+              {index === 1 && 'where'}
+              {index > 1 && 'and where'}
+            </Typography>
+          </Grid>
+          <Grid size={3}>
+            <div style={{ flexGrow: 1, minWidth: 120 }}>
+              <NodeSelector
+                id={edge.subject as string}
+                properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
+                setReference={(nodeId: string | null) => setReference('subject', nodeId)}
+                update={subjectIsReference ? () => setReference('subject', null) : editNode}
+                isReference={subjectIsReference}
+                options={{
+                  includeCuries: !subjectIsReference,
+                  includeCategories: !subjectIsReference,
+                  includeExistingNodes: index !== 0,
+                  existingNodes: Object.keys(query_graph.nodes)
+                    .filter((key) => key !== edge.object)
+                    .map((key) => ({
+                      ...query_graph.nodes[key],
+                      key,
+                      name: query_graph.nodes[key].name || key,
+                    })),
+                }}
+              />
+            </div>
+          </Grid>
+          <Grid size={3}>
+            <div style={{ flexGrow: 1, minWidth: 120 }}>
+              <PredicateSelector id={edgeId} />
+            </div>
+          </Grid>
+          <Grid size={3}>
+            <div style={{ flexGrow: 1, minWidth: 120 }}>
+              <NodeSelector
+                id={edge.object as string}
+                properties={edge.object ? query_graph.nodes[edge.object] : ''}
+                setReference={(nodeId: string | null) => setReference('object', nodeId)}
+                update={objectIsReference ? () => setReference('object', null) : editNode}
+                isReference={objectIsReference}
+                options={{
+                  includeCuries: !objectIsReference,
+                  includeCategories: !objectIsReference,
+                  includeExistingNodes: index !== 0,
+                  existingNodes: Object.keys(query_graph.nodes)
+                    .filter((key) => key !== edge.subject)
+                    .map((key) => ({
+                      ...query_graph.nodes[key],
+                      key,
+                      name: query_graph.nodes[key].name || key,
+                    })),
+                }}
+              />
+            </div>
+          </Grid>
+          <Grid size={1} display="flex" alignItems="center" justifyContent="flex-end">
+            <IconButton onClick={addHop} className="textEditorIconButton" aria-label="Add hop">
+              <AddBoxOutlinedIcon />
+            </IconButton>
+          </Grid>
 
-          <IconButton onClick={addHop} className="textEditorIconButton" aria-label="Add hop">
-            <AddBoxOutlinedIcon />
-          </IconButton>
-
-          <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+          {/* <Divider orientation="vertical" flexItem sx={{ mx: 1 }} /> */}
 
           {hasQualifiers && (
             <Chip size="small" color="primary" label="Qualifiers set" variant="filled" />
           )}
+        </Grid>
 
-          <Button
+        {/* <Button
             size="small"
             variant="text"
             onClick={() => setIsOpen((p) => !p)}
@@ -325,8 +350,19 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
             aria-controls={`qualifiers-${edgeId}`}
           >
             Qualifiers
-          </Button>
-        </Stack>
+          </Button> */}
+        {/* </Stack> */}
+        <Button
+          sx={{ padding: 0, margin: 0, width: '100%' }}
+          size="small"
+          variant="text"
+          onClick={() => setIsOpen((p) => !p)}
+          endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          aria-expanded={isOpen}
+          aria-controls={`qualifiers-${edgeId}`}
+        >
+          Qualifiers
+        </Button>
       </Box>
 
       <Collapse in={isOpen}>

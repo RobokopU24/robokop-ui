@@ -133,8 +133,52 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
   );
 
   return (
-    <div className="qualifiers-dropdown">
-      <div style={{ marginRight: '2rem' }}>
+    <>
+      {/* <div className="qualifiers-dropdown">
+        <div style={{ marginRight: '2rem' }}>
+          <Autocomplete
+            value={value}
+            onChange={(_, newValue) => {
+              setValue(newValue);
+            }}
+            disableClearable
+            size="small"
+            options={associationOptions}
+            getOptionLabel={(option) => option.name}
+            isOptionEqualToValue={(opt, val) => opt.uuid === val.uuid}
+            style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField {...params} label="Association" variant="outlined" />
+            )}
+          />
+          {otherQualifiers.length > 0 && <hr />}
+          <QualifiersList
+            value={otherQualifiers}
+            qualifiers={qualifiers}
+            setQualifiers={setQualifiers}
+          />
+        </div>
+        <QualifiersList
+          value={subjectQualfiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
+        <QualifiersList
+          value={predicateQualifiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
+        <QualifiersList
+          value={objectQualifiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
+      </div> */}
+      <div
+        style={{
+          marginBottom: '1rem',
+        }}
+      >
         <Autocomplete
           value={value}
           onChange={(_, newValue) => {
@@ -148,32 +192,41 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
           style={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Association" variant="outlined" />}
         />
-
-        {otherQualifiers.length > 0 && <hr />}
-
+      </div>
+      <hr />
+      <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
         <QualifiersList
           value={otherQualifiers}
           qualifiers={qualifiers}
           setQualifiers={setQualifiers}
         />
       </div>
-
-      <QualifiersList
-        value={subjectQualfiers}
-        qualifiers={qualifiers}
-        setQualifiers={setQualifiers}
-      />
-      <QualifiersList
-        value={predicateQualifiers}
-        qualifiers={qualifiers}
-        setQualifiers={setQualifiers}
-      />
-      <QualifiersList
-        value={objectQualifiers}
-        qualifiers={qualifiers}
-        setQualifiers={setQualifiers}
-      />
-    </div>
+      <hr />
+      <div
+        style={{
+          display: 'flex',
+          gap: '1rem',
+          marginTop: '1rem',
+          flexWrap: 'wrap',
+        }}
+      >
+        <QualifiersList
+          value={subjectQualfiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
+        <QualifiersList
+          value={predicateQualifiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
+        <QualifiersList
+          value={objectQualifiers}
+          qualifiers={qualifiers}
+          setQualifiers={setQualifiers}
+        />
+      </div>
+    </>
   );
 }
 
