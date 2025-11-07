@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Grid,
   Paper,
   Typography,
   List,
+  ListItem,
+  ListItemButton,
   ListItemText,
   IconButton,
   Divider,
@@ -17,8 +19,6 @@ import {
   Avatar,
   Tabs,
   Tab,
-  ListItemButton,
-  ListItem,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
@@ -28,77 +28,6 @@ import API from '../API/routes';
 import { authApi } from '../API/baseUrlProxy';
 import { useAlert } from '../components/AlertProvider';
 import { usePasskey } from '../hooks/usePasskey';
-
-type DeletePasskeyDialogProps = {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  deviceType?: string;
-};
-
-function DeletePasskeyDialog({ open, onClose, onConfirm, deviceType }: DeletePasskeyDialogProps) {
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Delete Passkey</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Typography>
-          Are you sure you want to delete this passkey {deviceType ? `(${deviceType})` : ''}? This
-          action cannot be undone.
-        </Typography>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="secondary">
-          Cancel
-        </Button>
-        <Button onClick={onConfirm} variant="contained" color="primary">
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
-type DeleteQueryDialogProps = {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  queryName?: string;
-};
-
-function DeleteQueryDialog({ open, onClose, onConfirm, queryName }: DeleteQueryDialogProps) {
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h6">Delete Query</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Typography>
-          Are you sure you want to delete the query "{queryName}"? This action cannot be undone.
-        </Typography>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="secondary">
-          Cancel
-        </Button>
-        <Button onClick={onConfirm} variant="contained" color="primary">
-          Delete
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
 
 interface Passkey {
   id: string;
@@ -110,81 +39,108 @@ interface SavedQuery {
   id: string;
   name: string;
   createdAt: string;
-  query: {
-    message: {
-      query_graph: Record<string, any>;
-    };
-  };
+  query: { message: { query_graph: Record<string, any> } };
 }
 
-function Profile() {
+interface ConfirmDialogProps {
+  open: boolean;
+  title: string;
+  description: string;
+  onConfirm: () => void;
+  onClose: () => void;
+}
+
+const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+  open,
+  title,
+  description,
+  onConfirm,
+  onClose,
+}) => (
+  <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+    <DialogTitle>
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h6">{title}</Typography>
+        <IconButton onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      </Box>
+    </DialogTitle>
+    <DialogContent>
+      <Typography>{description}</Typography>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={onClose} color="secondary">
+        Cancel
+      </Button>
+      <Button onClick={onConfirm} variant="contained" color="primary">
+        Confirm
+      </Button>
+    </DialogActions>
+  </Dialog>
+);
+
+const Profile: React.FC = () => {
   const { user } = useAuth();
   const { displayAlert } = useAlert();
   const { registerPasskey } = usePasskey();
-  const [passkeys, setPasskeys] = useState<(null | Passkey)[]>([]);
-  const [savedQueries, setSavedQueries] = useState<(null | SavedQuery)[]>([]);
-  const [selectedQuery, setSelectedQuery] = useState<null | SavedQuery>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<number>(0);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
-  const [passkeyToDelete, setPasskeyToDelete] = useState<null | Passkey>(null);
-  const [deleteQueryDialogOpen, setDeleteQueryDialogOpen] = useState<boolean>(false);
-  const [queryToDelete, setQueryToDelete] = useState<null | SavedQuery>(null);
+
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState(0);
+  const [passkeys, setPasskeys] = useState<Passkey[]>([]);
+  const [savedQueries, setSavedQueries] = useState<SavedQuery[]>([]);
+  const [selectedQuery, setSelectedQuery] = useState<SavedQuery | null>(null);
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmData, setConfirmData] = useState<{
+    type: 'passkey' | 'query' | null;
+    targetId?: string;
+    targetName?: string;
+  }>({ type: null });
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
-        const [passkeysRes, queriesRes] = await Promise.all([
+        const [pkRes, qRes] = await Promise.all([
           authApi.get(API.passkeyRoutes.list),
           authApi.get(API.queryRoutes.base),
         ]);
-        setPasskeys(passkeysRes.data);
-        setSavedQueries(queriesRes.data);
+        setPasskeys(pkRes.data);
+        setSavedQueries(qRes.data);
       } catch (err) {
-        console.error('Failed to load profile data:', err);
+        console.error(err);
         displayAlert('error', 'Failed to load profile data');
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchData();
   }, [displayAlert]);
 
-  const handleDeleteClick = (passkey: Passkey) => {
-    setPasskeyToDelete(passkey);
-    setDeleteDialogOpen(true);
+  const handleDelete = (type: 'passkey' | 'query', targetId: string, name?: string) => {
+    setConfirmData({ type, targetId, targetName: name });
+    setConfirmOpen(true);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!passkeyToDelete) return;
+  const confirmDeletion = async () => {
+    if (!confirmData.type || !confirmData.targetId) return;
+
     try {
-      await authApi.delete(`${API.passkeyRoutes.base}/${passkeyToDelete.id}`);
-      setPasskeys(passkeys.filter((pk) => pk?.id !== passkeyToDelete.id));
-      displayAlert('success', 'Passkey deleted');
+      if (confirmData.type === 'passkey') {
+        await authApi.delete(`${API.passkeyRoutes.base}/${confirmData.targetId}`);
+        setPasskeys((prev) => prev.filter((p) => p.id !== confirmData.targetId));
+        displayAlert('success', 'Passkey deleted');
+      } else {
+        await authApi.delete(`${API.queryRoutes.base}/${confirmData.targetId}`);
+        setSavedQueries((prev) => prev.filter((q) => q.id !== confirmData.targetId));
+        setSelectedQuery(null);
+        displayAlert('success', 'Query deleted');
+      }
     } catch {
-      displayAlert('error', 'Failed to delete passkey');
+      displayAlert('error', `Failed to delete ${confirmData.type}`);
     } finally {
-      setDeleteDialogOpen(false);
-      setPasskeyToDelete(null);
-    }
-  };
-
-  const handleQueryDeleteClick = (query: SavedQuery) => {
-    setQueryToDelete(query);
-    setDeleteQueryDialogOpen(true);
-  };
-
-  const handleQueryDeleteConfirm = async () => {
-    try {
-      await authApi.delete(`${API.queryRoutes.base}/${queryToDelete?.id}`);
-      setSavedQueries(savedQueries.filter((q) => q?.id !== queryToDelete?.id));
-      setSelectedQuery(null);
-      displayAlert('success', 'Query deleted');
-    } catch {
-      displayAlert('error', 'Failed to delete query');
-    } finally {
-      setDeleteQueryDialogOpen(false);
-      setQueryToDelete(null);
+      setConfirmOpen(false);
+      setConfirmData({ type: null });
     }
   };
 
@@ -199,6 +155,18 @@ function Profile() {
     }
   };
 
+  const memberSince = useMemo(
+    () =>
+      user?.createdAt
+        ? new Date(user.createdAt).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          })
+        : '',
+    [user?.createdAt]
+  );
+
   if (loading) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
@@ -208,17 +176,23 @@ function Profile() {
   }
 
   return (
-    <Grid container direction="column" spacing={3} sx={{ px: 4, pb: 4 }}>
+    <Grid
+      container
+      direction="column"
+      spacing={3}
+      sx={{ px: 4, pb: 4, maxWidth: 1300, mx: 'auto', mt: 4 }}
+    >
+      {/* User Info */}
       <Grid>
-        <Paper sx={{ p: 4, width: '100%' }}>
+        <Paper sx={{ p: 4 }}>
           <Box display="flex" alignItems="center" flexWrap="wrap" gap={3}>
             <Avatar src={user?.profilePicture} alt={user?.name} sx={{ width: 100, height: 100 }} />
             <Box>
               <Typography variant="h4">{user?.name}</Typography>
-              <Typography>Email: {user?.email}</Typography>
-              {user?.createdAt && (
+              <Typography color="text.secondary">{user?.email}</Typography>
+              {memberSince && (
                 <Typography variant="body2" color="text.secondary">
-                  Member since: {new Date(user.createdAt).toLocaleDateString()}
+                  Member since {memberSince}
                 </Typography>
               )}
             </Box>
@@ -226,11 +200,12 @@ function Profile() {
         </Paper>
       </Grid>
 
+      {/* Tabs */}
       <Grid>
-        <Paper sx={{ p: 4, width: '100%' }}>
+        <Paper sx={{ p: 4 }}>
           <Tabs
             value={activeTab}
-            onChange={(e, val) => setActiveTab(val)}
+            onChange={(_, val) => setActiveTab(val)}
             indicatorColor="primary"
             textColor="primary"
             sx={{ mb: 2 }}
@@ -241,7 +216,14 @@ function Profile() {
 
           {activeTab === 0 && (
             <Box display="flex" sx={{ height: 600 }}>
-              <List sx={{ width: 350, overflowY: 'auto', borderRight: 1, borderColor: 'divider' }}>
+              <List
+                sx={{
+                  width: 350,
+                  overflowY: 'auto',
+                  borderRight: 1,
+                  borderColor: 'divider',
+                }}
+              >
                 {savedQueries.length === 0 ? (
                   <Typography color="text.secondary" sx={{ p: 2 }}>
                     No saved queries
@@ -249,36 +231,29 @@ function Profile() {
                 ) : (
                   savedQueries.map((query) => (
                     <ListItemButton
-                      key={query?.id}
-                      selected={selectedQuery?.id === query?.id}
+                      key={query.id}
+                      selected={selectedQuery?.id === query.id}
                       onClick={() => setSelectedQuery(query)}
+                      sx={{ py: 1 }}
                     >
                       <ListItem
                         sx={{ p: 0 }}
                         secondaryAction={
-                          <IconButton
-                            edge="end"
-                            onClick={() => {
-                              if (query) handleQueryDeleteClick(query);
-                            }}
-                          >
+                          <IconButton onClick={() => handleDelete('query', query.id, query.name)}>
                             <DeleteIcon />
                           </IconButton>
                         }
                       >
                         <ListItemText
-                          primary={query?.name}
-                          secondary={
-                            query?.createdAt
-                              ? new Date(query.createdAt).toLocaleDateString()
-                              : 'Unknown Date'
-                          }
+                          primary={query.name}
+                          secondary={new Date(query.createdAt).toLocaleDateString()}
                         />
                       </ListItem>
                     </ListItemButton>
                   ))
                 )}
               </List>
+
               <Box flex={1} sx={{ p: 2, overflowY: 'auto' }}>
                 {selectedQuery ? (
                   <ReactJsonView
@@ -303,7 +278,7 @@ function Profile() {
                       color: 'text.disabled',
                     }}
                   >
-                    Please select a query from the list
+                    Select a query to view details
                   </Typography>
                 )}
               </Box>
@@ -313,35 +288,31 @@ function Profile() {
           {activeTab === 1 && (
             <>
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-                <Typography variant="h5">Passkeys</Typography>
+                <Typography variant="h6">Passkeys</Typography>
                 <Button variant="contained" onClick={registerNewPasskey}>
                   Add Passkey
                 </Button>
               </Box>
+
               {passkeys.length === 0 ? (
                 <Typography color="text.secondary">No passkeys registered</Typography>
               ) : (
                 <List>
-                  {passkeys.map((passkey, index) => (
-                    <React.Fragment key={passkey?.id}>
+                  {passkeys.map((pk, idx) => (
+                    <React.Fragment key={pk.id}>
                       <ListItem
                         secondaryAction={
-                          <IconButton
-                            edge="end"
-                            onClick={() => {
-                              if (passkey) handleDeleteClick(passkey);
-                            }}
-                          >
+                          <IconButton onClick={() => handleDelete('passkey', pk.id, pk.deviceType)}>
                             <DeleteIcon />
                           </IconButton>
                         }
                       >
                         <ListItemText
-                          primary={passkey?.deviceType || 'Unknown Device'}
-                          secondary={`Created: ${passkey?.createdAt ? new Date(passkey.createdAt).toLocaleDateString() : 'Unknown Date'}`}
+                          primary={pk.deviceType || 'Unknown Device'}
+                          secondary={`Created: ${new Date(pk.createdAt).toLocaleDateString()}`}
                         />
                       </ListItem>
-                      {index < passkeys.length - 1 && <Divider />}
+                      {idx < passkeys.length - 1 && <Divider />}
                     </React.Fragment>
                   ))}
                 </List>
@@ -351,27 +322,21 @@ function Profile() {
         </Paper>
       </Grid>
 
-      <DeletePasskeyDialog
-        open={deleteDialogOpen}
-        onClose={() => {
-          setDeleteDialogOpen(false);
-          setPasskeyToDelete(null);
-        }}
-        onConfirm={handleDeleteConfirm}
-        deviceType={passkeyToDelete?.deviceType}
-      />
-
-      <DeleteQueryDialog
-        open={deleteQueryDialogOpen}
-        onClose={() => {
-          setDeleteQueryDialogOpen(false);
-          setQueryToDelete(null);
-        }}
-        onConfirm={handleQueryDeleteConfirm}
-        queryName={queryToDelete?.name}
+      <ConfirmDialog
+        open={confirmOpen}
+        title={confirmData.type === 'passkey' ? 'Delete Passkey' : 'Delete Query'}
+        description={
+          confirmData.type === 'passkey'
+            ? `Are you sure you want to delete this passkey ${
+                confirmData.targetName ? `(${confirmData.targetName})` : ''
+              }?`
+            : `Are you sure you want to delete the query "${confirmData.targetName}"?`
+        }
+        onConfirm={confirmDeletion}
+        onClose={() => setConfirmOpen(false)}
       />
     </Grid>
   );
-}
+};
 
 export default Profile;

@@ -14,7 +14,13 @@ import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
 import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
+import { Route as LicenseRouteImport } from './routes/license'
 import { Route as GuideRouteImport } from './routes/guide'
+import { Route as FundingsRouteImport } from './routes/fundings'
+import { Route as EventsRouteImport } from './routes/events'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as CitationsRouteImport } from './routes/citations'
+import { Route as AdditionalToolsRouteImport } from './routes/additional-tools'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
@@ -54,9 +60,39 @@ const OauthCallbackRoute = OauthCallbackRouteImport.update({
   path: '/oauth-callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LicenseRoute = LicenseRouteImport.update({
+  id: '/license',
+  path: '/license',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuideRoute = GuideRouteImport.update({
   id: '/guide',
   path: '/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FundingsRoute = FundingsRouteImport.update({
+  id: '/fundings',
+  path: '/fundings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CitationsRoute = CitationsRouteImport.update({
+  id: '/citations',
+  path: '/citations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdditionalToolsRoute = AdditionalToolsRouteImport.update({
+  id: '/additional-tools',
+  path: '/additional-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -130,7 +166,13 @@ const ExploreGraphsGraph_idIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/additional-tools': typeof AdditionalToolsRoute
+  '/citations': typeof CitationsRoute
+  '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
+  '/fundings': typeof FundingsRoute
   '/guide': typeof GuideRoute
+  '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
   '/termsofservice': typeof TermsofserviceRoute
@@ -151,7 +193,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/additional-tools': typeof AdditionalToolsRoute
+  '/citations': typeof CitationsRoute
+  '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
+  '/fundings': typeof FundingsRoute
   '/guide': typeof GuideRoute
+  '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
   '/termsofservice': typeof TermsofserviceRoute
@@ -173,7 +221,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/additional-tools': typeof AdditionalToolsRoute
+  '/citations': typeof CitationsRoute
+  '/contact': typeof ContactRoute
+  '/events': typeof EventsRoute
+  '/fundings': typeof FundingsRoute
   '/guide': typeof GuideRoute
+  '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
   '/termsofservice': typeof TermsofserviceRoute
@@ -196,7 +250,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/additional-tools'
+    | '/citations'
+    | '/contact'
+    | '/events'
+    | '/fundings'
     | '/guide'
+    | '/license'
     | '/oauth-callback'
     | '/question-builder'
     | '/termsofservice'
@@ -217,7 +277,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/additional-tools'
+    | '/citations'
+    | '/contact'
+    | '/events'
+    | '/fundings'
     | '/guide'
+    | '/license'
     | '/oauth-callback'
     | '/question-builder'
     | '/termsofservice'
@@ -238,7 +304,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/additional-tools'
+    | '/citations'
+    | '/contact'
+    | '/events'
+    | '/fundings'
     | '/guide'
+    | '/license'
     | '/oauth-callback'
     | '/question-builder'
     | '/termsofservice'
@@ -260,7 +332,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdditionalToolsRoute: typeof AdditionalToolsRoute
+  CitationsRoute: typeof CitationsRoute
+  ContactRoute: typeof ContactRoute
+  EventsRoute: typeof EventsRoute
+  FundingsRoute: typeof FundingsRoute
   GuideRoute: typeof GuideRoute
+  LicenseRoute: typeof LicenseRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
   QuestionBuilderRoute: typeof QuestionBuilderRoute
   TermsofserviceRoute: typeof TermsofserviceRoute
@@ -316,11 +394,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OauthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/license': {
+      id: '/license'
+      path: '/license'
+      fullPath: '/license'
+      preLoaderRoute: typeof LicenseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guide': {
       id: '/guide'
       path: '/guide'
       fullPath: '/guide'
       preLoaderRoute: typeof GuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fundings': {
+      id: '/fundings'
+      path: '/fundings'
+      fullPath: '/fundings'
+      preLoaderRoute: typeof FundingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/citations': {
+      id: '/citations'
+      path: '/citations'
+      fullPath: '/citations'
+      preLoaderRoute: typeof CitationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/additional-tools': {
+      id: '/additional-tools'
+      path: '/additional-tools'
+      fullPath: '/additional-tools'
+      preLoaderRoute: typeof AdditionalToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -420,7 +540,13 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdditionalToolsRoute: AdditionalToolsRoute,
+  CitationsRoute: CitationsRoute,
+  ContactRoute: ContactRoute,
+  EventsRoute: EventsRoute,
+  FundingsRoute: FundingsRoute,
   GuideRoute: GuideRoute,
+  LicenseRoute: LicenseRoute,
   OauthCallbackRoute: OauthCallbackRoute,
   QuestionBuilderRoute: QuestionBuilderRoute,
   TermsofserviceRoute: TermsofserviceRoute,

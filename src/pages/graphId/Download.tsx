@@ -29,6 +29,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import API from '../../API/routes';
 import { formatFileSize } from '../../utils/getFileSize';
+import { formatBuildDate } from '../../utils/dateTime';
 
 function DownloadSection() {
   const { graph_id } = useParams({ strict: false });
@@ -127,9 +128,7 @@ function DownloadSection() {
 
                           <Typography variant="body2" color="text.secondary">
                             Build Date:{' '}
-                            {file.build_date
-                              ? new Date(file.build_date).toLocaleDateString()
-                              : 'Unknown'}
+                            {file.build_date ? formatBuildDate(file.build_date) : 'Unknown'}
                           </Typography>
                         </Box>
                         {/* <Box>
