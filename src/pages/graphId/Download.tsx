@@ -80,7 +80,7 @@ function DownloadSection() {
   return (
     <Box sx={{ mt: 5 }} id="download">
       <Card variant="outlined">
-        <CardHeader title="Downloads" sx={{ pb: 0 }} />
+        <CardHeader title="Prior releases" sx={{ pb: 0 }} />
         <CardContent>
           <Box>
             {isLoadingDownload ? (
@@ -122,14 +122,14 @@ function DownloadSection() {
                   </Typography> */}
                         <Box>
                           <Typography variant="body1" fontWeight={500}>
-                            {file.id}
-                          </Typography>
-
-                          <Typography variant="body2" color="text.secondary">
                             Build Date:{' '}
                             {file.build_date
                               ? new Date(file.build_date).toLocaleDateString()
                               : 'Unknown'}
+                          </Typography>
+
+                          <Typography variant="body2" color="text.secondary">
+                            Graph ID: {file.id}
                           </Typography>
                         </Box>
                         {/* <Box>
