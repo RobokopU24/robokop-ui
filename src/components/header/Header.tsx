@@ -125,7 +125,7 @@ function Header() {
             { to: '/details', label: 'Node Explorer' },
             { to: '/explore/enrichment-analysis', label: 'Enrichment Analysis' },
             { to: '/explore/drug-chemical', label: 'Drug to Disease Pair' },
-            { to: '/additional-tools', label: 'Additional Tools' },
+            { to: '/developer-tools', label: 'Developer Tools' },
           ]}
         />
         <Button
