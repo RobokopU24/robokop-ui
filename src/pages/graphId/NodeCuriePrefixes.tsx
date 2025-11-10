@@ -28,6 +28,9 @@ import {
   SortingState,
   getPaginationRowModel,
 } from '@tanstack/react-table';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 
 type PrefixData = {
   prefix: string;
@@ -171,26 +174,72 @@ function NodeCuriePrefixes({ graphData }: { graphData: any }) {
               }}
             >
               <Table stickyHeader>
-                <TableHead sx={{ backgroundColor: 'action.hover' }}>
+                <TableHead>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => (
-                        <TableCell
-                          key={header.id}
-                          align={header.column.columnDef.meta?.align}
-                          sx={{
-                            cursor: header.column.getCanSort() ? 'pointer' : 'default',
-                            userSelect: 'none',
-                          }}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          <Typography variant="subtitle2" fontWeight="bold">
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(header.column.columnDef.header, header.getContext())}
-                          </Typography>
-                        </TableCell>
-                      ))}
+                      {headerGroup.headers.map((header) => {
+                        const sorted = header.column.getIsSorted(); // false | 'asc' | 'desc'
+                        const canSort = header.column.getCanSort();
+
+                        return (
+                          <TableCell
+                            key={header.id}
+                            align={header.column.columnDef.meta?.align}
+                            onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                            sx={{
+                              cursor: canSort ? 'pointer' : 'default',
+                              userSelect: 'none',
+                              py: 1.5,
+                              px: 2,
+                              verticalAlign: 'middle',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent:
+                                  header.column.columnDef.meta?.align === 'right'
+                                    ? 'flex-end'
+                                    : 'flex-start',
+                                gap: 0.5,
+                              }}
+                            >
+                              <Typography
+                                variant="subtitle2"
+                                fontWeight="bold"
+                                sx={{ display: 'inline-flex', alignItems: 'center' }}
+                              >
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(header.column.columnDef.header, header.getContext())}
+                              </Typography>
+                              {canSort && (
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    color: sorted ? 'text.primary' : 'text.disabled',
+                                    opacity: sorted ? 1 : 0.5,
+                                    transition: 'color 0.2s, opacity 0.2s',
+                                    '&:hover': { opacity: 1 },
+                                  }}
+                                >
+                                  {sorted === 'asc' ? (
+                                    <ArrowDropUpIcon fontSize="small" />
+                                  ) : sorted === 'desc' ? (
+                                    <ArrowDropDownIcon fontSize="small" />
+                                  ) : (
+                                    <UnfoldMoreIcon fontSize="small" />
+                                  )}
+                                </Box>
+                              )}
+                            </Box>
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   ))}
                 </TableHead>

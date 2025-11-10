@@ -30,6 +30,13 @@ function Header() {
     setExploreAnchorEl(event.currentTarget);
   const closeExploreMenu = () => setExploreAnchorEl(null);
 
+  // About dropdown state
+  const [aboutAnchorEl, setAboutAnchorEl] = React.useState<null | HTMLElement>(null);
+  const aboutMenuOpen = Boolean(aboutAnchorEl);
+  const openAboutMenu = (event: React.MouseEvent<HTMLElement>) =>
+    setAboutAnchorEl(event.currentTarget);
+  const closeAboutMenu = () => setAboutAnchorEl(null);
+
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
 
@@ -47,13 +54,13 @@ function Header() {
   const navLinks: { to: string; label: string }[] = [
     { to: '/question-builder', label: 'Question Builder' },
     // 'Explore' group handled as dropdown below
-    { to: '/about', label: 'About' },
+    // { to: '/about', label: 'About' },
   ];
 
   const supportItems: MenuItemConfig[] = [
     { to: '/guide', label: 'Guide' },
     { to: '/tutorial', label: 'Tutorial' },
-    { to: '/#contact', label: 'Help' },
+    { to: '/contact', label: 'Contact Us' },
   ];
 
   const accountItems: MenuItemConfig[] = user
@@ -77,6 +84,29 @@ function Header() {
         ))}
         <Button
           className="nav-link"
+          id="about-button"
+          aria-controls={aboutMenuOpen ? 'about-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={aboutMenuOpen ? 'true' : undefined}
+          onClick={openAboutMenu}
+        >
+          About
+        </Button>
+        <DropdownMenu
+          id="about-menu"
+          anchorEl={aboutAnchorEl}
+          open={aboutMenuOpen}
+          onClose={closeAboutMenu}
+          items={[
+            { to: '/about', label: 'About Robokop' },
+            { to: '/license', label: 'License' },
+            { to: '/fundings', label: 'Fundings' },
+            { to: '/citations', label: 'Citations' },
+            { to: '/events', label: 'Events' },
+          ]}
+        />
+        <Button
+          className="nav-link"
           id="explore-button"
           aria-controls={exploreMenuOpen ? 'explore-menu' : undefined}
           aria-haspopup="true"
@@ -95,6 +125,7 @@ function Header() {
             { to: '/details', label: 'Node Explorer' },
             { to: '/explore/enrichment-analysis', label: 'Enrichment Analysis' },
             { to: '/explore/drug-chemical', label: 'Drug to Disease Pair' },
+            { to: '/developer-tools', label: 'Developer Tools' },
           ]}
         />
         <Button
