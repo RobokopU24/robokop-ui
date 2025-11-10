@@ -18,9 +18,9 @@ import { Route as LicenseRouteImport } from './routes/license'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as FundingsRouteImport } from './routes/fundings'
 import { Route as EventsRouteImport } from './routes/events'
+import { Route as DeveloperToolsRouteImport } from './routes/developer-tools'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CitationsRouteImport } from './routes/citations'
-import { Route as AdditionalToolsRouteImport } from './routes/additional-tools'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
@@ -80,6 +80,11 @@ const EventsRoute = EventsRouteImport.update({
   path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DeveloperToolsRoute = DeveloperToolsRouteImport.update({
+  id: '/developer-tools',
+  path: '/developer-tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
@@ -88,11 +93,6 @@ const ContactRoute = ContactRouteImport.update({
 const CitationsRoute = CitationsRouteImport.update({
   id: '/citations',
   path: '/citations',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdditionalToolsRoute = AdditionalToolsRouteImport.update({
-  id: '/additional-tools',
-  path: '/additional-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -166,9 +166,9 @@ const ExploreGraphsGraph_idIndexRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/additional-tools': typeof AdditionalToolsRoute
   '/citations': typeof CitationsRoute
   '/contact': typeof ContactRoute
+  '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
   '/fundings': typeof FundingsRoute
   '/guide': typeof GuideRoute
@@ -193,9 +193,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/additional-tools': typeof AdditionalToolsRoute
   '/citations': typeof CitationsRoute
   '/contact': typeof ContactRoute
+  '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
   '/fundings': typeof FundingsRoute
   '/guide': typeof GuideRoute
@@ -221,9 +221,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/additional-tools': typeof AdditionalToolsRoute
   '/citations': typeof CitationsRoute
   '/contact': typeof ContactRoute
+  '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
   '/fundings': typeof FundingsRoute
   '/guide': typeof GuideRoute
@@ -250,9 +250,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/additional-tools'
     | '/citations'
     | '/contact'
+    | '/developer-tools'
     | '/events'
     | '/fundings'
     | '/guide'
@@ -277,9 +277,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/additional-tools'
     | '/citations'
     | '/contact'
+    | '/developer-tools'
     | '/events'
     | '/fundings'
     | '/guide'
@@ -304,9 +304,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
-    | '/additional-tools'
     | '/citations'
     | '/contact'
+    | '/developer-tools'
     | '/events'
     | '/fundings'
     | '/guide'
@@ -332,9 +332,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AdditionalToolsRoute: typeof AdditionalToolsRoute
   CitationsRoute: typeof CitationsRoute
   ContactRoute: typeof ContactRoute
+  DeveloperToolsRoute: typeof DeveloperToolsRoute
   EventsRoute: typeof EventsRoute
   FundingsRoute: typeof FundingsRoute
   GuideRoute: typeof GuideRoute
@@ -422,6 +422,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/developer-tools': {
+      id: '/developer-tools'
+      path: '/developer-tools'
+      fullPath: '/developer-tools'
+      preLoaderRoute: typeof DeveloperToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contact': {
       id: '/contact'
       path: '/contact'
@@ -434,13 +441,6 @@ declare module '@tanstack/react-router' {
       path: '/citations'
       fullPath: '/citations'
       preLoaderRoute: typeof CitationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/additional-tools': {
-      id: '/additional-tools'
-      path: '/additional-tools'
-      fullPath: '/additional-tools'
-      preLoaderRoute: typeof AdditionalToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -540,9 +540,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AdditionalToolsRoute: AdditionalToolsRoute,
   CitationsRoute: CitationsRoute,
   ContactRoute: ContactRoute,
+  DeveloperToolsRoute: DeveloperToolsRoute,
   EventsRoute: EventsRoute,
   FundingsRoute: FundingsRoute,
   GuideRoute: GuideRoute,

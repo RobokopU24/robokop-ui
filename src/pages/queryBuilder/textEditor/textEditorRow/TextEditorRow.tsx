@@ -228,7 +228,11 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
   }
 
   function editNode(id: string, value: NodeOption | null) {
-    if (!value) return;
+    if (!value) {
+      // Clear the node by setting it to undefined, which will trigger getDefaultNode() in the reducer
+      queryBuilder.dispatch({ type: 'editNode', payload: { id, node: undefined } });
+      return;
+    }
     queryBuilder.dispatch({ type: 'editNode', payload: { id, node: value } });
   }
 

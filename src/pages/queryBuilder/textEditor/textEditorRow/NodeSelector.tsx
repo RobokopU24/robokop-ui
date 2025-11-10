@@ -267,13 +267,21 @@ function NodeSelector({
   const handleUpdate = useCallback(
     (e: React.SyntheticEvent<Element, Event>, v: NodeOption | null) => {
       updateInputText('');
+      if (v === null) {
+        if (isReference) {
+          setReference(null);
+        } else {
+          update(id, null);
+        }
+        return;
+      }
       if (v && 'key' in v) {
         setReference(v.key ?? null);
       } else {
         update(id, v);
       }
     },
-    [setReference, update, id]
+    [setReference, update, id, isReference]
   );
 
   /**
@@ -328,7 +336,10 @@ function NodeSelector({
       disableClearable={!clearable}
       inputValue={inputText}
       value={selectorValue}
-      isOptionEqualToValue={(option: NodeOption, value: NodeOption) => option.name === value.name}
+      isOptionEqualToValue={(option: NodeOption, value: NodeOption) => {
+        if (!value) return false;
+        return option.name === value.name;
+      }}
       open={open}
       onChange={handleUpdate}
       onOpen={handleOpen}
