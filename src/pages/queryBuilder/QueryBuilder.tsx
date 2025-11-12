@@ -145,7 +145,11 @@ export default function QueryBuilder() {
             download_type="all_queries"
           />
           <PanelGroup direction="horizontal">
-            <Panel defaultSize={60} minSize={30} style={{ padding: '20px 20px 20px 0' }}>
+            <Panel
+              defaultSize={60}
+              minSize={30}
+              style={{ padding: '20px 20px 20px 0', overflowY: 'auto' }}
+            >
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </Panel>
             <PanelResizeHandle

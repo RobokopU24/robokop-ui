@@ -1,5 +1,5 @@
 .textEditorSelector {
-    margin: 0px 10px;
+    /* margin: 0px 10px; */
     min-width: 200px;
 }
 
@@ -20,7 +20,7 @@ summary {
 }
 
 .qualifiers-wrapper {
-    padding: 2.5rem;
+    /* padding: 2.5rem; */
     border-top: 1px solid #e0e0e0;
 }
 
@@ -77,4 +77,57 @@ summary {
 
 .css-1tlcqt-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
     padding: 0px !important;
+}
+
+.editor-container {
+    padding: 1rem 0rem;
+    display: grid;
+    grid-template-columns: 6rem 1fr 1fr 1fr 3rem;
+    gap: 1rem;
+    align-items: center;
+    /* optional vertical centering */
+}
+
+.editor-item {
+    text-align: center;
+}
+
+.editor-flex-container {
+    display: flex;
+    align-items: center;
+}
+
+.editor-item.three-span {
+    grid-column: 2 / span 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.full-span {
+    grid-column: 1 / span 3;
+    text-align: start;
+    color: gray;
+    font-size: 0.9rem;
+}
+
+.qualifier-section {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-color: rgb(226, 226, 226);
+    width: 100%;
+    margin: 0.5rem 0rem;
+}
+
+.sub-heading {
+    text-align: start;
+    color: gray;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
 }

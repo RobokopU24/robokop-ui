@@ -174,57 +174,145 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
           setQualifiers={setQualifiers}
         />
       </div> */}
-      <div
-        style={{
-          marginBottom: '1rem',
-        }}
-      >
-        <Autocomplete
-          value={value}
-          onChange={(_, newValue) => {
-            setValue(newValue);
-          }}
-          disableClearable
-          size="small"
-          options={associationOptions}
-          getOptionLabel={(option) => option.name}
-          isOptionEqualToValue={(opt, val) => opt.uuid === val.uuid}
-          style={{ width: 300 }}
-          renderInput={(params) => <TextField {...params} label="Association" variant="outlined" />}
-        />
-      </div>
-      <hr />
-      <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
-        <QualifiersList
-          value={otherQualifiers}
-          qualifiers={qualifiers}
-          setQualifiers={setQualifiers}
-        />
-      </div>
-      <hr />
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          marginTop: '1rem',
-          flexWrap: 'wrap',
-        }}
-      >
-        <QualifiersList
-          value={subjectQualfiers}
-          qualifiers={qualifiers}
-          setQualifiers={setQualifiers}
-        />
-        <QualifiersList
-          value={predicateQualifiers}
-          qualifiers={qualifiers}
-          setQualifiers={setQualifiers}
-        />
-        <QualifiersList
-          value={objectQualifiers}
-          qualifiers={qualifiers}
-          setQualifiers={setQualifiers}
-        />
+
+      <div className="editor-container">
+        <div className="editor-item" />
+        <div className="editor-item three-span">
+          {/* <div
+            style={{
+              marginBottom: '1rem',
+            }}
+          >
+            <Autocomplete
+              value={value}
+              onChange={(_, newValue) => {
+                setValue(newValue);
+              }}
+              disableClearable
+              size="small"
+              options={associationOptions}
+              getOptionLabel={(option) => option.name}
+              isOptionEqualToValue={(opt, val) => opt.uuid === val.uuid}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label="Association" variant="outlined" />
+              )}
+            />
+          </div>
+          <hr />
+          <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+            <QualifiersList
+              value={otherQualifiers}
+              qualifiers={qualifiers}
+              setQualifiers={setQualifiers}
+            />
+          </div>
+          <hr />
+          <div
+            style={{
+              display: 'flex',
+              gap: '1rem',
+              marginTop: '1rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <QualifiersList
+              value={subjectQualfiers}
+              qualifiers={qualifiers}
+              setQualifiers={setQualifiers}
+            />
+            <QualifiersList
+              value={predicateQualifiers}
+              qualifiers={qualifiers}
+              setQualifiers={setQualifiers}
+            />
+            <QualifiersList
+              value={objectQualifiers}
+              qualifiers={qualifiers}
+              setQualifiers={setQualifiers}
+            />
+          </div> */}
+          <div className="qualifier-section">
+            <p className="full-span">Association</p>
+            <div style={{ flexGrow: 1 }}>
+              <Autocomplete
+                value={value}
+                onChange={(_, newValue) => {
+                  setValue(newValue);
+                }}
+                disableClearable
+                size="small"
+                options={associationOptions}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(opt, val) => opt.uuid === val.uuid}
+                renderInput={(params) => (
+                  <TextField {...params} label="Association" variant="outlined" />
+                )}
+              />
+            </div>
+          </div>
+
+          {otherQualifiers.length > 0 && (
+            <>
+              <hr />
+              <div className="qualifier-section">
+                <p className="full-span">Qualifiers</p>
+                {otherQualifiers.map(({ name, options }) => (
+                  <Autocomplete
+                    key={name}
+                    value={qualifiers[name] || null}
+                    onChange={(_, newValue) => {
+                      if (newValue === null) {
+                        setQualifiers((prev) => {
+                          const next = { ...prev };
+                          delete next[name];
+                          return next;
+                        });
+                      } else {
+                        setQualifiers((prev) => ({ ...prev, [name]: newValue || null }));
+                      }
+                    }}
+                    options={options}
+                    renderInput={(params) => (
+                      <TextField {...params} label={name} variant="outlined" />
+                    )}
+                    size="small"
+                  />
+                ))}
+              </div>
+            </>
+          )}
+          {(subjectQualfiers.length > 0 ||
+            predicateQualifiers.length > 0 ||
+            objectQualifiers.length > 0) && <hr />}
+          <div className="qualifier-section">
+            <div id="subject-qualifiers">
+              {subjectQualfiers.length > 0 && <p className="sub-heading">Subject</p>}
+              <QualifiersList
+                value={subjectQualfiers}
+                qualifiers={qualifiers}
+                setQualifiers={setQualifiers}
+              />
+            </div>
+            <div id="predicate-qualifiers">
+              {predicateQualifiers.length > 0 && <p className="sub-heading">Predicate</p>}
+              <QualifiersList
+                value={predicateQualifiers}
+                qualifiers={qualifiers}
+                setQualifiers={setQualifiers}
+              />
+            </div>
+            <div id="object-qualifiers">
+              {objectQualifiers.length > 0 && <p className="sub-heading">Object</p>}
+              <QualifiersList
+                value={objectQualifiers}
+                qualifiers={qualifiers}
+                setQualifiers={setQualifiers}
+              />
+            </div>
+          </div>
+        </div>
+        <div className="editor-item" />
       </div>
     </>
   );
