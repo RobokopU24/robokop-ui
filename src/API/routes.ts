@@ -35,4 +35,10 @@ export const fileRoutes = {
   fileSize: `${filesEndpoint}/file-size`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes };
+const llmEndpoint = `${baseAuthURL}/llm`;
+export const llmRoutes = {
+  base: llmEndpoint,
+  summarizeLinks: `${llmEndpoint}/stream-summaries`,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes };

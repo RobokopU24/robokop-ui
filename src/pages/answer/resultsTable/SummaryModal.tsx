@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Modal } from '@mui/material';
+import { useQuery } from '@tanstack/react-query';
+import { llmRoutes } from '../../../API/routes';
+import Markdown from 'react-markdown';
 
 function SummaryModal({
   isOpen,
@@ -10,6 +13,50 @@ function SummaryModal({
   onModalClose: () => void;
   links: string[];
 }) {
+  const [streamedText, setStreamedText] = useState<string>('');
+  useEffect(() => {
+    if (isOpen) setStreamedText('');
+  }, [isOpen]);
+
+  const { refetch, isFetching } = useQuery({
+    queryKey: ['summaryLinks', links],
+    enabled: false,
+    queryFn: async () => {
+      const response = await fetch(llmRoutes.summarizeLinks, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ urls: links }),
+      });
+
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      let full = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          break;
+        }
+        const chunk = decoder.decode(value);
+        full += chunk;
+        setStreamedText((prev) => prev + chunk);
+      }
+      return full;
+    },
+  });
+  useEffect(() => {
+    if (isOpen) {
+      refetch();
+    }
+  }, [isOpen, refetch]);
+
   return (
     <Modal
       open={isOpen}
@@ -32,15 +79,7 @@ function SummaryModal({
         }}
       >
         <div>Summary of Publications</div>
-        <ul>
-          {links.map((link, index) => (
-            <li key={index}>
-              <a href={link} target="_blank" rel="noreferrer">
-                {link}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <Markdown>{streamedText || (isFetching ? 'Loading...' : '')}</Markdown>
       </Box>
     </Modal>
   );
