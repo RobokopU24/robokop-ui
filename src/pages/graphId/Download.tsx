@@ -52,7 +52,7 @@ function DownloadSection() {
       {Array(5)
         .fill('')
         .map((_, i) => (
-          <Skeleton key={i} variant="rounded" height={48} sx={{ mb: 2 }} />
+          <Skeleton key={i} variant="rounded" height={48} width={480} sx={{ mb: 2 }} />
         ))}
     </Box>
   );
@@ -118,12 +118,8 @@ function DownloadSection() {
                         width="100%"
                         py={1}
                       >
-                        {/* <Typography variant="h6" component="span" fontWeight={400}>
-                    {file.id}, {file.version}, build date {file.build_date || "Unknown"}
-                  </Typography> */}
                         <Box>
                           <Typography variant="body1" fontWeight={500}>
-                            Build Date:{' '}
                             {file.build_date ? formatBuildDate(file.build_date) : 'Unknown'}
                           </Typography>
 
@@ -131,16 +127,6 @@ function DownloadSection() {
                             Graph ID: {file.id}
                           </Typography>
                         </Box>
-                        {/* <Box>
-                          {file.version && (
-                            <Chip
-                              label={file.version}
-                              size="small"
-                              color="primary"
-                              sx={{ mr: 1, height: 24 }}
-                            />
-                          )}
-                        </Box> */}
                       </Box>
                     </AccordionSummary>
                     <AccordionDetails sx={{ pt: 0 }}>

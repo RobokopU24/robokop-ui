@@ -45,3 +45,4 @@ jobs:
             ghcr.io/${{ env.OWNER_LOWER }}/robokop-frontend:${{ steps.get_version.outputs.VERSION }}
           build-args: |
             VITE_DEPLOYMENT=${{ secrets.VITE_DEPLOYMENT }}
+            VITE_BACKEND_API_URL=${{ secrets.VITE_BACKEND_API_URL }}
