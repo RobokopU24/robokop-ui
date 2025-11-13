@@ -48,7 +48,7 @@ function GraphId({ graphData }: GraphIdProps) {
   let nodeSet: Set<string> = new Set();
   let links: Array<{ source: string; target: string; value: number }> = [];
   for (const [key, value] of Object.entries(
-    graphData.qc_results.predicates_by_knowledge_source || {}
+    graphData?.qc_results?.predicates_by_knowledge_source || {}
   )) {
     nodeSet.add(key);
     for (const [predicate, count] of Object.entries(value as Record<string, number>)) {
@@ -98,8 +98,10 @@ function GraphId({ graphData }: GraphIdProps) {
                   {graphData.graph_name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Graph version <code>{graphData.graph_version}</code>, built{' '}
-                  <code>{formatBuildDate(graphData.build_time)}</code>
+                  Graph version <code>{graphData?.graph_version}</code>, built{' '}
+                  <code>
+                    {graphData?.build_time ? formatBuildDate(graphData?.build_time) : 'N/A'}
+                  </code>
                 </Typography>
               </Box>
               <Stack direction="row" spacing={1} flexWrap="wrap">
