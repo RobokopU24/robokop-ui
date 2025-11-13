@@ -10,6 +10,7 @@ import {
   Button,
   Chip,
   Box,
+  Grid,
 } from '@mui/material';
 
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
@@ -241,30 +242,27 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
 
   return (
     <Paper elevation={0} className="editor-row-wrapper">
-      <Box className="textEditorRow">
-        <Stack
-          direction="row"
-          alignItems="center"
-          spacing={1}
-          flexWrap="wrap"
-          width="100%"
-          display="flex"
-        >
-          <IconButton
-            onClick={deleteEdge}
-            className="textEditorIconButton"
-            disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
-            aria-label="Remove condition"
-          >
-            <IndeterminateCheckBoxOutlinedIcon />
-          </IconButton>
+      <div className="editor-container">
+        <div className="editor-item">
+          <div className="editor-flex-container">
+            <IconButton
+              onClick={deleteEdge}
+              className="textEditorIconButton"
+              disabled={(queryBuilder.textEditorRows?.length ?? 0) < 2}
+              aria-label="Remove condition"
+            >
+              <IndeterminateCheckBoxOutlinedIcon />
+            </IconButton>
 
-          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 64 }}>
-            {index === 0 && 'Find'}
-            {index === 1 && 'where'}
-            {index > 1 && 'and where'}
-          </Typography>
-          <div style={{ flexGrow: 1, minWidth: 120 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ minWidth: 64 }}>
+              {index === 0 && 'Find'}
+              {index === 1 && 'where'}
+              {index > 1 && 'and where'}
+            </Typography>
+          </div>
+        </div>
+        <div className="editor-item">
+          <div style={{ flexGrow: 1 }}>
             <NodeSelector
               id={edge.subject as string}
               properties={edge.subject ? query_graph.nodes[edge.subject] : ''}
@@ -285,10 +283,14 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
               }}
             />
           </div>
-          <div style={{ flexGrow: 1, minWidth: 120 }}>
+        </div>
+        <div className="editor-item">
+          <div style={{ flexGrow: 1 }}>
             <PredicateSelector id={edgeId} />
           </div>
-          <div style={{ flexGrow: 1, minWidth: 120 }}>
+        </div>
+        <div className="editor-item">
+          <div style={{ flexGrow: 1 }}>
             <NodeSelector
               id={edge.object as string}
               properties={edge.object ? query_graph.nodes[edge.object] : ''}
@@ -309,29 +311,24 @@ export default function TextEditorRow({ row, index }: { row: TextEditorRowProps;
               }}
             />
           </div>
-
+        </div>
+        <div className="editor-item">
           <IconButton onClick={addHop} className="textEditorIconButton" aria-label="Add hop">
             <AddBoxOutlinedIcon />
           </IconButton>
-
-          <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-
-          {hasQualifiers && (
-            <Chip size="small" color="primary" label="Qualifiers set" variant="filled" />
-          )}
-
-          <Button
-            size="small"
-            variant="text"
-            onClick={() => setIsOpen((p) => !p)}
-            endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            aria-expanded={isOpen}
-            aria-controls={`qualifiers-${edgeId}`}
-          >
-            Qualifiers
-          </Button>
-        </Stack>
-      </Box>
+        </div>
+      </div>
+      <Button
+        sx={{ padding: 0, margin: 0, width: '100%' }}
+        size="small"
+        variant="text"
+        onClick={() => setIsOpen((p) => !p)}
+        endIcon={isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        aria-expanded={isOpen}
+        aria-controls={`qualifiers-${edgeId}`}
+      >
+        Qualifiers
+      </Button>
 
       <Collapse in={isOpen}>
         <div id={`qualifiers-${edgeId}`} className="qualifiers-wrapper">
