@@ -185,20 +185,6 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
                 maxHeight: 600,
                 overflow: 'auto',
                 display: 'inline-block',
-                // width: 'auto',
-                '&::-webkit-scrollbar': {
-                  width: '8px',
-                },
-                '&::-webkit-scrollbar-track': {
-                  backgroundColor: '#f1f1f1',
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  backgroundColor: '#c1c1c1',
-                  borderRadius: '4px',
-                },
-                '&::-webkit-scrollbar-thumb:hover': {
-                  backgroundColor: '#a8a8a8',
-                },
               }}
             >
               <Table stickyHeader size="small">

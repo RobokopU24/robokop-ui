@@ -1,6 +1,7 @@
 import React from 'react';
-import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import SummaryModal from './SummaryModal';
 
 interface Attribute {
   attribute_type_id: string;
@@ -48,9 +49,19 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
         ? `https://pubmed.ncbi.nlm.nih.gov/${pmid[1]}/`
         : null;
   };
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
+
+  const linkList = Array.isArray(value) ? value.map(getLinkFromValue) : [getLinkFromValue(value)];
 
   return (
     <TableCell>
+      {isSummaryModalOpen && (
+        <SummaryModal
+          isOpen={isSummaryModalOpen}
+          onModalClose={() => setIsSummaryModalOpen(false)}
+          links={linkList as string[]}
+        />
+      )}
       <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
         {Array.isArray(value) ? (
           value.map((valueItem, valueItemIndex) => {
@@ -79,12 +90,15 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
           </li>
         )}
       </ul>
+      <Button variant="contained" sx={{ my: 1 }} onClick={() => setIsSummaryModalOpen(true)}>
+        Summarize with AI
+      </Button>
     </TableCell>
   );
 };
 
 const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources }) => (
-  <Box style={{ maxHeight: 500, overflow: 'auto' }}>
+  <Box style={{ maxHeight: 500, maxWidth: 500, overflow: 'auto' }}>
     <Table size="small" aria-label="edge attributes table">
       <TableHead style={{ position: 'sticky', top: 0 }}>
         <TableRow>
@@ -97,7 +111,9 @@ const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources }
           <TableRow key={index}>
             <TableCell style={{ verticalAlign: 'top' }}>{attribute.attribute_type_id}</TableCell>
             {attribute.attribute_type_id === 'biolink:publications' ? (
-              <PublicationLinkCell value={attribute.value} />
+              <>
+                <PublicationLinkCell value={attribute.value} />
+              </>
             ) : (
               <ValueCell value={attribute.value} />
             )}

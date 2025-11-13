@@ -137,9 +137,6 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
               sx={{
                 height: 600,
                 overflow: 'auto',
-                '&::-webkit-scrollbar': { width: '8px' },
-                '&::-webkit-scrollbar-thumb': { backgroundColor: '#c1c1c1', borderRadius: '4px' },
-                '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#a8a8a8' },
               }}
             >
               <Table stickyHeader size="small">
