@@ -79,9 +79,8 @@ function BookmarkModal({ isOpen, onClose, onCancel }: BookmarkModalProps) {
         <p style={{ color: '#5E5E5E', fontSize: '14px', margin: '8px 0 0 0' }}>
           Select one of the existing queries you have bookmarked
         </p>
-        {queries &&
-          queries.length > 0 &&
-          queries?.map((query) => (
+        {queries.length > 0 &&
+          queries.map((query) => (
             <div
               key={query.id}
               className={`example-box ${selectedBookmark?.id === query.id ? 'example-box-selected' : 'example-box-unselected'}`}
