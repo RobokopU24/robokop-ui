@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Box, Modal } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, Modal, Skeleton } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { llmRoutes } from '../../../API/routes';
 import Markdown from 'react-markdown';
@@ -14,6 +14,8 @@ function SummaryModal({
   links: string[];
 }) {
   const [streamedText, setStreamedText] = useState<string>('');
+  const abortControllerRef = useRef<AbortController | null>(null);
+
   useEffect(() => {
     if (isOpen) setStreamedText('');
   }, [isOpen]);
@@ -22,12 +24,19 @@ function SummaryModal({
     queryKey: ['summaryLinks', links],
     enabled: false,
     queryFn: async () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      abortControllerRef.current = new AbortController();
+
       const response = await fetch(llmRoutes.summarizeLinks, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ urls: links }),
+        signal: abortControllerRef.current.signal,
       });
 
       if (!response.body) {
@@ -39,23 +48,48 @@ function SummaryModal({
 
       let full = '';
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) {
-          break;
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          const chunk = decoder.decode(value);
+          full += chunk;
+          setStreamedText((prev) => prev + chunk);
         }
-        const chunk = decoder.decode(value);
-        full += chunk;
-        setStreamedText((prev) => prev + chunk);
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('Stream aborted');
+          return '';
+        }
+        throw error;
+      } finally {
+        reader.releaseLock();
       }
+
       return full;
     },
   });
+
   useEffect(() => {
     if (isOpen) {
       refetch();
+    } else {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
     }
   }, [isOpen, refetch]);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   return (
     <Modal
@@ -70,7 +104,7 @@ function SummaryModal({
       <Box
         sx={{
           backgroundColor: 'background.paper',
-          p: 2,
+          p: 4,
           borderRadius: 1,
           width: 700,
           maxHeight: '80vh',
@@ -78,8 +112,29 @@ function SummaryModal({
           overflowX: 'hidden',
         }}
       >
-        <div>Summary of Publications</div>
-        <Markdown>{streamedText || (isFetching ? 'Loading...' : '')}</Markdown>
+        <h2 style={{ marginBottom: '1em' }}>Summary of Publications</h2>
+        {streamedText ? (
+          <Markdown
+            components={{
+              h3: ({ node, ...props }) => <h3 style={{ marginTop: '1em' }} {...props} />,
+              p: ({ node, ...props }) => (
+                <p style={{ marginTop: '0.5em', marginBottom: '0.5em' }} {...props} />
+              ),
+              ul: ({ node, ...props }) => (
+                <ul
+                  style={{ paddingLeft: '1.5em', marginTop: '0.5em', marginBottom: '0.5em' }}
+                  {...props}
+                />
+              ),
+            }}
+          >
+            {streamedText}
+          </Markdown>
+        ) : (
+          <>
+            {Array(10).fill(<Skeleton variant="rounded" width="100%" height={20} sx={{ mb: 1 }} />)}
+          </>
+        )}
       </Box>
     </Modal>
   );

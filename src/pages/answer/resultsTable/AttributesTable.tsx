@@ -98,7 +98,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
 };
 
 const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources }) => (
-  <Box style={{ maxHeight: 500, maxWidth: 500, overflow: 'auto' }}>
+  <Box style={{ maxHeight: 500, maxWidth: 800, overflow: 'auto' }}>
     <Table size="small" aria-label="edge attributes table">
       <TableHead style={{ position: 'sticky', top: 0 }}>
         <TableRow>
