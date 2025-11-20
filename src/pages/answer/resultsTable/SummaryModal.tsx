@@ -8,10 +8,12 @@ function SummaryModal({
   isOpen,
   onModalClose,
   links,
+  ids,
 }: {
   isOpen: boolean;
   onModalClose: () => void;
   links: string[];
+  ids: string[];
 }) {
   const [streamedText, setStreamedText] = useState<string>('');
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -20,7 +22,7 @@ function SummaryModal({
     if (isOpen) setStreamedText('');
   }, [isOpen]);
 
-  const { refetch, isFetching } = useQuery({
+  const { refetch } = useQuery({
     queryKey: ['summaryLinks', links],
     enabled: false,
     queryFn: async () => {
@@ -35,7 +37,7 @@ function SummaryModal({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ urls: links }),
+        body: JSON.stringify({ urls: links, ids: ids }),
         signal: abortControllerRef.current.signal,
       });
 
@@ -116,7 +118,8 @@ function SummaryModal({
         {streamedText ? (
           <Markdown
             components={{
-              h3: ({ node, ...props }) => <h3 style={{ marginTop: '1em' }} {...props} />,
+              h2: ({ node, ...props }) => <h2 style={{ marginTop: '0.5em' }} {...props} />,
+              h3: ({ node, ...props }) => <h3 style={{ marginTop: '0.5em' }} {...props} />,
               p: ({ node, ...props }) => (
                 <p style={{ marginTop: '0.5em', marginBottom: '0.5em' }} {...props} />
               ),

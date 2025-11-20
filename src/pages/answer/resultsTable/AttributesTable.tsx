@@ -52,7 +52,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
 
   const linkList = Array.isArray(value) ? value.map(getLinkFromValue) : [getLinkFromValue(value)];
-
+  const idList = Array.isArray(value) ? value : [value];
   return (
     <TableCell>
       {isSummaryModalOpen && (
@@ -60,6 +60,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
           isOpen={isSummaryModalOpen}
           onModalClose={() => setIsSummaryModalOpen(false)}
           links={linkList as string[]}
+          ids={idList as string[]}
         />
       )}
       <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
