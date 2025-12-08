@@ -32,6 +32,7 @@ import ExampleModal from '../entryPoint/ExampleModal';
 import TemplateModal from '../entryPoint/TemplateModal';
 import BookmarkModal from '../entryPoint/BookmarkModal';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { AutocompleteTest } from './textEditor/textEditorRow/AsyncAutocomplete';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
@@ -191,6 +192,7 @@ export default function QueryBuilder() {
           <PanelGroup direction="horizontal">
             <Panel defaultSize={60} minSize={30} style={{ padding: '20px 20px 20px 0' }}>
               <TextEditor rows={queryBuilder.textEditorRows || []} />
+              <AutocompleteTest />
             </Panel>
             <PanelResizeHandle
               className="resize-container"

@@ -1,28 +1,20 @@
-import React, { useState, useEffect, useContext, useMemo } from 'react';
+import React, { useEffect, useContext, useMemo } from 'react';
 import axios, { CancelTokenSource } from 'axios';
 
 import BiolinkContext from '../../../../context/biolink';
 import strings from '../../../../utils/strings';
-import useDebounce from '../../../../stores/useDebounce';
 
 import fetchCuries from '../../../../utils/fetchCuries';
 import highlighter from '../../../../utils/d3/highlighter';
 
 import taxaCurieLookup from './taxon-curie-lookup.json';
 import { useAlert } from '../../../../components/AlertProvider';
-import {
-  Autocomplete,
-  IconButton,
-  Tooltip,
-  TextField,
-  CircularProgress,
-  AutocompleteRenderOptionState,
-} from '@mui/material';
-import Check from '@mui/icons-material/Check';
-import FileCopy from '@mui/icons-material/FileCopy';
-import { withStyles } from '@mui/styles';
-import { Theme } from '@mui/material/styles';
 import { NodeOption } from '../types';
+import {
+  AsyncAutocomplete,
+  AutocompleteOption,
+  DataSource,
+} from './AsyncAutocomplete';
 
 interface NodeSelectorProps {
   id: string;
@@ -102,107 +94,9 @@ export default function NodeSelector({
     clearable = true,
     includeSets = false,
   } = nodeOptions;
-  const [loading, toggleLoading] = useState<boolean>(false);
-  const [inputText, updateInputText] = useState<string>('');
-  const [open, toggleOpen] = useState<boolean>(false);
-  const [options, setOptions] = useState<NodeOption[]>([]);
   const { displayAlert } = useAlert();
   // @ts-ignore: context type is not strict
   const { concepts } = useContext(BiolinkContext) as { concepts: string[] };
-  const searchTerm = useDebounce(inputText, 500) as string;
-  const trimmedSearchTerm = useMemo(() => searchTerm.trim(), [searchTerm]);
-  const loweredTrimmedSearchTerm = useMemo(
-    () => trimmedSearchTerm.toLowerCase(),
-    [trimmedSearchTerm]
-  );
-
-  /**
-   * Get dropdown options for node selector
-   */
-  async function getOptions() {
-    toggleLoading(true);
-    const newOptions: NodeOption[] = isReference ? [{ name: 'New Term', key: null }] : [];
-    // allow user to select an existing node
-    if (includeExistingNodes) {
-      newOptions.push(...existingNodes);
-    }
-    // add general concepts to options
-    if (includeCategories) {
-      const matchesCategory = (category: string) => {
-        const raw = category.toLowerCase();
-        const display = strings.displayCategory(category).toLowerCase();
-        return raw.includes(loweredTrimmedSearchTerm) || display.includes(loweredTrimmedSearchTerm);
-      };
-
-      let includedCategories: NodeOption[] = concepts
-        .filter((category: string) => matchesCategory(category))
-        .map((category: string) => ({
-          categories: [category],
-          name: strings.displayCategory(category),
-        }));
-      if (includeSets) {
-        includedCategories = concepts
-          .filter((category: string) => matchesCategory(category))
-          .flatMap((category: string) => [
-            {
-              categories: [category],
-              name: strings.displayCategory(category),
-            },
-            {
-              categories: [category],
-              name: strings.setify(category),
-              is_set: true,
-            },
-          ]);
-      }
-      newOptions.push(...includedCategories);
-    }
-    // fetch matching curies from external services
-    if (includeCuries) {
-      if (trimmedSearchTerm.includes(':')) {
-        // user is typing a specific curie
-        newOptions.push({ name: trimmedSearchTerm, ids: [trimmedSearchTerm] });
-      }
-      if (cancel) {
-        cancel.cancel();
-      }
-      cancel = CancelToken.source();
-      const curies: NodeOption[] = await fetchCuries(
-        trimmedSearchTerm,
-        displayAlert as (arg0: string, arg1: string) => void,
-        cancel.token,
-        nameresCategoryFilter
-      );
-      newOptions.push(...curies);
-    }
-    toggleLoading(false);
-    setOptions(newOptions);
-  }
-
-  /**
-   * Get node options when dropdown opens or search term changes
-   * after debounce
-   */
-  useEffect(() => {
-    if (open && trimmedSearchTerm.length >= 3) {
-      getOptions();
-    } else {
-      setOptions([]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, trimmedSearchTerm]);
-
-  /**
-   * Cancel any api calls on unmount
-   */
-  useEffect(
-    () => () => {
-      if (cancel) {
-        cancel.cancel();
-      }
-    },
-    []
-  );
 
   /**
    * Create a human-readable label for every option
@@ -230,159 +124,184 @@ export default function NodeSelector({
   }
 
   /**
-   * Update query graph based on option selected
-   * @param {*} e - click event
-   * @param {object|null} v - value of selected option
+   * Convert NodeOption to AutocompleteOption
    */
-  function handleUpdate(e: React.SyntheticEvent<Element, Event>, v: NodeOption | null) {
-    // reset search term back when user selects something
-    updateInputText('');
-    if (v && 'key' in v) {
-      // key will only be in v when switching to existing node
-      setReference(v.key ?? null);
+  function nodeToAutocompleteOption(node: NodeOption): AutocompleteOption<NodeOption> {
+    // Build subText: show ID and taxa name (if available)
+    const subTextParts: string[] = [];
+
+    if (node.ids && node.ids.length > 0) {
+      subTextParts.push(node.ids[0]);
+    }
+
+    if (node.categories && node.categories.length > 0) {
+      const category = node.categories[0].replace(/^biolink:/, '');
+      subTextParts.push(category);
+    }
+
+    const taxaName = lookupTaxaName(node.taxa);
+    if (taxaName) {
+      subTextParts.push(taxaName);
+    }
+
+    return {
+      value: node,
+      label: getOptionLabel(node),
+      subText: subTextParts.length > 0 ? subTextParts.join(' • ') : undefined,
+      data: node,
+    };
+  }
+
+  const dataSources = useMemo<DataSource<NodeOption>[]>(() => {
+    const sources: DataSource<NodeOption>[] = [];
+
+    // Add reference node option if needed
+    if (isReference) {
+      sources.push({
+        id: 'reference',
+        label: 'Reference',
+        color: '#22c55e',
+        sticky: true,
+        options: [nodeToAutocompleteOption({ name: 'New Term', key: null })],
+      });
+    }
+
+    // Add existing nodes
+    if (includeExistingNodes && existingNodes.length > 0) {
+      sources.push({
+        id: 'existingNodes',
+        label: 'Existing Nodes',
+        color: '#3b82f6',
+        sticky: true,
+        options: existingNodes.map(nodeToAutocompleteOption),
+      });
+    }
+
+    // Add categories
+    if (includeCategories) {
+      let categoryOptions: NodeOption[] = concepts.map((category: string) => ({
+        categories: [category],
+        name: strings.displayCategory(category),
+      }));
+
+      if (includeSets) {
+        categoryOptions = concepts.flatMap((category: string) => [
+          {
+            categories: [category],
+            name: strings.displayCategory(category),
+          },
+          {
+            categories: [category],
+            name: strings.setify(category),
+            is_set: true,
+          },
+        ]);
+      }
+
+      sources.push({
+        id: 'categories',
+        label: 'Categories',
+        color: '#a855f7',
+        sticky: true,
+        options: categoryOptions.map(nodeToAutocompleteOption),
+      });
+    }
+
+    // Add async name resolver curies
+    if (includeCuries) {
+      sources.push({
+        id: 'curies',
+        label: 'Name Resolver',
+        color: '#ff9c39',
+        sticky: true,
+        fetchOptions: async (query: string) => {
+          const results: NodeOption[] = [];
+          if (query.includes(':')) {
+            results.push({ name: query, ids: [query] });
+          }
+
+          if (cancel) {
+            cancel.cancel();
+          }
+          cancel = CancelToken.source();
+          const curies: NodeOption[] = await fetchCuries(
+            query,
+            displayAlert as (arg0: string, arg1: string) => void,
+            cancel.token,
+            nameresCategoryFilter
+          );
+          results.push(...curies);
+
+          return results.map(nodeToAutocompleteOption);
+        },
+      });
+    }
+
+    return sources;
+  }, [
+    isReference,
+    includeExistingNodes,
+    existingNodes,
+    includeCategories,
+    concepts,
+    includeSets,
+    includeCuries,
+    displayAlert,
+    nameresCategoryFilter,
+  ]);
+
+  useEffect(
+    () => () => {
+      if (cancel) {
+        cancel.cancel();
+      }
+    },
+    []
+  );
+
+  function handleUpdate(option: AutocompleteOption<NodeOption> | null) {
+    if (option && option.value && 'key' in option.value) {
+      setReference(option.value.key ?? null);
     } else {
-      // updating a node value
-      update(id, v);
+      update(id, option?.value ?? null);
     }
   }
 
   /**
    * Compute current value of selector
    */
-  const selectorValue = useMemo(() => {
+  const selectorValue = useMemo<AutocompleteOption<NodeOption> | null>(() => {
     if (isValidNode(properties)) {
-      return properties;
+      return nodeToAutocompleteOption(properties);
     }
     return null;
   }, [properties]);
 
   return (
-    <Autocomplete
-      options={options}
-      loading={loading}
-      className={`textEditorSelector${isReference ? ' referenceNode' : ''} highlight-${id}`}
-      getOptionLabel={getOptionLabel}
-      filterOptions={(x) => x}
-      autoComplete
-      autoHighlight
-      clearOnBlur
-      blurOnSelect
-      disableClearable={!clearable}
-      inputValue={inputText}
+    <AsyncAutocomplete
       value={selectorValue}
-      isOptionEqualToValue={(option: NodeOption, value: NodeOption) => option.name === value.name}
-      open={open}
       onChange={handleUpdate}
-      onOpen={(e) => {
-        e.stopPropagation();
-        toggleOpen(true);
+      dataSources={dataSources}
+      label={title || id}
+      placeholder="Search..."
+      minQueryLength={3}
+      debounceMs={500}
+      clearable={clearable}
+      className={`textEditorSelector${isReference ? ' referenceNode' : ''} highlight-${id}`}
+      onFocus={() => {
+        highlighter.highlightGraphNode(id);
+        highlighter.highlightTextEditorNode(id);
       }}
-      onClose={(e) => {
-        e.stopPropagation();
-        toggleOpen(false);
+      onBlur={() => {
+        highlighter.clearGraphNode(id);
+        highlighter.clearTextEditorNode(id);
       }}
-      onInputChange={(_e, v) => updateInputText(v)}
-      renderOption={(props, option: NodeOption, state: AutocompleteRenderOptionState) => (
-        <Option {...option} {...props} />
-      )}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          variant="outlined"
-          className="nodeDropdown"
-          label={title || id}
-          margin="dense"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          onFocus={() => {
-            highlighter.highlightGraphNode(id);
-            highlighter.highlightTextEditorNode(id);
-          }}
-          onBlur={() => {
-            highlighter.clearGraphNode(id);
-            highlighter.clearTextEditorNode(id);
-          }}
-          InputProps={{
-            ...params.InputProps,
-            classes: {
-              root: `nodeSelector nodeSelector-${id}`,
-            },
-            endAdornment: (
-              <>
-                {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-        />
-      )}
-      size={size || 'medium'}
+      InputProps={{
+        classes: {
+          root: `nodeSelector nodeSelector-${id}`,
+        },
+      }}
+      getOptionLabel={(option) => option.label}
     />
-  );
-}
-
-const CustomTooltip = withStyles((theme: Theme) => ({
-  tooltip: {
-    fontSize: theme.typography.pxToRem(14),
-  },
-}))(Tooltip);
-
-interface OptionProps extends NodeOption {
-  // MUI Autocomplete renderOption props
-  [key: string]: any;
-}
-
-function Option({ name, ids, categories, taxa, ...props }: OptionProps) {
-  const taxaName = lookupTaxaName(taxa);
-
-  return (
-    <CustomTooltip
-      arrow
-      title={
-        <div className="node-option-tooltip-wrapper">
-          {Array.isArray(ids) && ids.length > 0 && (
-            <div>
-              <span>{ids[0]}</span>
-              <CopyButton textToCopy={ids[0]} />
-            </div>
-          )}
-          {Array.isArray(categories) && categories.length > 0 && <span>{categories[0]}</span>}
-        </div>
-      }
-      placement="left"
-    >
-      <div {...props}>
-        {name} {taxaName ? `(${taxaName})` : null}
-      </div>
-    </CustomTooltip>
-  );
-}
-
-interface CopyButtonProps {
-  textToCopy: string;
-}
-
-function CopyButton({ textToCopy }: CopyButtonProps) {
-  const [hasCopied, setHasCopied] = useState(false);
-
-  const handleCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(textToCopy);
-    setHasCopied(true);
-  };
-
-  if (
-    typeof navigator.clipboard === 'undefined' ||
-    typeof navigator.clipboard.writeText !== 'function' ||
-    typeof textToCopy !== 'string'
-  ) {
-    return null;
-  }
-
-  return (
-    <IconButton color="inherit" size="small" onClick={handleCopy}>
-      {hasCopied ? <Check /> : <FileCopy />}
-    </IconButton>
   );
 }
