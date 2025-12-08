@@ -25,17 +25,6 @@ import TemplateModal from '../entryPoint/TemplateModal';
 import BookmarkModal from '../entryPoint/BookmarkModal';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
-const SubmitButton = withStyles((theme) => ({
-  root: {
-    marginLeft: 'auto',
-    color: theme.palette.getContrastText(blue[600]),
-    backgroundColor: blue[600],
-    '&:hover': {
-      backgroundColor: blue[700],
-    },
-  },
-}))(Button);
-
 /**
  * Query Builder parent component
  *
@@ -74,30 +63,6 @@ export default function QueryBuilder() {
       disabled: !user,
     },
   ];
-  const [openMenu, setOpenMenu] = useState(false);
-  const anchorRef = useRef<HTMLDivElement>(null);
-  const [selectedIndex, setSelectedIndex] = useState(1);
-
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
-    index: number
-  ) => {
-    setSelectedIndex(index);
-    setOpenMenu(false);
-  };
-  const handleToggle = () => {
-    setOpenMenu((prevOpen) => !prevOpen);
-  };
-  const handleClose = (event: Event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
-      return;
-    }
-
-    setOpenMenu(false);
-  };
-  const handleClick = () => {
-    buttonOptions[selectedIndex].onClick();
-  };
 
   const pageStatus = usePageStatus(false);
   const { browserSupport } = usePasskey();
@@ -107,7 +72,6 @@ export default function QueryBuilder() {
   const [ara] = useState(ARAs[0]);
   const { displayAlert } = useAlert();
   const navigate = useNavigate();
-  const [exampleQueriesOpen, setExampleQueriesOpen] = useState(false);
   const [savedState, setSavedState] = useState<any>(null);
 
   const passkeyPopupDenied = localStorage.getItem('passkeyPopupDenied');
@@ -181,7 +145,11 @@ export default function QueryBuilder() {
             download_type="all_queries"
           />
           <PanelGroup direction="horizontal">
-            <Panel defaultSize={60} minSize={30} style={{ padding: '20px 20px 20px 0' }}>
+            <Panel
+              defaultSize={60}
+              minSize={30}
+              style={{ padding: '20px 20px 20px 0', overflowY: 'auto' }}
+            >
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </Panel>
             <PanelResizeHandle

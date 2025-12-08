@@ -1,0 +1,10 @@
+.hover-row .details-card-button {
+    opacity: 0;
+    border: none;
+    cursor: pointer;
+    /* transition: opacity 0.2s ease-in-out; */
+}
+
+.hover-row:hover .details-card-button {
+    opacity: 1;
+}

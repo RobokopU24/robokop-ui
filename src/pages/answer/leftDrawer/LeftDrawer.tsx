@@ -1,13 +1,24 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Drawer, Toolbar, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Checkbox, IconButton } from "@mui/material";
+import {
+  Drawer,
+  Toolbar,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  IconButton,
+} from '@mui/material';
 
-import PublishIcon from "@mui/icons-material/Publish";
-import GetAppIcon from "@mui/icons-material/GetApp";
+import PublishIcon from '@mui/icons-material/Publish';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
-import DownloadDialog from "../../../components/DownloadDialog";
+import DownloadDialog from '../../../components/DownloadDialog';
 
-import "./leftDrawer.css";
+import './leftDrawer.css';
+import { useQueryBuilderContext } from '../../../context/queryBuilder';
 
 interface DisplayStateItem {
   show: boolean;
@@ -20,7 +31,7 @@ interface DisplayState {
 }
 
 interface UpdateDisplayStateAction {
-  type: "toggle";
+  type: 'toggle';
   payload: {
     component: string;
     show: boolean;
@@ -47,26 +58,40 @@ interface LeftDrawerProps {
  * @param {function} deleteAnswer - delete an answer from Robokache
  * @param {boolean} owned - does the user own this answer
  */
-export default function LeftDrawer({ onUpload, displayState, updateDisplayState, message, saveAnswer, deleteAnswer, owned }: LeftDrawerProps) {
+export default function LeftDrawer({
+  onUpload,
+  displayState,
+  updateDisplayState,
+  message,
+  saveAnswer,
+  deleteAnswer,
+  owned,
+}: LeftDrawerProps) {
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const [downloadQueryOpen, setDownloadQueryOpen] = useState(false);
 
   function toggleDisplay(component: string, show: boolean) {
-    updateDisplayState({ type: "toggle", payload: { component, show } });
+    updateDisplayState({ type: 'toggle', payload: { component, show } });
   }
+  const queryBuilder = useQueryBuilderContext();
 
   return (
     <Drawer
-      container={document.getElementById("contentContainer")}
+      container={document.getElementById('contentContainer')}
       variant="permanent"
       open
       classes={{
-        paper: "leftDrawer",
+        paper: 'leftDrawer',
       }}
     >
       <Toolbar />
       <List>
         {Object.entries(displayState).map(([key, val]) => (
-          <ListItemButton key={key} onClick={() => toggleDisplay(key, !val.show)} disabled={val.disabled}>
+          <ListItemButton
+            key={key}
+            onClick={() => toggleDisplay(key, !val.show)}
+            disabled={val.disabled}
+          >
             <ListItemIcon>
               <Checkbox checked={val.show} disableRipple />
             </ListItemIcon>
@@ -76,11 +101,16 @@ export default function LeftDrawer({ onUpload, displayState, updateDisplayState,
         <ListItemButton
           disabled={!Object.keys(message).length}
           onClick={() => {
-            setDownloadOpen(true);
+            setDownloadQueryOpen(true);
           }}
         >
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Download" disableRipple>
+            <IconButton
+              component="span"
+              style={{ fontSize: '18px' }}
+              title="Download"
+              disableRipple
+            >
               <GetAppIcon />
             </IconButton>
           </ListItemIcon>
@@ -93,7 +123,12 @@ export default function LeftDrawer({ onUpload, displayState, updateDisplayState,
           }}
         >
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Download" disableRipple>
+            <IconButton
+              component="span"
+              style={{ fontSize: '18px' }}
+              title="Download"
+              disableRipple
+            >
               <GetAppIcon />
             </IconButton>
           </ListItemIcon>
@@ -101,15 +136,32 @@ export default function LeftDrawer({ onUpload, displayState, updateDisplayState,
         </ListItemButton>
         <ListItemButton component="label">
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Upload Answer" disableRipple>
+            <IconButton
+              component="span"
+              style={{ fontSize: '18px' }}
+              title="Upload Answer"
+              disableRipple
+            >
               <PublishIcon />
             </IconButton>
           </ListItemIcon>
           <ListItemText primary="Upload Answer" />
-          <input accept=".json" hidden style={{ display: "none" }} type="file" onChange={(e) => onUpload(e)} />
+          <input
+            accept=".json"
+            hidden
+            style={{ display: 'none' }}
+            type="file"
+            onChange={(e) => onUpload(e)}
+          />
         </ListItemButton>
       </List>
       <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={message} />
+      <DownloadDialog
+        open={downloadQueryOpen}
+        setOpen={setDownloadQueryOpen}
+        message={queryBuilder.query_graph}
+        download_type="all_queries"
+      />
     </Drawer>
   );
 }

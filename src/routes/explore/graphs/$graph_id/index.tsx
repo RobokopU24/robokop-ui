@@ -1,22 +1,5 @@
-import { Download, OpenInNew } from '@mui/icons-material';
-import {
-  Button,
-  ButtonGroup,
-  Container,
-  Paper,
-  styled,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material';
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import API from '../../../../API';
-import { formatFileSize, getFileSize } from '../../../../utils/getFileSize';
-import stringUtils from '../../../../utils/strings';
 import { queryClient } from '../../../../utils/queryClient';
 import { useQuery } from '@tanstack/react-query';
 import GraphId from '../../../../pages/graphId/GraphId';
