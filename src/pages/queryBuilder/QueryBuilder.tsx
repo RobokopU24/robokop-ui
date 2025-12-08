@@ -1,4 +1,4 @@
-import { Button, ButtonGroup } from '@mui/material';
+import { Button } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import { blue } from '@mui/material/colors';
 import React, { useState, useEffect, useRef } from 'react';
@@ -20,19 +20,10 @@ import GraphEditor from './graphEditor/GraphEditor';
 import JsonEditor from './jsonEditor/JsonEditor';
 import DownloadDialog from '../../components/DownloadDialog';
 import './queryBuilder.css';
-import TemplateQueriesModal from './templatedQueries/TemplateQueriesModal';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
 import ExampleModal from '../entryPoint/ExampleModal';
 import TemplateModal from '../entryPoint/TemplateModal';
 import BookmarkModal from '../entryPoint/BookmarkModal';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { AutocompleteTest } from './textEditor/textEditorRow/AsyncAutocomplete';
 
 const SubmitButton = withStyles((theme) => ({
   root: {
@@ -192,7 +183,6 @@ export default function QueryBuilder() {
           <PanelGroup direction="horizontal">
             <Panel defaultSize={60} minSize={30} style={{ padding: '20px 20px 20px 0' }}>
               <TextEditor rows={queryBuilder.textEditorRows || []} />
-              <AutocompleteTest />
             </Panel>
             <PanelResizeHandle
               className="resize-container"
