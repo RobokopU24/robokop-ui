@@ -16,7 +16,7 @@ export default function Explore() {
       <Divider sx={{ mb: 4 }} />
 
       <Box sx={{ mb: 6 }}>
-        <MuiLink component={Link} to={`/enrichment-analysis`} underline="hover">
+        <MuiLink component={Link} to={`/explore/enrichment-analysis`} underline="hover">
           Enrichment Analysis
           <Box
             component="span"
