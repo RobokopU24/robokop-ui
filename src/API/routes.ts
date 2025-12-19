@@ -39,6 +39,9 @@ const llmEndpoint = `${baseAuthURL}/llm`;
 export const llmRoutes = {
   base: llmEndpoint,
   summarizeLinks: `${llmEndpoint}/stream-summaries`,
+  summarizeGraph: `${llmEndpoint}/stream-graph-summary`,
+  summarizeKGNodes: `${llmEndpoint}/stream-kg-nodes-summary`,
+  summarizeTable: `${llmEndpoint}/stream-table-summary`,
 };
 
 export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes };

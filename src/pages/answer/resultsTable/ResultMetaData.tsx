@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect, useMemo } from 'react';
+import React, { useState, useReducer, useEffect, useMemo, useRef } from 'react';
 import {
   Paper,
   IconButton,
@@ -7,11 +7,16 @@ import {
   ListItemText,
   Collapse,
   ListItemButton,
+  Skeleton,
 } from '@mui/material';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 // @ts-ignore
 import shortid from 'shortid';
+import Markdown from 'react-markdown';
+import { transformKGToMinimalDynamic } from './metaDataTransformation';
+import { useQuery } from '@tanstack/react-query';
+import { llmRoutes } from '../../../API/routes';
 
 interface ExpansionState {
   [key: string]: boolean;
@@ -53,8 +58,11 @@ function expansionReducer(state: ExpansionState, action: ExpansionAction): Expan
  * @param {object} result - full node and edge result json from knowledge graph
  */
 export default function ResultMetaData({ metaData, result }: ResultMetaDataProps) {
+  const minifiedJson = transformKGToMinimalDynamic(result);
   const [expanded, updateExpanded] = useReducer(expansionReducer, {});
   const [showJSON, toggleJSONVisibility] = useState(false);
+  const [showSummarizeResults, toggleSummarizeResults] = useState(false);
+  const [streamedText, setStreamedText] = useState<string>('');
 
   useEffect(() => {
     // Whenever the user selects a new row, close all expanded rows
@@ -66,8 +74,128 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
     [metaData]
   );
 
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (showSummarizeResults) setStreamedText('');
+  }, [showSummarizeResults]);
+
+  const { refetch } = useQuery({
+    queryKey: ['summaryLinks', 'test'],
+    enabled: false,
+    queryFn: async () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      abortControllerRef.current = new AbortController();
+
+      const response = await fetch(llmRoutes.summarizeKGNodes, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ minimalJson: minifiedJson }),
+        signal: abortControllerRef.current.signal,
+      });
+
+      if (!response.body) {
+        throw new Error('No response body');
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      let full = '';
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          const chunk = decoder.decode(value);
+          full += chunk;
+          setStreamedText((prev) => prev + chunk);
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          console.log('Stream aborted');
+          return '';
+        }
+        throw error;
+      } finally {
+        reader.releaseLock();
+      }
+
+      return full;
+    },
+  });
+
+  useEffect(() => {
+    if (showSummarizeResults) {
+      refetch();
+    } else {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
+    }
+  }, [showSummarizeResults, refetch]);
+
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
   return (
     <Paper id="resultMetaData" elevation={3}>
+      <div>
+        <h4>
+          Summarize Results with AI &nbsp;
+          <IconButton onClick={() => toggleSummarizeResults(!showSummarizeResults)}>
+            {!showSummarizeResults ? <ExpandMore /> : <ExpandLess />}
+          </IconButton>
+        </h4>
+        {showSummarizeResults && (
+          <div
+            style={{
+              height: '300px',
+              overflowY: 'auto',
+              marginBottom: '16px',
+            }}
+          >
+            {streamedText ? (
+              <Markdown
+                components={{
+                  h2: ({ node, ...props }) => <h2 style={{ marginTop: '0.5em' }} {...props} />,
+                  h3: ({ node, ...props }) => <h3 style={{ marginTop: '0.5em' }} {...props} />,
+                  p: ({ node, ...props }) => (
+                    <p style={{ marginTop: '0.5em', marginBottom: '0.5em' }} {...props} />
+                  ),
+                  ul: ({ node, ...props }) => (
+                    <ul
+                      style={{ paddingLeft: '1.5em', marginTop: '0.5em', marginBottom: '0.5em' }}
+                      {...props}
+                    />
+                  ),
+                }}
+              >
+                {streamedText}
+              </Markdown>
+            ) : (
+              <>
+                {Array(3).fill(
+                  <Skeleton variant="rounded" width="100%" height={20} sx={{ mb: 1 }} />
+                )}
+              </>
+            )}
+          </div>
+        )}
+      </div>
       <div>
         <h4>Supporting Publications</h4>
         {hasSupportPublications ? (

@@ -4,7 +4,6 @@ import {
   Drawer,
   Toolbar,
   List,
-  ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
@@ -14,11 +13,14 @@ import {
 
 import PublishIcon from '@mui/icons-material/Publish';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import SummarizeIcon from '@mui/icons-material/Summarize';
 
 import DownloadDialog from '../../../components/DownloadDialog';
 
 import './leftDrawer.css';
 import { useQueryBuilderContext } from '../../../context/queryBuilder';
+import SummarizeWithAIModal from './SummarizeWithAIModal';
+import SummarizeTableWithAIModal from './SummarizeTableWithAIModal';
 
 interface DisplayStateItem {
   show: boolean;
@@ -46,6 +48,7 @@ interface LeftDrawerProps {
   saveAnswer: () => Promise<void>;
   deleteAnswer: () => Promise<void>;
   owned: boolean;
+  answerStore: any;
 }
 
 /**
@@ -66,9 +69,12 @@ export default function LeftDrawer({
   saveAnswer,
   deleteAnswer,
   owned,
+  answerStore,
 }: LeftDrawerProps) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [downloadQueryOpen, setDownloadQueryOpen] = useState(false);
+  const [summarizeWithAIOpen, setSummarizeWithAIOpen] = useState(false);
+  const [summarizeTableWithAIOpen, setSummarizeTableWithAIOpen] = useState(false);
 
   function toggleDisplay(component: string, show: boolean) {
     updateDisplayState({ type: 'toggle', payload: { component, show } });
@@ -154,6 +160,32 @@ export default function LeftDrawer({
             onChange={(e) => onUpload(e)}
           />
         </ListItemButton>
+        <ListItemButton component="label" onClick={() => setSummarizeWithAIOpen(true)}>
+          <ListItemIcon>
+            <IconButton
+              component="span"
+              style={{ fontSize: '18px' }}
+              title="Summarize with AI"
+              disableRipple
+            >
+              <SummarizeIcon />
+            </IconButton>
+          </ListItemIcon>
+          <ListItemText primary="Summarize with AI" />
+        </ListItemButton>
+        <ListItemButton component="label" onClick={() => setSummarizeTableWithAIOpen(true)}>
+          <ListItemIcon>
+            <IconButton
+              component="span"
+              style={{ fontSize: '18px' }}
+              title="Summarize table with AI"
+              disableRipple
+            >
+              <SummarizeIcon />
+            </IconButton>
+          </ListItemIcon>
+          <ListItemText primary="Summarize table with AI" />
+        </ListItemButton>
       </List>
       <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={message} />
       <DownloadDialog
@@ -162,6 +194,20 @@ export default function LeftDrawer({
         message={queryBuilder.query_graph}
         download_type="all_queries"
       />
+      {summarizeWithAIOpen && (
+        <SummarizeWithAIModal
+          isOpen={summarizeWithAIOpen}
+          onModalClose={() => setSummarizeWithAIOpen(false)}
+          answerStore={answerStore}
+        />
+      )}
+      {summarizeTableWithAIOpen && (
+        <SummarizeTableWithAIModal
+          isOpen={summarizeTableWithAIOpen}
+          onModalClose={() => setSummarizeTableWithAIOpen(false)}
+          answerStore={answerStore}
+        />
+      )}
     </Drawer>
   );
 }
