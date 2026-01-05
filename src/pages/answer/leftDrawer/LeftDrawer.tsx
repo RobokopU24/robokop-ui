@@ -21,6 +21,8 @@ import './leftDrawer.css';
 import { useQueryBuilderContext } from '../../../context/queryBuilder';
 import SummarizeWithAIModal from './SummarizeWithAIModal';
 import SummarizeTableWithAIModal from './SummarizeTableWithAIModal';
+import { useAuth } from '../../../context/AuthContext';
+import LoginWarning from './LoginWarning';
 
 interface DisplayStateItem {
   show: boolean;
@@ -66,20 +68,27 @@ export default function LeftDrawer({
   displayState,
   updateDisplayState,
   message,
-  saveAnswer,
-  deleteAnswer,
-  owned,
   answerStore,
 }: LeftDrawerProps) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [downloadQueryOpen, setDownloadQueryOpen] = useState(false);
   const [summarizeWithAIOpen, setSummarizeWithAIOpen] = useState(false);
   const [summarizeTableWithAIOpen, setSummarizeTableWithAIOpen] = useState(false);
+  const [loginWarningOpen, setLoginWarningOpen] = useState(false);
 
   function toggleDisplay(component: string, show: boolean) {
     updateDisplayState({ type: 'toggle', payload: { component, show } });
   }
   const queryBuilder = useQueryBuilderContext();
+  const { user } = useAuth();
+
+  function toggleSummarizeWithAI() {
+    if (!user) {
+      setLoginWarningOpen(true);
+    } else {
+      setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen);
+    }
+  }
 
   return (
     <Drawer
@@ -90,6 +99,7 @@ export default function LeftDrawer({
         paper: 'leftDrawer',
       }}
     >
+      <LoginWarning isOpen={loginWarningOpen} onClose={() => setLoginWarningOpen(false)} />
       <Toolbar />
       <List>
         {Object.entries(displayState).map(([key, val]) => (
@@ -160,20 +170,7 @@ export default function LeftDrawer({
             onChange={(e) => onUpload(e)}
           />
         </ListItemButton>
-        <ListItemButton component="label" onClick={() => setSummarizeWithAIOpen(true)}>
-          <ListItemIcon>
-            <IconButton
-              component="span"
-              style={{ fontSize: '18px' }}
-              title="Summarize with AI"
-              disableRipple
-            >
-              <SummarizeIcon />
-            </IconButton>
-          </ListItemIcon>
-          <ListItemText primary="Summarize with AI" />
-        </ListItemButton>
-        <ListItemButton component="label" onClick={() => setSummarizeTableWithAIOpen(true)}>
+        <ListItemButton component="label" onClick={() => toggleSummarizeWithAI()}>
           <ListItemIcon>
             <IconButton
               component="span"

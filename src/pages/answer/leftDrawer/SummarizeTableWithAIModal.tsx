@@ -107,10 +107,12 @@ function SummarizeTableWithAIModal({
 
       abortControllerRef.current = new AbortController();
 
+      const token = localStorage.getItem('authToken');
       const response = await fetch(llmRoutes.summarizeTable, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           tableData: tableDataMarkdown,

@@ -31,11 +31,12 @@ function SummaryModal({
       }
 
       abortControllerRef.current = new AbortController();
-
+      const token = localStorage.getItem('authToken');
       const response = await fetch(llmRoutes.summarizeLinks, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ urls: links, ids: ids }),
         signal: abortControllerRef.current.signal,

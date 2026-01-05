@@ -17,6 +17,7 @@ import Markdown from 'react-markdown';
 import { transformKGToMinimalDynamic } from './metaDataTransformation';
 import { useQuery } from '@tanstack/react-query';
 import { llmRoutes } from '../../../API/routes';
+import { useAuth } from '../../../context/AuthContext';
 
 interface ExpansionState {
   [key: string]: boolean;
@@ -79,6 +80,7 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
   useEffect(() => {
     if (showSummarizeResults) setStreamedText('');
   }, [showSummarizeResults]);
+  const { user } = useAuth();
 
   const { refetch } = useQuery({
     queryKey: ['summaryLinks', 'test'],
@@ -89,11 +91,13 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
       }
 
       abortControllerRef.current = new AbortController();
+      const token = localStorage.getItem('authToken');
 
       const response = await fetch(llmRoutes.summarizeKGNodes, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ minimalJson: minifiedJson }),
         signal: abortControllerRef.current.signal,
@@ -160,41 +164,54 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
             {!showSummarizeResults ? <ExpandMore /> : <ExpandLess />}
           </IconButton>
         </h4>
-        {showSummarizeResults && (
-          <div
-            style={{
-              height: '300px',
-              overflowY: 'auto',
-              marginBottom: '16px',
-            }}
-          >
-            {streamedText ? (
-              <Markdown
-                components={{
-                  h2: ({ node, ...props }) => <h2 style={{ marginTop: '0.5em' }} {...props} />,
-                  h3: ({ node, ...props }) => <h3 style={{ marginTop: '0.5em' }} {...props} />,
-                  p: ({ node, ...props }) => (
-                    <p style={{ marginTop: '0.5em', marginBottom: '0.5em' }} {...props} />
-                  ),
-                  ul: ({ node, ...props }) => (
-                    <ul
-                      style={{ paddingLeft: '1.5em', marginTop: '0.5em', marginBottom: '0.5em' }}
-                      {...props}
-                    />
-                  ),
+        {showSummarizeResults &&
+          (!user ? (
+            <>
+              <p style={{ marginBottom: '16px' }}>
+                Please log in to use the summarization feature.
+              </p>
+            </>
+          ) : (
+            <>
+              <div
+                style={{
+                  height: '300px',
+                  overflowY: 'auto',
+                  marginBottom: '16px',
                 }}
               >
-                {streamedText}
-              </Markdown>
-            ) : (
-              <>
-                {Array(3).fill(
-                  <Skeleton variant="rounded" width="100%" height={20} sx={{ mb: 1 }} />
+                {streamedText ? (
+                  <Markdown
+                    components={{
+                      h2: ({ node, ...props }) => <h2 style={{ marginTop: '0.5em' }} {...props} />,
+                      h3: ({ node, ...props }) => <h3 style={{ marginTop: '0.5em' }} {...props} />,
+                      p: ({ node, ...props }) => (
+                        <p style={{ marginTop: '0.5em', marginBottom: '0.5em' }} {...props} />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul
+                          style={{
+                            paddingLeft: '1.5em',
+                            marginTop: '0.5em',
+                            marginBottom: '0.5em',
+                          }}
+                          {...props}
+                        />
+                      ),
+                    }}
+                  >
+                    {streamedText}
+                  </Markdown>
+                ) : (
+                  <>
+                    {Array(3).fill(
+                      <Skeleton variant="rounded" width="100%" height={20} sx={{ mb: 1 }} />
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </div>
-        )}
+              </div>
+            </>
+          ))}
       </div>
       <div>
         <h4>Supporting Publications</h4>

@@ -2,6 +2,8 @@ import React from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SummaryModal from './SummaryModal';
+import { useAuth } from '../../../context/AuthContext';
+import LoginWarning from '../leftDrawer/LoginWarning';
 
 interface Attribute {
   attribute_type_id: string;
@@ -50,11 +52,24 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
         : null;
   };
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
+  const { user } = useAuth();
+  const [loginWarningOpen, setLoginWarningOpen] = React.useState(false);
+
+  function toggleSummarizeWithAI() {
+    if (!user) {
+      setLoginWarningOpen(true);
+    } else {
+      setIsSummaryModalOpen(!isSummaryModalOpen);
+    }
+  }
 
   const linkList = Array.isArray(value) ? value.map(getLinkFromValue) : [getLinkFromValue(value)];
   const idList = Array.isArray(value) ? value : [value];
   return (
     <TableCell>
+      {loginWarningOpen && (
+        <LoginWarning isOpen={loginWarningOpen} onClose={() => setLoginWarningOpen(false)} />
+      )}
       {isSummaryModalOpen && (
         <SummaryModal
           isOpen={isSummaryModalOpen}
@@ -91,7 +106,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
           </li>
         )}
       </ul>
-      <Button variant="contained" sx={{ my: 1 }} onClick={() => setIsSummaryModalOpen(true)}>
+      <Button variant="contained" sx={{ my: 1 }} onClick={() => toggleSummarizeWithAI()}>
         Summarize with AI
       </Button>
     </TableCell>
