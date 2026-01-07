@@ -25,6 +25,7 @@ interface User {
   createdAt: string;
   name?: string;
   profilePicture?: string;
+  role: 'user' | 'admin' | 'premium';
   _count?: {
     WebAuthnCredential: number;
   };

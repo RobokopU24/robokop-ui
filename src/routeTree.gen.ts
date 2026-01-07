@@ -27,6 +27,7 @@ import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ExploreIndexRouteImport } from './routes/explore/index'
 import { Route as DetailsIndexRouteImport } from './routes/details/index'
 import { Route as AnswerIndexRouteImport } from './routes/answer/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ActivateUserIndexRouteImport } from './routes/activate-user/index'
 import { Route as ShareShare_idIndexRouteImport } from './routes/share/$share_id/index'
 import { Route as ExploreGraphsIndexRouteImport } from './routes/explore/graphs/index'
@@ -125,6 +126,11 @@ const AnswerIndexRoute = AnswerIndexRouteImport.update({
   path: '/answer/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ActivateUserIndexRoute = ActivateUserIndexRouteImport.update({
   id: '/activate-user/',
   path: '/activate-user/',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/activate-user': typeof ActivateUserIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/answer': typeof AnswerIndexRoute
   '/details': typeof DetailsIndexRoute
   '/explore': typeof ExploreIndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/activate-user': typeof ActivateUserIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/answer': typeof AnswerIndexRoute
   '/details': typeof DetailsIndexRoute
   '/explore': typeof ExploreIndexRoute
@@ -234,6 +242,7 @@ export interface FileRoutesById {
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/activate-user/': typeof ActivateUserIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/answer/': typeof AnswerIndexRoute
   '/details/': typeof DetailsIndexRoute
   '/explore/': typeof ExploreIndexRoute
@@ -263,6 +272,7 @@ export interface FileRouteTypes {
     | '/tutorial'
     | '/welcome'
     | '/activate-user'
+    | '/admin'
     | '/answer'
     | '/details'
     | '/explore'
@@ -290,6 +300,7 @@ export interface FileRouteTypes {
     | '/tutorial'
     | '/welcome'
     | '/activate-user'
+    | '/admin'
     | '/answer'
     | '/details'
     | '/explore'
@@ -317,6 +328,7 @@ export interface FileRouteTypes {
     | '/tutorial'
     | '/welcome'
     | '/activate-user/'
+    | '/admin/'
     | '/answer/'
     | '/details/'
     | '/explore/'
@@ -345,6 +357,7 @@ export interface RootRouteChildren {
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
   ActivateUserIndexRoute: typeof ActivateUserIndexRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   AnswerIndexRoute: typeof AnswerIndexRoute
   DetailsIndexRoute: typeof DetailsIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
@@ -485,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnswerIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/activate-user/': {
       id: '/activate-user/'
       path: '/activate-user'
@@ -553,6 +573,7 @@ const rootRouteChildren: RootRouteChildren = {
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
   ActivateUserIndexRoute: ActivateUserIndexRoute,
+  AdminIndexRoute: AdminIndexRoute,
   AnswerIndexRoute: AnswerIndexRoute,
   DetailsIndexRoute: DetailsIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,

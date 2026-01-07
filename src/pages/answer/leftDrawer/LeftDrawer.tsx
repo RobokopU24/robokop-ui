@@ -75,6 +75,7 @@ export default function LeftDrawer({
   const [summarizeWithAIOpen, setSummarizeWithAIOpen] = useState(false);
   const [summarizeTableWithAIOpen, setSummarizeTableWithAIOpen] = useState(false);
   const [loginWarningOpen, setLoginWarningOpen] = useState(false);
+  const [warningType, setWarningType] = useState<'login' | 'premium' | null>(null);
 
   function toggleDisplay(component: string, show: boolean) {
     updateDisplayState({ type: 'toggle', payload: { component, show } });
@@ -84,9 +85,15 @@ export default function LeftDrawer({
 
   function toggleSummarizeWithAI() {
     if (!user) {
+      setWarningType('login');
       setLoginWarningOpen(true);
     } else {
-      setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen);
+      if (user.role !== 'admin' && user.role !== 'premium') {
+        setWarningType('premium');
+        setLoginWarningOpen(true);
+      } else {
+        setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen);
+      }
     }
   }
 
@@ -99,7 +106,13 @@ export default function LeftDrawer({
         paper: 'leftDrawer',
       }}
     >
-      <LoginWarning isOpen={loginWarningOpen} onClose={() => setLoginWarningOpen(false)} />
+      {loginWarningOpen && (
+        <LoginWarning
+          isOpen={loginWarningOpen}
+          onClose={() => setLoginWarningOpen(false)}
+          warningType={warningType}
+        />
+      )}
       <Toolbar />
       <List>
         {Object.entries(displayState).map(([key, val]) => (

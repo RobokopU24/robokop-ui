@@ -171,6 +171,13 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
                 Please log in to use the summarization feature.
               </p>
             </>
+          ) : user.role !== 'admin' && user.role !== 'premium' ? (
+            <>
+              <p style={{ marginBottom: '16px' }}>
+                This is a premium feature. Please upgrade your account to access AI-powered
+                summarization.
+              </p>
+            </>
           ) : (
             <>
               <div

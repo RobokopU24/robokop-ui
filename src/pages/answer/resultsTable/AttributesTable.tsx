@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SummaryModal from './SummaryModal';
@@ -54,12 +54,19 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false);
   const { user } = useAuth();
   const [loginWarningOpen, setLoginWarningOpen] = React.useState(false);
+  const [warningType, setWarningType] = useState<'login' | 'premium' | null>(null);
 
   function toggleSummarizeWithAI() {
     if (!user) {
+      setWarningType('login');
       setLoginWarningOpen(true);
     } else {
-      setIsSummaryModalOpen(!isSummaryModalOpen);
+      if (user.role !== 'admin' && user.role !== 'premium') {
+        setWarningType('premium');
+        setLoginWarningOpen(true);
+      } else {
+        setIsSummaryModalOpen(!isSummaryModalOpen);
+      }
     }
   }
 
@@ -68,7 +75,11 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
   return (
     <TableCell>
       {loginWarningOpen && (
-        <LoginWarning isOpen={loginWarningOpen} onClose={() => setLoginWarningOpen(false)} />
+        <LoginWarning
+          isOpen={loginWarningOpen}
+          onClose={() => setLoginWarningOpen(false)}
+          warningType={warningType}
+        />
       )}
       {isSummaryModalOpen && (
         <SummaryModal

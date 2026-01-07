@@ -44,4 +44,10 @@ export const llmRoutes = {
   summarizeTable: `${llmEndpoint}/stream-table-summary`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes };
+const adminEndpoint = `${baseAuthURL}/admin`;
+export const adminRoutes = {
+  base: adminEndpoint,
+  users: `${adminEndpoint}/users`,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes, adminRoutes };

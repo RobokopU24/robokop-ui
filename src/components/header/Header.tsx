@@ -67,6 +67,7 @@ function Header() {
     ? [
         { key: 'profile', label: 'Profile', onClick: handleProfileClick },
         { key: 'logout', label: 'Logout', onClick: handleLogout },
+        ...(user.role === 'admin' ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
     : [{ key: 'login', label: 'Login', onClick: handleLoginClick }];
 
