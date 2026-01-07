@@ -10,7 +10,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
   Link,
   Skeleton,
   Accordion,
@@ -26,10 +25,9 @@ import {
   CloudDownload as CloudDownloadIcon,
 } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import API from '../../API/routes';
 import { formatFileSize } from '../../utils/getFileSize';
 import { formatBuildDate } from '../../utils/dateTime';
+import { getGraphMetadataDownloads } from '../../functions/graphFunctions';
 
 function DownloadSection() {
   const { graph_id } = useParams({ strict: false });
@@ -37,10 +35,7 @@ function DownloadSection() {
 
   const { data: downloadData, isLoading: isLoadingDownload } = useQuery({
     queryKey: ['graph-metadata', graph_id, 'download'],
-    queryFn: async () => {
-      const res = await axios.get(API.fileRoutes.base + `/${graph_id}`);
-      return res.data;
-    },
+    queryFn: () => getGraphMetadataDownloads(graph_id!),
   });
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -81,7 +76,7 @@ function DownloadSection() {
   return (
     <Box sx={{ mt: 5 }} id="download">
       <Card variant="outlined">
-        <CardHeader title="Prior releases" sx={{ pb: 0 }} />
+        <CardHeader title="Releases" sx={{ pb: 0 }} />
         <CardContent>
           <Box>
             {isLoadingDownload ? (

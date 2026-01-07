@@ -1,0 +1,358 @@
+import { RichTextarea } from 'rich-textarea';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import {
+  autoUpdate,
+  FloatingFocusManager,
+  FloatingPortal,
+  size,
+  useDismiss,
+  useId,
+  useInteractions,
+  useListNavigation,
+  useRole,
+  flip, useFloating,
+} from '@floating-ui/react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+async function nameLookup({
+  name,
+  limit = 100,
+  biolinkTypeFilter,
+  taxaFilter,
+  signal,
+}: {
+  name: string;
+  limit?: number;
+  biolinkTypeFilter: string;
+  taxaFilter?: string[];
+  signal: AbortSignal;
+}) {
+  const { data } = await axios.get('https://robokop-name-resolver.apps.renci.org/lookup', {
+    signal,
+    params: {
+      string: name,
+      autocomplete: true,
+      offset: 0,
+      limit,
+      biolink_type: biolinkTypeFilter,
+      only_taxa: (taxaFilter || []).join('|') || undefined,
+    },
+  });
+
+  return data;
+}
+
+export default function NodeInputBox({
+  onCurieListChange, inputNodeTaxa, inputNodeType, curieMode,
+}: {
+  onCurieListChange: (curies: string[]) => void;
+  inputNodeTaxa: string;
+  inputNodeType: string;
+  curieMode: boolean;
+}) {
+  const [open, setOpen] = useState<boolean>(false);
+  const [value, setValue] = useState<string>('');
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [validNames, setValidNames] = useState<Map<string, string>>(new Map());
+
+  useEffect(() => {
+    let curies = [];
+    if (curieMode) {
+      curies = value.split('\n').map((line) => line.trim()).filter((line) => line.length > 0);
+    } else {
+      curies = value
+        .split('\n')
+        .map((line) => validNames.get(line))
+        .filter((line) => line !== undefined);
+    }
+    onCurieListChange(curies);
+  }, [value, validNames, onCurieListChange, curieMode]);
+
+  const [selection, setSelection] = useState({
+    top: 0, left: 0, selectionStart: 0, selectionEnd: 0,
+  });
+
+  const listRef = useRef<Array<HTMLElement | null>>([]);
+
+  const { refs, floatingStyles, context } = useFloating({
+    whileElementsMounted: autoUpdate,
+    open,
+    onOpenChange: setOpen,
+    placement: 'bottom-start',
+    middleware: [
+      flip(),
+      size({
+        padding: 16,
+        apply({ availableHeight, availableWidth, elements }) {
+          elements.floating.style.maxHeight = `${availableHeight}px`;
+          elements.floating.style.maxWidth = `${availableWidth}px`;
+        },
+      }),
+    ],
+  });
+
+  const role = useRole(context, { role: 'listbox' });
+  const dismiss = useDismiss(context);
+  const listNav = useListNavigation(context, {
+    listRef,
+    activeIndex,
+    onNavigate: setActiveIndex,
+    openOnArrowKeyDown: false,
+    virtual: true,
+    loop: true,
+    enabled: open && !curieMode,
+  });
+
+  const { getReferenceProps, getFloatingProps, getItemProps } = useInteractions(
+    [role, dismiss, listNav],
+  );
+
+  const getCurrentLineIndex = useCallback(
+    () => value.slice(0, selection.selectionStart).split('\n').length - 1,
+    [value, selection],
+  );
+
+  useEffect(() => {
+    refs.setPositionReference({
+      getBoundingClientRect: () => ({
+        x: 0,
+        y: 0,
+        top: selection.top,
+        left: selection.left,
+        bottom: selection.top + 20,
+        right: selection.left,
+        width: 0,
+        height: 20,
+      }),
+    });
+  }, [selection, refs]);
+
+  const currentLineText = useMemo(() => {
+    const currentLineIndex = getCurrentLineIndex();
+    return value.split('\n')[currentLineIndex];
+  }, [getCurrentLineIndex, value]);
+
+  const {
+    data: options,
+    isLoading,
+  } = useQuery<{
+    curie: string;
+    label: string;
+    synonyms: string[];
+    taxa: string[];
+    types: string[];
+  }[]>({
+    queryFn: async ({ signal }) => {
+      if (curieMode) return [];
+      if (currentLineText.length === 0) return [];
+      return nameLookup({
+        signal,
+        name: currentLineText,
+        taxaFilter: inputNodeTaxa.trim().split(',').map(((t) => t.trim())),
+        biolinkTypeFilter: inputNodeType,
+      });
+    },
+    queryKey: [currentLineText, inputNodeTaxa, inputNodeType],
+  });
+
+  function handleSelectItem() {
+    setActiveIndex(null);
+    setOpen(false);
+
+    if (!options || options.length === 0 || activeIndex === null) return;
+
+    const selectedOption = options[activeIndex];
+
+    setValidNames((prev) => {
+      const nextMap = new Map(prev);
+      nextMap.set(selectedOption.label, selectedOption.curie);
+      return nextMap;
+    });
+
+    setValue((prev) => {
+      const lines = prev.split('\n');
+      const currentLineIndex = getCurrentLineIndex();
+      lines[currentLineIndex] = selectedOption.label;
+      return lines.join('\n');
+    });
+  }
+
+  return (
+    <div>
+      {/* REFERENCE */}
+      <span
+        style={{
+          fontSize: '14px',
+          color: '#626262',
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
+          paddingLeft: '8px',
+        }}
+      >
+        Input nodes (1 per line)
+      </span>
+      <RichTextarea
+        style={{
+          padding: '8px',
+          border: '1px solid #9F9F9F',
+          borderRadius: '4px',
+          width: '100%',
+          maxWidth: '100%',
+          fontSize: '16px',
+        }}
+        rows={10}
+        autoHeight
+        onSelectionChange={setSelection as any}
+        {...getReferenceProps({
+          value,
+          onChange: (e) => {
+            setValue((e.target as unknown as { value: string }).value);
+          },
+          'aria-autocomplete': 'list',
+          onKeyDown: (e) => {
+            if (open) {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleSelectItem();
+              }
+            }
+
+            const noModifiers = !e.ctrlKey && !e.altKey && !e.metaKey;
+
+            if (
+              (e.ctrlKey && e.code === 'Space') ||
+              (noModifiers && e.key.length === 1 && e.key.match(/\S| /))
+            ) {
+              setActiveIndex(0);
+              setOpen(true);
+            }
+          },
+        })}
+      >
+        {(content) => content.split('\n').map((line, i) => {
+          let style;
+          if (!curieMode) {
+            if (validNames.has(line)) {
+              style = { backgroundColor: '#95FA7F' };
+            } else {
+              style = { backgroundColor: '#F09C97' };
+            }
+          }
+          return (
+            <React.Fragment key={i}>
+              <span style={style}>
+                {`${line}\n`}
+              </span>
+            </React.Fragment>
+          );
+        })}
+      </RichTextarea>
+
+      {/* FLOATING */}
+      {open && !curieMode && (
+        <FloatingPortal>
+          <FloatingFocusManager
+            context={context}
+            initialFocus={-1}
+            visuallyHiddenDismiss
+          >
+            <div
+              {...getFloatingProps({
+                ref: refs.setFloating,
+                style: {
+                  backgroundColor: 'white',
+                  boxSizing: 'border-box',
+                  border: '1px solid #9F9F9F',
+                  borderRadius: '4px',
+                  overflow: 'auto',
+                  boxShadow:
+                    '0px 2px 2px rgba(0 0 0 / 0.25), 0px 4px 4px rgba(0 0 0 / 0.25)',
+                  ...floatingStyles,
+                },
+              })}
+            >
+              {isLoading && (
+                <div style={{ padding: '2px 8px', fontStyle: 'italic' }}>
+                  Loading&hellip;
+                </div>
+              )}
+              {options === undefined || (options.length === 0 && !isLoading) ? (
+                <div style={{ padding: '2px 8px' }}>
+                  No matching results, please try a different query
+                </div>
+              ) : (
+                <>
+                  {Boolean(options) && options.map((option, i) => (
+                    <Item
+                      {...getItemProps({
+                        ref(node) {
+                          listRef.current[i] = node;
+                        },
+                        onClick() {
+                          handleSelectItem();
+                        },
+                      })}
+                      key={option.curie}
+                      active={activeIndex === i}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          gap: '16px',
+                        }}
+                      >
+                        <span>{option.label}</span>
+                        <span style={{ fontFamily: 'monospace' }}>
+                          {option.curie}
+                        </span>
+                      </div>
+                    </Item>
+                  ))}
+                </>
+              )}
+            </div>
+          </FloatingFocusManager>
+        </FloatingPortal>
+      )}
+    </div>
+  );
+}
+
+type ItemProps = React.HTMLAttributes<HTMLDivElement> & {
+  active?: boolean;
+  children: React.ReactNode;
+};
+
+const Item = React.memo(
+  forwardRef<HTMLDivElement, ItemProps>(
+    ({ children, active, ...rest }, ref) => {
+      const id = useId();
+      return (
+        <div
+          ref={ref}
+          role="option"
+          id={id}
+          aria-selected={active}
+          {...rest}
+          style={{
+            background: active ? '#D9D9D9' : 'none',
+            padding: '2px 8px',
+            cursor: 'pointer',
+            ...rest.style,
+          }}
+        >
+          {children}
+        </div>
+      );
+    },
+  ),
+);

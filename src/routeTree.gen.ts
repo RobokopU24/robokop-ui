@@ -29,6 +29,7 @@ import { Route as DetailsIndexRouteImport } from './routes/details/index'
 import { Route as AnswerIndexRouteImport } from './routes/answer/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ActivateUserIndexRouteImport } from './routes/activate-user/index'
+import { Route as ExploreEnrichmentAnalysisRouteImport } from './routes/explore/enrichment-analysis'
 import { Route as ShareShare_idIndexRouteImport } from './routes/share/$share_id/index'
 import { Route as ExploreGraphsIndexRouteImport } from './routes/explore/graphs/index'
 import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/drug-chemical/index'
@@ -136,6 +137,12 @@ const ActivateUserIndexRoute = ActivateUserIndexRouteImport.update({
   path: '/activate-user/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreEnrichmentAnalysisRoute =
+  ExploreEnrichmentAnalysisRouteImport.update({
+    id: '/explore/enrichment-analysis',
+    path: '/explore/enrichment-analysis',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ShareShare_idIndexRoute = ShareShare_idIndexRouteImport.update({
   id: '/share/$share_id/',
   path: '/share/$share_id/',
@@ -184,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/explore/enrichment-analysis': typeof ExploreEnrichmentAnalysisRoute
   '/activate-user': typeof ActivateUserIndexRoute
   '/admin': typeof AdminIndexRoute
   '/answer': typeof AnswerIndexRoute
@@ -212,6 +220,7 @@ export interface FileRoutesByTo {
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/explore/enrichment-analysis': typeof ExploreEnrichmentAnalysisRoute
   '/activate-user': typeof ActivateUserIndexRoute
   '/admin': typeof AdminIndexRoute
   '/answer': typeof AnswerIndexRoute
@@ -241,6 +250,7 @@ export interface FileRoutesById {
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
+  '/explore/enrichment-analysis': typeof ExploreEnrichmentAnalysisRoute
   '/activate-user/': typeof ActivateUserIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/answer/': typeof AnswerIndexRoute
@@ -271,6 +281,7 @@ export interface FileRouteTypes {
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
+    | '/explore/enrichment-analysis'
     | '/activate-user'
     | '/admin'
     | '/answer'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
+    | '/explore/enrichment-analysis'
     | '/activate-user'
     | '/admin'
     | '/answer'
@@ -327,6 +339,7 @@ export interface FileRouteTypes {
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
+    | '/explore/enrichment-analysis'
     | '/activate-user/'
     | '/admin/'
     | '/answer/'
@@ -356,6 +369,7 @@ export interface RootRouteChildren {
   TermsofserviceRoute: typeof TermsofserviceRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
+  ExploreEnrichmentAnalysisRoute: typeof ExploreEnrichmentAnalysisRoute
   ActivateUserIndexRoute: typeof ActivateUserIndexRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AnswerIndexRoute: typeof AnswerIndexRoute
@@ -512,6 +526,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ActivateUserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/enrichment-analysis': {
+      id: '/explore/enrichment-analysis'
+      path: '/explore/enrichment-analysis'
+      fullPath: '/explore/enrichment-analysis'
+      preLoaderRoute: typeof ExploreEnrichmentAnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/share/$share_id/': {
       id: '/share/$share_id/'
       path: '/share/$share_id'
@@ -572,6 +593,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsofserviceRoute: TermsofserviceRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
+  ExploreEnrichmentAnalysisRoute: ExploreEnrichmentAnalysisRoute,
   ActivateUserIndexRoute: ActivateUserIndexRoute,
   AdminIndexRoute: AdminIndexRoute,
   AnswerIndexRoute: AnswerIndexRoute,
