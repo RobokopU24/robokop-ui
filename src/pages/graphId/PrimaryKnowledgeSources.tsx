@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   CardContent,
   Divider,
@@ -76,6 +76,10 @@ function PrimaryKnowledgeSources({ graphData }: { graphData: any }) {
     return data.filter((row) => row.predicate.toLowerCase().includes(q));
   }, [data, searchQuery]);
 
+  useEffect(() => {
+    setPagination({ pageIndex: 0, pageSize: 10 });
+  }, [filteredData.length]);
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('predicate', {
@@ -124,7 +128,6 @@ function PrimaryKnowledgeSources({ graphData }: { graphData: any }) {
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);
-              setPagination((prev) => ({ ...prev, pageIndex: 0 }));
             }}
             InputProps={{
               startAdornment: (

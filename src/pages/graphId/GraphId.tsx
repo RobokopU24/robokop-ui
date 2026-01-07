@@ -10,10 +10,9 @@ import {
   Container,
   Grid,
   Stack,
-  styled,
   Typography,
 } from '@mui/material';
-import { Link } from '@tanstack/react-router';
+import { Link, useParams } from '@tanstack/react-router';
 import { formatFileSize } from '../../utils/getFileSize';
 import stringUtils from '../../utils/strings';
 import DownloadSection from './Download';
@@ -28,12 +27,14 @@ import Sidebar from './Sidebar';
 import './GraphId.css';
 import SankeyGraphModal from './SankeyGraphModal';
 import { formatBuildDate } from '../../utils/dateTime';
+import { getGraphMetadataDownloads } from '../../functions/graphFunctions';
 
 interface GraphIdProps {
   graphData: any;
 }
 
 function GraphId({ graphData }: GraphIdProps) {
+  const { graph_id } = useParams({ strict: false });
   const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
   const { data: fileSize } = useQuery({
     queryKey: ['graph-metadata', graphData.graph_id, 'file-size'],
@@ -43,6 +44,10 @@ function GraphId({ graphData }: GraphIdProps) {
       });
       return results.data.size;
     },
+  });
+  const { data: downloadData } = useQuery({
+    queryKey: ['graph-metadata', graph_id, 'download'],
+    queryFn: () => getGraphMetadataDownloads(graph_id!),
   });
 
   let nodeSet: Set<string> = new Set();
@@ -61,6 +66,10 @@ function GraphId({ graphData }: GraphIdProps) {
     nodes: Array.from(nodeSet).map((id) => ({ id })),
     links,
   };
+
+  const latestMetadataUrl = downloadData?.data
+    ?.at(-1)
+    ?.links?.filter((link: any) => link.url.includes('meta.json'))[0]?.url;
 
   return (
     <Container sx={{ my: 6, maxWidth: '1920px !important', display: 'flex', gap: 4 }}>
@@ -186,6 +195,22 @@ function GraphId({ graphData }: GraphIdProps) {
                 >
                   Sankey Graph
                 </button>
+                {latestMetadataUrl && (
+                  <a
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      maxWidth: '200px',
+                    }}
+                    className="details-card-secondary-button"
+                    href={latestMetadataUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Latest Metadata <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                  </a>
+                )}
               </Stack>
             </Stack>
           </CardContent>
