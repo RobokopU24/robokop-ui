@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-
+import React, { useCallback, useEffect, useState } from 'react';
+import { isPremiumOrAdmin } from '../../../utils/roles';
 import {
   Drawer,
   Toolbar,
@@ -88,7 +88,7 @@ export default function LeftDrawer({
       setWarningType('login');
       setLoginWarningOpen(true);
     } else {
-      if (user.role !== 'admin' && user.role !== 'premium') {
+      if (!isPremiumOrAdmin(user.role)) {
         setWarningType('premium');
         setLoginWarningOpen(true);
       } else {

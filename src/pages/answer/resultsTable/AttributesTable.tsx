@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import SummaryModal from './SummaryModal';
 import { useAuth } from '../../../context/AuthContext';
+import { isPremiumOrAdmin } from '../../../utils/roles';
 import LoginWarning from '../leftDrawer/LoginWarning';
 
 interface Attribute {
@@ -61,7 +62,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
       setWarningType('login');
       setLoginWarningOpen(true);
     } else {
-      if (user.role !== 'admin' && user.role !== 'premium') {
+      if (!isPremiumOrAdmin(user.role)) {
         setWarningType('premium');
         setLoginWarningOpen(true);
       } else {

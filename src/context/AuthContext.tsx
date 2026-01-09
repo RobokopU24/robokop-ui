@@ -4,6 +4,7 @@ import axios from 'axios';
 import routes from '../API/routes';
 import { useAlert } from '../components/AlertProvider';
 import posthog from 'posthog-js';
+import { User } from '../functions/userFunctions';
 
 interface AuthContextType {
   user: User | null;
@@ -19,17 +20,6 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-interface User {
-  id: string;
-  email: string;
-  createdAt: string;
-  name?: string;
-  profilePicture?: string;
-  role: 'user' | 'admin' | 'premium';
-  _count?: {
-    WebAuthnCredential: number;
-  };
-}
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const { displayAlert } = useAlert();

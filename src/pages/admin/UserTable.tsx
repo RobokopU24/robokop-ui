@@ -20,16 +20,26 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import { useQuery } from '@tanstack/react-query';
+import { getUsers } from '../../functions/userFunctions';
+import EditModal from './EditModal';
 
 function UserTable() {
-  const [userList, setUserList] = React.useState<Array<any>>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  // const [userList, setUserList] = React.useState<Array<any>>([]);
+  // const [loading, setLoading] = React.useState(true);
+  // const [error, setError] = React.useState<string | null>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [selectedUser, setSelectedUser] = React.useState<any>(null);
 
   const handleEdit = (user: any) => {
-    // TODO: Implement edit functionality
-    console.log('Edit user:', user);
+    setSelectedUser(user);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setSelectedUser(null);
+    setIsEditModalOpen(false);
   };
 
   const columns = [
@@ -82,24 +92,18 @@ function UserTable() {
     },
   ];
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setLoading(true);
-        const res = await authApi.get(adminRoutes.users);
-        setUserList(res.data);
-        setError(null);
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch users');
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUsers();
-  }, []);
+  const {
+    data: userList,
+    isLoading,
+    isError,
+    error: fetchError,
+  } = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  });
 
   const table = useReactTable({
-    data: userList,
+    data: userList || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -109,20 +113,23 @@ function UserTable() {
     },
   });
 
-  if (loading) {
+  if (isLoading) {
     return <div>Loading users...</div>;
   }
 
-  if (error) {
-    return <div style={{ color: 'red' }}>Error: {error}</div>;
+  if (isError) {
+    return <div style={{ color: 'red' }}>Error: {fetchError.message}</div>;
   }
 
-  if (userList.length === 0) {
+  if (userList?.length === 0) {
     return <div>No users found.</div>;
   }
 
   return (
     <div>
+      {isEditModalOpen && (
+        <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} selectedUser={selectedUser} />
+      )}
       <h2 style={{ margin: '20px 0' }}>Users</h2>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="user table">

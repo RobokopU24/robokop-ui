@@ -18,6 +18,7 @@ import { transformKGToMinimalDynamic } from './metaDataTransformation';
 import { useQuery } from '@tanstack/react-query';
 import { llmRoutes } from '../../../API/routes';
 import { useAuth } from '../../../context/AuthContext';
+import { isPremiumOrAdmin } from '../../../utils/roles';
 
 interface ExpansionState {
   [key: string]: boolean;
@@ -171,7 +172,7 @@ export default function ResultMetaData({ metaData, result }: ResultMetaDataProps
                 Please log in to use the summarization feature.
               </p>
             </>
-          ) : user.role !== 'admin' && user.role !== 'premium' ? (
+          ) : !isPremiumOrAdmin(user.role) ? (
             <>
               <p style={{ marginBottom: '16px' }}>
                 This is a premium feature. Please upgrade your account to access AI-powered

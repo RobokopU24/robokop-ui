@@ -7,6 +7,7 @@ import Logo from '../Logo';
 import { useNavigate, Link } from '@tanstack/react-router';
 import LoginDialog from '../LoginDialog';
 import { useAuth } from '../../context/AuthContext';
+import { isAdmin } from '../../utils/roles';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import DropdownMenu, { type MenuItemConfig } from '../shared/DropdownMenu';
 
@@ -67,7 +68,7 @@ function Header() {
     ? [
         { key: 'profile', label: 'Profile', onClick: handleProfileClick },
         { key: 'logout', label: 'Logout', onClick: handleLogout },
-        ...(user.role === 'admin' ? [{ to: '/admin', label: 'Admin' }] : []),
+        ...(isAdmin(user.role) ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
     : [{ key: 'login', label: 'Login', onClick: handleLoginClick }];
 
