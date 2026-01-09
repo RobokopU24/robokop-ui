@@ -8,3 +8,10 @@
 .hover-row:hover .details-card-button {
     opacity: 1;
 }
+
+.external-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}

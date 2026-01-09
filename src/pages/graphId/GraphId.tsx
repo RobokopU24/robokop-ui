@@ -135,38 +135,43 @@ function GraphId({ graphData }: GraphIdProps) {
                 direction={{ xs: 'column', sm: 'row' }}
                 spacing={1.5}
                 sx={{ mt: 2 }}
-                // width="fit-content"
+                alignItems="center"
               >
                 {graphData.graph_url && (
-                  <a
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      maxWidth: '200px',
-                    }}
-                    className="details-card-secondary-button"
-                    href={graphData.graph_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Graph website <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
-                  </a>
+                  <>
+                    <a
+                      className="external-links"
+                      href={graphData.graph_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {graphData.graph_id === 'robokopkg' ? 'Neo4j Browser' : 'Knowledge Source'}{' '}
+                      <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                    </a>
+                  </>
                 )}
+                <p>•</p>
                 <a
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    maxWidth: '200px',
-                  }}
-                  className="details-card-secondary-button"
+                  className="external-links"
                   href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
                 </a>
+                <p>•</p>
+                {latestMetadataUrl && (
+                  <a
+                    className="external-links"
+                    href={latestMetadataUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Latest Metadata <OpenInNew sx={{ ml: 0.5 }} />
+                  </a>
+                )}
+              </Stack>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 2 }}>
                 <a
                   className="details-card-button"
                   href={graphData.neo4j_dump}
@@ -179,10 +184,8 @@ function GraphId({ graphData }: GraphIdProps) {
                     maxWidth: '300px',
                   }}
                 >
-                  <span>Download Graph {formatFileSize(fileSize || 0, 2)}</span> <Download />
+                  <span>Download Graph ({formatFileSize(fileSize || 0, 2)})</span> <Download />
                 </a>
-              </Stack>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 2 }}>
                 <button
                   style={{
                     display: 'flex',
@@ -193,24 +196,8 @@ function GraphId({ graphData }: GraphIdProps) {
                   className="details-card-secondary-button"
                   onClick={() => setIsSankeyGraphModalOpen(true)}
                 >
-                  Sankey Graph
+                  Sankey Chart
                 </button>
-                {latestMetadataUrl && (
-                  <a
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      maxWidth: '200px',
-                    }}
-                    className="details-card-secondary-button"
-                    href={latestMetadataUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Latest Metadata <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
-                  </a>
-                )}
               </Stack>
             </Stack>
           </CardContent>
