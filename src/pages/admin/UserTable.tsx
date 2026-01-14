@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { adminRoutes } from '../../API/routes';
-import { authApi } from '../../API/baseUrlProxy';
+'use no memo';
+
+import React from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -20,17 +20,32 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Button from '@mui/material/Button';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import TablePagination from '@mui/material/TablePagination';
+import CircularProgress from '@mui/material/CircularProgress';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '../../functions/userFunctions';
+import useDebounce from '../../stores/useDebounce';
 import EditModal from './EditModal';
 
 function UserTable() {
-  // const [userList, setUserList] = React.useState<Array<any>>([]);
-  // const [loading, setLoading] = React.useState(true);
-  // const [error, setError] = React.useState<string | null>(null);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<any>(null);
+  const [searchFilter, setSearchFilter] = React.useState('');
+  const [roleFilter, setRoleFilter] = React.useState('');
+  const [selectedUsers, setSelectedUsers] = React.useState<string[]>([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+
+  const debouncedSearch = useDebounce(searchFilter, 300) as string;
 
   const handleEdit = (user: any) => {
     setSelectedUser(user);
@@ -98,12 +113,31 @@ function UserTable() {
     isError,
     error: fetchError,
   } = useQuery({
-    queryKey: ['users'],
-    queryFn: getUsers,
+    queryKey: ['users', debouncedSearch, roleFilter, page, rowsPerPage],
+    queryFn: () =>
+      getUsers({
+        search: debouncedSearch || undefined,
+        role: roleFilter || undefined,
+        page: page + 1,
+        limit: rowsPerPage,
+      }),
   });
 
+  React.useEffect(() => {
+    setPage(0);
+  }, [debouncedSearch, roleFilter]);
+
+  const handleChangePage = (_event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
   const table = useReactTable({
-    data: userList || [],
+    data: userList?.users || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -113,17 +147,57 @@ function UserTable() {
     },
   });
 
-  if (isLoading) {
-    return <div>Loading users...</div>;
-  }
+  console.log('userList:', userList);
 
-  if (isError) {
-    return <div style={{ color: 'red' }}>Error: {fetchError.message}</div>;
-  }
+  const renderTableContent = () => {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+            <CircularProgress size={40} />
+          </TableCell>
+        </TableRow>
+      );
+    }
 
-  if (userList?.length === 0) {
-    return <div>No users found.</div>;
-  }
+    if (isError) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} align="center" sx={{ py: 4, color: 'error.main' }}>
+            Error: {fetchError.message}
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    if (!userList?.users?.length) {
+      return (
+        <TableRow>
+          <TableCell colSpan={columns.length} align="center" sx={{ py: 4 }}>
+            No users found.
+          </TableCell>
+        </TableRow>
+      );
+    }
+
+    return table.getRowModel().rows.map((row) => (
+      <TableRow
+        key={row.id}
+        sx={{
+          '&:last-child td, &:last-child th': { border: 0 },
+          '&:hover': { backgroundColor: 'action.hover' },
+          transition: 'background-color 0.2s ease-in-out',
+          cursor: 'pointer',
+        }}
+      >
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  };
 
   return (
     <div>
@@ -131,6 +205,57 @@ function UserTable() {
         <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} selectedUser={selectedUser} />
       )}
       <h2 style={{ margin: '20px 0' }}>Users</h2>
+
+      <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
+        <TextField
+          label="Search"
+          variant="outlined"
+          size="small"
+          value={searchFilter}
+          onChange={(e) => setSearchFilter(e.target.value)}
+          placeholder="Search by name or email"
+          sx={{ minWidth: 250 }}
+        />
+
+        <FormControl size="small" sx={{ minWidth: 150 }}>
+          <InputLabel id="role-filter-label">Filter by Role</InputLabel>
+          <Select
+            labelId="role-filter-label"
+            id="role-filter"
+            value={roleFilter}
+            label="Filter by Role"
+            onChange={(e) => setRoleFilter(e.target.value)}
+          >
+            <MenuItem value="">All Roles</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="user">User</MenuItem>
+            <MenuItem value="premium">Premium</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Box sx={{ ml: 'auto', display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<SwapHorizIcon />}
+            disabled={true}
+            size="small"
+          >
+            Change Role
+          </Button>
+
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<DeleteIcon />}
+            disabled={true}
+            size="small"
+          >
+            Delete Selected
+          </Button>
+        </Box>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="user table">
           <TableHead>
@@ -153,27 +278,19 @@ function UserTable() {
               </TableRow>
             ))}
           </TableHead>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{
-                  '&:last-child td, &:last-child th': { border: 0 },
-                  '&:hover': { backgroundColor: 'action.hover' },
-                  transition: 'background-color 0.2s ease-in-out',
-                  cursor: 'pointer',
-                }}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
+          <TableBody>{renderTableContent()}</TableBody>
         </Table>
       </TableContainer>
+
+      <TablePagination
+        component="div"
+        count={userList?.pagination?.total || 0}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+      />
     </div>
   );
 }

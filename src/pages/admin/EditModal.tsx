@@ -16,7 +16,8 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import { updateUserRole, User } from '../../functions/userFunctions';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteUser, updateUserRole, User } from '../../functions/userFunctions';
 import { ROLE_OPTIONS } from '../../utils/roles';
 
 interface EditModalProps {
@@ -26,10 +27,28 @@ interface EditModalProps {
 }
 
 function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
+  const queryClient = useQueryClient();
   const roleOptions = useMemo(() => ROLE_OPTIONS, []);
 
   const [role, setRole] = useState<User['role']>(selectedUser?.role ?? 'user');
   const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ userId, newRole }: { userId: string; newRole: User['role'] }) =>
+      updateUserRole(userId, newRole),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      onClose();
+    },
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: (userId: string) => deleteUser(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      onClose();
+    },
+  });
 
   useEffect(() => {
     if (isOpen && selectedUser) {
@@ -38,9 +57,7 @@ function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
   }, [isOpen, selectedUser]);
 
   const handleSave = async () => {
-    const res = await updateUserRole(selectedUser.id, role);
-    console.log('Updated user role', res);
-    onClose();
+    updateRoleMutation.mutate({ userId: selectedUser.id, newRole: role });
   };
 
   const handleDelete = () => {
@@ -48,9 +65,8 @@ function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
   };
 
   const handleConfirmDelete = () => {
-    console.log('Deleting user', { userId: selectedUser.id, email: selectedUser.email });
+    deleteUserMutation.mutate(selectedUser.id);
     setConfirmOpen(false);
-    onClose();
   };
 
   const handleCancelDelete = () => setConfirmOpen(false);
@@ -59,7 +75,6 @@ function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
 
   return (
     <>
-      {/* Primary editing dialog */}
       <Dialog open={isOpen} onClose={onClose} maxWidth="sm" fullWidth>
         <DialogTitle>Edit User</DialogTitle>
         <DialogContent dividers>
@@ -109,14 +124,19 @@ function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
             Delete User
           </Button>
           <Box sx={{ flex: 1 }} />
-          <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={handleSave} disabled={!hasChanges} variant="contained">
-            Save
+          <Button onClick={onClose} disabled={updateRoleMutation.isPending}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={!hasChanges || updateRoleMutation.isPending}
+            variant="contained"
+          >
+            {updateRoleMutation.isPending ? 'Saving...' : 'Save'}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Delete confirmation dialog */}
       <Dialog open={confirmOpen} onClose={handleCancelDelete} maxWidth="xs" fullWidth>
         <DialogTitle>Delete User?</DialogTitle>
         <DialogContent>
