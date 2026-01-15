@@ -1,6 +1,7 @@
 import React from 'react';
-import { Menu, MenuItem, Typography } from '@mui/material';
+import { Menu, MenuItem, Typography, Box } from '@mui/material';
 import { Link } from '@tanstack/react-router';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export type MenuItemConfig = {
   key?: string;
@@ -8,6 +9,7 @@ export type MenuItemConfig = {
   to?: string;
   onClick?: () => void;
   closeOnClick?: boolean;
+  external?: boolean;
 };
 
 type DropdownMenuProps = {
@@ -47,16 +49,32 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
     >
       {items.map((item, idx) => {
         const key = item.key ?? `${id}-item-${idx}`;
-        const content = item.to ? (
-          <Link to={item.to} style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+        const labelContent = (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
             <Typography variant="body2" sx={{ fontWeight: 500 }}>
               {item.label}
             </Typography>
-          </Link>
+            {item.external && <OpenInNewIcon sx={{ fontSize: 16 }} />}
+          </Box>
+        );
+
+        const content = item.to ? (
+          item.external ? (
+            <a
+              href={item.to}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
+            >
+              {labelContent}
+            </a>
+          ) : (
+            <Link to={item.to} style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+              {labelContent}
+            </Link>
+          )
         ) : (
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            {item.label}
-          </Typography>
+          labelContent
         );
 
         return (
