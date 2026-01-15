@@ -47,11 +47,12 @@ export const getUsers = async (params: GetUsersParams = {}): Promise<PaginatedUs
   return res.data;
 };
 
-export const updateUserRole = async (userId: string, newRole: User['role']): Promise<User> => {
-  const res = await authApi.put(`${API.adminRoutes.userRole}`, { userId, newRole });
+export const updateUsersRole = async (userIds: string[], newRole: User['role']): Promise<{ count: number }> => {
+  const res = await authApi.put(`${API.adminRoutes.userRole}`, { userIds, newRole });
   return res.data;
 };
 
-export const deleteUser = async (userId: string): Promise<void> => {
-  await authApi.delete(`${API.adminRoutes.user}/${userId}`);
+export const deleteUsers = async (userIds: string[]): Promise<{ count: number }> => {
+  const res = await authApi.delete(`${API.adminRoutes.users}`, { data: { userIds } });
+  return res.data;
 };

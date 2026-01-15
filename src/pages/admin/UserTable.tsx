@@ -20,6 +20,7 @@ import Box from '@mui/material/Box';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import Checkbox from '@mui/material/Checkbox';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -34,10 +35,14 @@ import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '../../functions/userFunctions';
 import useDebounce from '../../stores/useDebounce';
 import EditModal from './EditModal';
+import ChangeSelectedUserRoles from './ChangeSelectedUserRoles';
+import DeleteSelectedUsers from './DeleteSelectedUsers';
 
 function UserTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const [isChangeRoleModalOpen, setIsChangeRoleModalOpen] = React.useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const [selectedUser, setSelectedUser] = React.useState<any>(null);
   const [searchFilter, setSearchFilter] = React.useState('');
   const [roleFilter, setRoleFilter] = React.useState('');
@@ -57,7 +62,59 @@ function UserTable() {
     setIsEditModalOpen(false);
   };
 
+  const handleBulkOperationSuccess = () => {
+    setSelectedUsers([]);
+  };
+
+  const handleSelectUser = (userId: string) => {
+    setSelectedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (!userList?.users) return;
+    const allUserIds = userList.users.map((user: any) => user.id);
+    const allSelected = allUserIds.every((id: string) => selectedUsers.includes(id));
+    if (allSelected) {
+      setSelectedUsers((prev) => prev.filter((id) => !allUserIds.includes(id)));
+    } else {
+      setSelectedUsers((prev) => [...new Set([...prev, ...allUserIds])]);
+    }
+  };
+
+  const isAllSelected = () => {
+    if (!userList?.users?.length) return false;
+    return userList.users.every((user: any) => selectedUsers.includes(user.id));
+  };
+
+  const isSomeSelected = () => {
+    if (!userList?.users?.length) return false;
+    const someSelected = userList.users.some((user: any) => selectedUsers.includes(user.id));
+    return someSelected && !isAllSelected();
+  };
+
   const columns = [
+    {
+      id: 'select',
+      header: () => (
+        <Checkbox
+          checked={isAllSelected()}
+          indeterminate={isSomeSelected()}
+          onChange={handleSelectAll}
+          inputProps={{ 'aria-label': 'select all users' }}
+        />
+      ),
+      cell: ({ row }: any) => (
+        <Checkbox
+          checked={selectedUsers.includes(row.original.id)}
+          onChange={() => handleSelectUser(row.original.id)}
+          inputProps={{ 'aria-label': `select ${row.original.name}` }}
+        />
+      ),
+    },
     {
       accessorKey: 'name',
       header: 'User',
@@ -204,6 +261,22 @@ function UserTable() {
       {isEditModalOpen && (
         <EditModal isOpen={isEditModalOpen} onClose={closeEditModal} selectedUser={selectedUser} />
       )}
+      {isChangeRoleModalOpen && (
+        <ChangeSelectedUserRoles
+          isOpen={isChangeRoleModalOpen}
+          onClose={() => setIsChangeRoleModalOpen(false)}
+          selectedUsers={userList?.users?.filter((u: any) => selectedUsers.includes(u.id)) || []}
+          onSuccess={handleBulkOperationSuccess}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <DeleteSelectedUsers
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          selectedUsers={userList?.users?.filter((u: any) => selectedUsers.includes(u.id)) || []}
+          onSuccess={handleBulkOperationSuccess}
+        />
+      )}
       <h2 style={{ margin: '20px 0' }}>Users</h2>
 
       <Box sx={{ display: 'flex', gap: 2, mb: 3, alignItems: 'center' }}>
@@ -238,8 +311,9 @@ function UserTable() {
             variant="outlined"
             color="primary"
             startIcon={<SwapHorizIcon />}
-            disabled={true}
+            disabled={selectedUsers.length === 0}
             size="small"
+            onClick={() => setIsChangeRoleModalOpen(true)}
           >
             Change Role
           </Button>
@@ -248,8 +322,9 @@ function UserTable() {
             variant="outlined"
             color="error"
             startIcon={<DeleteIcon />}
-            disabled={true}
+            disabled={selectedUsers.length === 0}
             size="small"
+            onClick={() => setIsDeleteModalOpen(true)}
           >
             Delete Selected
           </Button>

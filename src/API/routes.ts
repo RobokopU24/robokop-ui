@@ -48,7 +48,6 @@ const adminEndpoint = `${baseAuthURL}/admin`;
 export const adminRoutes = {
   base: adminEndpoint,
   users: `${adminEndpoint}/users`,
-  user: `${adminEndpoint}/user`,
   userRole: `${adminEndpoint}/user-role`,
 };
 

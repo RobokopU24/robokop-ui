@@ -66,9 +66,9 @@ function Header() {
 
   const accountItems: MenuItemConfig[] = user
     ? [
+        ...(isAdmin(user.role) ? [{ to: '/admin', label: 'Admin' }] : []),
         { key: 'profile', label: 'Profile', onClick: handleProfileClick },
         { key: 'logout', label: 'Logout', onClick: handleLogout },
-        ...(isAdmin(user.role) ? [{ to: '/admin', label: 'Admin' }] : []),
       ]
     : [{ key: 'login', label: 'Login', onClick: handleLoginClick }];
 

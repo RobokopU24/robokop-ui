@@ -17,8 +17,9 @@ import {
   Divider,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteUser, updateUserRole, User } from '../../functions/userFunctions';
+import { deleteUsers, updateUsersRole, User } from '../../functions/userFunctions';
 import { ROLE_OPTIONS } from '../../utils/roles';
+import { useAlert } from '../../components/AlertProvider';
 
 interface EditModalProps {
   isOpen: boolean;
@@ -28,6 +29,7 @@ interface EditModalProps {
 
 function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
   const queryClient = useQueryClient();
+  const { displayAlert } = useAlert();
   const roleOptions = useMemo(() => ROLE_OPTIONS, []);
 
   const [role, setRole] = useState<User['role']>(selectedUser?.role ?? 'user');
@@ -35,17 +37,19 @@ function EditModal({ isOpen, onClose, selectedUser }: EditModalProps) {
 
   const updateRoleMutation = useMutation({
     mutationFn: ({ userId, newRole }: { userId: string; newRole: User['role'] }) =>
-      updateUserRole(userId, newRole),
+      updateUsersRole([userId], newRole),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      displayAlert('success', 'Successfully updated user role');
       onClose();
     },
   });
 
   const deleteUserMutation = useMutation({
-    mutationFn: (userId: string) => deleteUser(userId),
+    mutationFn: (userId: string) => deleteUsers([userId]),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
+      displayAlert('success', 'Successfully deleted user');
       onClose();
     },
   });
