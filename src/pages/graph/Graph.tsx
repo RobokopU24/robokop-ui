@@ -78,17 +78,6 @@ function Graph({ graphData, isLoading }: GraphProps) {
                   className="details-card-actions"
                   style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, flexWrap: 'wrap' }}
                 >
-                  {graph.graph_url && (
-                    <a
-                      className="details-card-button"
-                      href={graph.graph_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ marginRight: 8 }}
-                    >
-                      Graph website
-                    </a>
-                  )}
                   <Link
                     className="details-card-button"
                     to="/explore/graphs/$graph_id"
