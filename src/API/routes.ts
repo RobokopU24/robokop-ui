@@ -49,6 +49,7 @@ export const adminRoutes = {
   base: adminEndpoint,
   users: `${adminEndpoint}/users`,
   userRole: `${adminEndpoint}/user-role`,
+  featureAccess: `${adminEndpoint}/feature-access`,
 };
 
 export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes, adminRoutes };
