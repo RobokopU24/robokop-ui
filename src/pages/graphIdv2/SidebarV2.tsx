@@ -12,22 +12,6 @@ function SidebarV2() {
       id: "download",
     },
     {
-      title: "Creators & Funders",
-      id: "creators-funders",
-    },
-    {
-      title: "Contact Points",
-      id: "contact-points",
-    },
-    {
-      title: "Conformance & Schema",
-      id: "conformance-schema",
-    },
-    {
-      title: "Data Sources",
-      id: "data-sources",
-    },
-    {
       title: "Predicate Counts",
       id: "predicate-counts",
     },
@@ -50,6 +34,22 @@ function SidebarV2() {
     {
       title: "Node Properties",
       id: "node-properties",
+    },
+    {
+      title: "Data Sources",
+      id: "data-sources",
+    },
+    {
+      title: "Creators & Funders",
+      id: "creators-funders",
+    },
+    {
+      title: "Contact Points",
+      id: "contact-points",
+    },
+    {
+      title: "Conformance & Schema",
+      id: "conformance-schema",
     },
   ];
   return (
