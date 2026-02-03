@@ -1,28 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import {
-  Avatar,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  FormControl,
-  InputLabel,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  MenuItem,
-  Select,
-  Typography,
-  CircularProgress,
-  Chip,
-} from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateUsersRole, User } from '../../functions/userFunctions';
-import { ROLE_OPTIONS } from '../../utils/roles';
-import { useAlert } from '../../components/AlertProvider';
+import React, { useState, useEffect } from "react";
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, List, ListItem, ListItemAvatar, ListItemText, MenuItem, Select, Typography, CircularProgress, Chip } from "@mui/material";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateUsersRole, User } from "../../functions/userFunctions";
+import { useRoles } from "../../stores/useRoles";
+import { useAlert } from "../../components/AlertProvider";
 
 interface ChangeSelectedUserRolesProps {
   isOpen: boolean;
@@ -31,37 +12,38 @@ interface ChangeSelectedUserRolesProps {
   onSuccess: () => void;
 }
 
-function ChangeSelectedUserRoles({
-  isOpen,
-  onClose,
-  selectedUsers,
-  onSuccess,
-}: ChangeSelectedUserRolesProps) {
+function ChangeSelectedUserRoles({ isOpen, onClose, selectedUsers, onSuccess }: ChangeSelectedUserRolesProps) {
   const queryClient = useQueryClient();
   const { displayAlert } = useAlert();
-  const roleOptions = useMemo(() => ROLE_OPTIONS, []);
-  const [newRole, setNewRole] = useState<User['role']>('user');
+  const { data: roles, isLoading: rolesLoading } = useRoles();
+  const [selectedRoleId, setSelectedRoleId] = useState<number | "">("");
+
+  useEffect(() => {
+    if (isOpen && selectedUsers.length > 0) {
+      setSelectedRoleId(selectedUsers[0].role.id);
+    }
+  }, [isOpen, selectedUsers]);
 
   const updateRoleMutation = useMutation({
-    mutationFn: ({ userIds, role }: { userIds: string[]; role: User['role'] }) =>
-      updateUsersRole(userIds, role),
+    mutationFn: ({ userIds, newRoleId }: { userIds: string[]; newRoleId: number }) => {
+      return updateUsersRole(userIds, newRoleId);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-      displayAlert(
-        'success',
-        `Successfully updated role for ${selectedUsers.length} user${selectedUsers.length > 1 ? 's' : ''}`
-      );
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      displayAlert("success", `Successfully updated role for ${selectedUsers.length} user${selectedUsers.length > 1 ? "s" : ""}`);
       onSuccess();
       onClose();
     },
   });
 
   const handleSave = () => {
-    updateRoleMutation.mutate({ userIds: selectedUsers.map((u) => u.id), role: newRole });
+    if (selectedRoleId === "") return;
+    updateRoleMutation.mutate({ userIds: selectedUsers.map((u) => u.id), newRoleId: selectedRoleId });
   };
 
   const handleClose = () => {
     if (!updateRoleMutation.isPending) {
+      setSelectedRoleId("");
       onClose();
     }
   };
@@ -72,15 +54,15 @@ function ChangeSelectedUserRoles({
       <DialogContent dividers>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           You are about to change the role for {selectedUsers.length} user
-          {selectedUsers.length > 1 ? 's' : ''}:
+          {selectedUsers.length > 1 ? "s" : ""}:
         </Typography>
 
         <Box
           sx={{
             maxHeight: 200,
-            overflow: 'auto',
+            overflow: "auto",
             border: 1,
-            borderColor: 'divider',
+            borderColor: "divider",
             borderRadius: 1,
             mb: 3,
           }}
@@ -91,17 +73,8 @@ function ChangeSelectedUserRoles({
                 <ListItemAvatar>
                   <Avatar src={user.profilePicture} alt={user.name || user.email} sx={{ width: 32, height: 32 }} />
                 </ListItemAvatar>
-                <ListItemText
-                  primary={user.name || user.email}
-                  secondary={user.name ? user.email : undefined}
-                  primaryTypographyProps={{ variant: 'body2' }}
-                  secondaryTypographyProps={{ variant: 'caption' }}
-                />
-                <Chip
-                  label={user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                  size="small"
-                  variant="outlined"
-                />
+                <ListItemText primary={user.name || user.email} secondary={user.name ? user.email : undefined} primaryTypographyProps={{ variant: "body2" }} secondaryTypographyProps={{ variant: "caption" }} />
+                <Chip label={user.role.roleName} size="small" variant="outlined" />
               </ListItem>
             ))}
           </List>
@@ -109,23 +82,17 @@ function ChangeSelectedUserRoles({
 
         <FormControl fullWidth>
           <InputLabel id="new-role-label">New Role</InputLabel>
-          <Select
-            labelId="new-role-label"
-            id="new-role"
-            value={newRole}
-            label="New Role"
-            onChange={(e) => setNewRole(e.target.value as User['role'])}
-          >
-            {roleOptions.map((role) => (
-              <MenuItem key={role} value={role}>
-                {role.charAt(0).toUpperCase() + role.slice(1)}
+          <Select labelId="new-role-label" id="new-role" value={selectedRoleId} label="New Role" onChange={(e) => setSelectedRoleId(e.target.value as number)} disabled={rolesLoading}>
+            {roles?.map((role) => (
+              <MenuItem key={role.id} value={role.id}>
+                {role.roleName}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
         {updateRoleMutation.isError && (
           <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-            Error: {updateRoleMutation.error?.message || 'Failed to update roles'}
+            Error: {updateRoleMutation.error?.message || "Failed to update roles"}
           </Typography>
         )}
       </DialogContent>
@@ -133,14 +100,8 @@ function ChangeSelectedUserRoles({
         <Button onClick={handleClose} disabled={updateRoleMutation.isPending}>
           Cancel
         </Button>
-        <Button
-          onClick={handleSave}
-          variant="contained"
-          color="primary"
-          disabled={updateRoleMutation.isPending}
-          startIcon={updateRoleMutation.isPending ? <CircularProgress size={16} /> : null}
-        >
-          {updateRoleMutation.isPending ? 'Updating...' : 'Update Roles'}
+        <Button onClick={handleSave} variant="contained" color="primary" disabled={updateRoleMutation.isPending || selectedRoleId === "" || rolesLoading} startIcon={updateRoleMutation.isPending ? <CircularProgress size={16} /> : null}>
+          {updateRoleMutation.isPending ? "Updating..." : "Update Roles"}
         </Button>
       </DialogActions>
     </Dialog>

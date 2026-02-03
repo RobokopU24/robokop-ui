@@ -1,13 +1,24 @@
-import API from '../API/routes';
-import { authApi } from '../API/baseUrlProxy';
+import API from "../API/routes";
+import { authApi } from "../API/baseUrlProxy";
 
+export interface Features {
+  id: number;
+  featureId: string;
+  featureName: string;
+  description: string;
+}
 export interface User {
   id: string;
   email: string;
   createdAt: string;
   name?: string;
   profilePicture?: string;
-  role: 'user' | 'admin' | 'premium';
+  role: {
+    description: string;
+    features: Features[];
+    id: number;
+    roleName: string;
+  };
   _count?: {
     WebAuthnCredential: number;
   };
@@ -27,7 +38,7 @@ export interface PaginatedUsers {
 
 export interface GetUsersParams {
   search?: string;
-  role?: string;
+  roleId?: number;
   page?: number;
   limit?: number;
 }
@@ -35,10 +46,10 @@ export interface GetUsersParams {
 export const getUsers = async (params: GetUsersParams = {}): Promise<PaginatedUsers> => {
   const queryParams = new URLSearchParams();
 
-  if (params.search) queryParams.append('search', params.search);
-  if (params.role) queryParams.append('role', params.role);
-  if (params.page) queryParams.append('page', params.page.toString());
-  if (params.limit) queryParams.append('limit', params.limit.toString());
+  if (params.search) queryParams.append("search", params.search);
+  if (params.roleId) queryParams.append("roleId", params.roleId.toString());
+  if (params.page) queryParams.append("page", params.page.toString());
+  if (params.limit) queryParams.append("limit", params.limit.toString());
 
   const queryString = queryParams.toString();
   const url = queryString ? `${API.adminRoutes.users}?${queryString}` : API.adminRoutes.users;
@@ -47,8 +58,8 @@ export const getUsers = async (params: GetUsersParams = {}): Promise<PaginatedUs
   return res.data;
 };
 
-export const updateUsersRole = async (userIds: string[], newRole: User['role']): Promise<{ count: number }> => {
-  const res = await authApi.put(`${API.adminRoutes.userRole}`, { userIds, newRole });
+export const updateUsersRole = async (userIds: string[], newRoleId: number): Promise<{ count: number }> => {
+  const res = await authApi.put(`${API.adminRoutes.userRole}`, { userIds, newRoleId });
   return res.data;
 };
 

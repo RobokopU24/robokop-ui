@@ -1,26 +1,28 @@
 import API from "../API/routes";
 import { authApi } from "../API/baseUrlProxy";
-import { Role } from "../utils/roles";
-import { DEFAULT_FEATURE_ROLES } from "../utils/features";
 
-export interface FeatureAccessConfig {
-  featureId: string;
-  roles: Role[];
+export interface RoleAllowed {
+  id: number;
+  roleName: string;
+  description: string;
 }
 
-export const getFeatureAccess = async (): Promise<FeatureAccessConfig[]> => {
-  try {
-    const res = await authApi.get(`${API.adminRoutes.featureAccess}`);
-    return res.data;
-  } catch (error) {
-    return Object.entries(DEFAULT_FEATURE_ROLES).map(([featureId, roles]) => ({
-      featureId,
-      roles,
-    }));
-  }
+export interface Feature {
+  id: number;
+  featureId: string;
+  featureName: string;
+  description: string;
+  rolesAllowed: RoleAllowed[];
+}
+
+export type FeaturesApiResponse = Feature[];
+
+export const getFeatures = async (): Promise<FeaturesApiResponse> => {
+  const res = await authApi.get(API.featuresRoutes.base);
+  return res.data;
 };
 
-export const updateFeatureAccess = async (featureId: string, roles: Role[]): Promise<FeatureAccessConfig> => {
-  const res = await authApi.put(`${API.adminRoutes.featureAccess}/${featureId}`, { roles });
+export const updateFeatureRoles = async (featureId: number, roleIds: number[]): Promise<Feature> => {
+  const res = await authApi.put(`${API.featuresRoutes.base}/${featureId}`, { roleIds });
   return res.data;
 };

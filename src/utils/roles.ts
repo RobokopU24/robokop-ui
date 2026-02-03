@@ -1,7 +1,7 @@
 export const ROLES = {
-  USER: 'user',
-  ADMIN: 'admin',
-  PREMIUM: 'premium',
+  USER: "user",
+  ADMIN: "admin",
+  PREMIUM: "premium",
 } as const;
 
 export type Role = (typeof ROLES)[keyof typeof ROLES];
@@ -15,3 +15,20 @@ export const isPremiumOrAdmin = (role: Role): boolean => {
 export const isAdmin = (role: Role): boolean => {
   return role === ROLES.ADMIN;
 };
+
+// Types for the /api/auth/roles API response
+export interface RoleFeature {
+  id: number;
+  featureId: string;
+  featureName: string;
+  description: string;
+}
+
+export interface RoleWithFeatures {
+  id: number;
+  roleName: string;
+  description: string;
+  features: RoleFeature[];
+}
+
+export type RolesApiResponse = RoleWithFeatures[];

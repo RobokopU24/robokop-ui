@@ -52,4 +52,14 @@ export const adminRoutes = {
   featureAccess: `${adminEndpoint}/feature-access`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes, adminRoutes };
+const featuresEndpoint = `${baseAuthURL}/features`;
+export const featuresRoutes = {
+  base: featuresEndpoint,
+};
+
+const rolesEndpoint = `${baseAuthURL}/roles`;
+export const rolesRoutes = {
+  base: rolesEndpoint,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes, adminRoutes, featuresRoutes, rolesRoutes };

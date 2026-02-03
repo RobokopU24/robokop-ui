@@ -21,81 +21,68 @@ import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import Typography from "@mui/material/Typography";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { FEATURES, DEFAULT_FEATURE_ROLES } from "../../utils/features";
-import { Role, ROLE_OPTIONS, ROLES } from "../../utils/roles";
-import { getFeatureAccess, updateFeatureAccess } from "../../functions/featureFunctions";
-
-const ROLE_COLORS: Record<Role, "default" | "info" | "error"> = {
-  [ROLES.USER]: "default",
-  [ROLES.PREMIUM]: "info",
-  [ROLES.ADMIN]: "error",
-};
-
-const ROLE_LABELS: Record<Role, string> = {
-  [ROLES.USER]: "User",
-  [ROLES.PREMIUM]: "Premium",
-  [ROLES.ADMIN]: "Admin",
-};
+import { getFeatures, updateFeatureRoles, Feature } from "../../functions/featureFunctions";
+import { useRoles } from "../../stores/useRoles";
 
 function FeatureAccessTable() {
   const queryClient = useQueryClient();
-  const [editingFeatureId, setEditingFeatureId] = React.useState<string | null>(null);
-  const [editingRoles, setEditingRoles] = React.useState<Role[]>([]);
+  const { data: roles } = useRoles();
+  const [editingFeatureId, setEditingFeatureId] = React.useState<number | null>(null);
+  const [editingRoleIds, setEditingRoleIds] = React.useState<number[]>([]);
 
-  const { data: featureAccessList, isLoading } = useQuery({
-    queryKey: ["featureAccess"],
-    queryFn: getFeatureAccess,
+  const {
+    data: features,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["features"],
+    queryFn: getFeatures,
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ featureId, roles }: { featureId: string; roles: Role[] }) => updateFeatureAccess(featureId, roles),
+    mutationFn: ({ featureId, roleIds }: { featureId: number; roleIds: number[] }) => updateFeatureRoles(featureId, roleIds),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["featureAccess"] });
+      queryClient.invalidateQueries({ queryKey: ["features"] });
+      queryClient.invalidateQueries({ queryKey: ["roles"] });
       setEditingFeatureId(null);
     },
   });
 
-  const featureRolesMap = React.useMemo(() => {
-    const map: Record<string, Role[]> = {};
-    if (featureAccessList) {
-      featureAccessList.forEach((f) => {
-        map[f.featureId] = f.roles;
-      });
-    }
-    FEATURES.forEach((feature) => {
-      if (!map[feature.id]) {
-        map[feature.id] = DEFAULT_FEATURE_ROLES[feature.id] || [];
-      }
-    });
-    return map;
-  }, [featureAccessList]);
-
-  const handleEditClick = (featureId: string) => {
-    setEditingFeatureId(featureId);
-    setEditingRoles([...featureRolesMap[featureId]]);
+  const handleEditClick = (feature: Feature) => {
+    setEditingFeatureId(feature.id);
+    setEditingRoleIds(feature.rolesAllowed.map((r) => r.id));
   };
 
   const handleCancelEdit = () => {
     setEditingFeatureId(null);
-    setEditingRoles([]);
+    setEditingRoleIds([]);
   };
 
   const handleSaveEdit = () => {
-    if (editingFeatureId) {
-      updateMutation.mutate({ featureId: editingFeatureId, roles: editingRoles });
+    if (editingFeatureId !== null) {
+      updateMutation.mutate({ featureId: editingFeatureId, roleIds: editingRoleIds });
     }
   };
 
-  const handleRoleChange = (event: SelectChangeEvent<Role[]>) => {
+  const handleRoleChange = (event: SelectChangeEvent<number[]>) => {
     const value = event.target.value;
-    setEditingRoles(typeof value === "string" ? (value.split(",") as Role[]) : value);
+    setEditingRoleIds(typeof value === "string" ? value.split(",").map(Number) : value);
   };
 
   if (isLoading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
+        <Typography color="error">Failed to load features</Typography>
       </Box>
     );
   }
@@ -108,15 +95,16 @@ function FeatureAccessTable() {
         <Table sx={{ minWidth: 600 }} aria-label="feature access table">
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }}>Feature</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Feature Name</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Feature ID</TableCell>
+              <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Allowed Roles</TableCell>
               <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {FEATURES.map((feature) => {
+            {features?.map((feature) => {
               const isEditing = editingFeatureId === feature.id;
-              const currentRoles = featureRolesMap[feature.id] || [];
 
               return (
                 <TableRow
@@ -126,33 +114,52 @@ function FeatureAccessTable() {
                     "&:hover": { backgroundColor: "action.hover" },
                   }}
                 >
-                  <TableCell>{feature.name}</TableCell>
+                  <TableCell>{feature.featureName}</TableCell>
+                  <TableCell>
+                    <Typography variant="body2" sx={{ fontFamily: "monospace", color: "text.secondary" }}>
+                      {feature.featureId}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2" color="text.secondary">
+                      {feature.description}
+                    </Typography>
+                  </TableCell>
                   <TableCell>
                     {isEditing ? (
                       <FormControl size="small" sx={{ minWidth: 200 }}>
                         <Select
                           multiple
-                          value={editingRoles}
+                          value={editingRoleIds}
                           onChange={handleRoleChange}
                           input={<OutlinedInput />}
                           renderValue={(selected) => (
                             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                              {selected.map((role) => (
-                                <Chip key={role} label={ROLE_LABELS[role]} size="small" color={ROLE_COLORS[role]} />
-                              ))}
+                              {selected.map((roleId) => {
+                                const role = roles?.find((r) => r.id === roleId);
+                                return role ? <Chip key={roleId} label={role.roleName} size="small" variant="outlined" /> : null;
+                              })}
                             </Box>
                           )}
                         >
-                          {ROLE_OPTIONS.map((role) => (
-                            <MenuItem key={role} value={role}>
-                              <Checkbox checked={editingRoles.includes(role)} />
-                              <ListItemText primary={ROLE_LABELS[role]} />
+                          {roles?.map((role) => (
+                            <MenuItem key={role.id} value={role.id}>
+                              <Checkbox checked={editingRoleIds.includes(role.id)} />
+                              <ListItemText primary={role.roleName} />
                             </MenuItem>
                           ))}
                         </Select>
                       </FormControl>
                     ) : (
-                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>{currentRoles.length === 0 ? <Chip label="No access" size="small" variant="outlined" /> : currentRoles.map((role) => <Chip key={role} label={ROLE_LABELS[role]} size="small" color={ROLE_COLORS[role]} />)}</Box>
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {feature.rolesAllowed.length === 0 ? (
+                          <Typography variant="body2" color="text.secondary">
+                            No access
+                          </Typography>
+                        ) : (
+                          feature.rolesAllowed.map((role) => <Chip key={role.id} label={role.roleName} size="small" variant="outlined" />)
+                        )}
+                      </Box>
                     )}
                   </TableCell>
                   <TableCell>
@@ -166,7 +173,7 @@ function FeatureAccessTable() {
                         </IconButton>
                       </Box>
                     ) : (
-                      <IconButton onClick={() => handleEditClick(feature.id)} color="primary" size="small">
+                      <IconButton onClick={() => handleEditClick(feature)} color="primary" size="small">
                         <EditIcon />
                       </IconButton>
                     )}

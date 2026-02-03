@@ -5,9 +5,10 @@ import Tab from "@mui/material/Tab";
 import PeopleIcon from "@mui/icons-material/People";
 import SecurityIcon from "@mui/icons-material/Security";
 import { useAuth } from "../../context/AuthContext";
-import { isAdmin } from "../../utils/roles";
+// import { isAdmin } from "../../utils/roles";
 import UserTable from "./UserTable";
 import FeatureAccessTable from "./FeatureAccessTable";
+import { useFeatureAccess } from "../../hooks";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -35,6 +36,9 @@ function a11yProps(index: number) {
 function AdminPage() {
   const { user, loading } = useAuth();
   const [tabValue, setTabValue] = React.useState(0);
+  const { hasRole } = useFeatureAccess();
+  const isAdmin = hasRole("admin");
+  console.log("User in AdminPage:", user);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -44,7 +48,7 @@ function AdminPage() {
     return <div>Loading...</div>;
   }
 
-  if (!user || !isAdmin(user.role)) {
+  if (!user || !isAdmin) {
     return <div>Access Denied</div>;
   }
 
