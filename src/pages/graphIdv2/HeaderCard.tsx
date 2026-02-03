@@ -68,14 +68,14 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
 
         <Stack direction={"row"} justifyContent={"space-between"}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 2 }} alignItems="center">
-            {graphData.graph_url && (
+            {/* {graphData.graph_url && (
               <>
                 <a className="external-links" href={graphData.graph_url} target="_blank" rel="noopener noreferrer">
                   {graphData.graph_id === "robokopkg" ? "Neo4j Browser" : "Knowledge Source"} <OpenInNew sx={{ fontSize: "1.25rem", ml: 0.5 }} />
                 </a>
               </>
             )}
-            <p>•</p>
+            <p>•</p> */}
             <a className="external-links" href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`} target="_blank" rel="noopener noreferrer">
               Automat API <OpenInNew sx={{ fontSize: "1.25rem", ml: 0.5 }} />
             </a>
