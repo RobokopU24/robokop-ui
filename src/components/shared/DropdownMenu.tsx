@@ -1,6 +1,6 @@
-import React from 'react';
-import { Menu, MenuItem, Typography } from '@mui/material';
-import { Link } from '@tanstack/react-router';
+import React from "react";
+import { Menu, MenuItem, Typography } from "@mui/material";
+import { Link } from "@tanstack/react-router";
 
 export type MenuItemConfig = {
   key?: string;
@@ -38,8 +38,8 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
           borderRadius: 2,
           mt: 1,
           minWidth: 180,
-          '& .MuiMenuItem-root': {
-            transition: 'background-color 0.15s ease',
+          "& .MuiMenuItem-root": {
+            transition: "background-color 0.15s ease",
           },
         },
       }}
@@ -47,17 +47,29 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
     >
       {items.map((item, idx) => {
         const key = item.key ?? `${id}-item-${idx}`;
-        const content = item.to ? (
-          <Link to={item.to} style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              {item.label}
-            </Typography>
-          </Link>
-        ) : (
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            {item.label}
-          </Typography>
-        );
+
+        if (item.to) {
+          return (
+            <MenuItem
+              key={key}
+              component={Link}
+              to={item.to}
+              onClick={handleItemClick(item)}
+              sx={{
+                py: 1,
+                px: 2,
+                textDecoration: "none",
+                color: "inherit",
+                "&:hover": { backgroundColor: "action.hover" },
+              }}
+              disableRipple
+            >
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {item.label}
+              </Typography>
+            </MenuItem>
+          );
+        }
 
         return (
           <MenuItem
@@ -66,11 +78,13 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
             sx={{
               py: 1,
               px: 2,
-              '&:hover': { backgroundColor: 'action.hover' },
+              "&:hover": { backgroundColor: "action.hover" },
             }}
             disableRipple
           >
-            {content}
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {item.label}
+            </Typography>
           </MenuItem>
         );
       })}
