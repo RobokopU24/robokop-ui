@@ -71,7 +71,7 @@ function GraphIdV2({ graphData, v2Metadata }: GraphIdV2Props) {
   const displayVersion = v2Metadata?.version ?? graphData?.graph_version;
 
   return (
-    <Container sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}>
+    <Container className="graph-id-v2-container" sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}>
       <SidebarV2 />
       <Box>
         <SankeyGraphModal isOpen={isSankeyGraphModalOpen} onClose={() => setIsSankeyGraphModalOpen(false)} graphData={graphDataset} />
