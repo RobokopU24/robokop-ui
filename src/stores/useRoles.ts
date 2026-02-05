@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import routes from "../API/routes";
 import { RolesApiResponse, RoleWithFeatures, RoleFeature } from "../utils/roles";
+import { authApi } from "../API/baseUrlProxy";
 
 const ROLES_QUERY_KEY = ["roles"] as const;
 
@@ -42,4 +43,30 @@ export const getAllFeatureIds = (roles: RolesApiResponse | undefined): string[] 
     });
   });
   return Array.from(featureIds);
+};
+
+export const deleteRoles = async (roleIds: number[]): Promise<void> => {
+  await authApi.delete(routes.rolesRoutes.base, { data: { roleIds } });
+};
+
+export interface CreateRolePayload {
+  roleName: string;
+  description: string;
+  featureIds: number[];
+}
+
+export const createRole = async (payload: CreateRolePayload): Promise<RoleWithFeatures> => {
+  const res = await authApi.post(routes.rolesRoutes.base, payload);
+  return res.data;
+};
+
+export interface UpdateRolePayload {
+  roleName: string;
+  description: string;
+  featureIds: number[];
+}
+
+export const updateRole = async (roleId: number, payload: UpdateRolePayload): Promise<RoleWithFeatures> => {
+  const res = await authApi.put(`${routes.rolesRoutes.base}/${roleId}`, payload);
+  return res.data;
 };
