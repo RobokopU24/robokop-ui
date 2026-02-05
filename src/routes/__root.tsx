@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router';
+import { HeadContent, Outlet, createRootRoute } from '@tanstack/react-router';
 
 import '../index.css';
 
@@ -15,6 +15,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 const RootLayout = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <HeadContent />
       <AlertProvider>
         <RootComponentWrapper>
           <Outlet />
