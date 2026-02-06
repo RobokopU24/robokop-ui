@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu, MenuItem, Typography, Box } from "@mui/material";
 import { Link } from "@tanstack/react-router";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export type MenuItemConfig = {
   key?: string;
@@ -50,11 +50,23 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
       {items.map((item, idx) => {
         const key = item.key ?? `${id}-item-${idx}`;
 
+        // wrapping label with external link icon if it's an external link
+        const labelContent = (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {item.label}
+            </Typography>
+            {item.external && <OpenInNewIcon sx={{ fontSize: 16 }} />}
+          </Box>
+        );
+
         if (item.to) {
           return (
             <MenuItem
               key={key}
               component={Link}
+              // adding this just for external links to open in new tab
+              {...(item.external && { target: "_blank", rel: "noopener noreferrer" })}
               to={item.to}
               onClick={handleItemClick(item)}
               sx={{
@@ -66,9 +78,7 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
               }}
               disableRipple
             >
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {item.label}
-              </Typography>
+              {labelContent}
             </MenuItem>
           );
         }
@@ -84,9 +94,7 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
             }}
             disableRipple
           >
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              {item.label}
-            </Typography>
+            {labelContent}
           </MenuItem>
         );
       })}
