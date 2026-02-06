@@ -28,6 +28,7 @@
     "d3-sankey": "^0.12.3",
     "dotenv": "^16.5.0",
     "export-to-csv": "^1.4.0",
+    "fuse.js": "^7.1.0",
     "idb-keyval": "^6.2.2",
     "lodash": "^4.17.21",
     "papaparse": "^5.5.3",
