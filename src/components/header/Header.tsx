@@ -100,7 +100,7 @@ function Header() {
           items={[
             { to: '/about', label: 'About Robokop' },
             { to: '/license', label: 'License' },
-            { to: '/fundings', label: 'Fundings' },
+            { to: '/funding', label: 'Funding' },
             { to: '/citations', label: 'Citations' },
             { to: '/events', label: 'Events' },
           ]}

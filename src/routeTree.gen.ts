@@ -16,7 +16,7 @@ import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as LicenseRouteImport } from './routes/license'
 import { Route as GuideRouteImport } from './routes/guide'
-import { Route as FundingsRouteImport } from './routes/fundings'
+import { Route as FundingRouteImport } from './routes/funding'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DeveloperToolsRouteImport } from './routes/developer-tools'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -71,9 +71,9 @@ const GuideRoute = GuideRouteImport.update({
   path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FundingsRoute = FundingsRouteImport.update({
-  id: '/fundings',
-  path: '/fundings',
+const FundingRoute = FundingRouteImport.update({
+  id: '/funding',
+  path: '/funding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -177,7 +177,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
-  '/fundings': typeof FundingsRoute
+  '/funding': typeof FundingRoute
   '/guide': typeof GuideRoute
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
@@ -205,7 +205,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
-  '/fundings': typeof FundingsRoute
+  '/funding': typeof FundingRoute
   '/guide': typeof GuideRoute
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
@@ -234,7 +234,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
-  '/fundings': typeof FundingsRoute
+  '/funding': typeof FundingRoute
   '/guide': typeof GuideRoute
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
@@ -264,7 +264,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/developer-tools'
     | '/events'
-    | '/fundings'
+    | '/funding'
     | '/guide'
     | '/license'
     | '/oauth-callback'
@@ -292,7 +292,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/developer-tools'
     | '/events'
-    | '/fundings'
+    | '/funding'
     | '/guide'
     | '/license'
     | '/oauth-callback'
@@ -320,7 +320,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/developer-tools'
     | '/events'
-    | '/fundings'
+    | '/funding'
     | '/guide'
     | '/license'
     | '/oauth-callback'
@@ -349,7 +349,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DeveloperToolsRoute: typeof DeveloperToolsRoute
   EventsRoute: typeof EventsRoute
-  FundingsRoute: typeof FundingsRoute
+  FundingRoute: typeof FundingRoute
   GuideRoute: typeof GuideRoute
   LicenseRoute: typeof LicenseRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
@@ -422,11 +422,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/fundings': {
-      id: '/fundings'
-      path: '/fundings'
-      fullPath: '/fundings'
-      preLoaderRoute: typeof FundingsRouteImport
+    '/funding': {
+      id: '/funding'
+      path: '/funding'
+      fullPath: '/funding'
+      preLoaderRoute: typeof FundingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -565,7 +565,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DeveloperToolsRoute: DeveloperToolsRoute,
   EventsRoute: EventsRoute,
-  FundingsRoute: FundingsRoute,
+  FundingRoute: FundingRoute,
   GuideRoute: GuideRoute,
   LicenseRoute: LicenseRoute,
   OauthCallbackRoute: OauthCallbackRoute,
