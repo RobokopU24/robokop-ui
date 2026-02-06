@@ -1,6 +1,6 @@
-import React from 'react';
-import { Menu, MenuItem, Typography, Box } from '@mui/material';
-import { Link } from '@tanstack/react-router';
+import React from "react";
+import { Menu, MenuItem, Typography, Box } from "@mui/material";
+import { Link } from "@tanstack/react-router";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 export type MenuItemConfig = {
@@ -40,8 +40,8 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
           borderRadius: 2,
           mt: 1,
           minWidth: 180,
-          '& .MuiMenuItem-root': {
-            transition: 'background-color 0.15s ease',
+          "& .MuiMenuItem-root": {
+            transition: "background-color 0.15s ease",
           },
         },
       }}
@@ -49,33 +49,29 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
     >
       {items.map((item, idx) => {
         const key = item.key ?? `${id}-item-${idx}`;
-        const labelContent = (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              {item.label}
-            </Typography>
-            {item.external && <OpenInNewIcon sx={{ fontSize: 16 }} />}
-          </Box>
-        );
 
-        const content = item.to ? (
-          item.external ? (
-            <a
-              href={item.to}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}
+        if (item.to) {
+          return (
+            <MenuItem
+              key={key}
+              component={Link}
+              to={item.to}
+              onClick={handleItemClick(item)}
+              sx={{
+                py: 1,
+                px: 2,
+                textDecoration: "none",
+                color: "inherit",
+                "&:hover": { backgroundColor: "action.hover" },
+              }}
+              disableRipple
             >
-              {labelContent}
-            </a>
-          ) : (
-            <Link to={item.to} style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
-              {labelContent}
-            </Link>
-          )
-        ) : (
-          labelContent
-        );
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {item.label}
+              </Typography>
+            </MenuItem>
+          );
+        }
 
         return (
           <MenuItem
@@ -84,11 +80,13 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
             sx={{
               py: 1,
               px: 2,
-              '&:hover': { backgroundColor: 'action.hover' },
+              "&:hover": { backgroundColor: "action.hover" },
             }}
             disableRipple
           >
-            {content}
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              {item.label}
+            </Typography>
           </MenuItem>
         );
       })}

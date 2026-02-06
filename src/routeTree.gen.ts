@@ -35,6 +35,7 @@ import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/d
 import { Route as DetailsDetails_idIndexRouteImport } from './routes/details/$details_id/index'
 import { Route as AnswerAnswer_idIndexRouteImport } from './routes/answer/$answer_id/index'
 import { Route as ExploreGraphsGraph_idIndexRouteImport } from './routes/explore/graphs/$graph_id/index'
+import { Route as ExploreGraphsGraph_idV2RouteImport } from './routes/explore/graphs/$graph_id/v2'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -169,6 +170,11 @@ const ExploreGraphsGraph_idIndexRoute =
     path: '/explore/graphs/$graph_id/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ExploreGraphsGraph_idV2Route = ExploreGraphsGraph_idV2RouteImport.update({
+  id: '/explore/graphs/$graph_id/v2',
+  path: '/explore/graphs/$graph_id/v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
   '/explore/graphs': typeof ExploreGraphsIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
+  '/explore/graphs/$graph_id/v2': typeof ExploreGraphsGraph_idV2Route
   '/explore/graphs/$graph_id': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRoutesByTo {
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
   '/explore/graphs': typeof ExploreGraphsIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
+  '/explore/graphs/$graph_id/v2': typeof ExploreGraphsGraph_idV2Route
   '/explore/graphs/$graph_id': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRoutesById {
@@ -253,6 +261,7 @@ export interface FileRoutesById {
   '/explore/drug-chemical/': typeof ExploreDrugChemicalIndexRoute
   '/explore/graphs/': typeof ExploreGraphsIndexRoute
   '/share/$share_id/': typeof ShareShare_idIndexRoute
+  '/explore/graphs/$graph_id/v2': typeof ExploreGraphsGraph_idV2Route
   '/explore/graphs/$graph_id/': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRouteTypes {
@@ -283,6 +292,7 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical'
     | '/explore/graphs'
     | '/share/$share_id'
+    | '/explore/graphs/$graph_id/v2'
     | '/explore/graphs/$graph_id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -311,6 +321,7 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical'
     | '/explore/graphs'
     | '/share/$share_id'
+    | '/explore/graphs/$graph_id/v2'
     | '/explore/graphs/$graph_id'
   id:
     | '__root__'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical/'
     | '/explore/graphs/'
     | '/share/$share_id/'
+    | '/explore/graphs/$graph_id/v2'
     | '/explore/graphs/$graph_id/'
   fileRoutesById: FileRoutesById
 }
@@ -368,6 +380,7 @@ export interface RootRouteChildren {
   ExploreDrugChemicalIndexRoute: typeof ExploreDrugChemicalIndexRoute
   ExploreGraphsIndexRoute: typeof ExploreGraphsIndexRoute
   ShareShare_idIndexRoute: typeof ShareShare_idIndexRoute
+  ExploreGraphsGraph_idV2Route: typeof ExploreGraphsGraph_idV2Route
   ExploreGraphsGraph_idIndexRoute: typeof ExploreGraphsGraph_idIndexRoute
 }
 
@@ -555,6 +568,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreGraphsGraph_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/graphs/$graph_id/v2': {
+      id: '/explore/graphs/$graph_id/v2'
+      path: '/explore/graphs/$graph_id/v2'
+      fullPath: '/explore/graphs/$graph_id/v2'
+      preLoaderRoute: typeof ExploreGraphsGraph_idV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -584,6 +604,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreDrugChemicalIndexRoute: ExploreDrugChemicalIndexRoute,
   ExploreGraphsIndexRoute: ExploreGraphsIndexRoute,
   ShareShare_idIndexRoute: ShareShare_idIndexRoute,
+  ExploreGraphsGraph_idV2Route: ExploreGraphsGraph_idV2Route,
   ExploreGraphsGraph_idIndexRoute: ExploreGraphsGraph_idIndexRoute,
 }
 export const routeTree = rootRouteImport
