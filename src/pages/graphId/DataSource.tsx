@@ -130,10 +130,6 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                           source.citation.length >= 2 &&
                           source.citation.every((c) => c.trim() !== ""),
                       )
-                      .map((s) => {
-                        console.log(s);
-                        return s;
-                      })
                       .map((source, index, arr) => (
                         <React.Fragment key={index}>
                           <ListItem>
