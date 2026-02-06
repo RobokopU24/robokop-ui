@@ -1,43 +1,91 @@
-import React from 'react';
-import Download from '@mui/icons-material/Download';
-import OpenInNew from '@mui/icons-material/OpenInNew';
-import {
-  Box,
-  Breadcrumbs,
-  Card,
-  CardContent,
-  Chip,
-  Container,
-  Grid,
-  Stack,
-  Typography,
-} from '@mui/material';
-import { Link, useParams } from '@tanstack/react-router';
-import { formatFileSize } from '../../utils/getFileSize';
-import stringUtils from '../../utils/strings';
-import DownloadSection from './Download';
-import { useQuery } from '@tanstack/react-query';
-import { fileRoutes } from '../../API/routes';
-import axios from 'axios';
-import PredicateCount from './PredicateCount';
-import NodeCuriePrefixes from './NodeCuriePrefixes';
-import PrimaryKnowledgeSources from './PrimaryKnowledgeSources';
-import StringTableDisplay from './StringTableDisplay';
-import Sidebar from './Sidebar';
-import './GraphId.css';
-import SankeyGraphModal from './SankeyGraphModal';
-import { formatBuildDate } from '../../utils/dateTime';
-import { getGraphMetadataDownloads } from '../../functions/graphFunctions';
+import { Box, Card, Container, Grid } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "@tanstack/react-router";
+import axios from "axios";
+import React from "react";
+import { GraphMetadataV2 } from "../../API/graphMetadataV2";
+import { fileRoutes } from "../../API/routes";
+import { getGraphMetadataDownloads } from "../../functions/graphFunctions";
+import DownloadSection from "../graphId/Download";
+import "../graphId/GraphId.css";
+import NodeCuriePrefixes from "../graphId/NodeCuriePrefixes";
+import PredicateCount from "../graphId/PredicateCount";
+import PrimaryKnowledgeSources from "../graphId/PrimaryKnowledgeSources";
+import SankeyGraphModal from "../graphId/SankeyGraphModal";
+import StringTableDisplay from "../graphId/StringTableDisplay";
+import BreadcrumbsComponent from "./BreadcrumbsComponent";
+import ConformanceSchema from "./ConformanceSchema";
+import ContactPoint from "./ContactPoint";
+import CreatorsFunders from "./CreatorsFunders";
+import DataSource from "./DataSource";
+import HeaderCard from "./HeaderCard";
+import SidebarV2 from "./Sidebar";
 
-interface GraphIdProps {
+const COMMON_SIDEBAR_ITEMS = [
+  {
+    title: "Description",
+    id: "description",
+  },
+  {
+    title: "Download",
+    id: "download",
+  },
+  {
+    title: "Predicate Counts",
+    id: "predicate-counts",
+  },
+  {
+    title: "Node CURIE Prefixes",
+    id: "node-curie-prefixes",
+  },
+  {
+    title: "Edge Properties",
+    id: "edge-properties",
+  },
+  {
+    title: "Primary Knowledge Sources",
+    id: "primary-knowledge-sources",
+  },
+  {
+    title: "Aggregator Knowledge Sources",
+    id: "aggregator-knowledge-sources",
+  },
+  {
+    title: "Node Properties",
+    id: "node-properties",
+  },
+];
+
+const V2_METADATA_SIDEBAR_ITEMS = [
+  {
+    title: "Data Sources",
+    id: "data-sources",
+  },
+  {
+    title: "Creators & Funders",
+    id: "creators-funders",
+  },
+  {
+    title: "Contact Points",
+    id: "contact-points",
+  },
+  {
+    title: "Conformance & Schema",
+    id: "conformance-schema",
+  },
+];
+
+interface GraphIdV2Props {
   graphData: any;
+  v2Metadata: GraphMetadataV2 | null;
 }
 
-function GraphId({ graphData }: GraphIdProps) {
+function GraphId({ graphData, v2Metadata }: GraphIdV2Props) {
   const { graph_id } = useParams({ strict: false });
-  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
+  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] =
+    React.useState(false);
   const { data: fileSize } = useQuery({
-    queryKey: ['graph-metadata', graphData.graph_id, 'file-size'],
+    queryKey: ["graph-metadata", graphData.graph_id, "file-size"],
     queryFn: async () => {
       const results = await axios.post(fileRoutes.fileSize, {
         fileUrl: graphData.neo4j_dump,
@@ -46,17 +94,19 @@ function GraphId({ graphData }: GraphIdProps) {
     },
   });
   const { data: downloadData } = useQuery({
-    queryKey: ['graph-metadata', graph_id, 'download'],
+    queryKey: ["graph-metadata", graph_id, "download"],
     queryFn: () => getGraphMetadataDownloads(graph_id!),
   });
 
   let nodeSet: Set<string> = new Set();
   let links: Array<{ source: string; target: string; value: number }> = [];
   for (const [key, value] of Object.entries(
-    graphData?.qc_results?.predicates_by_knowledge_source || {}
+    graphData?.qc_results?.predicates_by_knowledge_source || {},
   )) {
     nodeSet.add(key);
-    for (const [predicate, count] of Object.entries(value as Record<string, number>)) {
+    for (const [predicate, count] of Object.entries(
+      value as Record<string, number>,
+    )) {
       nodeSet.add(predicate);
       links.push({ source: key, target: predicate, value: count });
     }
@@ -69,139 +119,41 @@ function GraphId({ graphData }: GraphIdProps) {
 
   const latestMetadataUrl = downloadData?.data
     ?.at(-1)
-    ?.links?.filter((link: any) => link.url.includes('meta.json'))[0]?.url;
+    ?.links?.filter((link: any) => link.url.includes("meta.json"))[0]?.url;
+
+  const displayName = v2Metadata?.name ?? graphData.graph_name;
+  const displayDescription =
+    v2Metadata?.description ?? graphData.graph_description;
+  const displayVersion = v2Metadata?.version ?? graphData?.graph_version;
+
+  const sidebarItems = v2Metadata
+    ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS]
+    : COMMON_SIDEBAR_ITEMS;
 
   return (
-    <Container sx={{ my: 6, maxWidth: '1920px !important', display: 'flex', gap: 4 }}>
-      <Sidebar />
+    <Container
+      className="graph-id-v2-container"
+      sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}
+    >
+      <SidebarV2 listOfContents={sidebarItems} />
       <Box>
         <SankeyGraphModal
           isOpen={isSankeyGraphModalOpen}
           onClose={() => setIsSankeyGraphModalOpen(false)}
           graphData={graphDataset}
         />
-        <Breadcrumbs aria-label="graph breadcrumbs">
-          <Typography
-            component={Link}
-            to="/explore/graphs"
-            color="text.secondary"
-            variant="body2"
-            sx={{ textDecoration: 'none' }}
-          >
-            Explore graphs
-          </Typography>
-          <Typography color="text.primary" variant="body2">
-            {graphData.graph_name}
-          </Typography>
-        </Breadcrumbs>
-        <Card variant="outlined" sx={{ mt: 2 }} id="description">
-          <CardContent>
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              spacing={2}
-              justifyContent="space-between"
-              alignItems={{ xs: 'flex-start', sm: 'baseline' }}
-            >
-              <Box>
-                <Typography variant="h4" component="h1">
-                  {graphData.graph_name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                  Graph version <code>{graphData?.graph_version}</code>, built{' '}
-                  <code>
-                    {graphData?.build_time ? formatBuildDate(graphData?.build_time) : 'N/A'}
-                  </code>
-                </Typography>
-              </Box>
-              <Stack direction="row" spacing={1} flexWrap="wrap">
-                <Chip
-                  label={`${stringUtils.formatNumber(graphData.final_node_count)} nodes`}
-                  color="default"
-                  variant="outlined"
-                />
-                <Chip
-                  label={`${stringUtils.formatNumber(graphData.final_edge_count)} edges`}
-                  color="default"
-                  variant="outlined"
-                />
-              </Stack>
-            </Stack>
+        <BreadcrumbsComponent displayName={displayName} />
+        <HeaderCard
+          displayName={displayName}
+          displayVersion={displayVersion}
+          displayDescription={displayDescription}
+          graphData={graphData}
+          v2Metadata={v2Metadata}
+          latestMetadataUrl={latestMetadataUrl}
+          fileSize={fileSize}
+          setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen}
+        />
 
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              {graphData.graph_description}
-            </Typography>
-            <Stack direction={'row'} justifyContent={'space-between'}>
-              <Stack
-                direction={{ xs: 'column', sm: 'row' }}
-                spacing={1.5}
-                sx={{ mt: 2 }}
-                alignItems="center"
-              >
-                {graphData.graph_url && (
-                  <>
-                    <a
-                      className="external-links"
-                      href={graphData.graph_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {graphData.graph_id === 'robokopkg' ? 'Neo4j Browser' : 'Knowledge Source'}{' '}
-                      <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
-                    </a>
-                  </>
-                )}
-                <p>•</p>
-                <a
-                  className="external-links"
-                  href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
-                </a>
-                <p>•</p>
-                {latestMetadataUrl && (
-                  <a
-                    className="external-links"
-                    href={latestMetadataUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Latest Metadata <OpenInNew sx={{ ml: 0.5 }} />
-                  </a>
-                )}
-              </Stack>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 2 }}>
-                <a
-                  className="details-card-button"
-                  href={graphData.neo4j_dump}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    maxWidth: '300px',
-                  }}
-                >
-                  <span>Download Graph ({formatFileSize(fileSize || 0, 2)})</span> <Download />
-                </a>
-                <button
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    maxWidth: '200px',
-                  }}
-                  className="details-card-secondary-button"
-                  onClick={() => setIsSankeyGraphModalOpen(true)}
-                >
-                  Sankey Chart
-                </button>
-              </Stack>
-            </Stack>
-          </CardContent>
-        </Card>
         <Grid size={8} sx={{ mt: 2 }}>
           <Grid container spacing={2}>
             <Grid size={12} id="predicate-counts">
@@ -230,7 +182,9 @@ function GraphId({ graphData }: GraphIdProps) {
             <Grid size={12}>
               <Card variant="outlined" id="aggregator-knowledge-sources">
                 <StringTableDisplay
-                  tableData={graphData?.qc_results?.aggregator_knowledge_sources}
+                  tableData={
+                    graphData?.qc_results?.aggregator_knowledge_sources
+                  }
                   title="Aggregator Knowledge Sources"
                 />
               </Card>
@@ -243,6 +197,15 @@ function GraphId({ graphData }: GraphIdProps) {
                 />
               </Card>
             </Grid>
+
+            {v2Metadata !== null && (
+              <>
+                <DataSource v2Metadata={v2Metadata} />
+                <CreatorsFunders v2Metadata={v2Metadata} />
+                <ContactPoint v2Metadata={v2Metadata} />
+                <ConformanceSchema v2Metadata={v2Metadata} />
+              </>
+            )}
           </Grid>
         </Grid>
       </Box>

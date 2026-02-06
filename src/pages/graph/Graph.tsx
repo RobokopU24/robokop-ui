@@ -35,7 +35,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
           ? Array.from({ length: 8 }).map((_, index) => (
               <Skeleton key={index} variant="rounded" height={302} />
             ))
-          : graphData.map((graph) => (
+          : graphData.filter((graph) => graph.graph_name).map((graph) => (
               <div
                 key={graph.graph_id}
                 className="details-card"

@@ -3,34 +3,54 @@ import API from '../../../../API';
 import { queryClient } from '../../../../utils/queryClient';
 import { useQuery } from '@tanstack/react-query';
 import GraphId from '../../../../pages/graphId/GraphId';
+import type { GraphMetadataV2 } from '../../../../API/graphMetadataV2';
 
 export const Route = createFileRoute('/explore/graphs/$graph_id/')({
   component: RouteComponent,
   ssr: false,
   loader: async ({ params }) => {
-    const graphData = await queryClient.ensureQueryData({
-      queryKey: ['graph-metadata', params.graph_id],
-      queryFn: () => API.graphMetadata.metadata(params.graph_id!),
-    });
+    const [graphData, v2Metadata] = await Promise.all([
+      queryClient.ensureQueryData({
+        queryKey: ['graph-metadata', params.graph_id],
+        queryFn: () => API.graphMetadata.metadata(params.graph_id!),
+      }),
+      queryClient.ensureQueryData({
+        queryKey: ['graph-metadata-v2', params.graph_id],
+        queryFn: () => API.graphMetadataV2.metadata(params.graph_id),
+      }),
+    ]);
 
     return {
       graphData,
+      v2Metadata,
     };
   },
-  head: ({ params }) => {
+  head: ({ loaderData, params }) => {
     const cachedData: any = queryClient.getQueryData(['graph-metadata', params.graph_id]);
+    const cachedMetadataV2: any =
+      loaderData?.v2Metadata ?? queryClient.getQueryData(['graph-metadata-v2', params.graph_id]);
+
     return {
       meta: [
         {
           title: cachedData ? `${cachedData.graph_name} | ROBOKOP` : 'Graph | ROBOKOP',
         },
       ],
+      scripts: cachedMetadataV2
+        ? [
+            {
+              type: 'application/ld+json',
+              children: JSON.stringify(cachedMetadataV2),
+            },
+          ]
+        : [],
     };
   },
 });
 
 function RouteComponent() {
   const { graph_id } = Route.useParams();
+
   const { data, isPending } = useQuery({
     queryKey: ['graph-metadata', graph_id],
     queryFn: () => {
@@ -39,7 +59,13 @@ function RouteComponent() {
     enabled: !!graph_id,
   });
 
-  if (isPending) return 'Loading...';
+  const { data: v2Metadata, isPending: v2Pending } = useQuery({
+    queryKey: ["graph-metadata-v2", graph_id],
+    queryFn: () => API.graphMetadataV2.metadata(graph_id!),
+    enabled: !!graph_id,
+  });
 
-  return <GraphId graphData={data} />;
+  if (isPending || v2Pending) return 'Loading...';
+
+  return <GraphId graphData={data} v2Metadata={v2Metadata ?? null} />;
 }

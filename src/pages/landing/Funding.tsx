@@ -1,7 +1,7 @@
 import React from 'react';
 import { Section } from './Section/Section';
 
-function Fundings() {
+function Funding() {
   return (
     <Section title="Funding" index={3}>
       <p>
@@ -60,4 +60,4 @@ function Fundings() {
   );
 }
 
-export default Fundings;
+export default Funding;

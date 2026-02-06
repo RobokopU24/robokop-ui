@@ -100,7 +100,7 @@ function Header() {
           items={[
             { to: '/about', label: 'About Robokop' },
             { to: '/license', label: 'License' },
-            { to: '/fundings', label: 'Fundings' },
+            { to: '/funding', label: 'Funding' },
             { to: '/citations', label: 'Citations' },
             { to: '/events', label: 'Events' },
           ]}
@@ -126,6 +126,7 @@ function Header() {
             { to: '/explore/enrichment-analysis', label: 'Enrichment Analysis' },
             { to: '/explore/drug-chemical', label: 'Drug to Disease Pair' },
             { to: '/developer-tools', label: 'Developer Tools' },
+            { to: 'http://robokopkg.renci.org/browser/', label: 'ROBOKOP KG Browser', external: true },
           ]}
         />
         <Button
