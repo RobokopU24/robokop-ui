@@ -17,7 +17,7 @@ interface HeaderCardProps {
     final_edge_count: number;
     build_time?: string;
   };
-  v2Metadata?: GraphMetadataV2;
+  v2Metadata?: GraphMetadataV2 | null;
   latestMetadataUrl?: string;
   fileSize?: number;
   setIsSankeyGraphModalOpen: (isOpen: boolean) => void;
@@ -47,10 +47,10 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
             </Typography>
           </Box>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            <Chip label={`${stringUtils.formatNumber(graphData.final_node_count)} nodes`} color="default" variant="outlined" />
-            <Chip label={`${stringUtils.formatNumber(graphData.final_edge_count)} edges`} color="default" variant="outlined" />
-            {v2Metadata?.biolinkVersion && <Chip label={`Biolink ${v2Metadata.biolinkVersion}`} color="default" variant="outlined" />}
-            {v2Metadata?.babelVersion && <Chip label={`Babel ${v2Metadata.babelVersion}`} color="default" variant="outlined" />}
+            <Chip label={`${stringUtils.formatNumber(graphData.final_node_count)} nodes`} size="small" color="default" variant="outlined" />
+            <Chip label={`${stringUtils.formatNumber(graphData.final_edge_count)} edges`} size="small" color="default" variant="outlined" />
+            {v2Metadata?.biolinkVersion && <Chip label={`Biolink ${v2Metadata.biolinkVersion}`} size="small" color="default" variant="outlined" />}
+            {v2Metadata?.babelVersion && <Chip label={`Babel ${v2Metadata.babelVersion}`} size="small" color="default" variant="outlined" />}
           </Stack>
         </Stack>
 
@@ -58,13 +58,13 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
           {displayDescription}
         </Typography>
 
-        {v2Metadata?.keywords && v2Metadata.keywords.length > 0 && (
+        {/* {v2Metadata?.keywords && v2Metadata.keywords.length > 0 && (
           <Stack direction="row" spacing={1} sx={{ mt: 2 }} flexWrap="wrap" useFlexGap>
             {v2Metadata.keywords.map((keyword, index) => (
               <Chip key={index} label={keyword} size="small" variant="filled" />
             ))}
           </Stack>
-        )}
+        )} */}
 
         <Stack direction={"row"} justifyContent={"space-between"}>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 2 }} alignItems="center">
@@ -82,14 +82,14 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
             <p>•</p>
             {latestMetadataUrl && (
               <a className="external-links" href={latestMetadataUrl} target="_blank" rel="noopener noreferrer">
-                Latest Metadata <OpenInNew sx={{ ml: 0.5 }} />
+                Latest Metadata <OpenInNew sx={{ fontSize: "1.25rem", ml: 0.5 }} />
               </a>
             )}
             {v2Metadata?.license && (
               <>
                 <p>•</p>
                 <a className="external-links" href={v2Metadata.license} target="_blank" rel="noopener noreferrer">
-                  License <OpenInNew sx={{ ml: 0.5 }} />
+                  License <OpenInNew sx={{ fontSize: "1.25rem", ml: 0.5 }} />
                 </a>
               </>
             )}

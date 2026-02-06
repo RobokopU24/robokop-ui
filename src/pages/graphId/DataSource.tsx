@@ -1,5 +1,27 @@
 import React from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, Chip, Divider, Grid, Link as MuiLink, List, ListItem, ListItemText, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  Grid,
+  Link as MuiLink,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { OpenInNew } from "@mui/icons-material";
 import { GraphMetadataV2 } from "../../API/graphMetadataV2";
@@ -44,31 +66,46 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                       <TableRow key={index}>
                         <TableCell>
                           <Typography variant="body2" fontWeight="medium">
-                            {source.name}
+                            {source.url ? (
+                              <MuiLink href={source.url} target="_blank" rel="noopener noreferrer" title="Source URL">
+                                {source.name || source.id}{' '}
+                                <OpenInNew fontSize="small" sx={{ transform: "scale(0.85) translateY(5px)" }}/>
+                              </MuiLink>
+                            ) : source.name || source.id}
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Chip label={source.version} size="small" variant="outlined" />
+                          <Chip
+                            label={source.version}
+                            size="small"
+                            variant="outlined"
+                            sx={{ color: "#848484" }}
+                          />
                         </TableCell>
-                        <TableCell>
-                          <Typography variant="body2" sx={{ maxWidth: 400 }}>
+                        <TableCell sx={{ maxWidth: 800 }}>
+                          <Typography variant="body2">
                             {source.description || "No description available"}
                           </Typography>
                         </TableCell>
                         <TableCell>
                           <Stack direction="row" spacing={1}>
-                            {source.url && (
-                              <MuiLink href={source.url} target="_blank" rel="noopener noreferrer" title="Source URL">
-                                <OpenInNew fontSize="small" />
-                              </MuiLink>
-                            )}
                             {source.citation && (
-                              <MuiLink href={source.citation} target="_blank" rel="noopener noreferrer" title="Citation">
+                              <MuiLink
+                                href={source.citation[0]}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Citation"
+                              >
                                 DOI
                               </MuiLink>
                             )}
                             {source.license && (
-                              <MuiLink href={source.license} target="_blank" rel="noopener noreferrer" title="License">
+                              <MuiLink
+                                href={source.license}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="License"
+                              >
                                 License
                               </MuiLink>
                             )}
@@ -87,11 +124,37 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                 <AccordionDetails>
                   <List dense>
                     {v2Metadata.isBasedOn
-                      .filter((source) => source.fullCitation)
+                      .filter(
+                        (source) =>
+                          Array.isArray(source.citation) &&
+                          source.citation.length >= 2 &&
+                          source.citation.every((c) => c.trim() !== ""),
+                      )
+                      .map((s) => {
+                        console.log(s);
+                        return s;
+                      })
                       .map((source, index, arr) => (
                         <React.Fragment key={index}>
                           <ListItem>
-                            <ListItemText primary={source.name} secondary={source.fullCitation} secondaryTypographyProps={{ sx: { whiteSpace: "pre-wrap" } }} />
+                            <ListItemText
+                              primary={
+                                <span>
+                                  {source.name}{" "}
+                                  <a
+                                    href={source.citation[0]}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {source.citation[0]}
+                                  </a>
+                                </span>
+                              }
+                              secondary={source.citation[1]}
+                              secondaryTypographyProps={{
+                                sx: { whiteSpace: "pre-wrap" },
+                              }}
+                            />
                           </ListItem>
                           {index < arr.length - 1 && <Divider component="li" />}
                         </React.Fragment>
