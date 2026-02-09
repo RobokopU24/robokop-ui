@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import axios from "axios";
 import React from "react";
-import { GraphMetadataV2 } from "../../API/graphMetadataV2";
+import { GraphMetadataV2 } from "../../API/graphMetadata";
 import { fileRoutes } from "../../API/routes";
 import { getGraphMetadataDownloads } from "../../functions/graphFunctions";
 import DownloadSection from "../graphId/Download";
@@ -126,7 +126,7 @@ function GraphId({ graphData, v2Metadata }: GraphIdV2Props) {
     v2Metadata?.description ?? graphData.graph_description;
   const displayVersion = v2Metadata?.version ?? graphData?.graph_version;
 
-  const sidebarItems = v2Metadata
+  const sidebarItems = v2Metadata !== null && Object.entries(v2Metadata).length > 0
     ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS]
     : COMMON_SIDEBAR_ITEMS;
 

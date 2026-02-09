@@ -1,5 +1,5 @@
 import { Card, CardContent, Grid, Link as MuiLink, Stack, Typography, Box } from "@mui/material";
-import { GraphMetadataV2 } from "../../API/graphMetadataV2";
+import { GraphMetadataV2 } from "../../API/graphMetadata";
 
 interface ContactPointProps {
   v2Metadata: GraphMetadataV2;

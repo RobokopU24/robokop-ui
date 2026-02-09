@@ -3,7 +3,6 @@ import API from '../../../../API';
 import { queryClient } from '../../../../utils/queryClient';
 import { useQuery } from '@tanstack/react-query';
 import GraphId from '../../../../pages/graphId/GraphId';
-import type { GraphMetadataV2 } from '../../../../API/graphMetadataV2';
 
 export const Route = createFileRoute('/explore/graphs/$graph_id/')({
   component: RouteComponent,
@@ -16,7 +15,7 @@ export const Route = createFileRoute('/explore/graphs/$graph_id/')({
       }),
       queryClient.ensureQueryData({
         queryKey: ['graph-metadata-v2', params.graph_id],
-        queryFn: () => API.graphMetadataV2.metadata(params.graph_id),
+        queryFn: () => API.graphMetadata.graphMetadataV2(params.graph_id),
       }),
     ]);
 
@@ -61,7 +60,7 @@ function RouteComponent() {
 
   const { data: v2Metadata, isPending: v2Pending } = useQuery({
     queryKey: ["graph-metadata-v2", graph_id],
-    queryFn: () => API.graphMetadataV2.metadata(graph_id!),
+    queryFn: () => API.graphMetadata.graphMetadataV2(graph_id!),
     enabled: !!graph_id,
   });
 

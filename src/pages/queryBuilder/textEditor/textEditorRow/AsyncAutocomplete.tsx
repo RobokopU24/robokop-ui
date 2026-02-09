@@ -1,35 +1,10 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
-import {
-  useFloating,
-  autoUpdate,
-  offset,
-  flip,
-  shift,
-  size,
-  useDismiss,
-  useRole,
-  useInteractions,
-  FloatingPortal,
-  useListNavigation,
-  useTypeahead,
-} from '@floating-ui/react';
-import {
-  TextField,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  CircularProgress,
-  Box,
-  InputAdornment,
-  IconButton,
-  ListSubheader,
-} from '@mui/material';
-import { styled } from '@mui/material/styles';
-import ClearIcon from '@mui/icons-material/Clear';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import Fuse, { IFuseOptions } from 'fuse.js';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useFloating, autoUpdate, offset, flip, shift, size, useDismiss, useRole, useInteractions, FloatingPortal, useListNavigation, useTypeahead } from "@floating-ui/react";
+import { TextField, Paper, List, ListItem, ListItemText, ListItemButton, CircularProgress, Box, InputAdornment, IconButton, ListSubheader } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import ClearIcon from "@mui/icons-material/Clear";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Fuse, { IFuseOptions } from "fuse.js";
 
 export interface AutocompleteOption<T = any> {
   value: T;
@@ -56,6 +31,7 @@ export interface DataSource<T = any> {
 }
 
 export interface AutocompleteProps<T = any> {
+  onClick?: (event: React.MouseEvent) => void;
   value?: AutocompleteOption<T> | null;
   onChange?: (value: AutocompleteOption<T> | null) => void;
   dataSources: DataSource<T>[];
@@ -69,15 +45,15 @@ export interface AutocompleteProps<T = any> {
   minQueryLength?: number; // Minimum characters before search starts
   debounceMs?: number;
   maxHeight?: number;
-  loading?: boolean; 
+  loading?: boolean;
   onInputChange?: (value: string) => void;
   renderOption?: (option: AutocompleteOption<T>, state: { selected: boolean; active: boolean }) => React.ReactNode;
   getOptionLabel?: (option: AutocompleteOption<T>) => string;
   getOptionDisabled?: (option: AutocompleteOption<T>) => boolean;
   noOptionsText?: string;
   loadingText?: string;
-  fuseOptions?: IFuseOptions<AutocompleteOption<T>>; 
-  highlightMatches?: boolean; 
+  fuseOptions?: IFuseOptions<AutocompleteOption<T>>;
+  highlightMatches?: boolean;
   className?: string;
   onFocus?: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
@@ -89,19 +65,19 @@ export interface AutocompleteProps<T = any> {
 }
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-  maxHeight: 'inherit',
-  overflow: 'auto',
+  maxHeight: "inherit",
+  overflow: "auto",
 }));
 
 const StyledListItem = styled(ListItemButton)(({ theme }) => ({
-  padding: '6px 12px',
-  '&.Mui-selected': {
+  padding: "6px 12px",
+  "&.Mui-selected": {
     backgroundColor: theme.palette.action.selected,
   },
-  '&.Mui-focusVisible, &.active': {
+  "&.Mui-focusVisible, &.active": {
     backgroundColor: theme.palette.action.hover,
   },
-  '&:hover': {
+  "&:hover": {
     backgroundColor: theme.palette.action.hover,
   },
 }));
@@ -113,21 +89,16 @@ interface HighlightTextProps {
   highlightStyle?: React.CSSProperties;
 }
 
-const HighlightText: React.FC<HighlightTextProps> = ({ 
-  text, 
-  query, 
-  component: Component = 'span',
-  highlightStyle = { fontWeight: 600, backgroundColor: '#fff59d' }
-}) => {
+const HighlightText: React.FC<HighlightTextProps> = ({ text, query, component: Component = "span", highlightStyle = { fontWeight: 600, backgroundColor: "#fff59d" } }) => {
   if (!query) return <Component>{text}</Component>;
-  
+
   const parts: Array<{ text: string; highlight: boolean }> = [];
   const lowerText = text.toLowerCase();
   const lowerQuery = query.toLowerCase();
-  
+
   let lastIndex = 0;
   let index = lowerText.indexOf(lowerQuery, lastIndex);
-  
+
   while (index !== -1) {
     if (index > lastIndex) {
       parts.push({ text: text.slice(lastIndex, index), highlight: false });
@@ -136,31 +107,32 @@ const HighlightText: React.FC<HighlightTextProps> = ({
     lastIndex = index + query.length;
     index = lowerText.indexOf(lowerQuery, lastIndex);
   }
-  
+
   if (lastIndex < text.length) {
     parts.push({ text: text.slice(lastIndex), highlight: false });
   }
-  
+
   return (
     <Component>
-      {parts.map((part, i) => (
+      {parts.map((part, i) =>
         part.highlight ? (
           <Box component="span" key={i} sx={highlightStyle}>
             {part.text}
           </Box>
         ) : (
           <span key={i}>{part.text}</span>
-        )
-      ))}
+        ),
+      )}
     </Component>
   );
 };
 
 export function AsyncAutocomplete<T = any>({
+  onClick,
   value,
   onChange,
   dataSources,
-  placeholder = 'Search...',
+  placeholder = "Search...",
   disabled = false,
   error = false,
   helperText,
@@ -175,8 +147,8 @@ export function AsyncAutocomplete<T = any>({
   renderOption,
   getOptionLabel = (option) => option.label,
   getOptionDisabled = (option) => option.disabled || false,
-  noOptionsText = 'No options',
-  loadingText = 'Loading...',
+  noOptionsText = "No options",
+  loadingText = "Loading...",
   fuseOptions,
   highlightMatches = true,
   className,
@@ -185,11 +157,11 @@ export function AsyncAutocomplete<T = any>({
   InputProps,
 }: AutocompleteProps<T>) {
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [sourceLoadingStates, setSourceLoadingStates] = useState<Record<string, boolean>>({});
   const [asyncResults, setAsyncResults] = useState<Record<string, AutocompleteOption<T>[]>>({});
-  
+
   const listRef = useRef<Array<HTMLElement | null>>([]);
   const listContentRef = useRef<Array<string | null>>([]);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -215,68 +187,66 @@ export function AsyncAutocomplete<T = any>({
 
   const optionsWithGroups = useMemo(() => {
     const result: Array<{
-      type: 'header' | 'option';
+      type: "header" | "option";
       group?: DataSource<T>;
       option?: AutocompleteOption<T>;
       selectableIndex?: number;
     }> = [];
-    
+
     let selectableIndex = 0;
-    
+
     dataSources.forEach((source) => {
       let options: AutocompleteOption<T>[] = [];
-      
+
       if (source.options) {
         if (inputValue && inputValue.length >= minQueryLength) {
           const defaultFuseOptions: IFuseOptions<AutocompleteOption<T>> = {
-            keys: ['label', 'subText'],
+            keys: ["label", "subText"],
             threshold: 0.3,
             includeScore: true,
             ignoreLocation: true,
           };
-          
+
           const fuse = new Fuse(source.options, { ...defaultFuseOptions, ...fuseOptions });
-          options = fuse.search(inputValue).map(result => result.item);
+          options = fuse.search(inputValue).map((result) => result.item);
         } else {
           options = source.options;
         }
       } else {
         options = asyncResults[source.id] || [];
       }
-      
+
       const hasOptions = options.length > 0;
-      
+
       if (hasOptions && source.label) {
-        result.push({ type: 'header', group: source });
+        result.push({ type: "header", group: source });
       }
-      
+
       options.forEach((option) => {
         const isDisabled = getOptionDisabled(option);
-        result.push({ 
-          type: 'option', 
-          option, 
-          selectableIndex: isDisabled ? undefined : selectableIndex
+        result.push({
+          type: "option",
+          option,
+          selectableIndex: isDisabled ? undefined : selectableIndex,
         });
         if (!isDisabled) {
           selectableIndex++;
         }
       });
     });
-    
+
     return result;
   }, [dataSources, asyncResults, getOptionDisabled, inputValue, minQueryLength, fuseOptions]);
 
   const selectableOptions = useMemo(() => {
-    return optionsWithGroups
-      .filter((item) => item.type === 'option' && item.option && !getOptionDisabled(item.option))
-      .map((item) => item.option!);
+    return optionsWithGroups.filter((item) => item.type === "option" && item.option && !getOptionDisabled(item.option)).map((item) => item.option!);
   }, [optionsWithGroups, getOptionDisabled]);
 
   useEffect(() => {
     listContentRef.current = selectableOptions.map((option) => getOptionLabel(option));
   }, [selectableOptions, getOptionLabel]);
 
-  const role = useRole(context, { role: 'listbox' });
+  const role = useRole(context, { role: "listbox" });
   const dismiss = useDismiss(context);
 
   const listNavigation = useListNavigation(context, {
@@ -294,59 +264,57 @@ export function AsyncAutocomplete<T = any>({
     onMatch: open ? setActiveIndex : undefined,
   });
 
-  const { getReferenceProps, getFloatingProps } = useInteractions([
-    role,
-    dismiss,
-    listNavigation,
-    typeahead,
-  ]);
+  const { getReferenceProps, getFloatingProps } = useInteractions([role, dismiss, listNavigation, typeahead]);
 
-  const fetchAsyncData = useCallback(async (query: string) => {
-    const asyncSources = dataSources.filter((source) => source.fetchOptions);
-    
-    if (query.length < minQueryLength) {
-      setAsyncResults({});
-      setSourceLoadingStates({});
-      return;
-    }
-    
-    const loadingStates: Record<string, boolean> = {};
-    asyncSources.forEach((source) => {
-      loadingStates[source.id] = true;
-    });
-    setSourceLoadingStates(loadingStates);
-    
-    // Fetch data from all async sources
-    const promises = asyncSources.map(async (source) => {
-      try {
-        const results = await source.fetchOptions!(query);
-        return { id: source.id, results };
-      } catch (error) {
-        console.error(`Error fetching options for source ${source.id}:`, error);
-        return { id: source.id, results: [] };
+  const fetchAsyncData = useCallback(
+    async (query: string) => {
+      const asyncSources = dataSources.filter((source) => source.fetchOptions);
+
+      if (query.length < minQueryLength) {
+        setAsyncResults({});
+        setSourceLoadingStates({});
+        return;
       }
-    });
-    
-    const results = await Promise.all(promises);
-    
-    const newResults: Record<string, AutocompleteOption<T>[]> = {};
-    const newLoadingStates: Record<string, boolean> = {};
-    
-    results.forEach(({ id, results }) => {
-      newResults[id] = results;
-      newLoadingStates[id] = false;
-    });
-    
-    setAsyncResults(newResults);
-    setSourceLoadingStates(newLoadingStates);
-  }, [dataSources, minQueryLength]);
+
+      const loadingStates: Record<string, boolean> = {};
+      asyncSources.forEach((source) => {
+        loadingStates[source.id] = true;
+      });
+      setSourceLoadingStates(loadingStates);
+
+      // Fetch data from all async sources
+      const promises = asyncSources.map(async (source) => {
+        try {
+          const results = await source.fetchOptions!(query);
+          return { id: source.id, results };
+        } catch (error) {
+          console.error(`Error fetching options for source ${source.id}:`, error);
+          return { id: source.id, results: [] };
+        }
+      });
+
+      const results = await Promise.all(promises);
+
+      const newResults: Record<string, AutocompleteOption<T>[]> = {};
+      const newLoadingStates: Record<string, boolean> = {};
+
+      results.forEach(({ id, results }) => {
+        newResults[id] = results;
+        newLoadingStates[id] = false;
+      });
+
+      setAsyncResults(newResults);
+      setSourceLoadingStates(newLoadingStates);
+    },
+    [dataSources, minQueryLength],
+  );
 
   // Debounced search
   useEffect(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
-    
+
     if (open && inputValue) {
       debounceTimerRef.current = setTimeout(() => {
         fetchAsyncData(inputValue);
@@ -355,7 +323,7 @@ export function AsyncAutocomplete<T = any>({
       setAsyncResults({});
       setSourceLoadingStates({});
     }
-    
+
     return () => {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -377,8 +345,8 @@ export function AsyncAutocomplete<T = any>({
   useEffect(() => {
     if (activeIndex !== null && listRef.current[activeIndex]) {
       listRef.current[activeIndex]?.scrollIntoView({
-        block: 'nearest',
-        behavior: 'smooth',
+        block: "nearest",
+        behavior: "smooth",
       });
     }
   }, [activeIndex]);
@@ -388,11 +356,11 @@ export function AsyncAutocomplete<T = any>({
     const newValue = event.target.value;
     setInputValue(newValue);
     onInputChange?.(newValue);
-    
+
     if (value && newValue !== getOptionLabel(value)) {
       onChange?.(null);
     }
-    
+
     if (!open && newValue) {
       setOpen(true);
     }
@@ -412,24 +380,24 @@ export function AsyncAutocomplete<T = any>({
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     // Allow text editing keys to pass through immediately
-    if (event.key === 'Backspace' || event.key === 'Delete' || event.key.length === 1) {
+    if (event.key === "Backspace" || event.key === "Delete" || event.key.length === 1) {
       return;
     }
-    
-    if (event.key === 'Enter' && open && activeIndex !== null && selectableOptions[activeIndex]) {
+
+    if (event.key === "Enter" && open && activeIndex !== null && selectableOptions[activeIndex]) {
       event.preventDefault();
       handleOptionClick(selectableOptions[activeIndex], activeIndex);
       return;
     }
-    
-    if (event.key === 'Escape' && open) {
+
+    if (event.key === "Escape" && open) {
       event.preventDefault();
       setOpen(false);
       return;
     }
-    
+
     // For arrow keys, let the interactions handle it
-    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       if (!open) {
         setOpen(true);
       }
@@ -443,8 +411,8 @@ export function AsyncAutocomplete<T = any>({
   const handleClear = (event: React.MouseEvent) => {
     event.stopPropagation();
     onChange?.(null);
-    setInputValue('');
-    onInputChange?.('');
+    setInputValue("");
+    onInputChange?.("");
     setAsyncResults({});
     setSourceLoadingStates({});
   };
@@ -455,7 +423,7 @@ export function AsyncAutocomplete<T = any>({
       if (value) {
         setInputValue(getOptionLabel(value));
       } else {
-        setInputValue('');
+        setInputValue("");
       }
     }
   }, [value, open, getOptionLabel]);
@@ -466,12 +434,13 @@ export function AsyncAutocomplete<T = any>({
   return (
     <>
       <TextField
+        onClick={onClick}
         ref={refs.setReference}
         value={inputValue}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onFocus={(e) => {
-          if (inputValue.length >= minQueryLength || (!inputValue && dataSources.some(s => s.options && s.options.length > 0))) {
+          if (inputValue.length >= minQueryLength || (!inputValue && dataSources.some((s) => s.options && s.options.length > 0))) {
             setOpen(true);
           }
           onFocus?.(e);
@@ -495,19 +464,14 @@ export function AsyncAutocomplete<T = any>({
                   <ClearIcon fontSize="small" />
                 </IconButton>
               )}
-              <IconButton
-                size="small"
-                edge="end"
-                disabled={disabled}
-                onClick={() => setOpen(!open)}
-              >
+              <IconButton size="small" edge="end" disabled={disabled} onClick={() => setOpen(!open)}>
                 <ArrowDropDownIcon />
               </IconButton>
             </InputAdornment>
           ),
         }}
       />
-      
+
       {open && (
         <FloatingPortal>
           <StyledPaper
@@ -515,129 +479,100 @@ export function AsyncAutocomplete<T = any>({
             style={{
               ...floatingStyles,
               zIndex: 9999,
-              isolation: 'isolate',
+              isolation: "isolate",
             }}
             elevation={8}
             {...getFloatingProps()}
           >
-              <List dense disablePadding sx={{ py: 0 }}>
-                {optionsWithGroups.length === 0 && !isLoading && inputValue.length >= minQueryLength ? (
-                  <ListItem>
-                    <ListItemText 
-                      primary={noOptionsText}
-                      sx={{ textAlign: 'center', color: 'text.secondary' }}
-                    />
-                  </ListItem>
-                ) : (
-                  optionsWithGroups.map((item, visualIndex) => {
-                    if (item.type === 'header') {
-                      const baseColor = item.group!.color;
-                      const hasColor = !!baseColor;
-                      
-                      return (
-                        <ListSubheader
-                          key={`header-${item.group!.id}`}
-                          sx={{
-                            position: item.group!.sticky ? 'sticky' : 'relative',
-                            top: item.group!.sticky ? 0 : undefined,
-                            zIndex: item.group!.sticky ? 1 : undefined,
-                            backgroundColor: hasColor 
-                              ? `color-mix(in oklch, ${baseColor} 8%, white)`
-                              : 'rgb(250, 250, 250)',
-                            backgroundImage: hasColor
-                              ? `repeating-linear-gradient(45deg, transparent, transparent 8px, color-mix(in oklch, ${baseColor} 12%, white) 8px, color-mix(in oklch, ${baseColor} 12%, white) 16px)`
-                              : 'repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0, 0, 0, 0.015) 8px, rgba(0, 0, 0, 0.015) 16px)',
-                            borderTop: '1px solid',
-                            borderBottom: '1px solid',
-                            borderColor: hasColor
-                              ? `color-mix(in oklch, ${baseColor} 25%, white)`
-                              : 'rgb(229, 229, 229)',
-                            py: 0.75,
-                            px: 1.5,
-                            lineHeight: '1.2',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.5px',
-                            color: hasColor
-                              ? `color-mix(in oklch, ${baseColor} 65%, black)`
-                              : 'rgba(0, 0, 0, 0.6)',
-                          }}
-                        >
-                          {item.group!.label}
-                        </ListSubheader>
-                      );
-                    }
-                    
-                    const option = item.option!;
-                    const selectableIdx = item.selectableIndex;
-                    const isSelected = value?.value === option.value;
-                    const isActive = selectableIdx !== undefined && selectableIdx === activeIndex;
-                    const isDisabled = getOptionDisabled(option);
-                    
+            <List dense disablePadding sx={{ py: 0 }}>
+              {optionsWithGroups.length === 0 && !isLoading && inputValue.length >= minQueryLength ? (
+                <ListItem>
+                  <ListItemText primary={noOptionsText} sx={{ textAlign: "center", color: "text.secondary" }} />
+                </ListItem>
+              ) : (
+                optionsWithGroups.map((item, visualIndex) => {
+                  if (item.type === "header") {
+                    const baseColor = item.group!.color;
+                    const hasColor = !!baseColor;
+
                     return (
-                      <StyledListItem
-                        key={`option-${visualIndex}-${option.value}`}
-                        ref={(el) => {
-                          // Only add selectable items to listRef for keyboard navigation
-                          if (selectableIdx !== undefined) {
-                            listRef.current[selectableIdx] = el;
-                          }
+                      <ListSubheader
+                        key={`header-${item.group!.id}`}
+                        sx={{
+                          position: item.group!.sticky ? "sticky" : "relative",
+                          top: item.group!.sticky ? 0 : undefined,
+                          zIndex: item.group!.sticky ? 1 : undefined,
+                          backgroundColor: hasColor ? `color-mix(in oklch, ${baseColor} 8%, white)` : "rgb(250, 250, 250)",
+                          backgroundImage: hasColor
+                            ? `repeating-linear-gradient(45deg, transparent, transparent 8px, color-mix(in oklch, ${baseColor} 12%, white) 8px, color-mix(in oklch, ${baseColor} 12%, white) 16px)`
+                            : "repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0, 0, 0, 0.015) 8px, rgba(0, 0, 0, 0.015) 16px)",
+                          borderTop: "1px solid",
+                          borderBottom: "1px solid",
+                          borderColor: hasColor ? `color-mix(in oklch, ${baseColor} 25%, white)` : "rgb(229, 229, 229)",
+                          py: 0.75,
+                          px: 1.5,
+                          lineHeight: "1.2",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.5px",
+                          color: hasColor ? `color-mix(in oklch, ${baseColor} 65%, black)` : "rgba(0, 0, 0, 0.6)",
                         }}
-                        selected={isSelected}
-                        disabled={isDisabled}
-                        onClick={() => selectableIdx !== undefined && handleOptionClick(option, selectableIdx)}
-                        className={isActive ? 'active' : ''}
-                        tabIndex={-1}
-                        role="option"
-                        aria-selected={isActive}
                       >
-                        {renderOption ? (
-                          renderOption(option, { selected: isSelected, active: isActive })
-                        ) : (
-                          <ListItemText
-                            primary={
-                              highlightMatches ? (
-                                <HighlightText 
-                                  text={getOptionLabel(option)} 
-                                  query={inputValue}
-                                />
-                              ) : (
-                                getOptionLabel(option)
-                              )
-                            }
-                            secondary={
-                              option.subText ? (
-                                highlightMatches ? (
-                                  <HighlightText 
-                                    text={option.subText} 
-                                    query={inputValue}
-                                  />
-                                ) : (
-                                  option.subText
-                                )
-                              ) : undefined
-                            }
-                            slotProps={{
-                              primary: {
-                                noWrap: true,
-                                sx: { fontWeight: isSelected ? 600 : 400, fontSize: '0.875rem' },
-                              },
-                              secondary: {
-                                noWrap: false,
-                                variant: 'caption',
-                                sx: { fontSize: '0.75rem', whiteSpace: 'normal', wordBreak: 'break-word' },
-                              }
-                            }}
-                            sx={{ my: 0 }}
-                          />
-                        )}
-                      </StyledListItem>
+                        {item.group!.label}
+                      </ListSubheader>
                     );
-                  })
-                )}
-              </List>
-            </StyledPaper>
+                  }
+
+                  const option = item.option!;
+                  const selectableIdx = item.selectableIndex;
+                  const isSelected = value?.value === option.value;
+                  const isActive = selectableIdx !== undefined && selectableIdx === activeIndex;
+                  const isDisabled = getOptionDisabled(option);
+
+                  return (
+                    <StyledListItem
+                      key={`option-${visualIndex}-${option.value}`}
+                      ref={(el) => {
+                        // Only add selectable items to listRef for keyboard navigation
+                        if (selectableIdx !== undefined) {
+                          listRef.current[selectableIdx] = el;
+                        }
+                      }}
+                      selected={isSelected}
+                      disabled={isDisabled}
+                      onClick={() => selectableIdx !== undefined && handleOptionClick(option, selectableIdx)}
+                      className={isActive ? "active" : ""}
+                      tabIndex={-1}
+                      role="option"
+                      aria-selected={isActive}
+                    >
+                      {renderOption ? (
+                        renderOption(option, { selected: isSelected, active: isActive })
+                      ) : (
+                        <ListItemText
+                          primary={highlightMatches ? <HighlightText text={getOptionLabel(option)} query={inputValue} /> : getOptionLabel(option)}
+                          secondary={option.subText ? highlightMatches ? <HighlightText text={option.subText} query={inputValue} /> : option.subText : undefined}
+                          slotProps={{
+                            primary: {
+                              noWrap: true,
+                              sx: { fontWeight: isSelected ? 600 : 400, fontSize: "0.875rem" },
+                            },
+                            secondary: {
+                              noWrap: false,
+                              variant: "caption",
+                              sx: { fontSize: "0.75rem", whiteSpace: "normal", wordBreak: "break-word" },
+                            },
+                          }}
+                          sx={{ my: 0 }}
+                        />
+                      )}
+                    </StyledListItem>
+                  );
+                })
+              )}
+            </List>
+          </StyledPaper>
         </FloatingPortal>
       )}
     </>

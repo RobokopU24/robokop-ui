@@ -1,29 +1,26 @@
-import React, { useEffect, useContext, useMemo } from 'react';
-import axios, { CancelTokenSource } from 'axios';
+import React, { useEffect, useContext, useMemo } from "react";
+import axios, { CancelTokenSource } from "axios";
 
-import BiolinkContext from '../../../../context/biolink';
-import strings from '../../../../utils/strings';
+import BiolinkContext from "../../../../context/biolink";
+import strings from "../../../../utils/strings";
 
-import fetchCuries from '../../../../utils/fetchCuries';
-import highlighter from '../../../../utils/d3/highlighter';
+import fetchCuries from "../../../../utils/fetchCuries";
+import highlighter from "../../../../utils/d3/highlighter";
 
-import taxaCurieLookup from './taxon-curie-lookup.json';
-import { useAlert } from '../../../../components/AlertProvider';
-import { NodeOption } from '../types';
-import {
-  AsyncAutocomplete,
-  AutocompleteOption,
-  DataSource,
-} from './AsyncAutocomplete';
+import taxaCurieLookup from "./taxon-curie-lookup.json";
+import { useAlert } from "../../../../components/AlertProvider";
+import { NodeOption } from "../types";
+import { AsyncAutocomplete, AutocompleteOption, DataSource } from "./AsyncAutocomplete";
 
 interface NodeSelectorProps {
+  onClick?: (event: React.MouseEvent) => void;
   id: string;
   properties: any; // Could be more specific if known
   isReference: boolean;
   setReference: (key: string | null) => void;
   update: (id: string, value: NodeOption | null) => void;
   title?: string;
-  size?: 'small' | 'medium';
+  size?: "small" | "medium";
   nameresCategoryFilter?: string;
   options?: {
     includeCuries?: boolean;
@@ -36,10 +33,7 @@ interface NodeSelectorProps {
 }
 
 function isValidNode(properties: any): boolean {
-  return (
-    (properties.categories && properties.categories.length > 0) ||
-    (properties.ids && properties.ids.length > 0)
-  );
+  return (properties.categories && properties.categories.length > 0) || (properties.ids && properties.ids.length > 0);
 }
 
 /**
@@ -75,25 +69,8 @@ let cancel: CancelTokenSource | undefined;
  * @param {boolean} nodeOptions.includeExistingNodes - node selector can include existing nodes
  * @param {boolean} nodeOptions.includeCategories - node selector can include general categories
  */
-export default function NodeSelector({
-  id,
-  properties,
-  isReference,
-  setReference,
-  update,
-  title,
-  size,
-  nameresCategoryFilter,
-  options: nodeOptions = {},
-}: NodeSelectorProps) {
-  const {
-    includeCuries = true,
-    includeExistingNodes = true,
-    existingNodes = [],
-    includeCategories = true,
-    clearable = true,
-    includeSets = false,
-  } = nodeOptions;
+export default function NodeSelector({ onClick, id, properties, isReference, setReference, update, title, size, nameresCategoryFilter, options: nodeOptions = {} }: NodeSelectorProps) {
+  const { includeCuries = true, includeExistingNodes = true, existingNodes = [], includeCategories = true, clearable = true, includeSets = false } = nodeOptions;
   const { displayAlert } = useAlert();
   // @ts-ignore: context type is not strict
   const { concepts } = useContext(BiolinkContext) as { concepts: string[] };
@@ -104,7 +81,7 @@ export default function NodeSelector({
    * @returns {string} Label to display
    */
   function getOptionLabel(opt: NodeOption): string {
-    let label = '';
+    let label = "";
     if (opt.key) {
       label += `${opt.key}: `;
     }
@@ -112,15 +89,15 @@ export default function NodeSelector({
       return label + opt.name;
     }
     if (opt.ids && Array.isArray(opt.ids) && opt.ids.length) {
-      return label + opt.ids.join(', ');
+      return label + opt.ids.join(", ");
     }
     if (opt.categories && Array.isArray(opt.categories)) {
       if (opt.categories.length) {
-        return label + opt.categories.join(', ');
+        return label + opt.categories.join(", ");
       }
       return `${label} Something`;
     }
-    return '';
+    return "";
   }
 
   /**
@@ -135,7 +112,7 @@ export default function NodeSelector({
     }
 
     if (node.categories && node.categories.length > 0) {
-      const category = node.categories[0].replace(/^biolink:/, '');
+      const category = node.categories[0].replace(/^biolink:/, "");
       subTextParts.push(category);
     }
 
@@ -147,7 +124,7 @@ export default function NodeSelector({
     return {
       value: node,
       label: getOptionLabel(node),
-      subText: subTextParts.length > 0 ? subTextParts.join(' • ') : undefined,
+      subText: subTextParts.length > 0 ? subTextParts.join(" • ") : undefined,
       data: node,
     };
   }
@@ -158,20 +135,20 @@ export default function NodeSelector({
     // Add reference node option if needed
     if (isReference) {
       sources.push({
-        id: 'reference',
-        label: 'Reference',
-        color: '#22c55e',
+        id: "reference",
+        label: "Reference",
+        color: "#22c55e",
         sticky: true,
-        options: [nodeToAutocompleteOption({ name: 'New Term', key: null })],
+        options: [nodeToAutocompleteOption({ name: "New Term", key: null })],
       });
     }
 
     // Add existing nodes
     if (includeExistingNodes && existingNodes.length > 0) {
       sources.push({
-        id: 'existingNodes',
-        label: 'Existing Nodes',
-        color: '#3b82f6',
+        id: "existingNodes",
+        label: "Existing Nodes",
+        color: "#3b82f6",
         sticky: true,
         options: existingNodes.map(nodeToAutocompleteOption),
       });
@@ -199,9 +176,9 @@ export default function NodeSelector({
       }
 
       sources.push({
-        id: 'categories',
-        label: 'Categories',
-        color: '#a855f7',
+        id: "categories",
+        label: "Categories",
+        color: "#a855f7",
         sticky: true,
         options: categoryOptions.map(nodeToAutocompleteOption),
       });
@@ -210,13 +187,13 @@ export default function NodeSelector({
     // Add async name resolver curies
     if (includeCuries) {
       sources.push({
-        id: 'curies',
-        label: 'Name Resolver',
-        color: '#ff9c39',
+        id: "curies",
+        label: "Name Resolver",
+        color: "#ff9c39",
         sticky: true,
         fetchOptions: async (query: string) => {
           const results: NodeOption[] = [];
-          if (query.includes(':')) {
+          if (query.includes(":")) {
             results.push({ name: query, ids: [query] });
           }
 
@@ -224,12 +201,7 @@ export default function NodeSelector({
             cancel.cancel();
           }
           cancel = CancelToken.source();
-          const curies: NodeOption[] = await fetchCuries(
-            query,
-            displayAlert as (arg0: string, arg1: string) => void,
-            cancel.token,
-            nameresCategoryFilter
-          );
+          const curies: NodeOption[] = await fetchCuries(query, displayAlert as (arg0: string, arg1: string) => void, cancel.token, nameresCategoryFilter);
           results.push(...curies);
 
           return results.map(nodeToAutocompleteOption);
@@ -238,17 +210,7 @@ export default function NodeSelector({
     }
 
     return sources;
-  }, [
-    isReference,
-    includeExistingNodes,
-    existingNodes,
-    includeCategories,
-    concepts,
-    includeSets,
-    includeCuries,
-    displayAlert,
-    nameresCategoryFilter,
-  ]);
+  }, [isReference, includeExistingNodes, existingNodes, includeCategories, concepts, includeSets, includeCuries, displayAlert, nameresCategoryFilter]);
 
   useEffect(
     () => () => {
@@ -256,11 +218,11 @@ export default function NodeSelector({
         cancel.cancel();
       }
     },
-    []
+    [],
   );
 
   function handleUpdate(option: AutocompleteOption<NodeOption> | null) {
-    if (option && option.value && 'key' in option.value) {
+    if (option && option.value && "key" in option.value) {
       setReference(option.value.key ?? null);
     } else {
       update(id, option?.value ?? null);
@@ -279,6 +241,7 @@ export default function NodeSelector({
 
   return (
     <AsyncAutocomplete
+      onClick={onClick}
       value={selectorValue}
       onChange={handleUpdate}
       dataSources={dataSources}
@@ -287,7 +250,7 @@ export default function NodeSelector({
       minQueryLength={3}
       debounceMs={500}
       clearable={clearable}
-      className={`textEditorSelector${isReference ? ' referenceNode' : ''} highlight-${id}`}
+      className={`textEditorSelector${isReference ? " referenceNode" : ""} highlight-${id}`}
       onFocus={() => {
         highlighter.highlightGraphNode(id);
         highlighter.highlightTextEditorNode(id);
