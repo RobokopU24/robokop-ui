@@ -41,7 +41,7 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
               )}
               {v2Metadata?.dateModified && (
                 <>
-                  , modified <code>{v2Metadata.dateModified}</code>
+                  , modified <code>{formatBuildDate(v2Metadata.dateModified)}</code>
                 </>
               )}
             </Typography>
