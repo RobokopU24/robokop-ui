@@ -1,5 +1,4 @@
 export function formatBuildDate(buildTime: string) {
-  console.log("Build time:", buildTime);
   const [datePart, timePart] = buildTime?.split(" ");
 
   if (!timePart) {
