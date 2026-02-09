@@ -3,7 +3,7 @@ import { Download, OpenInNew } from "@mui/icons-material";
 import { formatFileSize } from "../../utils/getFileSize";
 import stringUtils from "../../utils/strings";
 import { formatBuildDate } from "../../utils/dateTime";
-import { GraphMetadataV2 } from "../../API/graphMetadataV2";
+import { GraphMetadataV2 } from "../../API/graphMetadata";
 
 interface HeaderCardProps {
   displayName: string;

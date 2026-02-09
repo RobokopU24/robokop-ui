@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Grid, Link as MuiLink, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { OpenInNew } from "@mui/icons-material";
-import { GraphMetadataV2 } from "../../API/graphMetadataV2";
+import { GraphMetadataV2 } from "../../API/graphMetadata";
 
 interface ConformanceSchemaProps {
   v2Metadata: GraphMetadataV2;

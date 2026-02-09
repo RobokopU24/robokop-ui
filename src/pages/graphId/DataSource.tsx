@@ -24,7 +24,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { OpenInNew } from "@mui/icons-material";
-import { GraphMetadataV2 } from "../../API/graphMetadataV2";
+import { GraphMetadataV2 } from "../../API/graphMetadata";
 
 interface DataSourceProps {
   v2Metadata: GraphMetadataV2;

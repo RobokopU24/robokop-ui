@@ -6,7 +6,6 @@ import nameResolver from "./nameResolver";
 import nodeNormalization from "./nodeNormalization";
 import details from "./details";
 import graphMetadata from "./graphMetadata";
-import graphMetadataV2 from "./graphMetadataV2";
 
 export default {
   cache,
@@ -17,5 +16,4 @@ export default {
   nameResolver,
   nodeNormalization,
   graphMetadata,
-  graphMetadataV2,
 };
