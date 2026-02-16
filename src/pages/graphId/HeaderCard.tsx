@@ -3,7 +3,7 @@ import { Download, OpenInNew } from "@mui/icons-material";
 import { formatFileSize } from "../../utils/getFileSize";
 import stringUtils from "../../utils/strings";
 import { formatBuildDate } from "../../utils/dateTime";
-import { GraphMetadataV2 } from "../../API/graphMetadata";
+import { GraphMetadataV2, GraphSchemaV2 } from "../../API/graphMetadata";
 
 interface HeaderCardProps {
   displayName: string;
@@ -21,9 +21,23 @@ interface HeaderCardProps {
   latestMetadataUrl?: string;
   fileSize?: number;
   setIsSankeyGraphModalOpen: (isOpen: boolean) => void;
+  graph_id: string | undefined;
 }
 
-function HeaderCard({ displayName, displayVersion, displayDescription, graphData, v2Metadata, latestMetadataUrl, fileSize, setIsSankeyGraphModalOpen }: HeaderCardProps) {
+function HeaderCard({ displayName, displayVersion, displayDescription, graphData, v2Metadata, latestMetadataUrl, fileSize, setIsSankeyGraphModalOpen, graph_id }: HeaderCardProps) {
+  console.log(v2Metadata, "v2Metadata in header card");
+  let totalNodeCount = 0;
+  let totalEdgeCount = 0;
+  if (v2Metadata?.hasPart && Array.isArray(v2Metadata.hasPart)) {
+    v2Metadata.hasPart.forEach((part) => {
+      if (part["orion:nodeCount"]) {
+        totalNodeCount += part["orion:nodeCount"];
+      }
+      if (part["orion:edgeCount"]) {
+        totalEdgeCount += part["orion:edgeCount"];
+      }
+    });
+  }
   return (
     <Card variant="outlined" sx={{ mt: 2 }} id="description">
       <CardContent>
@@ -34,9 +48,9 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
               Version <code>{displayVersion}</code>
-              {graphData?.build_time && (
+              {v2Metadata?.dateCreated && (
                 <>
-                  , built <code>{formatBuildDate(graphData?.build_time)}</code>
+                  , built <code>{formatBuildDate(v2Metadata.dateCreated)}</code>
                 </>
               )}
               {v2Metadata?.dateModified && (
@@ -47,8 +61,8 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
             </Typography>
           </Box>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            <Chip label={`${stringUtils.formatNumber(graphData.final_node_count)} nodes`} size="small" color="default" variant="outlined" />
-            <Chip label={`${stringUtils.formatNumber(graphData.final_edge_count)} edges`} size="small" color="default" variant="outlined" />
+            <Chip label={`${stringUtils.formatNumber(totalNodeCount)} nodes`} size="small" color="default" variant="outlined" />
+            <Chip label={`${stringUtils.formatNumber(totalEdgeCount)} edges`} size="small" color="default" variant="outlined" />
             {v2Metadata?.biolinkVersion && <Chip label={`Biolink ${v2Metadata.biolinkVersion}`} size="small" color="default" variant="outlined" />}
             {v2Metadata?.babelVersion && <Chip label={`Babel ${v2Metadata.babelVersion}`} size="small" color="default" variant="outlined" />}
           </Stack>
@@ -76,7 +90,7 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
               </>
             )}
             <p>•</p> */}
-            <a className="external-links" href={`https://robokop-automat.apps.renci.org/#/${graphData.graph_id}`} target="_blank" rel="noopener noreferrer">
+            <a className="external-links" href={`https://robokop-automat.apps.renci.org/#/${graph_id}`} target="_blank" rel="noopener noreferrer">
               Automat API <OpenInNew sx={{ fontSize: "1.25rem", ml: 0.5 }} />
             </a>
             <p>•</p>
@@ -95,7 +109,7 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
             )}
           </Stack>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 2 }}>
-            <a
+            {/* <a
               className="details-card-button"
               href={graphData.neo4j_dump}
               target="_blank"
@@ -108,7 +122,7 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
               }}
             >
               <span>Download Graph ({formatFileSize(fileSize || 0, 2)})</span> <Download />
-            </a>
+            </a> */}
             <button
               style={{
                 display: "flex",

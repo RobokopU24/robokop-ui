@@ -24,6 +24,7 @@ export function transformSchemaToLinks(schema: GraphSchemaV2): LinksOutput {
   for (const [source, predicates] of Object.entries(predicatesByKnowledgeSource)) {
     nodesSet.add(source);
     for (const [target, value] of Object.entries(predicates)) {
+      nodesSet.add(target);
       links.push({
         source,
         target,

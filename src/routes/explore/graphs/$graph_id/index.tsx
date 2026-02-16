@@ -32,7 +32,6 @@ export const Route = createFileRoute("/explore/graphs/$graph_id/")({
   head: ({ loaderData, params }) => {
     const cachedData: any = queryClient.getQueryData(["graph-metadata", params.graph_id]);
     const cachedMetadataV2: any = loaderData?.v2Metadata ?? queryClient.getQueryData(["graph-metadata-v2", params.graph_id]);
-    const cachedSchemaV2: any = loaderData?.schemaV2 ?? queryClient.getQueryData(["graph-schema-v2", params.graph_id]);
 
     return {
       meta: [
@@ -40,20 +39,14 @@ export const Route = createFileRoute("/explore/graphs/$graph_id/")({
           title: cachedData ? `${cachedData.graph_name} | ROBOKOP` : "Graph | ROBOKOP",
         },
       ],
-      //TODO: Confirm if schema should be included as well
-      scripts:
-        cachedMetadataV2 && cachedSchemaV2
-          ? [
-              {
-                type: "application/ld+json",
-                children: JSON.stringify(cachedMetadataV2),
-              },
-              {
-                type: "application/ld+json",
-                children: JSON.stringify(cachedSchemaV2),
-              },
-            ]
-          : [],
+      scripts: cachedMetadataV2
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify(cachedMetadataV2),
+            },
+          ]
+        : [],
     };
   },
 });

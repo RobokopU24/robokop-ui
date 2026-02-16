@@ -87,8 +87,9 @@ function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
   const { graph_id } = useParams({ strict: false });
   const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
   const { data: fileSize } = useQuery({
-    queryKey: ["graph-metadata", graphData.graph_id, "file-size"],
+    queryKey: ["graph-metadata", graph_id, "file-size"],
     queryFn: async () => {
+      // TODO: Neo4j dump isn't coming in new API
       const results = await axios.post(fileRoutes.fileSize, {
         fileUrl: graphData.neo4j_dump,
       });
@@ -100,28 +101,9 @@ function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
     queryFn: () => getGraphMetadataDownloads(graph_id!),
   });
 
-  const graphDataset = React.useMemo(() => {
-    let nodeSet: Set<string> = new Set();
-    let links: Array<{ source: string; target: string; value: number }> = [];
-    for (const [key, value] of Object.entries(graphData?.qc_results?.predicates_by_knowledge_source || {})) {
-      nodeSet.add(key);
-      for (const [predicate, count] of Object.entries(value as Record<string, number>)) {
-        nodeSet.add(predicate);
-        links.push({ source: key, target: predicate, value: count });
-      }
-    }
-
-    return {
-      nodes: Array.from(nodeSet).map((id) => ({ id })),
-      links,
-    };
-  }, [graphData?.qc_results?.predicates_by_knowledge_source]);
-
-  // const graphDatasetV2 = React.useMemo(() => {
-  //   return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] };
-  // }, [schemaV2]);
-
-  // console.log(graphDataset, "graphDatasetV2", graphDatasetV2);
+  const graphDatasetV2 = React.useMemo(() => {
+    return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] };
+  }, [schemaV2]);
 
   const latestMetadataUrl = downloadData?.data?.at(-1)?.links?.filter((link: any) => link.url.includes("meta.json"))[0]?.url;
 
@@ -135,9 +117,9 @@ function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
     <Container className="graph-id-v2-container" sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}>
       <SidebarV2 listOfContents={sidebarItems} />
       <Box>
-        <SankeyGraphModal isOpen={isSankeyGraphModalOpen} onClose={() => setIsSankeyGraphModalOpen(false)} graphData={graphDataset} />
+        <SankeyGraphModal isOpen={isSankeyGraphModalOpen} onClose={() => setIsSankeyGraphModalOpen(false)} graphData={graphDatasetV2} />
         <BreadcrumbsComponent displayName={displayName} />
-        <HeaderCard displayName={displayName} displayVersion={displayVersion} displayDescription={displayDescription} graphData={graphData} v2Metadata={v2Metadata} latestMetadataUrl={latestMetadataUrl} fileSize={fileSize} setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen} />
+        <HeaderCard displayName={displayName} displayVersion={displayVersion} displayDescription={displayDescription} graphData={graphData} v2Metadata={v2Metadata} latestMetadataUrl={latestMetadataUrl} fileSize={fileSize} setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen} graph_id={graph_id} />
 
         <Grid size={8} sx={{ mt: 2 }}>
           <Grid container spacing={2}>
