@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import axios from "axios";
 import React from "react";
-import { GraphMetadataV2 } from "../../API/graphMetadata";
+import { GraphMetadataV2, GraphSchemaV2 } from "../../API/graphMetadata";
 import { fileRoutes } from "../../API/routes";
 import { getGraphMetadataDownloads } from "../../functions/graphFunctions";
 import DownloadSection from "../graphId/Download";
@@ -20,6 +20,8 @@ import CreatorsFunders from "./CreatorsFunders";
 import DataSource from "./DataSource";
 import HeaderCard from "./HeaderCard";
 import SidebarV2 from "./Sidebar";
+import { transformSchemaToLinks } from "./functions";
+import NodeProperties from "./NodeProperties";
 
 const COMMON_SIDEBAR_ITEMS = [
   {
@@ -38,18 +40,18 @@ const COMMON_SIDEBAR_ITEMS = [
     title: "Node CURIE Prefixes",
     id: "node-curie-prefixes",
   },
-  {
-    title: "Edge Properties",
-    id: "edge-properties",
-  },
+  // {
+  //   title: "Edge Properties",
+  //   id: "edge-properties",
+  // },
   {
     title: "Primary Knowledge Sources",
     id: "primary-knowledge-sources",
   },
-  {
-    title: "Aggregator Knowledge Sources",
-    id: "aggregator-knowledge-sources",
-  },
+  // {
+  //   title: "Aggregator Knowledge Sources",
+  //   id: "aggregator-knowledge-sources",
+  // },
   {
     title: "Node Properties",
     id: "node-properties",
@@ -78,15 +80,16 @@ const V2_METADATA_SIDEBAR_ITEMS = [
 interface GraphIdV2Props {
   graphData: any;
   v2Metadata: GraphMetadataV2 | null;
+  schemaV2: GraphSchemaV2 | null;
 }
 
-function GraphId({ graphData, v2Metadata }: GraphIdV2Props) {
+function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
   const { graph_id } = useParams({ strict: false });
-  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] =
-    React.useState(false);
+  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
   const { data: fileSize } = useQuery({
-    queryKey: ["graph-metadata", graphData.graph_id, "file-size"],
+    queryKey: ["graph-metadata", graph_id, "file-size"],
     queryFn: async () => {
+      // TODO: Neo4j dump isn't coming in new API
       const results = await axios.post(fileRoutes.fileSize, {
         fileUrl: graphData.neo4j_dump,
       });
@@ -98,103 +101,58 @@ function GraphId({ graphData, v2Metadata }: GraphIdV2Props) {
     queryFn: () => getGraphMetadataDownloads(graph_id!),
   });
 
-  let nodeSet: Set<string> = new Set();
-  let links: Array<{ source: string; target: string; value: number }> = [];
-  for (const [key, value] of Object.entries(
-    graphData?.qc_results?.predicates_by_knowledge_source || {},
-  )) {
-    nodeSet.add(key);
-    for (const [predicate, count] of Object.entries(
-      value as Record<string, number>,
-    )) {
-      nodeSet.add(predicate);
-      links.push({ source: key, target: predicate, value: count });
-    }
-  }
+  const graphDatasetV2 = React.useMemo(() => {
+    return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] };
+  }, [schemaV2]);
 
-  const graphDataset = {
-    nodes: Array.from(nodeSet).map((id) => ({ id })),
-    links,
-  };
-
-  const latestMetadataUrl = downloadData?.data
-    ?.at(-1)
-    ?.links?.filter((link: any) => link.url.includes("meta.json"))[0]?.url;
+  const latestMetadataUrl = downloadData?.data?.at(-1)?.links?.filter((link: any) => link.url.includes("meta.json"))[0]?.url;
 
   const displayName = v2Metadata?.name ?? graphData.graph_name;
-  const displayDescription =
-    v2Metadata?.description ?? graphData.graph_description;
+  const displayDescription = v2Metadata?.description ?? graphData.graph_description;
   const displayVersion = v2Metadata?.version ?? graphData?.graph_version;
 
-  const sidebarItems = v2Metadata !== null && Object.entries(v2Metadata).length > 0
-    ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS]
-    : COMMON_SIDEBAR_ITEMS;
+  const sidebarItems = v2Metadata !== null && Object.entries(v2Metadata).length > 0 ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS] : COMMON_SIDEBAR_ITEMS;
 
   return (
-    <Container
-      className="graph-id-v2-container"
-      sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}
-    >
+    <Container className="graph-id-v2-container" sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}>
       <SidebarV2 listOfContents={sidebarItems} />
       <Box>
-        <SankeyGraphModal
-          isOpen={isSankeyGraphModalOpen}
-          onClose={() => setIsSankeyGraphModalOpen(false)}
-          graphData={graphDataset}
-        />
+        <SankeyGraphModal isOpen={isSankeyGraphModalOpen} onClose={() => setIsSankeyGraphModalOpen(false)} graphData={graphDatasetV2} />
         <BreadcrumbsComponent displayName={displayName} />
-        <HeaderCard
-          displayName={displayName}
-          displayVersion={displayVersion}
-          displayDescription={displayDescription}
-          graphData={graphData}
-          v2Metadata={v2Metadata}
-          latestMetadataUrl={latestMetadataUrl}
-          fileSize={fileSize}
-          setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen}
-        />
+        <HeaderCard displayName={displayName} displayVersion={displayVersion} displayDescription={displayDescription} graphData={graphData} v2Metadata={v2Metadata} latestMetadataUrl={latestMetadataUrl} fileSize={fileSize} setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen} graph_id={graph_id} />
 
         <Grid size={8} sx={{ mt: 2 }}>
           <Grid container spacing={2}>
             <Grid size={12} id="predicate-counts">
               <Card variant="outlined">
-                <PredicateCount graphData={graphData} />
+                <PredicateCount schema={schemaV2!} />
               </Card>
             </Grid>
             <Grid size={12} id="node-curie-prefixes">
               <Card variant="outlined">
-                <NodeCuriePrefixes graphData={graphData} />
+                <NodeCuriePrefixes schema={schemaV2!} />
               </Card>
             </Grid>
-            <Grid size={12}>
+            {/* TODO: Check this */}
+            {/* <Grid size={12}>
               <Card variant="outlined" id="edge-properties">
-                <StringTableDisplay
-                  tableData={graphData?.qc_results?.edge_properties || []}
-                  title="Edge Properties"
-                />
+                <StringTableDisplay tableData={graphData?.qc_results?.edge_properties || []} title="Edge Properties" />
               </Card>
-            </Grid>
+            </Grid> */}
             <Grid size={12}>
               <Card variant="outlined" id="primary-knowledge-sources">
-                <PrimaryKnowledgeSources graphData={graphData} />
+                <PrimaryKnowledgeSources schema={schemaV2!} />
               </Card>
             </Grid>
-            <Grid size={12}>
+            {/* TODO: Check this */}
+            {/* <Grid size={12}>
               <Card variant="outlined" id="aggregator-knowledge-sources">
-                <StringTableDisplay
-                  tableData={
-                    graphData?.qc_results?.aggregator_knowledge_sources
-                  }
-                  title="Aggregator Knowledge Sources"
-                />
+                <StringTableDisplay tableData={graphData?.qc_results?.aggregator_knowledge_sources} title="Aggregator Knowledge Sources" />
               </Card>
-            </Grid>
+            </Grid> */}
             <Grid size={12}>
               <Card variant="outlined" id="node-properties">
-                <StringTableDisplay
-                  tableData={graphData?.qc_results?.node_properties}
-                  title="Node Properties"
-                />
+                <NodeProperties schema={schemaV2!} />
               </Card>
             </Grid>
 
