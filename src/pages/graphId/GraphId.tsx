@@ -40,18 +40,18 @@ const COMMON_SIDEBAR_ITEMS = [
     title: "Node CURIE Prefixes",
     id: "node-curie-prefixes",
   },
-  {
-    title: "Edge Properties",
-    id: "edge-properties",
-  },
+  // {
+  //   title: "Edge Properties",
+  //   id: "edge-properties",
+  // },
   {
     title: "Primary Knowledge Sources",
     id: "primary-knowledge-sources",
   },
-  {
-    title: "Aggregator Knowledge Sources",
-    id: "aggregator-knowledge-sources",
-  },
+  // {
+  //   title: "Aggregator Knowledge Sources",
+  //   id: "aggregator-knowledge-sources",
+  // },
   {
     title: "Node Properties",
     id: "node-properties",
