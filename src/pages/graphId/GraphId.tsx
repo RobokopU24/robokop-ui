@@ -78,20 +78,20 @@ const V2_METADATA_SIDEBAR_ITEMS = [
 ];
 
 interface GraphIdV2Props {
-  graphData: any;
   v2Metadata: GraphMetadataV2 | null;
   schemaV2: GraphSchemaV2 | null;
 }
 
-function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
+function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
   const { graph_id } = useParams({ strict: false });
   const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
+  const downloadLink = v2Metadata?.distribution?.find((dist) => dist["@type"] === "DataDownload")?.contentUrl;
+  const validDownloadLink = downloadLink!.replace("https://robokop.renci.org", "https://stars.renci.org/var/plater") + "neo4j.dump";
   const { data: fileSize } = useQuery({
-    queryKey: ["graph-metadata", graph_id, "file-size"],
+    queryKey: ["graph-metadata-v2", graph_id, "file-size"],
     queryFn: async () => {
-      // TODO: Neo4j dump isn't coming in new API
       const results = await axios.post(fileRoutes.fileSize, {
-        fileUrl: graphData.neo4j_dump,
+        fileUrl: validDownloadLink,
       });
       return results.data.size;
     },
@@ -107,9 +107,9 @@ function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
 
   const latestMetadataUrl = downloadData?.data?.at(-1)?.links?.filter((link: any) => link.url.includes("meta.json"))[0]?.url;
 
-  const displayName = v2Metadata?.name ?? graphData.graph_name;
-  const displayDescription = v2Metadata?.description ?? graphData.graph_description;
-  const displayVersion = v2Metadata?.version ?? graphData?.graph_version;
+  const displayName = v2Metadata?.name || "";
+  const displayDescription = v2Metadata?.description || "No description available";
+  const displayVersion = v2Metadata?.version || "N/A";
 
   const sidebarItems = v2Metadata !== null && Object.entries(v2Metadata).length > 0 ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS] : COMMON_SIDEBAR_ITEMS;
 
@@ -119,7 +119,17 @@ function GraphId({ graphData, v2Metadata, schemaV2 }: GraphIdV2Props) {
       <Box>
         <SankeyGraphModal isOpen={isSankeyGraphModalOpen} onClose={() => setIsSankeyGraphModalOpen(false)} graphData={graphDatasetV2} />
         <BreadcrumbsComponent displayName={displayName} />
-        <HeaderCard displayName={displayName} displayVersion={displayVersion} displayDescription={displayDescription} graphData={graphData} v2Metadata={v2Metadata} latestMetadataUrl={latestMetadataUrl} fileSize={fileSize} setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen} graph_id={graph_id} />
+        <HeaderCard
+          displayName={displayName}
+          displayVersion={displayVersion}
+          displayDescription={displayDescription}
+          v2Metadata={v2Metadata}
+          latestMetadataUrl={latestMetadataUrl}
+          fileSize={fileSize}
+          setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen}
+          graph_id={graph_id}
+          downloadLink={validDownloadLink}
+        />
 
         <Grid size={8} sx={{ mt: 2 }}>
           <Grid container spacing={2}>
