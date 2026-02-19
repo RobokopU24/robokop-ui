@@ -9,23 +9,15 @@ interface HeaderCardProps {
   displayName: string;
   displayVersion: string;
   displayDescription: string;
-  graphData: {
-    graph_id: string;
-    graph_url?: string;
-    neo4j_dump: string;
-    final_node_count: number;
-    final_edge_count: number;
-    build_time?: string;
-  };
   v2Metadata?: GraphMetadataV2 | null;
   latestMetadataUrl?: string;
   fileSize?: number;
   setIsSankeyGraphModalOpen: (isOpen: boolean) => void;
   graph_id: string | undefined;
+  downloadLink: string;
 }
 
-function HeaderCard({ displayName, displayVersion, displayDescription, graphData, v2Metadata, latestMetadataUrl, fileSize, setIsSankeyGraphModalOpen, graph_id }: HeaderCardProps) {
-  console.log(v2Metadata, "v2Metadata in header card");
+function HeaderCard({ displayName, displayVersion, displayDescription, v2Metadata, latestMetadataUrl, fileSize, setIsSankeyGraphModalOpen, graph_id, downloadLink }: HeaderCardProps) {
   let totalNodeCount = 0;
   let totalEdgeCount = 0;
   if (v2Metadata?.hasPart && Array.isArray(v2Metadata.hasPart)) {
@@ -109,9 +101,9 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
             )}
           </Stack>
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mt: 2 }}>
-            {/* <a
+            <a
               className="details-card-button"
-              href={graphData.neo4j_dump}
+              href={downloadLink}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -122,7 +114,7 @@ function HeaderCard({ displayName, displayVersion, displayDescription, graphData
               }}
             >
               <span>Download Graph ({formatFileSize(fileSize || 0, 2)})</span> <Download />
-            </a> */}
+            </a>
             <button
               style={{
                 display: "flex",
