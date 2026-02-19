@@ -20,8 +20,9 @@ import CreatorsFunders from "./CreatorsFunders";
 import DataSource from "./DataSource";
 import HeaderCard from "./HeaderCard";
 import SidebarV2 from "./Sidebar";
-import { transformSchemaToLinks } from "./functions";
+import { getAttributesAndCounts, transformSchemaToLinks } from "./functions";
 import NodeProperties from "./NodeProperties";
+import EdgeProperties from "./EdgeProperties";
 
 const COMMON_SIDEBAR_ITEMS = [
   {
@@ -40,10 +41,10 @@ const COMMON_SIDEBAR_ITEMS = [
     title: "Node CURIE Prefixes",
     id: "node-curie-prefixes",
   },
-  // {
-  //   title: "Edge Properties",
-  //   id: "edge-properties",
-  // },
+  {
+    title: "Edge Properties",
+    id: "edge-properties",
+  },
   {
     title: "Primary Knowledge Sources",
     id: "primary-knowledge-sources",
@@ -111,6 +112,8 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
   const displayDescription = v2Metadata?.description || "No description available";
   const displayVersion = v2Metadata?.version || "N/A";
 
+  const edgePropertiesData = getAttributesAndCounts(schemaV2?.schema.edges || []);
+
   const sidebarItems = v2Metadata !== null && Object.entries(v2Metadata).length > 0 ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS] : COMMON_SIDEBAR_ITEMS;
 
   return (
@@ -143,12 +146,11 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
                 <NodeCuriePrefixes schema={schemaV2!} />
               </Card>
             </Grid>
-            {/* TODO: Check this */}
-            {/* <Grid size={12}>
-              <Card variant="outlined" id="edge-properties">
-                <StringTableDisplay tableData={graphData?.qc_results?.edge_properties || []} title="Edge Properties" />
+            <Grid size={12} id="edge-properties">
+              <Card variant="outlined">
+                <EdgeProperties data={edgePropertiesData} />
               </Card>
-            </Grid> */}
+            </Grid>
             <Grid size={12}>
               <Card variant="outlined" id="primary-knowledge-sources">
                 <PrimaryKnowledgeSources schema={schemaV2!} />
