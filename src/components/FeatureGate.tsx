@@ -1,5 +1,5 @@
 import React from "react";
-import { useFeatureAccess } from "./useFeatureAccess";
+import { useFeatureAccess } from "../hooks/useFeatureAccess";
 
 interface FeatureGateProps {
   feature: string;

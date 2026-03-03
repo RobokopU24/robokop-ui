@@ -1,10 +1,18 @@
 import React from "react";
-import { Box, Card, CardContent, Chip, Divider, Link, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, CardContent, Chip, Divider, Link, Stack, Typography } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { GitHubRelease } from "./functions";
 
-function ReleaseNoteCard({ releaseNote }: { releaseNote: GitHubRelease }) {
+interface ReleaseNoteCardProps {
+  releaseNote: GitHubRelease;
+  onEdit?: (release: GitHubRelease) => void;
+  onDelete?: (release: GitHubRelease) => void;
+}
+
+function ReleaseNoteCard({ releaseNote, onEdit, onDelete }: ReleaseNoteCardProps) {
   const publishedDate = releaseNote.publishedAt
     ? new Date(releaseNote.publishedAt).toLocaleString(undefined, {
         year: "numeric",
@@ -32,16 +40,34 @@ function ReleaseNoteCard({ releaseNote }: { releaseNote: GitHubRelease }) {
           </Typography>
         ) : null}
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 2 }}>
-          <Link href={releaseNote.htmlUrl} target="_blank" rel="noreferrer noopener">
-            View on GitHub
-          </Link>
-          <Link href={releaseNote.tarballUrl} target="_blank" rel="noreferrer noopener">
-            Tarball
-          </Link>
-          <Link href={releaseNote.zipballUrl} target="_blank" rel="noreferrer noopener">
-            Zipball
-          </Link>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ mt: 2, alignItems: "center" }}>
+          {releaseNote.htmlUrl && (
+            <Link href={releaseNote.htmlUrl} target="_blank" rel="noreferrer noopener">
+              View on GitHub
+            </Link>
+          )}
+          {releaseNote.tarballUrl && (
+            <Link href={releaseNote.tarballUrl} target="_blank" rel="noreferrer noopener">
+              Tarball
+            </Link>
+          )}
+          {releaseNote.zipballUrl && (
+            <Link href={releaseNote.zipballUrl} target="_blank" rel="noreferrer noopener">
+              Zipball
+            </Link>
+          )}
+
+          {(onEdit || onDelete) && <Box sx={{ flexGrow: 1 }} />}
+          {onEdit && (
+            <Button size="small" startIcon={<EditIcon />} onClick={() => onEdit(releaseNote)}>
+              Edit
+            </Button>
+          )}
+          {onDelete && (
+            <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => onDelete(releaseNote)}>
+              Delete
+            </Button>
+          )}
         </Stack>
 
         <Divider sx={{ my: 3 }} />

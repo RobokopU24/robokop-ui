@@ -10,6 +10,7 @@ import { useAuth } from "../../context/AuthContext";
 import { isAdmin } from "../../utils/roles";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import DropdownMenu, { type MenuItemConfig } from "../shared/DropdownMenu";
+import { useFeatureAccess } from "../../hooks";
 
 function Header() {
   const { user, logout } = useAuth();
@@ -61,10 +62,12 @@ function Header() {
     { to: "/contact", label: "Contact Us" },
   ];
 
+  const { canAccess } = useFeatureAccess();
+
   const accountItems: MenuItemConfig[] = user
     ? [
         //TODO: Fix this
-        ...(isAdmin(user.role) ? [{ to: "/admin", label: "Admin" }] : []),
+        ...(canAccess("admin") ? [{ to: "/admin", label: "Admin" }] : []),
         { key: "profile", label: "Profile", onClick: handleProfileClick },
         { key: "logout", label: "Logout", onClick: handleLogout },
       ]
@@ -91,11 +94,12 @@ function Header() {
           open={aboutMenuOpen}
           onClose={closeAboutMenu}
           items={[
-            { to: "/about", label: "About Robokop" },
+            { to: "/about", label: "About ROBOKOP" },
             { to: "/license", label: "License" },
             { to: "/fundings", label: "Fundings" },
             { to: "/citations", label: "Citations" },
             { to: "/events", label: "Events" },
+            { to: "/releases", label: "Releases" },
           ]}
         />
         <Button className="nav-link" id="explore-button" aria-controls={exploreMenuOpen ? "explore-menu" : undefined} aria-haspopup="true" aria-expanded={exploreMenuOpen ? "true" : undefined} onClick={openExploreMenu}>

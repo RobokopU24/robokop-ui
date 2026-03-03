@@ -1,5 +1,6 @@
 import axios from "axios";
 import { releasesRoutes } from "../../API/routes";
+import { authApi } from "../../API/baseUrlProxy";
 
 export type GitHubRelease = {
   id: number;
@@ -28,4 +29,26 @@ export type GitHubRelease = {
 export const getReleaseNotes = async (): Promise<GitHubRelease[]> => {
   const res = await axios.get(releasesRoutes.base);
   return res.data;
+};
+
+export type CreateReleasePayload = {
+  title: string;
+  tag: string;
+  content: string;
+};
+
+export type UpdateReleasePayload = CreateReleasePayload;
+
+export const createRelease = async (payload: CreateReleasePayload): Promise<GitHubRelease> => {
+  const res = await authApi.post(releasesRoutes.base, payload);
+  return res.data;
+};
+
+export const updateRelease = async (id: number, payload: UpdateReleasePayload): Promise<GitHubRelease> => {
+  const res = await authApi.put(`${releasesRoutes.base}/${id}`, payload);
+  return res.data;
+};
+
+export const deleteRelease = async (id: number): Promise<void> => {
+  await authApi.delete(`${releasesRoutes.base}/${id}`);
 };
