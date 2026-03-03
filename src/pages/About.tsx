@@ -104,7 +104,13 @@ export default function About() {
           <Typography component={'p'}>
             Information on ROBOKOP’s knowledge sources, including URLs, their publicly available
             application programming interfaces (APIs), and other resources, can be found on the{' '}
-            <Link href="/api-docs/docs/category/automat">Automat page</Link>.
+            <Link href="https://robokop-automat.apps.renci.org" target="_blank" rel="noreferrer noopener">Automat page</Link>.
+          </Typography>
+
+          <Typography component={'p'} sx={{ mt: 2 }}>
+            Users may request the addition of new knowledge sources to ROBOKOP by submitting an
+            issue on the New Source Proposal{' '}
+            <Link href="https://github.com/RobokopU24/NewSourceProposals/issues/new?template=new-source-proposal.yml" target="_blank" rel="noreferrer noopener">Github repo</Link>.
           </Typography>
 
           <Divider sx={{ my: 3 }} />
@@ -121,6 +127,11 @@ export default function About() {
               ROBOKOP GitHub repository
             </Link>
             .
+          </Typography>
+
+          <Typography component={'p'} sx={{ mt: 2 }}>
+            All issues and questions can be submitted to the{" "}
+            <Link href="https://github.com/RobokopU24/Feedback/issues" target="_blank" rel="noreferrer noopener">ROBOKOP Feedback issues page</Link>.
           </Typography>
         </Grid>
       </Grid>

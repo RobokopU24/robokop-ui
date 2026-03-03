@@ -1,16 +1,13 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { CardContent, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Pagination, Select, MenuItem, FormControl, TextField, InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, getSortedRowModel, SortingState, getPaginationRowModel } from "@tanstack/react-table";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, getSortedRowModel, SortingState, getPaginationRowModel } from "@tanstack/react-table";
 import { GraphSchemaV2 } from "../../API/graphMetadata";
 
-type PrefixData = {
-  prefix: string;
-  count: number;
-};
+type RowType = { property: string };
 
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData, TValue> {
@@ -18,44 +15,41 @@ declare module "@tanstack/react-table" {
   }
 }
 
-const columnHelper = createColumnHelper<PrefixData>();
+const columnHelper = createColumnHelper<RowType>();
 
-function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: GraphSchemaV2 }) {
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: "count", desc: true }]);
-  const [pageSize, setPageSize] = useState(10);
+function NodeProperties({ schema }: { schema?: GraphSchemaV2 }) {
+  const [sorting, setSorting] = useState<SortingState>([{ id: "property", desc: false }]);
+  const [pageSize, setPageSize] = useState(50);
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   const data = useMemo(() => {
-    return [...Object.entries(schema?.schema.nodes_summary.id_prefixes || {})].map(([prefix, count]) => ({
-      prefix,
-      count: count as number,
-    }));
+    const attributeKeysSet = new Set<string>();
+
+    // Iterate through all nodes and collect unique attribute keys
+    schema?.schema.nodes.forEach((node) => {
+      Object.keys(node.attributes || {}).forEach((key) => {
+        attributeKeysSet.add(key);
+      });
+    });
+
+    return Array.from(attributeKeysSet).map((property) => ({ property }));
   }, [schema]);
 
   const filteredData = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return data;
-    return data.filter((row) => row.prefix.toLowerCase().includes(q));
+    return data.filter((row) => row.property.toLowerCase().includes(q));
   }, [data, searchQuery]);
 
-  // Reset page index when page size changes
-  useEffect(() => {
-    setPageIndex(0);
-  }, [pageSize]);
+  useEffect(() => setPageIndex(0), [pageSize]);
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("prefix", {
-        header: "Prefix",
+      columnHelper.accessor("property", {
+        header: "Property",
         cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor("count", {
-        header: "Count",
-        cell: (info) => info.getValue().toLocaleString(),
-        meta: {
-          align: "right" as const,
-        },
+        meta: { align: "left" },
       }),
     ],
     [],
@@ -64,13 +58,7 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
   const table = useReactTable({
     data: filteredData,
     columns,
-    state: {
-      sorting,
-      pagination: {
-        pageSize,
-        pageIndex,
-      },
-    },
+    state: { sorting, pagination: { pageSize, pageIndex } },
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
       if (typeof updater === "function") {
@@ -85,14 +73,14 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    manualPagination: false,
   });
 
   return (
     <CardContent sx={{ p: 1 }}>
       <Box>
+        {/* Header Section */}
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-          <Typography variant="h6">Node CURIE Prefixes</Typography>
+          <Typography variant="h6">Node Properties</Typography>
           <TextField
             size="small"
             placeholder="Search"
@@ -110,7 +98,10 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
             }}
           />
         </Box>
+
         <Divider sx={{ mb: 2 }} />
+
+        {/* Empty State */}
         {filteredData.length === 0 ? (
           <Box
             sx={{
@@ -122,62 +113,50 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
               justifyContent: "center",
             }}
           >
-            <Typography>No prefix data available.</Typography>
+            <Typography>No properties available.</Typography>
           </Box>
         ) : (
           <>
+            {/* Table */}
             <TableContainer
               component={Paper}
               sx={{
                 height: 600,
                 overflow: "auto",
-                "&::-webkit-scrollbar": {
-                  width: "8px",
-                },
-                "&::-webkit-scrollbar-track": {
-                  backgroundColor: "#f1f1f1",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "#c1c1c1",
-                  borderRadius: "4px",
-                },
-                "&::-webkit-scrollbar-thumb:hover": {
-                  backgroundColor: "#a8a8a8",
-                },
+                "&::-webkit-scrollbar": { width: "8px" },
+                "&::-webkit-scrollbar-thumb": { backgroundColor: "#c1c1c1", borderRadius: "4px" },
+                "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#a8a8a8" },
               }}
             >
-              <Table stickyHeader>
-                <TableHead>
+              <Table stickyHeader size="small">
+                <TableHead sx={{ backgroundColor: "action.hover" }}>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        const sorted = header.column.getIsSorted(); // false | 'asc' | 'desc'
+                        const sorted = header.column.getIsSorted(); // 'asc' | 'desc' | false
                         const canSort = header.column.getCanSort();
-
                         return (
                           <TableCell
                             key={header.id}
                             align={header.column.columnDef.meta?.align}
-                            onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                             sx={{
                               cursor: canSort ? "pointer" : "default",
                               userSelect: "none",
-                              py: 1.5,
+                              py: 1.2,
                               px: 2,
-                              verticalAlign: "middle",
-                              whiteSpace: "nowrap",
                             }}
+                            onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                           >
                             <Box
                               sx={{
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: header.column.columnDef.meta?.align === "right" ? "flex-end" : "flex-start",
-                                gap: 0.5,
+                                gap: 0.4,
                               }}
                             >
-                              <Typography variant="subtitle2" fontWeight="bold" sx={{ display: "inline-flex", alignItems: "center" }}>
-                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                              <Typography variant="subtitle2" fontWeight="bold">
+                                {flexRender(header.column.columnDef.header, header.getContext())}
                               </Typography>
                               {canSort && (
                                 <Box
@@ -186,9 +165,8 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
                                     display: "inline-flex",
                                     alignItems: "center",
                                     color: sorted ? "text.primary" : "text.disabled",
-                                    opacity: sorted ? 1 : 0.5,
-                                    transition: "color 0.2s, opacity 0.2s",
-                                    "&:hover": { opacity: 1 },
+                                    opacity: sorted ? 1 : 0.6,
+                                    transition: "opacity 0.2s ease",
                                   }}
                                 >
                                   {sorted === "asc" ? <ArrowDropUpIcon fontSize="small" /> : sorted === "desc" ? <ArrowDropDownIcon fontSize="small" /> : <UnfoldMoreIcon fontSize="small" />}
@@ -201,11 +179,12 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
                     </TableRow>
                   ))}
                 </TableHead>
+
                 <TableBody>
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id} hover>
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} component={cell.column.id === "prefix" ? "th" : "td"} scope={cell.column.id === "prefix" ? "row" : undefined} align={cell.column.columnDef.meta?.align}>
+                        <TableCell key={cell.id} sx={{ py: 1.2 }}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
@@ -215,52 +194,41 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
               </Table>
             </TableContainer>
 
-            {filteredData.length > 0 && (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mt: 2,
-                }}
-              >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Typography variant="body2">Page size:</Typography>
-                  <FormControl size="small" sx={{ minWidth: 80 }}>
-                    <Select
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPageIndex(0);
-                      }}
-                      displayEmpty
-                    >
-                      <MenuItem value={5}>5</MenuItem>
-                      <MenuItem value={10}>10</MenuItem>
-                      <MenuItem value={20}>20</MenuItem>
-                      <MenuItem value={50}>50</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
-
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Typography variant="body2">
-                    Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of {filteredData.length} results
-                  </Typography>
-                  <Pagination
-                    count={Math.ceil(filteredData.length / pageSize)}
-                    page={pageIndex + 1}
-                    onChange={(event, page) => {
-                      setPageIndex(page - 1);
+            {/* Pagination */}
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mt: 2,
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="body2">Page size:</Typography>
+                <FormControl size="small" sx={{ minWidth: 80 }}>
+                  <Select
+                    value={pageSize}
+                    onChange={(e) => {
+                      setPageSize(Number(e.target.value));
+                      setPageIndex(0);
                     }}
-                    color="primary"
-                    size="small"
-                    showFirstButton
-                    showLastButton
-                  />
-                </Box>
+                    displayEmpty
+                  >
+                    <MenuItem value={10}>10</MenuItem>
+                    <MenuItem value={20}>20</MenuItem>
+                    <MenuItem value={50}>50</MenuItem>
+                    <MenuItem value={100}>100</MenuItem>
+                  </Select>
+                </FormControl>
               </Box>
-            )}
+
+              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                <Typography variant="body2">
+                  Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of {filteredData.length} results
+                </Typography>
+                <Pagination count={Math.ceil(filteredData.length / pageSize)} page={pageIndex + 1} onChange={(event, page) => setPageIndex(page - 1)} color="primary" size="small" showFirstButton showLastButton />
+              </Box>
+            </Box>
           </>
         )}
       </Box>
@@ -268,4 +236,4 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
   );
 }
 
-export default NodeCuriePrefixes;
+export default NodeProperties;

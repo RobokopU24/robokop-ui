@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { HeadContent, Outlet, createRootRoute } from "@tanstack/react-router";
 
 import "../index.css";
 
@@ -21,6 +21,7 @@ const RolesPrefetch = () => {
 const RootLayout = () => {
   return (
     <QueryClientProvider client={queryClient}>
+      <HeadContent />
       <RolesPrefetch />
       <AlertProvider>
         <RootComponentWrapper>

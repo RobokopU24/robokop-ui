@@ -5,11 +5,10 @@ import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, getSort
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
-import { GraphSchemaV2 } from "../../API/graphMetadata";
 
-type PrefixData = {
-  prefix: string;
-  count: number;
+type EdgePropertyData = {
+  name: string;
+  value: number;
 };
 
 declare module "@tanstack/react-table" {
@@ -18,25 +17,18 @@ declare module "@tanstack/react-table" {
   }
 }
 
-const columnHelper = createColumnHelper<PrefixData>();
+const columnHelper = createColumnHelper<EdgePropertyData>();
 
-function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: GraphSchemaV2 }) {
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: "count", desc: true }]);
+function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: "value", desc: true }]);
   const [pageSize, setPageSize] = useState(10);
   const [pageIndex, setPageIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const data = useMemo(() => {
-    return [...Object.entries(schema?.schema.nodes_summary.id_prefixes || {})].map(([prefix, count]) => ({
-      prefix,
-      count: count as number,
-    }));
-  }, [schema]);
-
   const filteredData = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return data;
-    return data.filter((row) => row.prefix.toLowerCase().includes(q));
+    return data.filter((row) => row.name.toLowerCase().includes(q));
   }, [data, searchQuery]);
 
   // Reset page index when page size changes
@@ -46,11 +38,11 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("prefix", {
-        header: "Prefix",
+      columnHelper.accessor("name", {
+        header: "Name",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("count", {
+      columnHelper.accessor("value", {
         header: "Count",
         cell: (info) => info.getValue().toLocaleString(),
         meta: {
@@ -92,7 +84,7 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
     <CardContent sx={{ p: 1 }}>
       <Box>
         <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-          <Typography variant="h6">Node CURIE Prefixes</Typography>
+          <Typography variant="h6">Edge Properties</Typography>
           <TextField
             size="small"
             placeholder="Search"
@@ -122,7 +114,7 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
               justifyContent: "center",
             }}
           >
-            <Typography>No prefix data available.</Typography>
+            <Typography>No edge property data available.</Typography>
           </Box>
         ) : (
           <>
@@ -205,7 +197,7 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id} hover>
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} component={cell.column.id === "prefix" ? "th" : "td"} scope={cell.column.id === "prefix" ? "row" : undefined} align={cell.column.columnDef.meta?.align}>
+                        <TableCell key={cell.id} component={cell.column.id === "name" ? "th" : "td"} scope={cell.column.id === "name" ? "row" : undefined} align={cell.column.columnDef.meta?.align}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
@@ -268,4 +260,4 @@ function NodeCuriePrefixes({ graphData, schema }: { graphData?: any; schema: Gra
   );
 }
 
-export default NodeCuriePrefixes;
+export default EdgeProperties;

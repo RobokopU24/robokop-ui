@@ -12,11 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
+import { Route as ReleasesRouteImport } from './routes/releases'
 import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as LicenseRouteImport } from './routes/license'
 import { Route as GuideRouteImport } from './routes/guide'
-import { Route as FundingsRouteImport } from './routes/fundings'
+import { Route as FundingRouteImport } from './routes/funding'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DeveloperToolsRouteImport } from './routes/developer-tools'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -36,7 +37,6 @@ import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/d
 import { Route as DetailsDetails_idIndexRouteImport } from './routes/details/$details_id/index'
 import { Route as AnswerAnswer_idIndexRouteImport } from './routes/answer/$answer_id/index'
 import { Route as ExploreGraphsGraph_idIndexRouteImport } from './routes/explore/graphs/$graph_id/index'
-import { Route as ExploreGraphsGraph_idV2RouteImport } from './routes/explore/graphs/$graph_id/v2'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -51,6 +51,11 @@ const TutorialRoute = TutorialRouteImport.update({
 const TermsofserviceRoute = TermsofserviceRouteImport.update({
   id: '/termsofservice',
   path: '/termsofservice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReleasesRoute = ReleasesRouteImport.update({
+  id: '/releases',
+  path: '/releases',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuestionBuilderRoute = QuestionBuilderRouteImport.update({
@@ -73,9 +78,9 @@ const GuideRoute = GuideRouteImport.update({
   path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FundingsRoute = FundingsRouteImport.update({
-  id: '/fundings',
-  path: '/fundings',
+const FundingRoute = FundingRouteImport.update({
+  id: '/funding',
+  path: '/funding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventsRoute = EventsRouteImport.update({
@@ -176,11 +181,6 @@ const ExploreGraphsGraph_idIndexRoute =
     path: '/explore/graphs/$graph_id/',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ExploreGraphsGraph_idV2Route = ExploreGraphsGraph_idV2RouteImport.update({
-  id: '/explore/graphs/$graph_id/v2',
-  path: '/explore/graphs/$graph_id/v2',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -189,11 +189,12 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
-  '/fundings': typeof FundingsRoute
+  '/funding': typeof FundingRoute
   '/guide': typeof GuideRoute
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -209,7 +210,6 @@ export interface FileRoutesByFullPath {
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
   '/explore/graphs': typeof ExploreGraphsIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
-  '/explore/graphs/$graph_id/v2': typeof ExploreGraphsGraph_idV2Route
   '/explore/graphs/$graph_id': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRoutesByTo {
@@ -219,11 +219,12 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
-  '/fundings': typeof FundingsRoute
+  '/funding': typeof FundingRoute
   '/guide': typeof GuideRoute
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -239,7 +240,6 @@ export interface FileRoutesByTo {
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
   '/explore/graphs': typeof ExploreGraphsIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
-  '/explore/graphs/$graph_id/v2': typeof ExploreGraphsGraph_idV2Route
   '/explore/graphs/$graph_id': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRoutesById {
@@ -250,11 +250,12 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
-  '/fundings': typeof FundingsRoute
+  '/funding': typeof FundingRoute
   '/guide': typeof GuideRoute
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -270,7 +271,6 @@ export interface FileRoutesById {
   '/explore/drug-chemical/': typeof ExploreDrugChemicalIndexRoute
   '/explore/graphs/': typeof ExploreGraphsIndexRoute
   '/share/$share_id/': typeof ShareShare_idIndexRoute
-  '/explore/graphs/$graph_id/v2': typeof ExploreGraphsGraph_idV2Route
   '/explore/graphs/$graph_id/': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRouteTypes {
@@ -282,11 +282,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/developer-tools'
     | '/events'
-    | '/fundings'
+    | '/funding'
     | '/guide'
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
@@ -302,7 +303,6 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical'
     | '/explore/graphs'
     | '/share/$share_id'
-    | '/explore/graphs/$graph_id/v2'
     | '/explore/graphs/$graph_id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -312,11 +312,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/developer-tools'
     | '/events'
-    | '/fundings'
+    | '/funding'
     | '/guide'
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
@@ -332,7 +333,6 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical'
     | '/explore/graphs'
     | '/share/$share_id'
-    | '/explore/graphs/$graph_id/v2'
     | '/explore/graphs/$graph_id'
   id:
     | '__root__'
@@ -342,11 +342,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/developer-tools'
     | '/events'
-    | '/fundings'
+    | '/funding'
     | '/guide'
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
@@ -362,7 +363,6 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical/'
     | '/explore/graphs/'
     | '/share/$share_id/'
-    | '/explore/graphs/$graph_id/v2'
     | '/explore/graphs/$graph_id/'
   fileRoutesById: FileRoutesById
 }
@@ -373,11 +373,12 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DeveloperToolsRoute: typeof DeveloperToolsRoute
   EventsRoute: typeof EventsRoute
-  FundingsRoute: typeof FundingsRoute
+  FundingRoute: typeof FundingRoute
   GuideRoute: typeof GuideRoute
   LicenseRoute: typeof LicenseRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
   QuestionBuilderRoute: typeof QuestionBuilderRoute
+  ReleasesRoute: typeof ReleasesRoute
   TermsofserviceRoute: typeof TermsofserviceRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -393,7 +394,6 @@ export interface RootRouteChildren {
   ExploreDrugChemicalIndexRoute: typeof ExploreDrugChemicalIndexRoute
   ExploreGraphsIndexRoute: typeof ExploreGraphsIndexRoute
   ShareShare_idIndexRoute: typeof ShareShare_idIndexRoute
-  ExploreGraphsGraph_idV2Route: typeof ExploreGraphsGraph_idV2Route
   ExploreGraphsGraph_idIndexRoute: typeof ExploreGraphsGraph_idIndexRoute
 }
 
@@ -418,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/termsofservice'
       fullPath: '/termsofservice'
       preLoaderRoute: typeof TermsofserviceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/releases': {
+      id: '/releases'
+      path: '/releases'
+      fullPath: '/releases'
+      preLoaderRoute: typeof ReleasesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/question-builder': {
@@ -448,11 +455,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/fundings': {
-      id: '/fundings'
-      path: '/fundings'
-      fullPath: '/fundings'
-      preLoaderRoute: typeof FundingsRouteImport
+    '/funding': {
+      id: '/funding'
+      path: '/funding'
+      fullPath: '/funding'
+      preLoaderRoute: typeof FundingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events': {
@@ -588,13 +595,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreGraphsGraph_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore/graphs/$graph_id/v2': {
-      id: '/explore/graphs/$graph_id/v2'
-      path: '/explore/graphs/$graph_id/v2'
-      fullPath: '/explore/graphs/$graph_id/v2'
-      preLoaderRoute: typeof ExploreGraphsGraph_idV2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -605,11 +605,12 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DeveloperToolsRoute: DeveloperToolsRoute,
   EventsRoute: EventsRoute,
-  FundingsRoute: FundingsRoute,
+  FundingRoute: FundingRoute,
   GuideRoute: GuideRoute,
   LicenseRoute: LicenseRoute,
   OauthCallbackRoute: OauthCallbackRoute,
   QuestionBuilderRoute: QuestionBuilderRoute,
+  ReleasesRoute: ReleasesRoute,
   TermsofserviceRoute: TermsofserviceRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
@@ -625,7 +626,6 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreDrugChemicalIndexRoute: ExploreDrugChemicalIndexRoute,
   ExploreGraphsIndexRoute: ExploreGraphsIndexRoute,
   ShareShare_idIndexRoute: ShareShare_idIndexRoute,
-  ExploreGraphsGraph_idV2Route: ExploreGraphsGraph_idV2Route,
   ExploreGraphsGraph_idIndexRoute: ExploreGraphsGraph_idIndexRoute,
 }
 export const routeTree = rootRouteImport

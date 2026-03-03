@@ -35,6 +35,11 @@ export const fileRoutes = {
   fileSize: `${filesEndpoint}/file-size`,
 };
 
+const releasesEndpoint = `${baseAPI}/api/releases`;
+export const releasesRoutes = {
+  base: releasesEndpoint,
+};
+
 const llmEndpoint = `${baseAuthURL}/llm`;
 export const llmRoutes = {
   base: llmEndpoint,
@@ -62,4 +67,4 @@ export const rolesRoutes = {
   base: rolesEndpoint,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, llmRoutes, adminRoutes, featuresRoutes, rolesRoutes };
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, releasesRoutes, llmRoutes, adminRoutes, featuresRoutes, rolesRoutes };

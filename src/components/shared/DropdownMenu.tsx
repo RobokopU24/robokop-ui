@@ -1,6 +1,7 @@
-import React from 'react';
-import { Menu, MenuItem, Typography } from '@mui/material';
-import { Link } from '@tanstack/react-router';
+import React from "react";
+import { Menu, MenuItem, Typography, Box } from "@mui/material";
+import { Link } from "@tanstack/react-router";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 export type MenuItemConfig = {
   key?: string;
@@ -8,6 +9,7 @@ export type MenuItemConfig = {
   to?: string;
   onClick?: () => void;
   closeOnClick?: boolean;
+  external?: boolean;
 };
 
 type DropdownMenuProps = {
@@ -38,8 +40,8 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
           borderRadius: 2,
           mt: 1,
           minWidth: 180,
-          '& .MuiMenuItem-root': {
-            transition: 'background-color 0.15s ease',
+          "& .MuiMenuItem-root": {
+            transition: "background-color 0.15s ease",
           },
         },
       }}
@@ -47,17 +49,39 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
     >
       {items.map((item, idx) => {
         const key = item.key ?? `${id}-item-${idx}`;
-        const content = item.to ? (
-          <Link to={item.to} style={{ textDecoration: 'none', color: 'inherit', width: '100%' }}>
+
+        // wrapping label with external link icon if it's an external link
+        const labelContent = (
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1, width: "100%" }}>
             <Typography variant="body2" sx={{ fontWeight: 500 }}>
               {item.label}
             </Typography>
-          </Link>
-        ) : (
-          <Typography variant="body2" sx={{ fontWeight: 500 }}>
-            {item.label}
-          </Typography>
+            {item.external && <OpenInNewIcon sx={{ fontSize: 16 }} />}
+          </Box>
         );
+
+        if (item.to) {
+          return (
+            <MenuItem
+              key={key}
+              component={Link}
+              // adding this just for external links to open in new tab
+              {...(item.external && { target: "_blank", rel: "noopener noreferrer" })}
+              to={item.to}
+              onClick={handleItemClick(item)}
+              sx={{
+                py: 1,
+                px: 2,
+                textDecoration: "none",
+                color: "inherit",
+                "&:hover": { backgroundColor: "action.hover" },
+              }}
+              disableRipple
+            >
+              {labelContent}
+            </MenuItem>
+          );
+        }
 
         return (
           <MenuItem
@@ -66,11 +90,11 @@ function DropdownMenu({ id, anchorEl, open, onClose, items, menuProps }: Dropdow
             sx={{
               py: 1,
               px: 2,
-              '&:hover': { backgroundColor: 'action.hover' },
+              "&:hover": { backgroundColor: "action.hover" },
             }}
             disableRipple
           >
-            {content}
+            {labelContent}
           </MenuItem>
         );
       })}

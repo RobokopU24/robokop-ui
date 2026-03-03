@@ -137,7 +137,8 @@ function prettyDisplay(arg: string | string[]) {
   );
 }
 
-function formatNumber(num: number, decimals = 0) {
+function formatNumber(num: number | undefined | null, decimals = 0) {
+  if (num == null || Number.isNaN(num)) return '-';
   const absNum = Math.abs(num);
 
   const format = (value: number, divisor: number, suffix: string) =>
