@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
+import { Route as ReleasesRouteImport } from './routes/releases'
 import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as LicenseRouteImport } from './routes/license'
@@ -49,6 +50,11 @@ const TutorialRoute = TutorialRouteImport.update({
 const TermsofserviceRoute = TermsofserviceRouteImport.update({
   id: '/termsofservice',
   path: '/termsofservice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReleasesRoute = ReleasesRouteImport.update({
+  id: '/releases',
+  path: '/releases',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuestionBuilderRoute = QuestionBuilderRouteImport.update({
@@ -182,6 +188,7 @@ export interface FileRoutesByFullPath {
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
@@ -354,6 +366,7 @@ export interface RootRouteChildren {
   LicenseRoute: typeof LicenseRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
   QuestionBuilderRoute: typeof QuestionBuilderRoute
+  ReleasesRoute: typeof ReleasesRoute
   TermsofserviceRoute: typeof TermsofserviceRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -392,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/termsofservice'
       fullPath: '/termsofservice'
       preLoaderRoute: typeof TermsofserviceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/releases': {
+      id: '/releases'
+      path: '/releases'
+      fullPath: '/releases'
+      preLoaderRoute: typeof ReleasesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/question-builder': {
@@ -570,6 +590,7 @@ const rootRouteChildren: RootRouteChildren = {
   LicenseRoute: LicenseRoute,
   OauthCallbackRoute: OauthCallbackRoute,
   QuestionBuilderRoute: QuestionBuilderRoute,
+  ReleasesRoute: ReleasesRoute,
   TermsofserviceRoute: TermsofserviceRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,

@@ -35,4 +35,9 @@ export const fileRoutes = {
   fileSize: `${filesEndpoint}/file-size`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes };
+const releasesEndpoint = `${baseAPI}/api/releases`;
+export const releasesRoutes = {
+  base: releasesEndpoint,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, releasesRoutes };
