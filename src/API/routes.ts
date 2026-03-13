@@ -67,4 +67,9 @@ export const rolesRoutes = {
   base: rolesEndpoint,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, releasesRoutes, llmRoutes, adminRoutes, featuresRoutes, rolesRoutes };
+const citationsEndpoint = `${baseAPI}/api/citations`;
+export const citationsRoutes = {
+  base: citationsEndpoint,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, releasesRoutes, llmRoutes, adminRoutes, featuresRoutes, rolesRoutes, citationsRoutes };
