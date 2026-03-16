@@ -1,6 +1,6 @@
-import React from 'react';
-import { useQueryBuilderContext } from '../../../../context/queryBuilder';
-import { TextField, Autocomplete } from '@mui/material';
+import React from "react";
+import { useQueryBuilderContext } from "../../../../context/queryBuilder";
+import { TextField, Autocomplete } from "@mui/material";
 
 // Types for the query builder context
 interface TreeNode {
@@ -113,24 +113,26 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
 
   const [value, setValue] = React.useState<AssociationOption | null>(associationOptions[0] || null);
   const [qualifiers, setQualifiers] = React.useState<Record<string, string | null>>({});
+
+  const associationKey = associations.map((a) => a.association.uuid).join(",");
   React.useEffect(() => {
-    queryBuilder.dispatch({ type: 'editQualifiers', payload: { id, qualifiers } });
+    setValue(associationOptions[0] || null);
+    setQualifiers({});
+  }, [associationKey]);
+
+  React.useEffect(() => {
+    queryBuilder.dispatch({ type: "editQualifiers", payload: { id, qualifiers } });
   }, [qualifiers]);
 
   if (associationOptions.length === 0) return null;
-  if (associationOptions.length === 1 && associationOptions[0].name === 'association') return null;
+  if (associationOptions.length === 1 && associationOptions[0].name === "association") return null;
 
   if (!value) return null;
 
-  const subjectQualfiers = value.qualifiers.filter(({ name }) => name.includes('subject'));
-  const predicateQualifiers = value.qualifiers.filter(({ name }) => name.includes('predicate'));
-  const objectQualifiers = value.qualifiers.filter(({ name }) => name.includes('object'));
-  const otherQualifiers = value.qualifiers.filter(
-    (q) =>
-      !subjectQualfiers.includes(q) &&
-      !predicateQualifiers.includes(q) &&
-      !objectQualifiers.includes(q)
-  );
+  const subjectQualfiers = value.qualifiers.filter(({ name }) => name.includes("subject"));
+  const predicateQualifiers = value.qualifiers.filter(({ name }) => name.includes("predicate"));
+  const objectQualifiers = value.qualifiers.filter(({ name }) => name.includes("object"));
+  const otherQualifiers = value.qualifiers.filter((q) => !subjectQualfiers.includes(q) && !predicateQualifiers.includes(q) && !objectQualifiers.includes(q));
 
   return (
     <>
@@ -150,9 +152,7 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
                 options={associationOptions}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(opt, val) => opt.uuid === val.uuid}
-                renderInput={(params) => (
-                  <TextField {...params} label="Association" variant="outlined" />
-                )}
+                renderInput={(params) => <TextField {...params} label="Association" variant="outlined" />}
               />
             </div>
           </div>
@@ -178,42 +178,26 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
                       }
                     }}
                     options={options}
-                    renderInput={(params) => (
-                      <TextField {...params} label={name} variant="outlined" />
-                    )}
+                    renderInput={(params) => <TextField {...params} label={name} variant="outlined" />}
                     size="small"
                   />
                 ))}
               </div>
             </>
           )}
-          {(subjectQualfiers.length > 0 ||
-            predicateQualifiers.length > 0 ||
-            objectQualifiers.length > 0) && <hr />}
+          {(subjectQualfiers.length > 0 || predicateQualifiers.length > 0 || objectQualifiers.length > 0) && <hr />}
           <div className="qualifier-section">
             <div id="subject-qualifiers">
               {subjectQualfiers.length > 0 && <p className="sub-heading">Subject</p>}
-              <QualifiersList
-                value={subjectQualfiers}
-                qualifiers={qualifiers}
-                setQualifiers={setQualifiers}
-              />
+              <QualifiersList value={subjectQualfiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
             </div>
             <div id="predicate-qualifiers">
               {predicateQualifiers.length > 0 && <p className="sub-heading">Predicate</p>}
-              <QualifiersList
-                value={predicateQualifiers}
-                qualifiers={qualifiers}
-                setQualifiers={setQualifiers}
-              />
+              <QualifiersList value={predicateQualifiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
             </div>
             <div id="object-qualifiers">
               {objectQualifiers.length > 0 && <p className="sub-heading">Object</p>}
-              <QualifiersList
-                value={objectQualifiers}
-                qualifiers={qualifiers}
-                setQualifiers={setQualifiers}
-              />
+              <QualifiersList value={objectQualifiers} qualifiers={qualifiers} setQualifiers={setQualifiers} />
             </div>
           </div>
         </div>

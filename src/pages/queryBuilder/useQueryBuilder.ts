@@ -1,10 +1,10 @@
-import { useEffect, useReducer, useMemo } from 'react';
+import { useEffect, useReducer, useMemo } from "react";
 
-import snakeCase from 'lodash/snakeCase';
-import queryBuilderUtils from '../../utils/queryBuilder';
-import queryGraphUtils from '../../utils/queryGraph';
-import { useAlert } from '../../components/AlertProvider';
-import cloneDeep from 'lodash/cloneDeep';
+import snakeCase from "lodash/snakeCase";
+import queryBuilderUtils from "../../utils/queryBuilder";
+import queryGraphUtils from "../../utils/queryGraph";
+import { useAlert } from "../../components/AlertProvider";
+import cloneDeep from "lodash/cloneDeep";
 
 interface QueryGraphNode {
   name?: string;
@@ -41,21 +41,21 @@ interface QueryBuilderState {
 }
 
 type QueryBuilderAction =
-  | { type: 'addEdge'; payload: [string, string] }
+  | { type: "addEdge"; payload: [string, string] }
   | {
-      type: 'editEdge';
-      payload: { edgeId: string; endpoint: 'subject' | 'object'; nodeId?: string };
+      type: "editEdge";
+      payload: { edgeId: string; endpoint: "subject" | "object"; nodeId?: string };
     }
-  | { type: 'editPredicate'; payload: { id: string; predicates: string[] } }
-  | { type: 'editQualifiers'; payload: { id: string; qualifiers: Record<string, string> } }
-  | { type: 'deleteEdge'; payload: { id: string } }
-  | { type: 'addHop'; payload: { nodeId?: string } }
-  | { type: 'addNode' }
-  | { type: 'editNode'; payload: { id: string; node?: QueryGraphNode } }
-  | { type: 'resetGraph' }
-  | { type: 'deleteNode'; payload: { id: string } }
-  | { type: 'saveGraph'; payload: { message: { query_graph: QueryGraph } } }
-  | { type: 'restoreGraph'; payload: QueryGraph }
+  | { type: "editPredicate"; payload: { id: string; predicates: string[] } }
+  | { type: "editQualifiers"; payload: { id: string; qualifiers: Record<string, string> } }
+  | { type: "deleteEdge"; payload: { id: string } }
+  | { type: "addHop"; payload: { nodeId?: string } }
+  | { type: "addNode" }
+  | { type: "editNode"; payload: { id: string; node?: QueryGraphNode } }
+  | { type: "resetGraph" }
+  | { type: "deleteNode"; payload: { id: string } }
+  | { type: "saveGraph"; payload: { message: { query_graph: QueryGraph } } }
+  | { type: "restoreGraph"; payload: QueryGraph }
   | { type: string; payload?: any };
 
 interface TextEditorRow {
@@ -72,9 +72,9 @@ function getDefaultNode(): QueryGraphNode {
 }
 function getDefaultEdge(subject?: string, object?: string): QueryGraphEdge {
   return {
-    subject: subject || '',
-    object: object || '',
-    predicates: ['biolink:related_to'],
+    subject: subject || "",
+    object: object || "",
+    predicates: ["biolink:related_to"],
   };
 }
 
@@ -84,7 +84,7 @@ const defaultQueryGraph: QueryGraph = {
     n1: getDefaultNode(),
   },
   edges: {
-    e0: getDefaultEdge('n0', 'n1'),
+    e0: getDefaultEdge("n0", "n1"),
   },
 };
 
@@ -94,26 +94,22 @@ const initialState: QueryBuilderState = {
       query_graph: defaultQueryGraph,
     },
   },
-  rootNode: 'n0',
+  rootNode: "n0",
   isValid: true,
-  errMessage: '',
+  errMessage: "",
 };
 
 function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBuilderState {
   const newState = cloneDeep(state);
   switch (action.type) {
-    case 'addEdge': {
+    case "addEdge": {
       const [subjectId, objectId]: [string, string] = action.payload;
       const newEdgeId = queryBuilderUtils.getNextEdgeID(newState.message.message.query_graph);
       newState.message.message.query_graph.edges[newEdgeId] = getDefaultEdge(subjectId, objectId);
       break;
     }
-    case 'editEdge': {
-      const {
-        edgeId,
-        endpoint,
-        nodeId,
-      }: { edgeId: string; endpoint: 'subject' | 'object'; nodeId?: string } = action.payload;
+    case "editEdge": {
+      const { edgeId, endpoint, nodeId }: { edgeId: string; endpoint: "subject" | "object"; nodeId?: string } = action.payload;
       if (!nodeId) {
         const newNodeId = queryBuilderUtils.getNextNodeID(newState.message.message.query_graph);
         newState.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
@@ -121,49 +117,40 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
       } else {
         newState.message.message.query_graph.edges[edgeId][endpoint] = nodeId;
       }
-      newState.rootNode = queryBuilderUtils.getRootNode(
-        newState.message.message.query_graph as any,
-        newState.rootNode
-      );
-      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
-        newState.message.message.query_graph as any,
-        newState.rootNode
-      );
+      newState.rootNode = queryBuilderUtils.getRootNode(newState.message.message.query_graph as any, newState.rootNode);
+      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(newState.message.message.query_graph as any, newState.rootNode);
       break;
     }
-    case 'editPredicate': {
+    case "editPredicate": {
       const { id, predicates }: { id: string; predicates: string[] } = action.payload;
       newState.message.message.query_graph.edges[id].predicates = predicates;
+      delete newState.message.message.query_graph.edges[id].qualifier_constraints;
       break;
     }
-    case 'editQualifiers': {
+    case "editQualifiers": {
       const { id, qualifiers }: { id: string; qualifiers: Record<string, string> } = action.payload;
+      console.log("[editQualifiers]", JSON.stringify(qualifiers, null, 2));
       if (Object.keys(qualifiers).length !== 0) {
         const qualifier_set = Object.entries(qualifiers).map(([name, value]) => ({
           qualifier_type_id: `biolink:${snakeCase(name)}`,
-          qualifier_value:
-            name === 'qualified predicate'
-              ? `biolink:${snakeCase(value as string)}`
-              : snakeCase(value as string),
+          qualifier_value: name === "qualified predicate" ? `biolink:${snakeCase(value as string)}` : snakeCase(value as string),
         }));
         newState.message.message.query_graph.edges[id].qualifier_constraints = [{ qualifier_set }];
+        console.log("[editQualifiers]", JSON.stringify(newState.message.message.query_graph.edges[id].qualifier_constraints, null, 2));
+      } else {
+        delete newState.message.message.query_graph.edges[id].qualifier_constraints;
+        console.log("[editQualifiers] cleared qualifier_constraints");
       }
       break;
     }
-    case 'deleteEdge': {
+    case "deleteEdge": {
       const { id }: { id: string } = action.payload;
       delete newState.message.message.query_graph.edges[id];
-      newState.rootNode = queryBuilderUtils.getRootNode(
-        newState.message.message.query_graph as any,
-        newState.rootNode
-      );
-      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
-        newState.message.message.query_graph as any,
-        newState.rootNode
-      );
+      newState.rootNode = queryBuilderUtils.getRootNode(newState.message.message.query_graph as any, newState.rootNode);
+      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(newState.message.message.query_graph as any, newState.rootNode);
       break;
     }
-    case 'addHop': {
+    case "addHop": {
       const { nodeId }: { nodeId?: string } = action.payload;
       const newNodeId = queryBuilderUtils.getNextNodeID(newState.message.message.query_graph);
       const newEdgeId = queryBuilderUtils.getNextEdgeID(newState.message.message.query_graph);
@@ -176,63 +163,44 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
       newState.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
       break;
     }
-    case 'addNode': {
+    case "addNode": {
       const newNodeId = queryBuilderUtils.getNextNodeID(newState.message.message.query_graph);
       newState.message.message.query_graph.nodes[newNodeId] = getDefaultNode();
       break;
     }
-    case 'editNode': {
+    case "editNode": {
       const { id, node }: { id: string; node?: QueryGraphNode } = action.payload;
       newState.message.message.query_graph.nodes[id] = node || getDefaultNode();
       break;
     }
-    case 'resetGraph': {
+    case "resetGraph": {
       newState.message.message.query_graph = defaultQueryGraph;
-      newState.rootNode = 'n0';
+      newState.rootNode = "n0";
       break;
     }
-    case 'deleteNode': {
+    case "deleteNode": {
       const { id }: { id: string } = action.payload;
       delete newState.message.message.query_graph.nodes[id];
-      const trimmedQueryGraph = queryBuilderUtils.removeAttachedEdges(
-        newState.message.message.query_graph as any,
-        id
-      );
-      newState.rootNode = queryBuilderUtils.getRootNode(
-        trimmedQueryGraph as any,
-        newState.rootNode
-      );
-      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(
-        trimmedQueryGraph as any,
-        newState.rootNode
-      );
+      const trimmedQueryGraph = queryBuilderUtils.removeAttachedEdges(newState.message.message.query_graph as any, id);
+      newState.rootNode = queryBuilderUtils.getRootNode(trimmedQueryGraph as any, newState.rootNode);
+      newState.message.message.query_graph = queryBuilderUtils.removeDetachedFromRoot(trimmedQueryGraph as any, newState.rootNode);
       break;
     }
-    case 'saveGraph': {
-      newState.message.message.query_graph = queryGraphUtils.toCurrentTRAPI(
-        action.payload.message.query_graph
-      );
-      newState.rootNode = queryBuilderUtils.getRootNode(
-        newState.message.message.query_graph as any,
-        null
-      );
+    case "saveGraph": {
+      newState.message.message.query_graph = queryGraphUtils.toCurrentTRAPI(action.payload.message.query_graph);
+      newState.rootNode = queryBuilderUtils.getRootNode(newState.message.message.query_graph as any, null);
       break;
     }
-    case 'restoreGraph': {
+    case "restoreGraph": {
       newState.message.message.query_graph = action.payload;
-      newState.rootNode = queryBuilderUtils.getRootNode(
-        newState.message.message.query_graph as any,
-        null
-      );
+      newState.rootNode = queryBuilderUtils.getRootNode(newState.message.message.query_graph as any, null);
       break;
     }
     default: {
       return newState;
     }
   }
-  const { isValid, errMsg }: { isValid: boolean; errMsg: string } = queryBuilderUtils.isValidGraph(
-    newState.message.message.query_graph
-  );
+  const { isValid, errMsg }: { isValid: boolean; errMsg: string } = queryBuilderUtils.isValidGraph(newState.message.message.query_graph);
   newState.isValid = isValid;
   newState.errMessage = errMsg;
   return newState;
@@ -250,7 +218,7 @@ export default function useQueryBuilder() {
 
   useEffect(() => {
     if (!state.isValid && state.errMessage) {
-      displayAlert('error', state.errMessage);
+      displayAlert("error", state.errMessage);
     }
   }, [state.isValid, state.errMessage]);
 
@@ -278,11 +246,11 @@ export default function useQueryBuilder() {
       const edge = query_graph.edges[edgeId];
       const row: TextEditorRow = {
         edgeId,
-        subjectIsReference: nodeList.has(edge.subject ?? ''),
-        objectIsReference: nodeList.has(edge.object ?? ''),
+        subjectIsReference: nodeList.has(edge.subject ?? ""),
+        objectIsReference: nodeList.has(edge.object ?? ""),
       };
-      nodeList.add(edge.subject ?? '');
-      nodeList.add(edge.object ?? '');
+      nodeList.add(edge.subject ?? "");
+      nodeList.add(edge.object ?? "");
 
       rows.push(row);
     });
