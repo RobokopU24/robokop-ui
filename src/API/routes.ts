@@ -35,4 +35,41 @@ export const fileRoutes = {
   fileSize: `${filesEndpoint}/file-size`,
 };
 
-export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes };
+const releasesEndpoint = `${baseAPI}/api/releases`;
+export const releasesRoutes = {
+  base: releasesEndpoint,
+};
+
+const llmEndpoint = `${baseAuthURL}/llm`;
+export const llmRoutes = {
+  base: llmEndpoint,
+  summarizeLinks: `${llmEndpoint}/stream-summaries`,
+  summarizeGraph: `${llmEndpoint}/stream-graph-summary`,
+  summarizeKGNodes: `${llmEndpoint}/stream-kg-nodes-summary`,
+  summarizeTable: `${llmEndpoint}/stream-table-summary`,
+};
+
+const adminEndpoint = `${baseAuthURL}/admin`;
+export const adminRoutes = {
+  base: adminEndpoint,
+  users: `${adminEndpoint}/users`,
+  userRole: `${adminEndpoint}/user-role`,
+  featureAccess: `${adminEndpoint}/feature-access`,
+};
+
+const featuresEndpoint = `${baseAuthURL}/features`;
+export const featuresRoutes = {
+  base: featuresEndpoint,
+};
+
+const rolesEndpoint = `${baseAuthURL}/roles`;
+export const rolesRoutes = {
+  base: rolesEndpoint,
+};
+
+const citationsEndpoint = `${baseAPI}/api/citations`;
+export const citationsRoutes = {
+  base: citationsEndpoint,
+};
+
+export default { authRoutes, passkeyRoutes, queryRoutes, fileRoutes, releasesRoutes, llmRoutes, adminRoutes, featuresRoutes, rolesRoutes, citationsRoutes };

@@ -75,7 +75,7 @@
     }
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     width: 15px;
     height: 15px;
 }
@@ -94,7 +94,7 @@
 
 ::-webkit-scrollbar-thumb:active {
     background-color: var(--scrollbar-active-color);
-}
+} */
 
 html {
     height: 100%;

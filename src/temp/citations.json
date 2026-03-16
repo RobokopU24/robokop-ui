@@ -1,0 +1,2805 @@
+{
+  "offset": 0,
+  "data": [
+    {
+      "citingPaper": {
+        "paperId": "3e55d82837a8ace30a6ff92da2084d6d007a7b4e",
+        "externalIds": {
+          "PubMedCentral": "12888809",
+          "DOI": "10.1093/gigascience/giag007",
+          "CorpusId": 284873408,
+          "PubMed": "41553353"
+        },
+        "url": "https://www.semanticscholar.org/paper/3e55d82837a8ace30a6ff92da2084d6d007a7b4e",
+        "title": "Federated knowledge retrieval elevates large language model performance on biomedical benchmarks",
+        "venue": "GigaScience",
+        "year": 2026,
+        "authors": [
+          {
+            "authorId": "2375004906",
+            "name": "Janet Joy"
+          },
+          {
+            "authorId": "2079595422",
+            "name": "Andrew I. Su"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "f58ebb9da63f61195b3dd9f3069d95d89e7d1206",
+        "externalIds": {
+          "DBLP": "journals/corr/abs-2601-10008",
+          "ArXiv": "2601.10008",
+          "DOI": "10.48550/arXiv.2601.10008",
+          "CorpusId": 284737932
+        },
+        "url": "https://www.semanticscholar.org/paper/f58ebb9da63f61195b3dd9f3069d95d89e7d1206",
+        "title": "The \"I\" in FAIR: Translating from Interoperability in Principle to Interoperation in Practice",
+        "venue": "arXiv.org",
+        "year": 2026,
+        "authors": [
+          {
+            "authorId": "2323372282",
+            "name": "Evan D. Morris"
+          },
+          {
+            "authorId": "2349246157",
+            "name": "Gaurav Vaidya"
+          },
+          {
+            "authorId": "2067547861",
+            "name": "Phil Owen"
+          },
+          {
+            "authorId": "145985633",
+            "name": "Jason Reilly"
+          },
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "2108355177",
+            "name": "Patrick Wang"
+          },
+          {
+            "authorId": "1388286745",
+            "name": "Yaphet Kebede"
+          },
+          {
+            "authorId": "2378129686",
+            "name": "E. Carter"
+          },
+          {
+            "authorId": "2398024480",
+            "name": "Christopher Bizon"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "acb5d5fca4ee2766313ffd23e9e4d9ea54b65779",
+        "externalIds": {
+          "DBLP": "journals/ijdsa/SchatzBTC26",
+          "DOI": "10.1007/s41060-025-00911-y",
+          "CorpusId": 284110223
+        },
+        "url": "https://www.semanticscholar.org/paper/acb5d5fca4ee2766313ffd23e9e4d9ea54b65779",
+        "title": "GAME+: lossless knowledge-graph compression for improving the efficiency and effectiveness of rule mining",
+        "venue": "International Journal of Data Science and Analysis",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "2294830853",
+            "name": "Jon-Michael Beasley"
+          },
+          {
+            "authorId": "2238163188",
+            "name": "Alexander Tropsha"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "30f4e19c1c57951b296ef944fc94bb7c179e5b87",
+        "externalIds": {
+          "PubMedCentral": "12649945",
+          "DOI": "10.3390/bioengineering12111260",
+          "CorpusId": 283159296,
+          "PubMed": "41301216"
+        },
+        "url": "https://www.semanticscholar.org/paper/30f4e19c1c57951b296ef944fc94bb7c179e5b87",
+        "title": "Large Language Models in Bio-Ontology Research: A Review",
+        "venue": "Bioengineering",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "3199031",
+            "name": "Prashanti Manda"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "c78f4f42d48eb8b621ecee2c1a20736075d411f7",
+        "externalIds": {
+          "DBLP": "journals/corr/abs-2509-19057",
+          "ArXiv": "2509.19057",
+          "DOI": "10.48550/arXiv.2509.19057",
+          "CorpusId": 281496828
+        },
+        "url": "https://www.semanticscholar.org/paper/c78f4f42d48eb8b621ecee2c1a20736075d411f7",
+        "title": "RELATE: Relation Extraction in Biomedical Abstracts with LLMs and Ontology Constraints",
+        "venue": "arXiv.org",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2006057676",
+            "name": "Olawumi Olasunkanmi"
+          },
+          {
+            "authorId": "2381728541",
+            "name": "Mathew Satursky"
+          },
+          {
+            "authorId": "2150983399",
+            "name": "Hong Yi"
+          },
+          {
+            "authorId": "2149930315",
+            "name": "Chris Bizon"
+          },
+          {
+            "authorId": "2375398044",
+            "name": "Harlin Lee"
+          },
+          {
+            "authorId": "2323374314",
+            "name": "Stanley Ahalt"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "33ed3a8d3806e477b1ca31b025c6495f009fc078",
+        "externalIds": {
+          "PubMedCentral": "12407614",
+          "ArXiv": "2508.21774",
+          "CorpusId": 280984857,
+          "PubMed": "40909156"
+        },
+        "url": "https://www.semanticscholar.org/paper/33ed3a8d3806e477b1ca31b025c6495f009fc078",
+        "title": "Improving Biomedical Knowledge Graph Quality: A Community Approach",
+        "venue": "arXiv.org",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2268196223",
+            "name": "Katherina G Cortes"
+          },
+          {
+            "authorId": "2378128626",
+            "name": "Shilpa Sundar"
+          },
+          {
+            "authorId": "2350536238",
+            "name": "Sarah Gehrke"
+          },
+          {
+            "authorId": "2329169967",
+            "name": "Keenan R Manpearl"
+          },
+          {
+            "authorId": "2312866499",
+            "name": "Junxia Lin"
+          },
+          {
+            "authorId": "2353566656",
+            "name": "Daniel R. Korn"
+          },
+          {
+            "authorId": "2249531959",
+            "name": "H. Caufield"
+          },
+          {
+            "authorId": "2378128155",
+            "name": "Kevin Schaper"
+          },
+          {
+            "authorId": "2275203052",
+            "name": "Justin Reese"
+          },
+          {
+            "authorId": "2386805659",
+            "name": "Kushal Koirala"
+          },
+          {
+            "authorId": "2262537712",
+            "name": "Lawrence Hunter"
+          },
+          {
+            "authorId": "2378129686",
+            "name": "E. Carter"
+          },
+          {
+            "authorId": "2378129024",
+            "name": "Marcello DeLuca"
+          },
+          {
+            "authorId": "2316326511",
+            "name": "Arjun Krishnan"
+          },
+          {
+            "authorId": "2273588388",
+            "name": "Chris Mungall"
+          },
+          {
+            "authorId": "2297676167",
+            "name": "M. Haendel"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "0792800b5305d10a7c9b29e9b520a0ac668f9cea",
+        "externalIds": {
+          "PubMedCentral": "12324469",
+          "DOI": "10.1101/2025.08.01.668022",
+          "CorpusId": 280532253,
+          "PubMed": "40766637"
+        },
+        "url": "https://www.semanticscholar.org/paper/0792800b5305d10a7c9b29e9b520a0ac668f9cea",
+        "title": "Federated Knowledge Retrieval Elevates Large Language Model Performance on Biomedical Benchmarks",
+        "venue": "bioRxiv",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2375004906",
+            "name": "Janet Joy"
+          },
+          {
+            "authorId": "2079595422",
+            "name": "Andrew I. Su"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "2deeedc7cad3fb0f115c90493ff624c43a60505d",
+        "externalIds": {
+          "DBLP": "journals/bdcc/BalderasMartinezSTJCGGA25",
+          "DOI": "10.3390/bdcc9060162",
+          "CorpusId": 279479709
+        },
+        "url": "https://www.semanticscholar.org/paper/2deeedc7cad3fb0f115c90493ff624c43a60505d",
+        "title": "Semantic Reasoning Using Standard Attention-Based Models: An Application to Chronic Disease Literature",
+        "venue": "Big Data and Cognitive Computing",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "1398696206",
+            "name": "Y. Balderas-Martínez"
+          },
+          {
+            "authorId": "2140655413",
+            "name": "José Armando Sánchez-Rojas"
+          },
+          {
+            "authorId": "1399089733",
+            "name": "Arturo Téllez-Velázquez"
+          },
+          {
+            "authorId": "2383175559",
+            "name": "Flavio Juárez-Martínez"
+          },
+          {
+            "authorId": "1399089730",
+            "name": "Raúl Cruz-Barbosa"
+          },
+          {
+            "authorId": "1399463865",
+            "name": "E. Guzmán-Ramírez"
+          },
+          {
+            "authorId": "2367874238",
+            "name": "Iván García-Pacheco"
+          },
+          {
+            "authorId": "2367868146",
+            "name": "Ignacio Arroyo-Fernández"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "9d295740e5c544d0c730d6e78786d44b8c8fd592",
+        "externalIds": {
+          "PubMedCentral": "12041571",
+          "DOI": "10.1038/s41467-025-56818-6",
+          "CorpusId": 278203418,
+          "PubMed": "40301300"
+        },
+        "url": "https://www.semanticscholar.org/paper/9d295740e5c544d0c730d6e78786d44b8c8fd592",
+        "title": "AI-driven discovery of synergistic drug combinations against pancreatic cancer",
+        "venue": "Nature Communications",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "11955909",
+            "name": "M. Pourmousa"
+          },
+          {
+            "authorId": "2303994572",
+            "name": "Sankalp Jain"
+          },
+          {
+            "authorId": "4608491",
+            "name": "E. Barnaeva"
+          },
+          {
+            "authorId": "2400119",
+            "name": "Wengong Jin"
+          },
+          {
+            "authorId": "8581131",
+            "name": "Joshua E. Hochuli"
+          },
+          {
+            "authorId": "49585510",
+            "name": "Z. Itkin"
+          },
+          {
+            "authorId": "2253668433",
+            "name": "Travis Maxfield"
+          },
+          {
+            "authorId": "1398729951",
+            "name": "C. Melo-Filho"
+          },
+          {
+            "authorId": "2138073846",
+            "name": "Andrew Thieme"
+          },
+          {
+            "authorId": "34484135",
+            "name": "Kelli M. Wilson"
+          },
+          {
+            "authorId": "1402929084",
+            "name": "Carleen Klumpp-Thomas"
+          },
+          {
+            "authorId": "2332332085",
+            "name": "Sam Michael"
+          },
+          {
+            "authorId": "2265646816",
+            "name": "Noel Southall"
+          },
+          {
+            "authorId": "35132120",
+            "name": "T. Jaakkola"
+          },
+          {
+            "authorId": "2258603325",
+            "name": "Eugene N. Muratov"
+          },
+          {
+            "authorId": "2254308896",
+            "name": "R. Barzilay"
+          },
+          {
+            "authorId": "2239082164",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "2206561720",
+            "name": "Marc Ferrer"
+          },
+          {
+            "authorId": "2238416197",
+            "name": "Alexey V. Zakharov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "61c8b18b38b7949df13e62d6c5ca671a59a33810",
+        "externalIds": {
+          "DOI": "10.1101/2025.04.19.649662",
+          "CorpusId": 278130091
+        },
+        "url": "https://www.semanticscholar.org/paper/61c8b18b38b7949df13e62d6c5ca671a59a33810",
+        "title": "TARRAGON: Therapeutic Target Applicability Ranking and Retrieval-Augmented Generation Over Networks",
+        "venue": "bioRxiv",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2188751279",
+            "name": "Jon-Michael T. Beasley"
+          },
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "2357732097",
+            "name": "Elvin Ding"
+          },
+          {
+            "authorId": "2378129024",
+            "name": "Marcello DeLuca"
+          },
+          {
+            "authorId": "31165354",
+            "name": "Nahed Abu Zaid"
+          },
+          {
+            "authorId": "2277827972",
+            "name": "Nyssa N. Tucker"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "2244720319",
+            "name": "Daniel J. Crona"
+          },
+          {
+            "authorId": "2239082164",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "2258603325",
+            "name": "Eugene N. Muratov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "78806cc618a6e507caf44efb6231e67d908d4036",
+        "externalIds": {
+          "PubMedCentral": "12052891",
+          "DOI": "10.3389/ftox.2025.1549268",
+          "CorpusId": 278013206,
+          "PubMed": "40330554"
+        },
+        "url": "https://www.semanticscholar.org/paper/78806cc618a6e507caf44efb6231e67d908d4036",
+        "title": "Elucidating the mechanistic relationships between peroxisome proliferator–activated receptors and hepatic fibrosis using the ROBOKOP knowledge graph",
+        "venue": "Frontiers in Toxicology",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "2277827972",
+            "name": "Nyssa N. Tucker"
+          },
+          {
+            "authorId": "2294830853",
+            "name": "Jon-Michael Beasley"
+          },
+          {
+            "authorId": "2249013510",
+            "name": "Scott S. Auerbach"
+          },
+          {
+            "authorId": "2149930315",
+            "name": "Chris Bizon"
+          },
+          {
+            "authorId": "2238163188",
+            "name": "Alexander Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "61c62ebeb27c39812c8b977669f21ec735f6b7b7",
+        "externalIds": {
+          "DOI": "10.1080/17460441.2025.2490253",
+          "CorpusId": 277771773,
+          "PubMed": "40223439"
+        },
+        "url": "https://www.semanticscholar.org/paper/61c62ebeb27c39812c8b977669f21ec735f6b7b7",
+        "title": "An update on knowledge graphs and their current and potential applications in drug discovery",
+        "venue": "Expert Opinion on Drug Discovery",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "1903092",
+            "name": "A. Serra"
+          },
+          {
+            "authorId": "3257981",
+            "name": "Michele Fratello"
+          },
+          {
+            "authorId": "2476151",
+            "name": "A. Federico"
+          },
+          {
+            "authorId": "2320417272",
+            "name": "Dario Greco"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "6404f24de83f25fd15da1165140a0149eb0cc385",
+        "externalIds": {
+          "DBLP": "journals/jcisd/KyrsanovTSGPJRV25",
+          "DOI": "10.1021/acs.jcim.5c00021",
+          "CorpusId": 277624573,
+          "PubMed": "40197979"
+        },
+        "url": "https://www.semanticscholar.org/paper/6404f24de83f25fd15da1165140a0149eb0cc385",
+        "title": "Chemistry Meets Biology: Cross-Disciplinary Evaluation of Drug Discovery Databases",
+        "venue": "Journal of Chemical Information and Modeling",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2354210249",
+            "name": "Andrii V Kyrsanov"
+          },
+          {
+            "authorId": "2266995621",
+            "name": "I. Tkachenko"
+          },
+          {
+            "authorId": "92517674",
+            "name": "N. A. Shtil"
+          },
+          {
+            "authorId": "2272573347",
+            "name": "Konstantin S. Gavrilenko"
+          },
+          {
+            "authorId": "2294088718",
+            "name": "Olexandr Ye. Pashenko"
+          },
+          {
+            "authorId": "2354210330",
+            "name": "Duncan B. Judd"
+          },
+          {
+            "authorId": "6503788",
+            "name": "S. Ryabukhin"
+          },
+          {
+            "authorId": "5454378",
+            "name": "D. Volochnyuk"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "7e79a3088b0ef54699b57dfb6bc1226a52ce29f8",
+        "externalIds": {
+          "DOI": "10.1016/j.drudis.2025.104341",
+          "CorpusId": 277249076,
+          "PubMed": "40122449"
+        },
+        "url": "https://www.semanticscholar.org/paper/7e79a3088b0ef54699b57dfb6bc1226a52ce29f8",
+        "title": "The Six Ds of Exponentials and drug discovery: A path toward reversing Eroom's law.",
+        "venue": "Drug Discovery Today",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2239082164",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "143736640",
+            "name": "H. Martin"
+          },
+          {
+            "authorId": "2261623105",
+            "name": "Artem Cherkasov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "b67cada72422e525e4b800c370e1f6ce3fdd7bf0",
+        "externalIds": {
+          "PubMedCentral": "11785035",
+          "DOI": "10.1101/2025.01.17.633658",
+          "CorpusId": 275852314,
+          "PubMed": "39896648"
+        },
+        "url": "https://www.semanticscholar.org/paper/b67cada72422e525e4b800c370e1f6ce3fdd7bf0",
+        "title": "Breaking the Phalanx: Overcoming Bacterial Drug Resistance with Quorum Sensing Inhibitors that Enhance Therapeutic Activity of Antibiotics",
+        "venue": "bioRxiv",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2294830853",
+            "name": "Jon-Michael Beasley"
+          },
+          {
+            "authorId": "1777430",
+            "name": "D. Dorjsuren"
+          },
+          {
+            "authorId": "2303994572",
+            "name": "Sankalp Jain"
+          },
+          {
+            "authorId": "2238415711",
+            "name": "Marielle Rath"
+          },
+          {
+            "authorId": "2329829022",
+            "name": "Ricardo Scheufen Tieghi"
+          },
+          {
+            "authorId": "2239082164",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "2250180981",
+            "name": "Anton Simeonov"
+          },
+          {
+            "authorId": "2238416197",
+            "name": "Alexey V. Zakharov"
+          },
+          {
+            "authorId": "2258603325",
+            "name": "Eugene N. Muratov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "190b359438d9d73c7a1e050e73c048d24e0bb5cf",
+        "externalIds": {
+          "ArXiv": "2501.11632",
+          "DBLP": "journals/corr/abs-2501-11632",
+          "DOI": "10.48550/arXiv.2501.11632",
+          "CorpusId": 275757343
+        },
+        "url": "https://www.semanticscholar.org/paper/190b359438d9d73c7a1e050e73c048d24e0bb5cf",
+        "title": "Biomedical Knowledge Graph: A Survey of Domains, Tasks, and Real-World Applications",
+        "venue": "arXiv.org",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2220675861",
+            "name": "Yuxing Lu"
+          },
+          {
+            "authorId": "2341334135",
+            "name": "Sin Yee Goi"
+          },
+          {
+            "authorId": "2223390939",
+            "name": "Xukai Zhao"
+          },
+          {
+            "authorId": "2262010212",
+            "name": "Jinzhuo Wang"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "f3582fa2ee1ce4bd102e1e32a3e57979c58ecd3b",
+        "externalIds": {
+          "DBLP": "conf/bigdataconf/MeiSZC24",
+          "DOI": "10.1109/BigData62323.2024.10825942",
+          "CorpusId": 275586199
+        },
+        "url": "https://www.semanticscholar.org/paper/f3582fa2ee1ce4bd102e1e32a3e57979c58ecd3b",
+        "title": "Semantics-Aware Path Ranking On Information Extracted from Knowledge Graphs",
+        "venue": "BigData Congress [Services Society]",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2269145926",
+            "name": "Zhuocheng Mei"
+          },
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "31165354",
+            "name": "Nahed Abu Zaid"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "3b0cc35b355639ed1d86c0119aaaf836badfac67",
+        "externalIds": {
+          "DBLP": "journals/health/KornHSBTC25",
+          "DOI": "10.1145/3707650",
+          "CorpusId": 274627487
+        },
+        "url": "https://www.semanticscholar.org/paper/3b0cc35b355639ed1d86c0119aaaf836badfac67",
+        "title": "Towards Improving the Efficiency of Drug Repurposing by Leveraging Node Promiscuity in Biomedical Knowledge Graphs",
+        "venue": "ACM Trans. Comput. Heal.",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2307922202",
+            "name": "Daniel Korn"
+          },
+          {
+            "authorId": "1505768084",
+            "name": "Pei-Yu Hou"
+          },
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "2294830853",
+            "name": "Jon-Michael Beasley"
+          },
+          {
+            "authorId": "2239082164",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "0d5fb2325607cd188e712bf033b3b3f52236f100",
+        "externalIds": {
+          "DBLP": "conf/bigdataconf/OlasunkanmiMKLA24",
+          "ArXiv": "2409.18659",
+          "DOI": "10.1109/BigData62323.2024.10825589",
+          "CorpusId": 272969209
+        },
+        "url": "https://www.semanticscholar.org/paper/0d5fb2325607cd188e712bf033b3b3f52236f100",
+        "title": "Explainable Enrichment-Driven GrAph Reasoner (EDGAR) for Large Knowledge Graphs with Applications in Drug Repurposing",
+        "venue": "BigData Congress [Services Society]",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2006057676",
+            "name": "Olawumi Olasunkanmi"
+          },
+          {
+            "authorId": "2323372282",
+            "name": "Evan D. Morris"
+          },
+          {
+            "authorId": "1388286745",
+            "name": "Yaphet Kebede"
+          },
+          {
+            "authorId": "72152328",
+            "name": "Harlin Lee"
+          },
+          {
+            "authorId": "2323374314",
+            "name": "Stanley Ahalt"
+          },
+          {
+            "authorId": "2238163188",
+            "name": "Alexander Tropsha"
+          },
+          {
+            "authorId": "2149930315",
+            "name": "Chris Bizon"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "4073221c92000ff555ae207c436e7627de79ff3f",
+        "externalIds": {
+          "DOI": "10.3390/app14156638",
+          "CorpusId": 271581863
+        },
+        "url": "https://www.semanticscholar.org/paper/4073221c92000ff555ae207c436e7627de79ff3f",
+        "title": "XAI-Based Clinical Decision Support Systems: A Systematic Review",
+        "venue": "Applied Sciences",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2280853107",
+            "name": "Se Young Kim"
+          },
+          {
+            "authorId": "2111926641",
+            "name": "Daeho Kim"
+          },
+          {
+            "authorId": "2314529376",
+            "name": "M. J. Kim"
+          },
+          {
+            "authorId": "2195636711",
+            "name": "Hyojin Ko"
+          },
+          {
+            "authorId": "2314000749",
+            "name": "O. Jeong"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "a28781c38ae7c53c1613634f294004f6ed6fdf23",
+        "externalIds": {
+          "DOI": "10.1016/j.aichem.2024.100060",
+          "CorpusId": 268565223
+        },
+        "url": "https://www.semanticscholar.org/paper/a28781c38ae7c53c1613634f294004f6ed6fdf23",
+        "title": "Emerging technologies for drug repurposing: Harnessing the potential of text and graph embedding approaches",
+        "venue": "Artificial Intelligence Chemistry",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "1989414",
+            "name": "Xialan Dong"
+          },
+          {
+            "authorId": "2293237139",
+            "name": "Weifan Zheng"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "e563ff3dfda28f622b07fafeb0ab644cfbf0df39",
+        "externalIds": {
+          "DOI": "10.1016/j.tube.2024.102500",
+          "CorpusId": 268101555,
+          "PubMed": "38432118"
+        },
+        "url": "https://www.semanticscholar.org/paper/e563ff3dfda28f622b07fafeb0ab644cfbf0df39",
+        "title": "Computational drug repositioning identifies niclosamide and tribromsalan as inhibitors of Mycobacterium tuberculosis and Mycobacterium abscessus.",
+        "venue": "Tuberculosis",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2288867629",
+            "name": "Jeremy J. Yang"
+          },
+          {
+            "authorId": "1935542761",
+            "name": "Aaron Goff"
+          },
+          {
+            "authorId": "2288652809",
+            "name": "David J. Wild"
+          },
+          {
+            "authorId": "151390829",
+            "name": "Yingjie Ding"
+          },
+          {
+            "authorId": "2180973775",
+            "name": "Ayano Annis"
+          },
+          {
+            "authorId": "35584723",
+            "name": "R. Kerber"
+          },
+          {
+            "authorId": "2065070331",
+            "name": "Brian Foote"
+          },
+          {
+            "authorId": "2311828085",
+            "name": "Anurag Passi"
+          },
+          {
+            "authorId": "88018702",
+            "name": "Joel Duerksen"
+          },
+          {
+            "authorId": "2288641049",
+            "name": "Shelley London"
+          },
+          {
+            "authorId": "39778181",
+            "name": "A. C. Puhl"
+          },
+          {
+            "authorId": "2204351674",
+            "name": "Thomas R. Lane"
+          },
+          {
+            "authorId": "2310416555",
+            "name": "Miriam Braunstein"
+          },
+          {
+            "authorId": "2078043",
+            "name": "S. Waddell"
+          },
+          {
+            "authorId": "1887610",
+            "name": "S. Ekins"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "8ca2233fa1a86ae452b83859b1786f2ca028d240",
+        "externalIds": {
+          "DBLP": "journals/bioinformatics/BeasleyKTAMBT24",
+          "PubMedCentral": "10812875",
+          "DOI": "10.1093/bioinformatics/btad779",
+          "CorpusId": 266764838,
+          "PubMed": "38175789"
+        },
+        "url": "https://www.semanticscholar.org/paper/8ca2233fa1a86ae452b83859b1786f2ca028d240",
+        "title": "ExEmPLAR (Extracting, Exploring, and Embedding Pathways Leading to Actionable Research): a user-friendly interface for knowledge graph mining",
+        "venue": "Bioinform.",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2188751279",
+            "name": "Jon-Michael T. Beasley"
+          },
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "2277827972",
+            "name": "Nyssa N. Tucker"
+          },
+          {
+            "authorId": "2153040925",
+            "name": "E. T. M. Alves"
+          },
+          {
+            "authorId": "2258603325",
+            "name": "Eugene N. Muratov"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "2239082164",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "700d1b3a3ab3e09ddc65a8110f805b5c19bedb62",
+        "externalIds": {
+          "PubMedCentral": "11605767",
+          "DOI": "10.1177/26330040241290252",
+          "CorpusId": 274399083,
+          "PubMed": "39619418"
+        },
+        "url": "https://www.semanticscholar.org/paper/700d1b3a3ab3e09ddc65a8110f805b5c19bedb62",
+        "title": "The MED13L Foundation strategic research plan: a roadmap to the future",
+        "venue": "Therapeutic Advances in Rare Disease",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2333068131",
+            "name": "Rachel Heilmann"
+          },
+          {
+            "authorId": "3594538",
+            "name": "Anna C. Pfalzer"
+          },
+          {
+            "authorId": "2250831267",
+            "name": "T. J. Bichell"
+          },
+          {
+            "authorId": "2313825927",
+            "name": "Ananya Terala"
+          },
+          {
+            "authorId": "2331604865",
+            "name": "A. Campbell"
+          },
+          {
+            "authorId": "2333067484",
+            "name": "Dylan J. Taatjes"
+          },
+          {
+            "authorId": "10330519",
+            "name": "J. Ghoumid"
+          },
+          {
+            "authorId": "2336672099",
+            "name": "Chad E. Grueter"
+          },
+          {
+            "authorId": "2280093782",
+            "name": "J. Bain"
+          },
+          {
+            "authorId": "2333065896",
+            "name": "Randy Strich"
+          },
+          {
+            "authorId": "2405193832",
+            "name": "V. Dias"
+          },
+          {
+            "authorId": "2333066663",
+            "name": "Kimberly Sokorai"
+          },
+          {
+            "authorId": "2333066659",
+            "name": "Nicholas Seaver"
+          },
+          {
+            "authorId": "2333065893",
+            "name": "K. Sexton"
+          },
+          {
+            "authorId": "2333066657",
+            "name": "Kathleen Boychuck"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "982118803d183cfd0079c54d5c1d9ecedecde9e8",
+        "externalIds": {
+          "DBLP": "conf/bigdataconf/SchatzTC23",
+          "DOI": "10.1109/BigData59044.2023.10386384",
+          "CorpusId": 267109392
+        },
+        "url": "https://www.semanticscholar.org/paper/982118803d183cfd0079c54d5c1d9ecedecde9e8",
+        "title": "GAME: Improving Efficiency and Effectiveness of Knowledge-Graph Rule Mining via Data Reduction",
+        "venue": "BigData Congress [Services Society]",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "2238163188",
+            "name": "Alexander Tropsha"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "eaf2f0ed4281699f52f3c03ee4a2ee411fa0aa6e",
+        "externalIds": {
+          "ArXiv": "2311.17330",
+          "DBLP": "journals/bioinformatics/SomanRMASPVCSRI24",
+          "PubMedCentral": "11441322",
+          "DOI": "10.1093/bioinformatics/btae560",
+          "CorpusId": 265498312,
+          "PubMed": "39288310"
+        },
+        "url": "https://www.semanticscholar.org/paper/eaf2f0ed4281699f52f3c03ee4a2ee411fa0aa6e",
+        "title": "Biomedical knowledge graph-optimized prompt generation for large language models",
+        "venue": "Bioinform.",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "48228268",
+            "name": "Karthik Soman"
+          },
+          {
+            "authorId": "2184494479",
+            "name": "Peter W Rose"
+          },
+          {
+            "authorId": "2245823377",
+            "name": "J. H. Morris"
+          },
+          {
+            "authorId": "2205312554",
+            "name": "Rabia E Akbas"
+          },
+          {
+            "authorId": "2241953021",
+            "name": "Brett Smith"
+          },
+          {
+            "authorId": "2268673150",
+            "name": "Braian Peetoom"
+          },
+          {
+            "authorId": "2268673146",
+            "name": "Catalina Villouta-Reyes"
+          },
+          {
+            "authorId": "2187032873",
+            "name": "G. Cerono"
+          },
+          {
+            "authorId": "2205240857",
+            "name": "Yongmei Shi"
+          },
+          {
+            "authorId": "1402246186",
+            "name": "Angela Rizk-Jackson"
+          },
+          {
+            "authorId": "52309142",
+            "name": "Sharat Israni"
+          },
+          {
+            "authorId": "32015902",
+            "name": "Charlotte A. Nelson"
+          },
+          {
+            "authorId": "2242005770",
+            "name": "Sui Huang"
+          },
+          {
+            "authorId": "2241716125",
+            "name": "Sergio Baranzini"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "5622734d7365abf94893abfbf8095800ec95a860",
+        "externalIds": {
+          "DBLP": "conf/icnsc/LiuZC23",
+          "DOI": "10.1109/ICNSC58704.2023.10318978",
+          "CorpusId": 265331655
+        },
+        "url": "https://www.semanticscholar.org/paper/5622734d7365abf94893abfbf8095800ec95a860",
+        "title": "Is Averaging Always the Best? Improving Aggregation Method for Federated Knowledge Graph Embedding",
+        "venue": "2023 IEEE International Conference on Networking, Sensing and Control (ICNSC)",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "2181560446",
+            "name": "Yuanyi Liu"
+          },
+          {
+            "authorId": "2267629075",
+            "name": "Renyu Zhang"
+          },
+          {
+            "authorId": "2267543385",
+            "name": "Jia Chen"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "24959332d6b820ffba7d50ded2d7e782ebc47c9e",
+        "externalIds": {
+          "DOI": "10.1093/femsre/fuad048",
+          "CorpusId": 261005545,
+          "PubMed": "37596064"
+        },
+        "url": "https://www.semanticscholar.org/paper/24959332d6b820ffba7d50ded2d7e782ebc47c9e",
+        "title": "Praemonitus praemunitus: can we forecast and prepare for future viral disease outbreaks?",
+        "venue": "FEMS Microbiology Reviews",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "1990510059",
+            "name": "Zoe L. Sessions"
+          },
+          {
+            "authorId": "1742265335",
+            "name": "Tesia M. Bobrowski"
+          },
+          {
+            "authorId": "143736640",
+            "name": "H. Martin"
+          },
+          {
+            "authorId": "2188751279",
+            "name": "Jon-Michael T. Beasley"
+          },
+          {
+            "authorId": "2232403911",
+            "name": "Aneri Kothari"
+          },
+          {
+            "authorId": "2232403893",
+            "name": "Trevor Phares"
+          },
+          {
+            "authorId": "2112111917",
+            "name": "Michael Li"
+          },
+          {
+            "authorId": "145086231",
+            "name": "Vinicius M. Alves"
+          },
+          {
+            "authorId": "2898751",
+            "name": "M. Scotti"
+          },
+          {
+            "authorId": "2340688792",
+            "name": "Nathaniel J Moorman"
+          },
+          {
+            "authorId": "3209833",
+            "name": "R. Baric"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "c43c1acad578848ad98de4828dd59ff437fa31bf",
+        "externalIds": {
+          "PubMedCentral": "11348471",
+          "DOI": "10.2174/1871526523666230816151614",
+          "CorpusId": 260925315,
+          "PubMed": "37584349"
+        },
+        "url": "https://www.semanticscholar.org/paper/c43c1acad578848ad98de4828dd59ff437fa31bf",
+        "title": "Advancement of Computational Design Drug Delivery System in COVID-19: Current Updates and Future Crosstalk- A Critical Update",
+        "venue": "Infectious Diseases - Drug Targets",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "2125353892",
+            "name": "Abu Mohiuddin"
+          },
+          {
+            "authorId": "6451938",
+            "name": "S. Mondal"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "9e545ea405b5c5ae42c4df7a10701ee9c4221c87",
+        "externalIds": {
+          "DBLP": "journals/jbi/CuiLXWMYYKLZQHFMHWY25",
+          "ArXiv": "2306.04802",
+          "DOI": "10.1016/j.jbi.2025.104861",
+          "CorpusId": 259108375,
+          "PubMed": "40712809"
+        },
+        "url": "https://www.semanticscholar.org/paper/9e545ea405b5c5ae42c4df7a10701ee9c4221c87",
+        "title": "A review on knowledge graphs for healthcare: Resources, applications, and promises",
+        "venue": "Journal of Biomedical Informatics",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "2112821580",
+            "name": "Hejie Cui"
+          },
+          {
+            "authorId": "2117727751",
+            "name": "Jiaying Lu"
+          },
+          {
+            "authorId": "2130352205",
+            "name": "Shiyu Wang"
+          },
+          {
+            "authorId": "47462790",
+            "name": "Ran Xu"
+          },
+          {
+            "authorId": "2214023328",
+            "name": "Wenjing Ma"
+          },
+          {
+            "authorId": "2219270021",
+            "name": "Shaojun Yu"
+          },
+          {
+            "authorId": "2218865512",
+            "name": "Yue Yu"
+          },
+          {
+            "authorId": "2052319438",
+            "name": "Xuan Kan"
+          },
+          {
+            "authorId": "2219702470",
+            "name": "Chen Ling"
+          },
+          {
+            "authorId": "152316651",
+            "name": "Joyce Ho"
+          },
+          {
+            "authorId": "2148957822",
+            "name": "Fei Wang"
+          },
+          {
+            "authorId": "1390553618",
+            "name": "Carl Yang"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "5c3c4634397c78f26e5a52978449334e5541581f",
+        "externalIds": {
+          "DBLP": "journals/bigdatama/WuDPL23",
+          "DOI": "10.26599/bdma.2022.9020021",
+          "CorpusId": 256322714
+        },
+        "url": "https://www.semanticscholar.org/paper/5c3c4634397c78f26e5a52978449334e5541581f",
+        "title": "Medical Knowledge Graph: Data Sources, Construction, Reasoning, and Applications",
+        "venue": "Big Data Mining and Analytics",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "2117919776",
+            "name": "Xuehong Wu"
+          },
+          {
+            "authorId": "3237142",
+            "name": "Junwen Duan"
+          },
+          {
+            "authorId": "144680105",
+            "name": "Yi Pan"
+          },
+          {
+            "authorId": "49140537",
+            "name": "Min Li"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "a68ca16dced93b0e58d5a6dbe156d09435f88652",
+        "externalIds": {
+          "PubMedCentral": "10138499",
+          "DOI": "10.3390/ijms24086954",
+          "CorpusId": 258068930,
+          "PubMed": "37108117"
+        },
+        "url": "https://www.semanticscholar.org/paper/a68ca16dced93b0e58d5a6dbe156d09435f88652",
+        "title": "BioGraph: Data Model for Linking and Querying Diverse Biological Metadata",
+        "venue": "International Journal of Molecular Sciences",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "34336975",
+            "name": "A. Veljkovic"
+          },
+          {
+            "authorId": "2061009743",
+            "name": "Y. Orlov"
+          },
+          {
+            "authorId": "2098111",
+            "name": "N. Mitić"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "042b197469125503d1bcebbac4220c5b8c0f723d",
+        "externalIds": {
+          "DBLP": "conf/bigdataconf/SchatzKTC22",
+          "DOI": "10.1109/BigData55660.2022.10020536",
+          "CorpusId": 256322956
+        },
+        "url": "https://www.semanticscholar.org/paper/042b197469125503d1bcebbac4220c5b8c0f723d",
+        "title": "Workflow for Domain- and Task-Sensitive Curation of Knowledge Graphs, with Use Case of DRKG",
+        "venue": "2022 IEEE International Conference on Big Data (Big Data)",
+        "year": 2022,
+        "authors": [
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "93dfcb80caa16d8c687ca6bc32944a8390c9ba9d",
+        "externalIds": {
+          "PubMedCentral": "9708744",
+          "DOI": "10.3389/fonc.2022.1029670",
+          "CorpusId": 253526903,
+          "PubMed": "36465398"
+        },
+        "url": "https://www.semanticscholar.org/paper/93dfcb80caa16d8c687ca6bc32944a8390c9ba9d",
+        "title": "A chronicle review of new techniques that facilitate the understanding and development of optimal individualized therapeutic strategies for chordoma",
+        "venue": "Frontiers in Oncology",
+        "year": 2022,
+        "authors": [
+          {
+            "authorId": "50016087",
+            "name": "Chenglong Zhao"
+          },
+          {
+            "authorId": "1680609778",
+            "name": "Tao Tan"
+          },
+          {
+            "authorId": "150994561",
+            "name": "E. Zhang"
+          },
+          {
+            "authorId": "48470173",
+            "name": "Ting Wang"
+          },
+          {
+            "authorId": "14544759",
+            "name": "Haiyi Gong"
+          },
+          {
+            "authorId": "144122993",
+            "name": "Q. Jia"
+          },
+          {
+            "authorId": "2110264657",
+            "name": "Tie-king Liu"
+          },
+          {
+            "authorId": "2360197",
+            "name": "Xing-hai Yang"
+          },
+          {
+            "authorId": "2143573209",
+            "name": "Jian Zhao"
+          },
+          {
+            "authorId": "12054708",
+            "name": "Zhipeng Wu"
+          },
+          {
+            "authorId": "2109393930",
+            "name": "Haifeng Wei"
+          },
+          {
+            "authorId": "153269944",
+            "name": "Jianru Xiao"
+          },
+          {
+            "authorId": "145806388",
+            "name": "Cheng Yang"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "741a1d1c10dfff3acc7cf695839a38d12f381f1e",
+        "externalIds": {
+          "DOI": "10.1101/2022.02.02.22270107",
+          "CorpusId": 246531181
+        },
+        "url": "https://www.semanticscholar.org/paper/741a1d1c10dfff3acc7cf695839a38d12f381f1e",
+        "title": "TEXT MINING OF THE PEOPLE's PHARMACY RADIO SHOW TRANSCRIPTS CAN IDENTIFY NOVEL DRUG REPURPOSING HYPOTHESES",
+        "venue": "medRxiv",
+        "year": 2022,
+        "authors": [
+          {
+            "authorId": "51038208",
+            "name": "Rahul Yedida"
+          },
+          {
+            "authorId": "1730670",
+            "name": "J. Beasley"
+          },
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "2385934056",
+            "name": "S. Abrar"
+          },
+          {
+            "authorId": "1398729951",
+            "name": "C. Melo-Filho"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          },
+          {
+            "authorId": "47531146",
+            "name": "J. Graedon"
+          },
+          {
+            "authorId": "11633939",
+            "name": "T. Graedon"
+          },
+          {
+            "authorId": "2152554901",
+            "name": "R. Chirkova"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "1341761ddeb809fbe9a43b9ba3b0d2a4b6f5b1da",
+        "externalIds": {
+          "DOI": "10.1016/j.drudis.2022.02.008",
+          "CorpusId": 246939611,
+          "PubMed": "35182735"
+        },
+        "url": "https://www.semanticscholar.org/paper/1341761ddeb809fbe9a43b9ba3b0d2a4b6f5b1da",
+        "title": "Defining clinical outcome pathways.",
+        "venue": "Drug Discovery Today",
+        "year": 2022,
+        "authors": [
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "2138073846",
+            "name": "Andrew Thieme"
+          },
+          {
+            "authorId": "2082045",
+            "name": "Vinicius M. Alves"
+          },
+          {
+            "authorId": "2154852188",
+            "name": "Michael Yeakey"
+          },
+          {
+            "authorId": "2154845369",
+            "name": "Joyce V.V.B. Borba"
+          },
+          {
+            "authorId": "5740750",
+            "name": "Stephen J. Capuzzi"
+          },
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "34396086",
+            "name": "Stephen W. Edwards"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "6022038",
+            "name": "C. Colvis"
+          },
+          {
+            "authorId": "49134285",
+            "name": "Noel Southall"
+          },
+          {
+            "authorId": "4066869",
+            "name": "C. Austin"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "a2adc8bf173d1c2b35c34695c3e786c380e400e9",
+        "externalIds": {
+          "DBLP": "conf/bigdataconf/SchatzMTC21",
+          "DOI": "10.1109/BigData52589.2021.9672006",
+          "CorpusId": 237445554
+        },
+        "url": "https://www.semanticscholar.org/paper/a2adc8bf173d1c2b35c34695c3e786c380e400e9",
+        "title": "Explaining Drug-Discovery Hypotheses Using Knowledge-Graph Patterns",
+        "venue": "2021 IEEE International Conference on Big Data (Big Data)",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "2125952744",
+            "name": "Kara Schatz"
+          },
+          {
+            "authorId": "1398729951",
+            "name": "C. Melo-Filho"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "ea4c41ffc31288503cf8b7296553c4cb13d61f4d",
+        "externalIds": {
+          "DBLP": "journals/corr/abs-2111-13781",
+          "ArXiv": "2111.13781",
+          "CorpusId": 244714786
+        },
+        "url": "https://www.semanticscholar.org/paper/ea4c41ffc31288503cf8b7296553c4cb13d61f4d",
+        "title": "Common Sense Knowledge Learning for Open Vocabulary Neural Reasoning: A First View into Chronic Disease Literature",
+        "venue": "arXiv.org",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "2142468146",
+            "name": "Ignacio Arroyo-Fern'andez"
+          },
+          {
+            "authorId": "2142463034",
+            "name": "Jos'e Armando S'anchez-Rojas"
+          },
+          {
+            "authorId": "2142471422",
+            "name": "Arturo Tellez-Vel'azquez"
+          },
+          {
+            "authorId": "2142445095",
+            "name": "Flavio Ju'arez-Mart'inez"
+          },
+          {
+            "authorId": "1399089730",
+            "name": "Raúl Cruz-Barbosa"
+          },
+          {
+            "authorId": "2142457344",
+            "name": "Enrique Guzm'an-Ram'irez"
+          },
+          {
+            "authorId": "2142461531",
+            "name": "Yalbi Itzel Balderas-Mart'inez"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "1b33064cbf4d45c5c6205c7fc40224a5fb168e08",
+        "externalIds": {
+          "DBLP": "journals/jcisd/KornPBASBBCCMT21",
+          "PubMedCentral": "8610010",
+          "DOI": "10.1021/acs.jcim.1c01285",
+          "CorpusId": 244131199,
+          "PubMed": "34783553"
+        },
+        "url": "https://www.semanticscholar.org/paper/1b33064cbf4d45c5c6205c7fc40224a5fb168e08",
+        "title": "COVID-19 Knowledge Extractor (COKE): A Curated Repository of Drug–Target Associations Extracted from the CORD-19 Corpus of Scientific Publications on COVID-19",
+        "venue": "Journal of Chemical Information and Modeling",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "2016974942",
+            "name": "Vera Pervitsky"
+          },
+          {
+            "authorId": "1742265335",
+            "name": "Tesia M. Bobrowski"
+          },
+          {
+            "authorId": "2082045",
+            "name": "Vinicius M. Alves"
+          },
+          {
+            "authorId": "2004849817",
+            "name": "Charles Schmitt"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "145456250",
+            "name": "Nancy C. Baker"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "145230547",
+            "name": "A. Cherkasov"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "be73be4bfdd75d452fcb4a15f25e19a0fd288766",
+        "externalIds": {
+          "DOI": "10.1101/2021.07.07.451461",
+          "CorpusId": 235799464
+        },
+        "url": "https://www.semanticscholar.org/paper/be73be4bfdd75d452fcb4a15f25e19a0fd288766",
+        "title": "Dug: A Semantic Search Engine Leveraging Peer-Reviewed Literature to Span Biomedical Data Repositories",
+        "venue": "bioRxiv",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "103743221",
+            "name": "Alex Waldrop"
+          },
+          {
+            "authorId": "66171119",
+            "name": "John B. Cheadle"
+          },
+          {
+            "authorId": "32050181",
+            "name": "Kira Bradford"
+          },
+          {
+            "authorId": "2118998975",
+            "name": "Nathan Braswell"
+          },
+          {
+            "authorId": "2118999856",
+            "name": "Matt Watson"
+          },
+          {
+            "authorId": "15279100",
+            "name": "Andrew Crerar"
+          },
+          {
+            "authorId": "2064478450",
+            "name": "Christopher Ball"
+          },
+          {
+            "authorId": "1388286745",
+            "name": "Yaphet Kebede"
+          },
+          {
+            "authorId": "2118994276",
+            "name": "Carl Schreep"
+          },
+          {
+            "authorId": "2118998711",
+            "name": "P. Linebaugh"
+          },
+          {
+            "authorId": "66382073",
+            "name": "Hannah Hiles"
+          },
+          {
+            "authorId": "35406546",
+            "name": "Rebecca R. Boyles"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "144695689",
+            "name": "A. Krishnamurthy"
+          },
+          {
+            "authorId": "152212711",
+            "name": "Steven Cox"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "10d2bba2e13ced9a81e6a66742fa5fa6a80f0208",
+        "externalIds": {
+          "PubMedCentral": "8371861",
+          "DOI": "10.1039/d0cs01065k",
+          "CorpusId": 235709339,
+          "PubMed": "34212944"
+        },
+        "url": "https://www.semanticscholar.org/paper/10d2bba2e13ced9a81e6a66742fa5fa6a80f0208",
+        "title": "A critical overview of computational approaches employed for COVID-19 drug discovery",
+        "venue": "Chemical Society Reviews",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          },
+          {
+            "authorId": "1897520",
+            "name": "R. Amaro"
+          },
+          {
+            "authorId": "2574801",
+            "name": "C. Andrade"
+          },
+          {
+            "authorId": "2070311892",
+            "name": "Nathan Brown"
+          },
+          {
+            "authorId": "1887610",
+            "name": "S. Ekins"
+          },
+          {
+            "authorId": "1733047",
+            "name": "D. Fourches"
+          },
+          {
+            "authorId": "2385206",
+            "name": "O. Isayev"
+          },
+          {
+            "authorId": "144518940",
+            "name": "D. Kozakov"
+          },
+          {
+            "authorId": "1398549240",
+            "name": "J. Medina-Franco"
+          },
+          {
+            "authorId": "153621009",
+            "name": "K. Merz"
+          },
+          {
+            "authorId": "2641313",
+            "name": "Tudor I. Oprea"
+          },
+          {
+            "authorId": "1805456",
+            "name": "V. Poroikov"
+          },
+          {
+            "authorId": "144522872",
+            "name": "G. Schneider"
+          },
+          {
+            "authorId": "2917510",
+            "name": "M. Todd"
+          },
+          {
+            "authorId": "1685042",
+            "name": "A. Varnek"
+          },
+          {
+            "authorId": "2105939165",
+            "name": "D. Winkler"
+          },
+          {
+            "authorId": "31944915",
+            "name": "A. Zakharov"
+          },
+          {
+            "authorId": "145230547",
+            "name": "A. Cherkasov"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "03fb1883376859d1c10baefef75a092f56638466",
+        "externalIds": {
+          "DBLP": "journals/jbi/MoonJDAZCT21",
+          "DOI": "10.1016/j.jbi.2021.103838",
+          "CorpusId": 235425831,
+          "PubMed": "34119691"
+        },
+        "url": "https://www.semanticscholar.org/paper/03fb1883376859d1c10baefef75a092f56638466",
+        "title": "Learning Drug-Disease-Target Embedding (DDTE) from knowledge graphs to inform drug repurposing hypotheses",
+        "venue": "Journal of Biomedical Informatics",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "32955168",
+            "name": "Changsung Moon"
+          },
+          {
+            "authorId": "2111951092",
+            "name": "Chunming Jin"
+          },
+          {
+            "authorId": "1989414",
+            "name": "Xialan Dong"
+          },
+          {
+            "authorId": "2385934056",
+            "name": "S. Abrar"
+          },
+          {
+            "authorId": "1826978",
+            "name": "Weifan Zheng"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "724e19ae26fc4d3d92df164a23352df051dd723a",
+        "externalIds": {
+          "PubMedCentral": "8504839",
+          "DOI": "10.1111/cts.13021",
+          "CorpusId": 232299469,
+          "PubMed": "33742785"
+        },
+        "url": "https://www.semanticscholar.org/paper/724e19ae26fc4d3d92df164a23352df051dd723a",
+        "title": "Application of MCAT questions as a testing tool and evaluation metric for knowledge graph–based reasoning systems",
+        "venue": "Clinical and Translational Science",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "3016516",
+            "name": "J. Balhoff"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "39318187",
+            "name": "William E. Byrd"
+          },
+          {
+            "authorId": "2058726170",
+            "name": "Sui Hang"
+          },
+          {
+            "authorId": "3052403",
+            "name": "D. Koslicki"
+          },
+          {
+            "authorId": "5662611",
+            "name": "Stefano E. Rensi"
+          },
+          {
+            "authorId": "2058722817",
+            "name": "Patrick L. Schmitt"
+          },
+          {
+            "authorId": "1748896",
+            "name": "Mathias Wawer"
+          },
+          {
+            "authorId": "2116742873",
+            "name": "Mark Williams"
+          },
+          {
+            "authorId": "1723388",
+            "name": "S. Ahalt"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "7d0a206028136ffc094d7d57a189754a3c42b58c",
+        "externalIds": {
+          "PubMedCentral": "8335603",
+          "MAG": "3159726507",
+          "DOI": "10.2196/26714",
+          "CorpusId": 235868885,
+          "PubMed": "34283031"
+        },
+        "url": "https://www.semanticscholar.org/paper/7d0a206028136ffc094d7d57a189754a3c42b58c",
+        "title": "A Biomedical Knowledge Graph System to Propose Mechanistic Hypotheses for Real-World Environmental Health Observations: Cohort Study and Informatics Application",
+        "venue": "JMIR Medical Informatics",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "2119466373",
+            "name": "Frederick W Miller"
+          },
+          {
+            "authorId": "4684817",
+            "name": "S. Schurman"
+          },
+          {
+            "authorId": "2074092426",
+            "name": "Charles P Schmitt"
+          },
+          {
+            "authorId": "11565680",
+            "name": "William Xue"
+          },
+          {
+            "authorId": "2062826086",
+            "name": "Kenneth Morton"
+          },
+          {
+            "authorId": "2108355177",
+            "name": "Patrick Wang"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "95cc878959fb71cd862fafd9018a346968512e46",
+        "externalIds": {
+          "PubMedCentral": "7834738",
+          "MAG": "3112541288",
+          "DOI": "10.1016/j.ymthe.2020.12.016",
+          "CorpusId": 229315935,
+          "PubMed": "33333292"
+        },
+        "url": "https://www.semanticscholar.org/paper/95cc878959fb71cd862fafd9018a346968512e46",
+        "title": "Synergistic and Antagonistic Drug Combinations against SARS-CoV-2",
+        "venue": "Molecular Therapy",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "1742265335",
+            "name": "Tesia M. Bobrowski"
+          },
+          {
+            "authorId": "2115384630",
+            "name": "Lu Chen"
+          },
+          {
+            "authorId": "40570773",
+            "name": "R. Eastman"
+          },
+          {
+            "authorId": "49585510",
+            "name": "Z. Itkin"
+          },
+          {
+            "authorId": "2803775",
+            "name": "P. Shinn"
+          },
+          {
+            "authorId": "1415417169",
+            "name": "Catherine Z. Chen"
+          },
+          {
+            "authorId": "144243203",
+            "name": "Hui Guo"
+          },
+          {
+            "authorId": "2152412811",
+            "name": "Wei Zheng"
+          },
+          {
+            "authorId": "88898503",
+            "name": "Sam Michael"
+          },
+          {
+            "authorId": "145183304",
+            "name": "A. Simeonov"
+          },
+          {
+            "authorId": "143999402",
+            "name": "M. Hall"
+          },
+          {
+            "authorId": "31944915",
+            "name": "A. Zakharov"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "ca8965d0a24fade349b3a3dbb65fd54138305cf8",
+        "externalIds": {
+          "PubMedCentral": "7709174",
+          "MAG": "3108563815",
+          "DOI": "10.26434/chemrxiv.13289222",
+          "CorpusId": 227255763,
+          "PubMed": "33269341"
+        },
+        "url": "https://www.semanticscholar.org/paper/ca8965d0a24fade349b3a3dbb65fd54138305cf8",
+        "title": "COVID-19 Knowledge Extractor (COKE): a tool and a web portal to extract drug - target protein associations from the CORD-19 corpus of scientific publications on COVID-19",
+        "venue": "ChemRxiv",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "2016974942",
+            "name": "Vera Pervitsky"
+          },
+          {
+            "authorId": "1742265335",
+            "name": "Tesia M. Bobrowski"
+          },
+          {
+            "authorId": "145086231",
+            "name": "Vinicius M. Alves"
+          },
+          {
+            "authorId": "2004849817",
+            "name": "Charles Schmitt"
+          },
+          {
+            "authorId": "1780394503",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "145456250",
+            "name": "Nancy C. Baker"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "145230547",
+            "name": "A. Cherkasov"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "c309499b24c3b83ca056353d0a7067707c2c03f3",
+        "externalIds": {
+          "MAG": "3040223991",
+          "PubMedCentral": "7890668",
+          "DBLP": "journals/bioinformatics/KornBLKWOVMCBT21",
+          "DOI": "10.1093/bioinformatics/btaa718",
+          "CorpusId": 220251374,
+          "PubMed": "33175089"
+        },
+        "url": "https://www.semanticscholar.org/paper/c309499b24c3b83ca056353d0a7067707c2c03f3",
+        "title": "COVID-KOP: integrating emerging COVID-19 data with the ROBOKOP database",
+        "venue": "Bioinform.",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "1742265335",
+            "name": "Tesia M. Bobrowski"
+          },
+          {
+            "authorId": "2112111917",
+            "name": "Michael Li"
+          },
+          {
+            "authorId": "1388286745",
+            "name": "Yaphet Kebede"
+          },
+          {
+            "authorId": "2108355177",
+            "name": "Patrick Wang"
+          },
+          {
+            "authorId": "40352315",
+            "name": "Phillips Owen"
+          },
+          {
+            "authorId": "3054526",
+            "name": "Gaurav Vaidya"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "df03c5d61f35f7a52b4b5476b02acd909d459eba",
+        "externalIds": {
+          "PubMedCentral": "7721550",
+          "MAG": "3042438073",
+          "DOI": "10.2196/17964",
+          "CorpusId": 227134997,
+          "PubMed": "33226347"
+        },
+        "url": "https://www.semanticscholar.org/paper/df03c5d61f35f7a52b4b5476b02acd909d459eba",
+        "title": "Visualization Environment for Federated Knowledge Graphs: Development of an Interactive Biomedical Query Language and Web Application Interface",
+        "venue": "JMIR Medical Informatics",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "152212711",
+            "name": "Steven Cox"
+          },
+          {
+            "authorId": "1723388",
+            "name": "S. Ahalt"
+          },
+          {
+            "authorId": "3016516",
+            "name": "J. Balhoff"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "1388286745",
+            "name": "Yaphet Kebede"
+          },
+          {
+            "authorId": "2062826086",
+            "name": "Kenneth Morton"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "2108355177",
+            "name": "Patrick Wang"
+          },
+          {
+            "authorId": "2108834814",
+            "name": "Hao Xu"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "bd03d72a9e6b3e66f078c2b172e28ff6429cc20b",
+        "externalIds": {
+          "MAG": "3191669997",
+          "PubMedCentral": "7337386",
+          "DOI": "10.1101/2020.06.29.178889",
+          "CorpusId": 220366254,
+          "PubMed": "32637956"
+        },
+        "url": "https://www.semanticscholar.org/paper/bd03d72a9e6b3e66f078c2b172e28ff6429cc20b",
+        "title": "Discovery of Synergistic and Antagonistic Drug Combinations against SARS-CoV-2 In Vitro",
+        "venue": "bioRxiv",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "1742265335",
+            "name": "Tesia M. Bobrowski"
+          },
+          {
+            "authorId": "2115384630",
+            "name": "Lu Chen"
+          },
+          {
+            "authorId": "40570773",
+            "name": "R. Eastman"
+          },
+          {
+            "authorId": "49585510",
+            "name": "Z. Itkin"
+          },
+          {
+            "authorId": "2803775",
+            "name": "P. Shinn"
+          },
+          {
+            "authorId": "1415417169",
+            "name": "Catherine Z. Chen"
+          },
+          {
+            "authorId": "144243203",
+            "name": "Hui Guo"
+          },
+          {
+            "authorId": "2152412811",
+            "name": "Wei Zheng"
+          },
+          {
+            "authorId": "88898503",
+            "name": "Sam Michael"
+          },
+          {
+            "authorId": "145183304",
+            "name": "A. Simeonov"
+          },
+          {
+            "authorId": "143999402",
+            "name": "M. Hall"
+          },
+          {
+            "authorId": "31944915",
+            "name": "A. Zakharov"
+          },
+          {
+            "authorId": "2243882",
+            "name": "E. Muratov"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "d0c88fda76568998377009c3654c9dbe3925c9cb",
+        "externalIds": {
+          "DOI": "10.2196/preprints.17964",
+          "CorpusId": 242545595
+        },
+        "url": "https://www.semanticscholar.org/paper/d0c88fda76568998377009c3654c9dbe3925c9cb",
+        "title": "Visualization Environment for Federated Knowledge Graphs: Development of an Interactive Biomedical Query Language and Web Application Interface (Preprint)",
+        "venue": "",
+        "year": 2020,
+        "authors": [
+          {
+            "authorId": "152212711",
+            "name": "Steven Cox"
+          },
+          {
+            "authorId": "1723388",
+            "name": "S. Ahalt"
+          },
+          {
+            "authorId": "3016516",
+            "name": "J. Balhoff"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "1388286745",
+            "name": "Yaphet Kebede"
+          },
+          {
+            "authorId": "2062826086",
+            "name": "Kenneth Morton"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "2108355177",
+            "name": "Patrick Wang"
+          },
+          {
+            "authorId": "2108834814",
+            "name": "Hao Xu"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "adabcfa05c819ea1a1d54901d29ce2138933cca1",
+        "externalIds": {
+          "DBLP": "conf/kes/BaazouziK25",
+          "DOI": "10.1016/j.procs.2025.09.238",
+          "CorpusId": 283019665
+        },
+        "url": "https://www.semanticscholar.org/paper/adabcfa05c819ea1a1d54901d29ce2138933cca1",
+        "title": "Improving biomedical fields with knowledge graphs: Domains, Tasks, and Applications",
+        "venue": "International Conference on Knowledge-Based Intelligent Information & Engineering Systems",
+        "year": 2025,
+        "authors": [
+          {
+            "authorId": "2039232434",
+            "name": "Wiem Baazouzi"
+          },
+          {
+            "authorId": "2770124",
+            "name": "Marouen Kachroudi"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "9bbcb82ba2e4cc7fabe99bf696dc2f40d4dd7d78",
+        "externalIds": {
+          "DBLP": "conf/sci-k/0001AS24",
+          "CorpusId": 273691866
+        },
+        "url": "https://www.semanticscholar.org/paper/9bbcb82ba2e4cc7fabe99bf696dc2f40d4dd7d78",
+        "title": "Federated Querying of Scholarly Communication Infrastructures",
+        "venue": "Sci-K@ISWC",
+        "year": 2024,
+        "authors": [
+          {
+            "authorId": "2065376009",
+            "name": "Muhammad Haris"
+          },
+          {
+            "authorId": "2265900042",
+            "name": "S. Auer"
+          },
+          {
+            "authorId": "153237136",
+            "name": "M. Stocker"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "f96addec50f6dfe192e298a3ecd5e5932d4ea1bc",
+        "externalIds": {
+          "DBLP": "journals/corr/abs-2306-04802",
+          "DOI": "10.48550/arXiv.2306.04802",
+          "CorpusId": 271244158
+        },
+        "url": "https://www.semanticscholar.org/paper/f96addec50f6dfe192e298a3ecd5e5932d4ea1bc",
+        "title": "A Survey on Knowledge Graphs for Healthcare: Resources, Applications, and Promises",
+        "venue": "arXiv.org",
+        "year": 2023,
+        "authors": [
+          {
+            "authorId": "2112821580",
+            "name": "Hejie Cui"
+          },
+          {
+            "authorId": "2277715552",
+            "name": "Jiaying Lu"
+          },
+          {
+            "authorId": "2284725554",
+            "name": "Shiyu Wang"
+          },
+          {
+            "authorId": "2265148831",
+            "name": "Ran Xu"
+          },
+          {
+            "authorId": "2214023328",
+            "name": "Wenjing Ma"
+          },
+          {
+            "authorId": "2219270021",
+            "name": "Shaojun Yu"
+          },
+          {
+            "authorId": "2218865512",
+            "name": "Yue Yu"
+          },
+          {
+            "authorId": "2052319438",
+            "name": "Xuan Kan"
+          },
+          {
+            "authorId": "2219702470",
+            "name": "Chen Ling"
+          },
+          {
+            "authorId": "2263536473",
+            "name": "Joyce C. Ho"
+          },
+          {
+            "authorId": "2148957822",
+            "name": "Fei Wang"
+          },
+          {
+            "authorId": "2237940940",
+            "name": "Carl Yang"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "9a01f1787eab13f19d331c5c866ea86737b26a87",
+        "externalIds": {
+          "CorpusId": 231895142
+        },
+        "url": "https://www.semanticscholar.org/paper/9a01f1787eab13f19d331c5c866ea86737b26a87",
+        "title": "The Rare Disease InfoHub Portal: Actionable Knowledge Appropriately Delivered",
+        "venue": "",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "2115540626",
+            "name": "David R. Wright"
+          },
+          {
+            "authorId": "37968543",
+            "name": "D. Norris"
+          },
+          {
+            "authorId": "1719685",
+            "name": "A. Tropsha"
+          },
+          {
+            "authorId": "1722388",
+            "name": "Rada Y. Chirkova"
+          },
+          {
+            "authorId": "30742453",
+            "name": "D. Korn"
+          },
+          {
+            "authorId": "2264619367",
+            "name": "J. Quiñones"
+          },
+          {
+            "authorId": "2075888063",
+            "name": "Seth B. Parrish"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "0ff0aff2a11b2f38b680f78c3e7028018228c6cd",
+        "externalIds": {
+          "CorpusId": 261305513
+        },
+        "url": "https://www.semanticscholar.org/paper/0ff0aff2a11b2f38b680f78c3e7028018228c6cd",
+        "title": "Dug: A Semantic Search Engine Leveraging Peer-Reviewed Knowledge to Span Biomedical Data Repositories",
+        "venue": "",
+        "year": 2021,
+        "authors": [
+          {
+            "authorId": "103743221",
+            "name": "Alex Waldrop"
+          },
+          {
+            "authorId": "66171119",
+            "name": "John B. Cheadle"
+          },
+          {
+            "authorId": "32050181",
+            "name": "Kira Bradford"
+          },
+          {
+            "authorId": "2162944270",
+            "name": "Alexander Preiss"
+          },
+          {
+            "authorId": "19227625",
+            "name": "Robert F. Chew"
+          },
+          {
+            "authorId": "2162945188",
+            "name": "Jonathan R. Holt"
+          },
+          {
+            "authorId": "2118998975",
+            "name": "Nathan Braswell"
+          },
+          {
+            "authorId": "2118999856",
+            "name": "Matt Watson"
+          },
+          {
+            "authorId": "15279100",
+            "name": "Andrew Crerar"
+          },
+          {
+            "authorId": "2162945053",
+            "name": "Chris M. Ball"
+          },
+          {
+            "authorId": "2235543211",
+            "name": "Yaphet"
+          },
+          {
+            "authorId": "30155931",
+            "name": "Kebede"
+          },
+          {
+            "authorId": "2118994276",
+            "name": "Carl Schreep"
+          },
+          {
+            "authorId": "2118998711",
+            "name": "P. Linebaugh"
+          },
+          {
+            "authorId": "66382073",
+            "name": "Hannah Hiles"
+          },
+          {
+            "authorId": "35406546",
+            "name": "Rebecca R. Boyles"
+          },
+          {
+            "authorId": "3252077",
+            "name": "C. Bizon"
+          },
+          {
+            "authorId": "2060442700",
+            "name": "Ashok"
+          },
+          {
+            "authorId": "2235545398",
+            "name": "Krishnamurthy"
+          },
+          {
+            "authorId": "152212711",
+            "name": "Steven Cox"
+          }
+        ]
+      }
+    },
+    {
+      "citingPaper": {
+        "paperId": "c890dcda418a497a20e091494cd2eb4ae30de0c5",
+        "externalIds": {
+          "CorpusId": 276885692
+        },
+        "url": "https://www.semanticscholar.org/paper/c890dcda418a497a20e091494cd2eb4ae30de0c5",
+        "title": "Integration of Adverse Outcome Pathway Information into the Biomedical Data Translator",
+        "venue": "",
+        "year": null,
+        "authors": [
+          {
+            "authorId": "2317646519",
+            "name": "Meisha Mandal"
+          },
+          {
+            "authorId": "2336161224",
+            "name": "Patricia Ceger"
+          },
+          {
+            "authorId": "4310025",
+            "name": "K. Fecho"
+          },
+          {
+            "authorId": "2349245479",
+            "name": "V. Hench"
+          },
+          {
+            "authorId": "2349246157",
+            "name": "Gaurav Vaidya"
+          },
+          {
+            "authorId": "3016516",
+            "name": "J. Balhoff"
+          }
+        ]
+      }
+    }
+  ]
+}

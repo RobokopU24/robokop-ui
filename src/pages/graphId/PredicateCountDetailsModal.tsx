@@ -59,9 +59,6 @@ function PredicateCountDetailsModal({
           maxHeight: '80vh',
           overflowY: 'auto',
           overflowX: 'hidden',
-          '&::-webkit-scrollbar': { width: '8px' },
-          '&::-webkit-scrollbar-thumb': { backgroundColor: '#c1c1c1', borderRadius: '4px' },
-          '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#a8a8a8' },
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>

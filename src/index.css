@@ -268,3 +268,13 @@ a {
 .secondary-button:hover {
   opacity: 0.9;
 }
+
+.button-cancel {
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+  background: white;
+  color: #5E5E5E;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 16px;
+}

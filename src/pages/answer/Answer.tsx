@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { get as idbGet, del as idbDelete, set as idbSet } from "idb-keyval";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { get as idbGet, del as idbDelete, set as idbSet } from 'idb-keyval';
 
-import API from "../../API";
-import trapiUtils from "../../utils/trapi";
-import queryGraphUtils from "../../utils/queryGraph";
-import usePageStatus from "../../stores/usePageStatus";
-import { defaultAnswer } from "../../utils/cache";
+import API from '../../API';
+import trapiUtils from '../../utils/trapi';
+import queryGraphUtils from '../../utils/queryGraph';
+import usePageStatus from '../../stores/usePageStatus';
+import { defaultAnswer } from '../../utils/cache';
 
-import useAnswerStore from "./useAnswerStore";
-import useDisplayState from "./useDisplayState";
+import useAnswerStore from './useAnswerStore';
+import useDisplayState from './useDisplayState';
 
-import LeftDrawer from "./leftDrawer/LeftDrawer";
-import KgFull from "./fullKg/KgFull";
-import QueryGraph from "./queryGraph/QueryGraph";
-import ResultsTable from "./resultsTable/ResultsTable";
+import LeftDrawer from './leftDrawer/LeftDrawer';
+import KgFull from './fullKg/KgFull';
+import QueryGraph from './queryGraph/QueryGraph';
+import ResultsTable from './resultsTable/ResultsTable';
 
-import "./answer.css";
-import { useAlert } from "../../components/AlertProvider";
+import './answer.css';
+import { useAlert } from '../../components/AlertProvider';
 
 interface AnswerProps {
   answer_id?: string;
@@ -25,7 +25,7 @@ interface AnswerProps {
 
 // --- Local Types ---
 
-type AlertSeverity = "success" | "error" | "info" | "warning";
+type AlertSeverity = 'success' | 'error' | 'info' | 'warning';
 
 interface NodeType {
   id: string;
@@ -83,7 +83,7 @@ interface DisplayState {
   [key: string]: DisplayStateItem;
 }
 interface DisplayStateAction {
-  type: "toggle" | "disable";
+  type: 'toggle' | 'disable';
   payload: {
     component: string;
     show?: boolean;
@@ -102,11 +102,19 @@ interface DisplayStateAction {
 export default function Answer({ answer_id }: AnswerProps) {
   const { displayAlert } = useAlert();
   const answerStore = useAnswerStore();
+
   const navigate = useNavigate();
-  const { displayState, updateDisplayState } = useDisplayState() as { displayState: DisplayState; updateDisplayState: (action: DisplayStateAction) => void };
+  const { displayState, updateDisplayState } = useDisplayState() as {
+    displayState: DisplayState;
+    updateDisplayState: (action: DisplayStateAction) => void;
+  };
   // const { isAuthenticated, getAccessTokenSilently, isLoading } = useAuth0();
-  const [isAuthenticated, isLoading, getAccessTokenSilently]: [boolean, boolean, () => Promise<string>] = [false, false, () => Promise.resolve("")];
-  const pageStatus = usePageStatus(isLoading, "Loading Message...");
+  const [isAuthenticated, isLoading, getAccessTokenSilently]: [
+    boolean,
+    boolean,
+    () => Promise<string>,
+  ] = [false, false, () => Promise.resolve('')];
+  const pageStatus = usePageStatus(isLoading, 'Loading Message...');
   const [owned, setOwned] = useState<boolean>(false);
 
   /**
@@ -114,7 +122,7 @@ export default function Answer({ answer_id }: AnswerProps) {
    * @param answerResponse - Either an object with error message or stringified message object
    */
   function validateAndInitializeMessage(answerResponse: any): void {
-    if (answerResponse && answerResponse.status && answerResponse.status === "error") {
+    if (answerResponse && answerResponse.status && answerResponse.status === 'error') {
       pageStatus.setFailure(answerResponse.message);
       return;
     }
@@ -123,33 +131,38 @@ export default function Answer({ answer_id }: AnswerProps) {
     try {
       answerResponseJSON = JSON.parse(answerResponse);
     } catch (err) {
-      console.error("Failed to parse answer response:", err);
-      pageStatus.setFailure("Invalid answer JSON");
+      console.error('Failed to parse answer response:', err);
+      pageStatus.setFailure('Invalid answer JSON');
       return;
     }
 
-    if (answerResponseJSON.status === "error") {
+    if (answerResponseJSON.status === 'error') {
       pageStatus.setFailure(`Error during answer processing: ${answerResponseJSON.message}`);
       return;
     }
 
     const validationErrors = trapiUtils.validateMessage(answerResponseJSON);
     if (validationErrors.length) {
-      pageStatus.setFailure(`Found errors while parsing message: ${validationErrors.join(", ")}`);
+      pageStatus.setFailure(`Found errors while parsing message: ${validationErrors.join(', ')}`);
       return;
     }
 
     try {
-      answerResponseJSON.message.query_graph = queryGraphUtils.toCurrentTRAPI(answerResponseJSON.message.query_graph);
+      answerResponseJSON.message.query_graph = queryGraphUtils.toCurrentTRAPI(
+        answerResponseJSON.message.query_graph
+      );
       try {
         answerStore.initialize(answerResponseJSON.message, updateDisplayState);
         pageStatus.setSuccess();
       } catch (err) {
-        displayAlert("error", `Failed to initialize message. Please submit an issue: ${err}`);
+        displayAlert('error', `Failed to initialize message. Please submit an issue: ${err}`);
       }
     } catch (err) {
-      console.error("Failed to parse query graph:", err);
-      displayAlert("error", "Failed to parse this query graph. Please make sure it is TRAPI compliant.");
+      console.error('Failed to parse query graph:', err);
+      displayAlert(
+        'error',
+        'Failed to parse this query graph. Please make sure it is TRAPI compliant.'
+      );
     }
   }
 
@@ -162,7 +175,7 @@ export default function Answer({ answer_id }: AnswerProps) {
       try {
         accessToken = await getAccessTokenSilently();
       } catch (err) {
-        displayAlert("error", `Failed to authenticate user: ${err}`);
+        displayAlert('error', `Failed to authenticate user: ${err}`);
       }
     }
     const answerResponse = await API.cache.getAnswerData(answer_id, accessToken);
@@ -181,11 +194,11 @@ export default function Answer({ answer_id }: AnswerProps) {
       try {
         accessToken = await getAccessTokenSilently();
       } catch (err) {
-        displayAlert("error", `Failed to authenticate user: ${err}`);
+        displayAlert('error', `Failed to authenticate user: ${err}`);
       }
     }
     const answerResponse = await API.cache.getAnswer(answer_id ?? null, accessToken ?? null);
-    if (answerResponse.status === "error") {
+    if (answerResponse.status === 'error') {
       pageStatus.setFailure(answerResponse.message);
       return;
     }
@@ -197,13 +210,13 @@ export default function Answer({ answer_id }: AnswerProps) {
    */
   useEffect(() => {
     if (!isLoading) {
-      pageStatus.setLoading("Loading Message...");
+      pageStatus.setLoading('Loading Message...');
       if (answer_id) {
-        idbDelete("quick_message");
+        idbDelete('quick_message');
         checkIfAnswerOwned();
         fetchAnswerData();
       } else {
-        idbGet("quick_message")
+        idbGet('quick_message')
           .then((val) => {
             if (val) {
               validateAndInitializeMessage(val);
@@ -216,7 +229,10 @@ export default function Answer({ answer_id }: AnswerProps) {
           })
           .catch((err) => {
             answerStore.reset();
-            displayAlert("error", `Failed to load answer. Please try refreshing the page. Error: ${err}`);
+            displayAlert(
+              'error',
+              `Failed to load answer. Please try refreshing the page. Error: ${err}`
+            );
             // stop loading message
             pageStatus.setSuccess();
           });
@@ -232,49 +248,55 @@ export default function Answer({ answer_id }: AnswerProps) {
     const files = Array.from(event.target.files ?? []);
     files.forEach((file) => {
       const fr = new window.FileReader();
-      fr.onloadstart = () => pageStatus.setLoading("Loading Message...");
+      fr.onloadstart = () => pageStatus.setLoading('Loading Message...');
       fr.onload = (e) => {
         if (!e.target) return;
         const fileContents = e.target.result;
         let msg: any = {};
         try {
-          msg = JSON.parse(typeof fileContents === "string" ? fileContents : "");
+          msg = JSON.parse(typeof fileContents === 'string' ? fileContents : '');
         } catch (err) {
-          console.error("Failed to parse uploaded file:", err);
-          displayAlert("error", "Failed to read this message. Are you sure this is valid JSON?");
+          console.error('Failed to parse uploaded file:', err);
+          displayAlert('error', 'Failed to read this message. Are you sure this is valid JSON?');
         }
         const errors = trapiUtils.validateMessage(msg);
         if (!errors.length) {
           try {
             msg.message.query_graph = queryGraphUtils.toCurrentTRAPI(msg.message.query_graph);
             try {
-              idbSet("quick_message", JSON.stringify(msg));
+              idbSet('quick_message', JSON.stringify(msg));
               answerStore.initialize(msg.message, updateDisplayState);
               // user uploaded a new answer, reset the url
               if (answer_id) {
-                navigate({ to: "/answer" });
+                navigate({ to: '/answer' });
               }
             } catch (err) {
-              displayAlert("error", `Failed to initialize message. Please submit an issue: ${err}`);
+              displayAlert('error', `Failed to initialize message. Please submit an issue: ${err}`);
               answerStore.reset();
             }
           } catch (err) {
-            console.error("Failed to parse query graph:", err);
-            displayAlert("error", "Failed to parse this query graph. Please make sure it is TRAPI compliant.");
+            console.error('Failed to parse query graph:', err);
+            displayAlert(
+              'error',
+              'Failed to parse this query graph. Please make sure it is TRAPI compliant.'
+            );
           }
           pageStatus.setSuccess();
         } else {
-          pageStatus.setFailure(errors.join(", "));
+          pageStatus.setFailure(errors.join(', '));
         }
       };
       fr.onerror = () => {
-        displayAlert("error", "Sorry but there was a problem uploading the file. The file may be invalid JSON.");
+        displayAlert(
+          'error',
+          'Sorry but there was a problem uploading the file. The file may be invalid JSON.'
+        );
         pageStatus.setSuccess();
       };
       fr.readAsText(file);
     });
     // This clears out the input value so you can upload a second time
-    event.target.value = "";
+    event.target.value = '';
   }
 
   /**
@@ -286,22 +308,26 @@ export default function Answer({ answer_id }: AnswerProps) {
       try {
         accessToken = await getAccessTokenSilently();
       } catch (err) {
-        displayAlert("error", `Failed to authenticate user: ${err}`);
+        displayAlert('error', `Failed to authenticate user: ${err}`);
       }
     } else {
-      return displayAlert("warning", "You need to be signed in to save an answer.");
+      return displayAlert('warning', 'You need to be signed in to save an answer.');
     }
     let response = await API.cache.createAnswer(defaultAnswer, accessToken ?? null);
-    if (response.status === "error") {
-      displayAlert("error", `Failed to create answer: ${response.message}`);
+    if (response.status === 'error') {
+      displayAlert('error', `Failed to create answer: ${response.message}`);
       return;
     }
     const answerId = response.id;
-    response = await API.cache.setAnswerData(answerId, { message: answerStore.message }, accessToken);
-    if (response.status === "error") {
-      return displayAlert("error", `Failed to save answer: ${response.message}`);
+    response = await API.cache.setAnswerData(
+      answerId,
+      { message: answerStore.message },
+      accessToken
+    );
+    if (response.status === 'error') {
+      return displayAlert('error', `Failed to save answer: ${response.message}`);
     }
-    return displayAlert("success", "Your answer has been saved!");
+    return displayAlert('success', 'Your answer has been saved!');
   }
 
   /**
@@ -316,45 +342,45 @@ export default function Answer({ answer_id }: AnswerProps) {
       try {
         accessToken = await getAccessTokenSilently();
       } catch (err) {
-        displayAlert("error", `Failed to authenticate user: ${err}`);
+        displayAlert('error', `Failed to authenticate user: ${err}`);
       }
     } else {
-      return displayAlert("warning", "You need to be signed in to delete an answer.");
+      return displayAlert('warning', 'You need to be signed in to delete an answer.');
     }
     // get associated question
     let response = await API.cache.getAnswer(answer_id ?? null, accessToken ?? null);
-    if (response.status === "error") {
-      displayAlert("error", `Failed to fetch answer: ${response.message}`);
+    if (response.status === 'error') {
+      displayAlert('error', `Failed to fetch answer: ${response.message}`);
       return;
     }
     const questionId: string | undefined = response.parent;
     // delete answer from Robokache
     response = await API.cache.deleteAnswer(answer_id ?? null, accessToken ?? null);
-    if (response.status === "error") {
-      displayAlert("error", `Failed to delete answer: ${response.message}`);
+    if (response.status === 'error') {
+      displayAlert('error', `Failed to delete answer: ${response.message}`);
       return;
     }
-    navigate({ to: "/answer" });
-    let alertType: AlertSeverity = "success";
-    let alertText = "Your answer has been deleted!";
+    navigate({ to: '/answer' });
+    let alertType: AlertSeverity = 'success';
+    let alertText = 'Your answer has been deleted!';
     // check if question has other answers
     if (questionId) {
       response = await API.cache.getAnswers(questionId, accessToken ?? null);
-      if (response.status === "error") {
-        alertType = "error";
+      if (response.status === 'error') {
+        alertType = 'error';
         alertText += ` However, failed to get sibling answers: ${response.message}`;
       } else if (!response.length) {
         // if question has no answers, set hasAnswers to false
         response = await API.cache.getQuestion(questionId, accessToken ?? null);
-        if (response.status === "error") {
-          alertType = "error";
+        if (response.status === 'error') {
+          alertType = 'error';
           alertText += ` However, failed to get associated question data: ${response.message}`;
         } else {
           response.metadata.hasAnswers = false;
           response = await API.cache.updateQuestion(response, accessToken ?? null);
-          if (response.status === "error") {
-            alertType = "error";
-            alertText += " However, failed to update associated question to no answers.";
+          if (response.status === 'error') {
+            alertType = 'error';
+            alertText += ' However, failed to update associated question to no answers.';
           }
         }
       }
@@ -365,6 +391,7 @@ export default function Answer({ answer_id }: AnswerProps) {
   return (
     <>
       <LeftDrawer
+        answerStore={answerStore}
         displayState={displayState}
         updateDisplayState={updateDisplayState}
         onUpload={onUpload}
@@ -379,9 +406,17 @@ export default function Answer({ answer_id }: AnswerProps) {
           <>
             {Object.keys(answerStore.message).length ? (
               <>
-                {displayState.qg.show && answerStore.message.query_graph && <QueryGraph query_graph={answerStore.message.query_graph} />}
-                {displayState.kgFull.show && answerStore.message.knowledge_graph && <KgFull message={answerStore.message as { knowledge_graph: { nodes: any; edges: any } }} />}
-                {displayState.results.show && <ResultsTable answerStore={answerStore as AnswerStoreType} />}
+                {displayState.qg.show && answerStore.message.query_graph && (
+                  <QueryGraph query_graph={answerStore.message.query_graph} />
+                )}
+                {displayState.kgFull.show && answerStore.message.knowledge_graph && (
+                  <KgFull
+                    message={answerStore.message as { knowledge_graph: { nodes: any; edges: any } }}
+                  />
+                )}
+                {displayState.results.show && (
+                  <ResultsTable answerStore={answerStore as AnswerStoreType} />
+                )}
               </>
             ) : (
               <div id="answerPageSplashMessage">

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as TutorialRouteImport } from './routes/tutorial'
 import { Route as TermsofserviceRouteImport } from './routes/termsofservice'
+import { Route as ReleasesRouteImport } from './routes/releases'
 import { Route as QuestionBuilderRouteImport } from './routes/question-builder'
 import { Route as OauthCallbackRouteImport } from './routes/oauth-callback'
 import { Route as LicenseRouteImport } from './routes/license'
@@ -27,6 +28,7 @@ import { Route as ProfileIndexRouteImport } from './routes/profile/index'
 import { Route as ExploreIndexRouteImport } from './routes/explore/index'
 import { Route as DetailsIndexRouteImport } from './routes/details/index'
 import { Route as AnswerIndexRouteImport } from './routes/answer/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ActivateUserIndexRouteImport } from './routes/activate-user/index'
 import { Route as ExploreEnrichmentAnalysisRouteImport } from './routes/explore/enrichment-analysis'
 import { Route as ShareShare_idIndexRouteImport } from './routes/share/$share_id/index'
@@ -49,6 +51,11 @@ const TutorialRoute = TutorialRouteImport.update({
 const TermsofserviceRoute = TermsofserviceRouteImport.update({
   id: '/termsofservice',
   path: '/termsofservice',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReleasesRoute = ReleasesRouteImport.update({
+  id: '/releases',
+  path: '/releases',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuestionBuilderRoute = QuestionBuilderRouteImport.update({
@@ -126,6 +133,11 @@ const AnswerIndexRoute = AnswerIndexRouteImport.update({
   path: '/answer/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ActivateUserIndexRoute = ActivateUserIndexRouteImport.update({
   id: '/activate-user/',
   path: '/activate-user/',
@@ -182,11 +194,13 @@ export interface FileRoutesByFullPath {
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/explore/enrichment-analysis': typeof ExploreEnrichmentAnalysisRoute
   '/activate-user': typeof ActivateUserIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/answer': typeof AnswerIndexRoute
   '/details': typeof DetailsIndexRoute
   '/explore': typeof ExploreIndexRoute
@@ -210,11 +224,13 @@ export interface FileRoutesByTo {
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/explore/enrichment-analysis': typeof ExploreEnrichmentAnalysisRoute
   '/activate-user': typeof ActivateUserIndexRoute
+  '/admin': typeof AdminIndexRoute
   '/answer': typeof AnswerIndexRoute
   '/details': typeof DetailsIndexRoute
   '/explore': typeof ExploreIndexRoute
@@ -239,11 +255,13 @@ export interface FileRoutesById {
   '/license': typeof LicenseRoute
   '/oauth-callback': typeof OauthCallbackRoute
   '/question-builder': typeof QuestionBuilderRoute
+  '/releases': typeof ReleasesRoute
   '/termsofservice': typeof TermsofserviceRoute
   '/tutorial': typeof TutorialRoute
   '/welcome': typeof WelcomeRoute
   '/explore/enrichment-analysis': typeof ExploreEnrichmentAnalysisRoute
   '/activate-user/': typeof ActivateUserIndexRoute
+  '/admin/': typeof AdminIndexRoute
   '/answer/': typeof AnswerIndexRoute
   '/details/': typeof DetailsIndexRoute
   '/explore/': typeof ExploreIndexRoute
@@ -269,11 +287,13 @@ export interface FileRouteTypes {
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
     | '/explore/enrichment-analysis'
     | '/activate-user'
+    | '/admin'
     | '/answer'
     | '/details'
     | '/explore'
@@ -297,11 +317,13 @@ export interface FileRouteTypes {
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
     | '/explore/enrichment-analysis'
     | '/activate-user'
+    | '/admin'
     | '/answer'
     | '/details'
     | '/explore'
@@ -325,11 +347,13 @@ export interface FileRouteTypes {
     | '/license'
     | '/oauth-callback'
     | '/question-builder'
+    | '/releases'
     | '/termsofservice'
     | '/tutorial'
     | '/welcome'
     | '/explore/enrichment-analysis'
     | '/activate-user/'
+    | '/admin/'
     | '/answer/'
     | '/details/'
     | '/explore/'
@@ -354,11 +378,13 @@ export interface RootRouteChildren {
   LicenseRoute: typeof LicenseRoute
   OauthCallbackRoute: typeof OauthCallbackRoute
   QuestionBuilderRoute: typeof QuestionBuilderRoute
+  ReleasesRoute: typeof ReleasesRoute
   TermsofserviceRoute: typeof TermsofserviceRoute
   TutorialRoute: typeof TutorialRoute
   WelcomeRoute: typeof WelcomeRoute
   ExploreEnrichmentAnalysisRoute: typeof ExploreEnrichmentAnalysisRoute
   ActivateUserIndexRoute: typeof ActivateUserIndexRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   AnswerIndexRoute: typeof AnswerIndexRoute
   DetailsIndexRoute: typeof DetailsIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
@@ -392,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/termsofservice'
       fullPath: '/termsofservice'
       preLoaderRoute: typeof TermsofserviceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/releases': {
+      id: '/releases'
+      path: '/releases'
+      fullPath: '/releases'
+      preLoaderRoute: typeof ReleasesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/question-builder': {
@@ -499,6 +532,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnswerIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/activate-user/': {
       id: '/activate-user/'
       path: '/activate-user'
@@ -570,11 +610,13 @@ const rootRouteChildren: RootRouteChildren = {
   LicenseRoute: LicenseRoute,
   OauthCallbackRoute: OauthCallbackRoute,
   QuestionBuilderRoute: QuestionBuilderRoute,
+  ReleasesRoute: ReleasesRoute,
   TermsofserviceRoute: TermsofserviceRoute,
   TutorialRoute: TutorialRoute,
   WelcomeRoute: WelcomeRoute,
   ExploreEnrichmentAnalysisRoute: ExploreEnrichmentAnalysisRoute,
   ActivateUserIndexRoute: ActivateUserIndexRoute,
+  AdminIndexRoute: AdminIndexRoute,
   AnswerIndexRoute: AnswerIndexRoute,
   DetailsIndexRoute: DetailsIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,

@@ -1,29 +1,29 @@
-import { Button } from '@mui/material';
-import { withStyles } from '@mui/styles';
-import { blue } from '@mui/material/colors';
-import React, { useState, useEffect, useRef } from 'react';
-import usePageStatus from '../../stores/usePageStatus';
-import { useAuth } from '../../context/AuthContext';
-import { usePasskey } from '../../hooks/usePasskey';
-import ARAs from '../../API/services';
-import { useAlert } from '../../components/AlertProvider';
-import { useNavigate } from '@tanstack/react-router';
-import queryGraphUtils from '../../utils/queryGraph';
-import API from '../../API';
-import { useQueryBuilderContext } from '../../context/queryBuilder';
-import cloneDeep from 'lodash/cloneDeep';
+import { Button } from "@mui/material";
+import { withStyles } from "@mui/styles";
+import { blue } from "@mui/material/colors";
+import React, { useState, useEffect, useRef } from "react";
+import usePageStatus from "../../stores/usePageStatus";
+import { useAuth } from "../../context/AuthContext";
+import { usePasskey } from "../../hooks/usePasskey";
+import ARAs from "../../API/services";
+import { useAlert } from "../../components/AlertProvider";
+import { useNavigate } from "@tanstack/react-router";
+import queryGraphUtils from "../../utils/queryGraph";
+import API from "../../API";
+import { useQueryBuilderContext } from "../../context/queryBuilder";
+import cloneDeep from "lodash/cloneDeep";
 
-import { set as idbSet } from 'idb-keyval';
-import RegisterPasskeyDialog from '../../components/RegisterPasskeyDialog';
-import TextEditor from './textEditor/TextEditor';
-import GraphEditor from './graphEditor/GraphEditor';
-import JsonEditor from './jsonEditor/JsonEditor';
-import DownloadDialog from '../../components/DownloadDialog';
-import './queryBuilder.css';
-import ExampleModal from '../entryPoint/ExampleModal';
-import TemplateModal from '../entryPoint/TemplateModal';
-import BookmarkModal from '../entryPoint/BookmarkModal';
-import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { set as idbSet } from "idb-keyval";
+import RegisterPasskeyDialog from "../../components/RegisterPasskeyDialog";
+import TextEditor from "./textEditor/TextEditor";
+import GraphEditor from "./graphEditor/GraphEditor";
+import JsonEditor from "./jsonEditor/JsonEditor";
+import DownloadDialog from "../../components/DownloadDialog";
+import "./queryBuilder.css";
+import ExampleModal from "../entryPoint/ExampleModal";
+import TemplateModal from "../entryPoint/TemplateModal";
+import BookmarkModal from "../entryPoint/BookmarkModal";
+import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
 /**
  * Query Builder parent component
@@ -39,7 +39,7 @@ export default function QueryBuilder() {
   const [bookmarkModalOpen, setBookmarkModalOpen] = useState(false);
   const buttonOptions = [
     {
-      label: 'Load Example',
+      label: "Load Example",
       onClick: () => {
         setSavedState(cloneDeep(queryBuilder.query_graph));
         setExampleModalOpen(true);
@@ -47,7 +47,7 @@ export default function QueryBuilder() {
       disabled: false,
     },
     {
-      label: 'Load Template',
+      label: "Load Template",
       onClick: () => {
         setSavedState(cloneDeep(queryBuilder.query_graph));
         setTemplateModalOpen(true);
@@ -55,7 +55,7 @@ export default function QueryBuilder() {
       disabled: false,
     },
     {
-      label: 'Load Bookmark',
+      label: "Load Bookmark",
       onClick: () => {
         setSavedState(cloneDeep(queryBuilder.query_graph));
         setBookmarkModalOpen(true);
@@ -74,13 +74,13 @@ export default function QueryBuilder() {
   const navigate = useNavigate();
   const [savedState, setSavedState] = useState<any>(null);
 
-  const passkeyPopupDenied = localStorage.getItem('passkeyPopupDenied');
+  const passkeyPopupDenied = localStorage.getItem("passkeyPopupDenied");
 
   // Display modal for the user to create a passkey if they don't have one
   useEffect(() => {
     if (user && browserSupport) {
       // eslint-disable-next-line no-underscore-dangle
-      if (user._count?.WebAuthnCredential === 0 && passkeyPopupDenied !== 'true') {
+      if (user._count?.WebAuthnCredential === 0 && passkeyPopupDenied !== "true") {
         setRegisterPasskeyOpen(true);
       }
     }
@@ -90,30 +90,41 @@ export default function QueryBuilder() {
    * Submit this query directly to an ARA and then navigate to the answer page
    */
   async function onQuickSubmit() {
-    pageStatus.setLoading('Fetching answer, this may take a while');
+    pageStatus.setLoading("Fetching answer, this may take a while");
     const prunedQueryGraph = queryGraphUtils.prune(queryBuilder.query_graph);
+
+    // Debug: log submitted query details
+    const qg = prunedQueryGraph;
+    Object.entries(qg.edges).forEach(([edgeId, edge]: [string, any]) => {
+      const subjectNode = qg.nodes[edge.subject];
+      const objectNode = qg.nodes[edge.object];
+      console.log(`[Submit] Edge ${edgeId}:`, {
+        subject: { id: edge.subject, categories: subjectNode?.categories, ids: subjectNode?.ids },
+        predicate: edge.predicates,
+        object: { id: edge.object, categories: objectNode?.categories, ids: objectNode?.ids },
+        qualifier_constraints: edge.qualifier_constraints ?? "none",
+      });
+    });
+
     const response = await API.ara.getQuickAnswer(ara, {
       message: { query_graph: prunedQueryGraph },
     });
 
-    if (response.status === 'error') {
-      const failedToAnswer = 'Please try asking this question later.';
-      displayAlert('error', `${response.message}. ${failedToAnswer}`);
+    if (response.status === "error") {
+      const failedToAnswer = "Please try asking this question later.";
+      displayAlert("error", `${response.message}. ${failedToAnswer}`);
       // go back to rendering query builder
       pageStatus.setSuccess();
     } else {
       // stringify to stay consistent with answer page json parsing
-      idbSet('quick_message', JSON.stringify(response))
+      idbSet("quick_message", JSON.stringify(response))
         .then(() => {
-          displayAlert('success', 'Your answer is ready!');
+          displayAlert("success", "Your answer is ready!");
           // once message is stored, navigate to answer page to load and display
-          navigate({ to: '/answer' });
+          navigate({ to: "/answer" });
         })
         .catch((err) => {
-          displayAlert(
-            'error',
-            `Failed to locally store this answer. Please try again later. Error: ${err}`
-          );
+          displayAlert("error", `Failed to locally store this answer. Please try again later. Error: ${err}`);
           pageStatus.setSuccess();
         });
     }
@@ -122,7 +133,7 @@ export default function QueryBuilder() {
   const handleCancel = () => {
     if (savedState) {
       queryBuilder.dispatch({
-        type: 'restoreGraph',
+        type: "restoreGraph",
         payload: savedState,
       });
     }
@@ -133,53 +144,21 @@ export default function QueryBuilder() {
       <pageStatus.Display />
       {pageStatus.displayPage && (
         <div id="queryBuilderContainer">
-          <RegisterPasskeyDialog
-            open={registerPasskeyOpen}
-            onClose={() => setRegisterPasskeyOpen(false)}
-          />
+          <RegisterPasskeyDialog open={registerPasskeyOpen} onClose={() => setRegisterPasskeyOpen(false)} />
           <JsonEditor show={showJson} close={() => toggleJson(false)} />
-          <DownloadDialog
-            open={downloadOpen}
-            setOpen={setDownloadOpen}
-            message={queryBuilder.query_graph}
-            download_type="all_queries"
-          />
+          <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={queryBuilder.query_graph} download_type="all_queries" />
           <PanelGroup direction="horizontal">
-            <Panel
-              defaultSize={60}
-              minSize={30}
-              style={{ padding: '20px 20px 20px 0', overflowY: 'auto' }}
-            >
+            <Panel defaultSize={60} minSize={30} style={{ padding: "20px 20px 20px 0", overflowY: "auto" }}>
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </Panel>
-            <PanelResizeHandle
-              className="resize-container"
-              children={<div className="resize-handle">||</div>}
-            />
-            <Panel minSize={20} defaultSize={40} style={{ padding: '20px 2px 20px 20px' }}>
-              <GraphEditor
-                editJson={() => toggleJson(true)}
-                downloadQuery={() => setDownloadOpen(true)}
-                onSubmit={() => onQuickSubmit()}
-                buttonOptions={buttonOptions}
-              />
+            <PanelResizeHandle className="resize-container" children={<div className="resize-handle">||</div>} />
+            <Panel minSize={20} defaultSize={40} style={{ padding: "20px 2px 20px 20px" }}>
+              <GraphEditor editJson={() => toggleJson(true)} downloadQuery={() => setDownloadOpen(true)} onSubmit={() => onQuickSubmit()} buttonOptions={buttonOptions} />
             </Panel>
           </PanelGroup>
-          <ExampleModal
-            isOpen={exampleModalOpen}
-            onClose={() => setExampleModalOpen(false)}
-            onCancel={handleCancel}
-          />
-          <TemplateModal
-            isOpen={templateModalOpen}
-            onClose={() => setTemplateModalOpen(false)}
-            onCancel={handleCancel}
-          />
-          <BookmarkModal
-            isOpen={bookmarkModalOpen}
-            onClose={() => setBookmarkModalOpen(false)}
-            onCancel={handleCancel}
-          />
+          <ExampleModal isOpen={exampleModalOpen} onClose={() => setExampleModalOpen(false)} onCancel={handleCancel} />
+          <TemplateModal isOpen={templateModalOpen} onClose={() => setTemplateModalOpen(false)} onCancel={handleCancel} />
+          <BookmarkModal isOpen={bookmarkModalOpen} onClose={() => setBookmarkModalOpen(false)} onCancel={handleCancel} />
         </div>
       )}
     </>
