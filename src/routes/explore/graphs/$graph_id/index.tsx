@@ -8,11 +8,7 @@ export const Route = createFileRoute("/explore/graphs/$graph_id/")({
   component: RouteComponent,
   ssr: false,
   loader: async ({ params }) => {
-    const [graphData, v2Metadata, schemaV2] = await Promise.all([
-      queryClient.ensureQueryData({
-        queryKey: ["graph-metadata", params.graph_id],
-        queryFn: () => API.graphMetadata.metadata(params.graph_id!),
-      }),
+    const [v2Metadata, schemaV2] = await Promise.all([
       queryClient.ensureQueryData({
         queryKey: ["graph-metadata-v2", params.graph_id],
         queryFn: () => API.graphMetadata.graphMetadataV2(params.graph_id),
@@ -24,7 +20,6 @@ export const Route = createFileRoute("/explore/graphs/$graph_id/")({
     ]);
 
     return {
-      graphData,
       v2Metadata,
       schemaV2,
     };
@@ -54,14 +49,6 @@ export const Route = createFileRoute("/explore/graphs/$graph_id/")({
 function RouteComponent() {
   const { graph_id } = Route.useParams();
 
-  const { data, isPending } = useQuery({
-    queryKey: ["graph-metadata", graph_id],
-    queryFn: () => {
-      return API.graphMetadata.metadata(graph_id!);
-    },
-    enabled: !!graph_id,
-  });
-
   const { data: v2Metadata, isPending: v2Pending } = useQuery({
     queryKey: ["graph-metadata-v2", graph_id],
     queryFn: () => API.graphMetadata.graphMetadataV2(graph_id!),
@@ -74,7 +61,7 @@ function RouteComponent() {
     enabled: !!graph_id,
   });
 
-  if (isPending || v2Pending || schemaPending) return "Loading...";
+  if (v2Pending || schemaPending) return "Loading...";
 
-  return <GraphId graphData={data} v2Metadata={v2Metadata ?? null} schemaV2={schemaV2 ?? null} />;
+  return <GraphId v2Metadata={v2Metadata ?? null} schemaV2={schemaV2 ?? null} />;
 }
