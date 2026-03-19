@@ -138,7 +138,6 @@ export default function QueryBuilder() {
       });
     }
   };
-
   return (
     <>
       <pageStatus.Display />
@@ -146,7 +145,7 @@ export default function QueryBuilder() {
         <div id="queryBuilderContainer">
           <RegisterPasskeyDialog open={registerPasskeyOpen} onClose={() => setRegisterPasskeyOpen(false)} />
           <JsonEditor show={showJson} close={() => toggleJson(false)} />
-          <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={queryBuilder.query_graph} download_type="all_queries" />
+          <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={queryBuilder.state.message.message} download_type="all_queries" />
           <PanelGroup direction="horizontal">
             <Panel defaultSize={60} minSize={30} style={{ padding: "20px 20px 20px 0", overflowY: "auto" }}>
               <TextEditor rows={queryBuilder.textEditorRows || []} />

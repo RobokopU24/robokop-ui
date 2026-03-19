@@ -78,4 +78,8 @@
         font-size: 0.8rem;
         padding: 6px 12px;
     }
+
+    .MuiTypography-h5 {
+        font-size: 1.25rem !important;
+    }
 }
