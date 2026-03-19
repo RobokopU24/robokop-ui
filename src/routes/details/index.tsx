@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
-import DetailsPage from '../../pages/details/DetailsPage';
+import { createFileRoute } from '@tanstack/react-router'
+import DetailsPage from '../../pages/details/DetailsPage'
 
-type TypeOptions = 'id' | 'name';
+type TypeOptions = 'id' | 'name'
 
 type DetailsRouteParams = {
-  type?: TypeOptions;
-  q?: string;
-};
+  type?: TypeOptions
+  q?: string
+}
 
 export const Route = createFileRoute('/details/')({
   component: RouteComponent,
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/details/')({
     return {
       q: (search.q as string) || '',
       type: (search.type as TypeOptions) || 'id',
-    };
+    }
   },
   head: () => ({
     meta: [
@@ -39,8 +39,8 @@ export const Route = createFileRoute('/details/')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <DetailsPage />;
+  return <DetailsPage />
 }

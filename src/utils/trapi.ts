@@ -14,47 +14,47 @@
  */
 function validateGraph(
   graph: {
-    constructor: ObjectConstructor;
-    nodes: { [x: string]: any };
-    edges: { [x: string]: any };
+    constructor: ObjectConstructor
+    nodes: { [x: string]: any }
+    edges: { [x: string]: any }
   },
-  graphName: string
+  graphName: string,
 ) {
-  const errors = [];
+  const errors = []
 
   if (!graph || graph.constructor !== Object) {
-    errors.push(`${graphName} is not a valid JSON object`);
-    return errors;
+    errors.push(`${graphName} is not a valid JSON object`)
+    return errors
   }
 
   // Check for nodes
   if (!graph.nodes) {
-    errors.push(`${graphName} requires a "nodes" property`);
-    return errors;
+    errors.push(`${graphName} requires a "nodes" property`)
+    return errors
   }
   if (Array.isArray(graph.nodes)) {
-    errors.push(`${graphName} nodes should be an object`);
-    return errors;
+    errors.push(`${graphName} nodes should be an object`)
+    return errors
   }
   // Since every node has an id we can check if they are unique
-  const nodeIds = new Set(Object.keys(graph.nodes));
-  const hasUniqueNodeIds = nodeIds.size === Object.keys(graph.nodes).length;
+  const nodeIds = new Set(Object.keys(graph.nodes))
+  const hasUniqueNodeIds = nodeIds.size === Object.keys(graph.nodes).length
   if (!hasUniqueNodeIds) {
-    errors.push(`There are multiple ${graphName.toLowerCase()} nodes with the same ID`);
+    errors.push(`There are multiple ${graphName.toLowerCase()} nodes with the same ID`)
   }
 
   // Check for edges
   if (!graph.edges) {
-    errors.push(`${graphName} requires an "edges" property`);
-    return errors;
+    errors.push(`${graphName} requires an "edges" property`)
+    return errors
   }
   if (Array.isArray(graph.edges)) {
-    errors.push(`${graphName} edges should be an object`);
-    return errors;
+    errors.push(`${graphName} edges should be an object`)
+    return errors
   }
   // each edge should have a valid source and target id
   const edgesHaveIds = Object.keys(graph.edges).reduce((val, e) => {
-    const edge = graph.edges[e];
+    const edge = graph.edges[e]
     return (
       val &&
       edge &&
@@ -63,15 +63,15 @@ function validateGraph(
       graph.nodes &&
       graph.nodes[edge.subject] &&
       graph.nodes[edge.object]
-    );
-  }, true);
+    )
+  }, true)
   if (!edgesHaveIds) {
     errors.push(
-      `Each ${graphName.toLowerCase()} edge must have a valid "subject" and "object" property`
-    );
+      `Each ${graphName.toLowerCase()} edge must have a valid "subject" and "object" property`,
+    )
   }
 
-  return errors;
+  return errors
 }
 
 /**
@@ -81,31 +81,31 @@ function validateGraph(
  * @param {array} results - results array of a message
  */
 function validateResults(results: string | any[]) {
-  const errors = [];
+  const errors = []
 
   if (!Array.isArray(results)) {
-    errors.push('Message results should be an array');
-    return errors;
+    errors.push('Message results should be an array')
+    return errors
   }
 
   for (let i = 0; i < results.length; i += 1) {
     if (!('node_bindings' in results[i])) {
-      errors.push('No node_bindings in result object');
+      errors.push('No node_bindings in result object')
     } else if (results[i].node_bindings.constructor !== Object) {
-      errors.push('Results node_bindings is not a valid JSON object');
+      errors.push('Results node_bindings is not a valid JSON object')
     }
 
     if (!('analyses' in results[i])) {
-      errors.push('No analyses in result object');
+      errors.push('No analyses in result object')
     } else if (!Array.isArray(results[i].analyses)) {
-      errors.push('Results analyses is not an array');
+      errors.push('Results analyses is not an array')
     }
     if (errors.length) {
-      break;
+      break
     }
   }
 
-  return errors;
+  return errors
 }
 
 /**
@@ -114,29 +114,29 @@ function validateResults(results: string | any[]) {
  * @param {Message} message - TRAPI message
  */
 function validateMessage(message: {
-  constructor: ObjectConstructor;
-  message: { query_graph: any; knowledge_graph: any; results: any };
+  constructor: ObjectConstructor
+  message: { query_graph: any; knowledge_graph: any; results: any }
 }) {
   if (!message || message.constructor !== Object) {
-    return ["The uploaded message isn't a valid JSON object."];
+    return ["The uploaded message isn't a valid JSON object."]
   }
   if (!('message' in message)) {
-    return ['The uploaded message should have a parent property of "message".'];
+    return ['The uploaded message should have a parent property of "message".']
   }
 
-  let errors = validateGraph(message.message.query_graph, 'Query Graph');
+  let errors = validateGraph(message.message.query_graph, 'Query Graph')
   // A knowledge_graph and results are not required in a trapi message
   if (message.message.knowledge_graph) {
-    errors = [...errors, ...validateGraph(message.message.knowledge_graph, 'Knowledge Graph')];
+    errors = [...errors, ...validateGraph(message.message.knowledge_graph, 'Knowledge Graph')]
   }
   if (message.message.results) {
-    errors = [...errors, ...validateResults(message.message.results)];
+    errors = [...errors, ...validateResults(message.message.results)]
   }
 
-  return errors;
+  return errors
 }
 
 export default {
   validateGraph,
   validateMessage,
-};
+}

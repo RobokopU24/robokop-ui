@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react'
 
-import ReactJsonView, { InteractionProps } from 'react-json-view';
+import ReactJsonView, { InteractionProps } from 'react-json-view'
 
 import {
   Button,
@@ -9,35 +9,35 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-} from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import CloseIcon from '@mui/icons-material/Close';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import SaveIcon from '@mui/icons-material/Save';
+} from '@mui/material'
+import CloudUploadIcon from '@mui/icons-material/CloudUpload'
+import CloseIcon from '@mui/icons-material/Close'
+import FileCopyIcon from '@mui/icons-material/FileCopy'
+import SaveIcon from '@mui/icons-material/Save'
 
-import trapiUtils from '../../../utils/trapi';
-import queryGraphUtils from '../../../utils/queryGraph';
-import usePageStatus from '../../../stores/usePageStatus';
-import { useQueryBuilderContext } from '../../../context/queryBuilder';
-import ClipboardButton from '../../../components/shared/ClipboardButton';
-import { useAlert } from '../../../components/AlertProvider';
+import trapiUtils from '../../../utils/trapi'
+import queryGraphUtils from '../../../utils/queryGraph'
+import usePageStatus from '../../../stores/usePageStatus'
+import { useQueryBuilderContext } from '../../../context/queryBuilder'
+import ClipboardButton from '../../../components/shared/ClipboardButton'
+import { useAlert } from '../../../components/AlertProvider'
 
 // Local type for context value expected here
 type QueryBuilderContextWithState = {
-  state: { message: any };
-  dispatch: (action: { type: string; payload: any }) => void;
-};
+  state: { message: any }
+  dispatch: (action: { type: string; payload: any }) => void
+}
 
 // Type for TRAPI message structure expected by validateMessage
 type TRAPIMessage = {
-  constructor: ObjectConstructor;
+  constructor: ObjectConstructor
   message: {
-    query_graph: any;
-    knowledge_graph: any;
-    results: any;
-    [key: string]: any;
-  };
-};
+    query_graph: any
+    knowledge_graph: any
+    results: any
+    [key: string]: any
+  }
+}
 
 const emptyTRAPIMessage: TRAPIMessage = {
   constructor: Object,
@@ -46,7 +46,7 @@ const emptyTRAPIMessage: TRAPIMessage = {
     knowledge_graph: undefined,
     results: undefined,
   },
-};
+}
 
 /**
  * Query Builder json editor interface
@@ -54,76 +54,73 @@ const emptyTRAPIMessage: TRAPIMessage = {
  * @param {func} close - close the json editor
  */
 export default function JsonEditor({ show, close }: { show: boolean; close: () => void }) {
-  const queryBuilder = useQueryBuilderContext() as unknown as QueryBuilderContextWithState;
-  const [errorMessages, setErrorMessages] = useState<string[]>([]);
-  const { message } = queryBuilder.state;
-  const [localMessage, updateLocalMessage] = useState(message);
-  const pageStatus = usePageStatus(false, '');
-  const { displayAlert } = useAlert();
+  const queryBuilder = useQueryBuilderContext() as unknown as QueryBuilderContextWithState
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
+  const { message } = queryBuilder.state
+  const [localMessage, updateLocalMessage] = useState(message)
+  const pageStatus = usePageStatus(false, '')
+  const { displayAlert } = useAlert()
 
   function updateJson(e: InteractionProps) {
-    const data = e.updated_src;
-    setErrorMessages(trapiUtils.validateMessage(data as TRAPIMessage));
-    updateLocalMessage(data);
+    const data = e.updated_src
+    setErrorMessages(trapiUtils.validateMessage(data as TRAPIMessage))
+    updateLocalMessage(data)
   }
 
   function onUpload(event: React.ChangeEvent<HTMLInputElement>) {
-    const { files } = event.target;
-    if (!files) return;
+    const { files } = event.target
+    if (!files) return
     Array.from(files).forEach((file) => {
-      const fr = new window.FileReader();
-      fr.onloadstart = () => pageStatus.setLoading('Loading Query Graph');
-      fr.onloadend = () => pageStatus.setSuccess();
+      const fr = new window.FileReader()
+      fr.onloadstart = () => pageStatus.setLoading('Loading Query Graph')
+      fr.onloadend = () => pageStatus.setSuccess()
       fr.onload = (e) => {
-        const fileContents = e.target && e.target.result;
+        const fileContents = e.target && e.target.result
         try {
-          const graph = JSON.parse(fileContents as string);
+          const graph = JSON.parse(fileContents as string)
           // We only need the query graph, so delete any knowledge_graph and results in message
           if (graph.message && graph.message.knowledge_graph) {
-            delete graph.message.knowledge_graph;
+            delete graph.message.knowledge_graph
           }
           if (graph.message && graph.message.results) {
-            delete graph.message.results;
+            delete graph.message.results
           }
-          const errors = trapiUtils.validateMessage(graph);
-          setErrorMessages(errors);
+          const errors = trapiUtils.validateMessage(graph)
+          setErrorMessages(errors)
           if (!errors.length) {
-            graph.message.query_graph = queryGraphUtils.toCurrentTRAPI(graph.message.query_graph);
+            graph.message.query_graph = queryGraphUtils.toCurrentTRAPI(graph.message.query_graph)
           }
-          updateLocalMessage(graph);
+          updateLocalMessage(graph)
         } catch (err) {
-          console.error('Error reading query graph file:', err);
-          displayAlert(
-            'error',
-            'Failed to read this query graph. Are you sure this is valid JSON?'
-          );
+          console.error('Error reading query graph file:', err)
+          displayAlert('error', 'Failed to read this query graph. Are you sure this is valid JSON?')
         }
-      };
+      }
       fr.onerror = () => {
         displayAlert(
           'error',
-          'Sorry but there was a problem uploading the file. The file may be invalid JSON.'
-        );
-      };
-      fr.readAsText(file);
-    });
+          'Sorry but there was a problem uploading the file. The file may be invalid JSON.',
+        )
+      }
+      fr.readAsText(file)
+    })
     // This clears out the input value so you can upload a second time
-    event.target.value = '';
+    event.target.value = ''
   }
 
   useEffect(() => {
     if (show) {
-      setErrorMessages(trapiUtils.validateMessage(message));
-      updateLocalMessage(message);
+      setErrorMessages(trapiUtils.validateMessage(message))
+      updateLocalMessage(message)
     }
-  }, [show]);
+  }, [show])
 
   function saveGraph() {
-    queryBuilder.dispatch({ type: 'saveGraph', payload: localMessage });
+    queryBuilder.dispatch({ type: 'saveGraph', payload: localMessage })
   }
 
   function copyQueryGraph() {
-    const prunedQueryGraph = queryGraphUtils.prune(localMessage.message.query_graph);
+    const prunedQueryGraph = queryGraphUtils.prune(localMessage.message.query_graph)
     return JSON.stringify(
       {
         message: {
@@ -132,38 +129,38 @@ export default function JsonEditor({ show, close }: { show: boolean; close: () =
         },
       },
       null,
-      2
-    );
+      2,
+    )
   }
 
   return (
     <Dialog
       open={show}
       fullWidth
-      maxWidth="lg"
+      maxWidth='lg'
       onClose={() => {
-        setErrorMessages([]);
-        close();
+        setErrorMessages([])
+        close()
       }}
     >
       <DialogTitle style={{ padding: 0 }}>
-        <div id="jsonEditorTitle">
+        <div id='jsonEditorTitle'>
           <div>
-            <label htmlFor="jsonEditorUpload" id="uploadIconLabel">
+            <label htmlFor='jsonEditorUpload' id='uploadIconLabel'>
               <input
-                accept=".json"
+                accept='.json'
                 style={{ display: 'none' }}
-                type="file"
-                id="jsonEditorUpload"
+                type='file'
+                id='jsonEditorUpload'
                 onChange={(e) => onUpload(e)}
                 disabled={!pageStatus.displayPage}
               />
               <Button
-                component="span"
-                variant="contained"
+                component='span'
+                variant='contained'
                 disabled={!pageStatus.displayPage}
                 style={{ margin: '0px 10px' }}
-                title="Load Message"
+                title='Load Message'
                 startIcon={<CloudUploadIcon />}
               >
                 Upload
@@ -171,9 +168,9 @@ export default function JsonEditor({ show, close }: { show: boolean; close: () =
             </label>
             <ClipboardButton
               startIcon={<FileCopyIcon />}
-              displayText="Copy"
+              displayText='Copy'
               clipboardText={copyQueryGraph}
-              notificationText="Copied JSON to clipboard!"
+              notificationText='Copied JSON to clipboard!'
               disabled={!pageStatus.displayPage}
             />
           </div>
@@ -182,10 +179,10 @@ export default function JsonEditor({ show, close }: { show: boolean; close: () =
             style={{
               fontSize: '18px',
             }}
-            title="Close Editor"
+            title='Close Editor'
             onClick={() => {
-              setErrorMessages([]);
-              close();
+              setErrorMessages([])
+              close()
             }}
           >
             <CloseIcon />
@@ -205,14 +202,14 @@ export default function JsonEditor({ show, close }: { show: boolean; close: () =
             >
               <ReactJsonView
                 name={false}
-                theme="rjv-default"
+                theme='rjv-default'
                 collapseStringsAfterLength={15}
                 indentWidth={2}
-                iconStyle="triangle"
+                iconStyle='triangle'
                 enableClipboard={false}
                 displayObjectSize={false}
                 displayDataTypes={false}
-                defaultValue=""
+                defaultValue=''
                 src={localMessage}
                 onEdit={updateJson}
                 onAdd={updateJson}
@@ -234,16 +231,16 @@ export default function JsonEditor({ show, close }: { show: boolean; close: () =
         <Button
           startIcon={<SaveIcon />}
           disabled={errorMessages.length > 0 || !pageStatus.displayPage}
-          variant="contained"
-          title="Save Changes"
+          variant='contained'
+          title='Save Changes'
           onClick={() => {
-            saveGraph();
-            close();
+            saveGraph()
+            close()
           }}
         >
           Save
         </Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }

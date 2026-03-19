@@ -1,5 +1,5 @@
-import axios from 'axios';
-import utils from './utils';
+import axios from 'axios'
+import utils from './utils'
 const baseRoutes = {
   async getNodeDetails(nodeId: string) {
     let config = {
@@ -10,17 +10,17 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
+      const response = await axios(config)
 
-      return response.data;
+      return response.data
       // return testData1;
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
 
@@ -29,7 +29,7 @@ const baseRoutes = {
     pageSize: number,
     pageNumber: number,
     predicate: string,
-    category?: string
+    category?: string,
   ) {
     let config = {
       method: 'get',
@@ -41,17 +41,17 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
+      const response = await axios(config)
 
-      return response.data;
+      return response.data
       // return testData1;
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
 
@@ -64,16 +64,16 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
+      const response = await axios(config)
 
-      return response.data;
+      return response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
 
@@ -86,24 +86,24 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
-      return response.data;
+      const response = await axios(config)
+      return response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
-};
+}
 
 const routes = {
   getNodeEdges: baseRoutes.getNodeEdges,
   getNodeDetails: baseRoutes.getNodeDetails,
   getNodeEdgeSummary: baseRoutes.getNodeEdgeSummary,
   getNodeEdgeCount: baseRoutes.getNodeEdgeCount,
-};
+}
 
-export default routes;
+export default routes

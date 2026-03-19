@@ -1,60 +1,60 @@
-import React, { useEffect } from 'react';
-import './Details.css';
-import SearchIcon from '@mui/icons-material/Search';
-import axios from 'axios';
-import IDResults from './IDResults';
-import NameResults from './NameResults';
-import { Link, useSearch } from '@tanstack/react-router';
+import React, { useEffect } from 'react'
+import './Details.css'
+import SearchIcon from '@mui/icons-material/Search'
+import axios from 'axios'
+import IDResults from './IDResults'
+import NameResults from './NameResults'
+import { Link, useSearch } from '@tanstack/react-router'
 
 function DetailsPage() {
-  const searchParams = useSearch({ from: '/details/' });
+  const searchParams = useSearch({ from: '/details/' })
   const [selectedOption, setSelectedOption] = React.useState<'id' | 'name'>(
-    searchParams.type || 'id'
-  );
-  const [searchValue, setSearchValue] = React.useState(searchParams.q || '');
-  const [loading, setLoading] = React.useState(false);
+    searchParams.type || 'id',
+  )
+  const [searchValue, setSearchValue] = React.useState(searchParams.q || '')
+  const [loading, setLoading] = React.useState(false)
 
-  const [idResults, setIdResults] = React.useState<any[]>([]);
-  const [nameResults, setNameResults] = React.useState<any[]>([]);
+  const [idResults, setIdResults] = React.useState<any[]>([])
+  const [nameResults, setNameResults] = React.useState<any[]>([])
 
   const handleSearch = () => {
-    setLoading(true);
+    setLoading(true)
     if (selectedOption === 'id') {
       axios
         .get(
-          'https://robokop-name-resolver.apps.renci.org/synonyms?preferred_curies=' + searchValue
+          'https://robokop-name-resolver.apps.renci.org/synonyms?preferred_curies=' + searchValue,
         )
         .then((response) => {
-          setIdResults(response.data);
+          setIdResults(response.data)
         })
         .catch((error) => {
-          console.error('Error fetching ID results:', error);
+          console.error('Error fetching ID results:', error)
         })
         .finally(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     } else {
       axios
         .get(
-          `https://robokop-name-resolver.apps.renci.org/lookup?string=${searchValue}&autocomplete=true&highlighting=true&offset=0&limit=10`
+          `https://robokop-name-resolver.apps.renci.org/lookup?string=${searchValue}&autocomplete=true&highlighting=true&offset=0&limit=10`,
         )
         .then((response) => {
-          setNameResults(response.data);
+          setNameResults(response.data)
         })
         .catch((error) => {
-          console.error('Error fetching name results:', error);
+          console.error('Error fetching name results:', error)
         })
         .finally(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     }
-  };
+  }
 
   useEffect(() => {
     if (searchParams.q && searchParams.type) {
-      handleSearch();
+      handleSearch()
     }
-  }, [searchParams]);
+  }, [searchParams])
   return (
     <div
       style={{
@@ -78,8 +78,8 @@ function DetailsPage() {
         <p
           className={selectedOption === 'id' ? 'button-default' : 'button-secondary'}
           onClick={() => {
-            setSelectedOption('id');
-            setSearchValue('');
+            setSelectedOption('id')
+            setSearchValue('')
           }}
         >
           Search by ID
@@ -87,8 +87,8 @@ function DetailsPage() {
         <p
           className={selectedOption === 'name' ? 'button-default' : 'button-secondary'}
           onClick={() => {
-            setSelectedOption('name');
-            setSearchValue('');
+            setSelectedOption('name')
+            setSearchValue('')
           }}
         >
           Search by Name
@@ -113,9 +113,9 @@ function DetailsPage() {
             borderRadius: '8px',
           }}
         >
-          <SearchIcon color="action" sx={{ width: 20, paddingLeft: 1, paddingRight: 1 }} />
+          <SearchIcon color='action' sx={{ width: 20, paddingLeft: 1, paddingRight: 1 }} />
           <input
-            type="text"
+            type='text'
             placeholder={selectedOption === 'id' ? 'e.g. MONDO:0005732' : 'e.g. diabetes'}
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
@@ -138,8 +138,8 @@ function DetailsPage() {
           Search
         </button> */}
         <Link
-          className="button-secondary"
-          to="/details"
+          className='button-secondary'
+          to='/details'
           search={{
             q: searchValue,
             type: selectedOption,
@@ -151,7 +151,7 @@ function DetailsPage() {
       {selectedOption === 'id' && <IDResults idResults={idResults} />}
       {selectedOption === 'name' && <NameResults nameResults={nameResults} />}
     </div>
-  );
+  )
 }
 
-export default DetailsPage;
+export default DetailsPage

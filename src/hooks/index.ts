@@ -1,2 +1,2 @@
-export * from './use-local-storage';
-export * from './useFeatureAccess';
+export * from './use-local-storage'
+export * from './useFeatureAccess'

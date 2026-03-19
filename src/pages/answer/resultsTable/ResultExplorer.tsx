@@ -1,115 +1,115 @@
-import React, { useEffect, useContext, useRef, useState } from 'react';
-import * as d3 from 'd3';
-import { Paper, Box, Slider } from '@mui/material';
+import React, { useEffect, useContext, useRef, useState } from 'react'
+import * as d3 from 'd3'
+import { Paper, Box, Slider } from '@mui/material'
 
-import BiolinkContext from '../../../context/biolink';
-import dragUtils from '../../../utils/d3/drag';
-import graphUtils from '../../../utils/d3/graph';
-import edgeUtils from '../../../utils/d3/edges';
-import stringUtils from '../../../utils/strings';
-import useDebounce from '../../../stores/useDebounce';
-import ResultMetaData from './ResultMetaData';
-import AttributesTable from './AttributesTable';
-import Popover from '../../../components/Popover';
-import NodeAttributesTable from '../NodeAttributesTable';
+import BiolinkContext from '../../../context/biolink'
+import dragUtils from '../../../utils/d3/drag'
+import graphUtils from '../../../utils/d3/graph'
+import edgeUtils from '../../../utils/d3/edges'
+import stringUtils from '../../../utils/strings'
+import useDebounce from '../../../stores/useDebounce'
+import ResultMetaData from './ResultMetaData'
+import AttributesTable from './AttributesTable'
+import Popover from '../../../components/Popover'
+import NodeAttributesTable from '../NodeAttributesTable'
 
 interface BiolinkContextValue {
-  colorMap?: (categories: string | string[]) => [string | null, string];
-  hierarchies?: Record<string, any>;
+  colorMap?: (categories: string | string[]) => [string | null, string]
+  hierarchies?: Record<string, any>
   predicates?: Array<{
-    predicate: string;
-    domain: string;
-    range: string;
-    symmetric: boolean;
-  }>;
+    predicate: string
+    domain: string
+    range: string
+    symmetric: boolean
+  }>
 }
 
-const nodeRadius: number = 40;
+const nodeRadius: number = 40
 
 interface NodeType extends d3.SimulationNodeDatum {
-  id: string;
-  name: string;
-  categories: string[];
-  score: number;
-  x?: number;
-  y?: number;
-  fx?: number | null;
-  fy?: number | null;
+  id: string
+  name: string
+  categories: string[]
+  score: number
+  x?: number
+  y?: number
+  fx?: number | null
+  fy?: number | null
 }
 
 interface EdgeType extends d3.SimulationLinkDatum<NodeType> {
-  id: string;
-  source: string | NodeType;
-  target: string | NodeType;
-  predicate: string;
-  strokeWidth?: number;
-  numEdges?: number;
-  index?: number;
-  attributes?: any[];
-  sources?: any[];
+  id: string
+  source: string | NodeType
+  target: string | NodeType
+  predicate: string
+  strokeWidth?: number
+  numEdges?: number
+  index?: number
+  attributes?: any[]
+  sources?: any[]
 }
 
 interface AnswerStoreType {
-  numQgNodes: number;
-  showNodePruneSlider: boolean;
+  numQgNodes: number
+  showNodePruneSlider: boolean
   selectedResult: {
-    nodes: { [id: string]: NodeType };
-    edges: { [id: string]: EdgeType };
-  };
-  selectedRowId: string;
-  metaData?: any;
+    nodes: { [id: string]: NodeType }
+    edges: { [id: string]: EdgeType }
+  }
+  selectedRowId: string
+  metaData?: any
   resultJSON: {
     knowledge_graph: {
-      edges: { [id: string]: { attributes: any[]; sources: any[] } };
-    };
-  };
+      edges: { [id: string]: { attributes: any[]; sources: any[] } }
+    }
+  }
 }
 
-type PopoverType = 'node' | 'edge' | null;
+type PopoverType = 'node' | 'edge' | null
 
 type PopoverDataType =
   | Pick<NodeType, 'name' | 'id' | 'categories'>
   | Pick<EdgeType, 'attributes' | 'sources'>
-  | {};
+  | {}
 
 /**
  * Selected result graph
  * @param {object} answerStore - answer store hook
  */
 export default function ResultExplorer({ answerStore }: { answerStore: AnswerStoreType }) {
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
-  const width = useRef<number>(0);
-  const height = useRef<number>(0);
-  const node = useRef<d3.Selection<SVGGElement, NodeType, d3.BaseType, unknown> | null>(null);
-  const edge = useRef<d3.Selection<SVGGElement, EdgeType, d3.BaseType, unknown> | null>(null);
-  const simulation = useRef<d3.Simulation<NodeType, EdgeType> | null>(null);
-  const { colorMap, predicates } = useContext(BiolinkContext) as BiolinkContextValue;
-  const [numTrimmedNodes, setNumTrimmedNodes] = useState<number>(answerStore.numQgNodes);
-  const debouncedTrimmedNodes = useDebounce(numTrimmedNodes, 500);
-  const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [popoverOpen, setPopoverOpen] = useState<PopoverType | null>(null);
-  const [popoverData, setPopoverData] = useState<PopoverDataType>({});
+  const svgRef = useRef<SVGSVGElement | null>(null)
+  const svg = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null)
+  const width = useRef<number>(0)
+  const height = useRef<number>(0)
+  const node = useRef<d3.Selection<SVGGElement, NodeType, d3.BaseType, unknown> | null>(null)
+  const edge = useRef<d3.Selection<SVGGElement, EdgeType, d3.BaseType, unknown> | null>(null)
+  const simulation = useRef<d3.Simulation<NodeType, EdgeType> | null>(null)
+  const { colorMap, predicates } = useContext(BiolinkContext) as BiolinkContextValue
+  const [numTrimmedNodes, setNumTrimmedNodes] = useState<number>(answerStore.numQgNodes)
+  const debouncedTrimmedNodes = useDebounce(numTrimmedNodes, 500)
+  const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
+  const [popoverOpen, setPopoverOpen] = useState<PopoverType | null>(null)
+  const [popoverData, setPopoverData] = useState<PopoverDataType>({})
   const symmetricPredicates: string[] = (predicates || [])
     .filter((predicate: any) => predicate && predicate.symmetric)
-    .map((predicate: any) => predicate.predicate);
+    .map((predicate: any) => predicate.predicate)
 
   /**
    * Initialize svg object
    */
   useEffect(() => {
-    if (!svgRef.current) return;
-    svg.current = d3.select(svgRef.current);
-    const { width: fullWidth, height: fullHeight } = svg.current.node()!.getBoundingClientRect();
-    width.current = fullWidth;
-    height.current = fullHeight;
+    if (!svgRef.current) return
+    svg.current = d3.select(svgRef.current)
+    const { width: fullWidth, height: fullHeight } = svg.current.node()!.getBoundingClientRect()
+    width.current = fullWidth
+    height.current = fullHeight
     svg.current
       .attr('width', width.current)
       .attr('height', height.current)
       .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', [0, 0, width.current, height.current]);
+      .attr('viewBox', [0, 0, width.current, height.current])
     if (svg.current.select('defs').empty()) {
-      const defs = svg.current.append('defs');
+      const defs = svg.current.append('defs')
       defs
         .append('marker')
         .attr('id', 'arrow')
@@ -126,34 +126,34 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
             [0, 0],
             [0, 13],
             [25, 6.5],
-          ] as [number, number][])
+          ] as [number, number][]),
         )
-        .attr('fill', '#999');
+        .attr('fill', '#999')
     }
     if (svg.current.select('#nodeContainer').empty()) {
-      svg.current.append('g').attr('id', 'nodeContainer');
-      node.current = svg.current.select('#nodeContainer').selectAll<SVGGElement, NodeType>('g');
+      svg.current.append('g').attr('id', 'nodeContainer')
+      node.current = svg.current.select('#nodeContainer').selectAll<SVGGElement, NodeType>('g')
     }
     if (svg.current.select('#edgeContainer').empty()) {
-      svg.current.append('g').attr('id', 'edgeContainer');
-      edge.current = svg.current.select('#edgeContainer').selectAll<SVGGElement, EdgeType>('g');
+      svg.current.append('g').attr('id', 'edgeContainer')
+      edge.current = svg.current.select('#edgeContainer').selectAll<SVGGElement, EdgeType>('g')
     }
-  }, []);
+  }, [])
 
   /**
    * Move nodes and edges one 'tick' during simulation
    */
   function ticked() {
-    if (!node.current || !edge.current) return;
+    if (!node.current || !edge.current) return
     node.current.attr('transform', (d: NodeType) => {
-      let padding = nodeRadius;
+      let padding = nodeRadius
       if (d.fx !== null && d.fx !== undefined) {
-        padding *= 0.5;
+        padding *= 0.5
       }
-      d.x = graphUtils.getBoundedValue(Number(d.x), Number(width.current) - padding, padding);
-      d.y = graphUtils.getBoundedValue(Number(d.y), Number(height.current) - padding, padding);
-      return `translate(${d.x}, ${d.y})`;
-    });
+      d.x = graphUtils.getBoundedValue(Number(d.x), Number(width.current) - padding, padding)
+      d.y = graphUtils.getBoundedValue(Number(d.y), Number(height.current) - padding, padding)
+      return `translate(${d.x}, ${d.y})`
+    })
 
     edge.current.select<SVGPathElement>('.result_edge').attr('d', (d: EdgeType) => {
       const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
@@ -163,10 +163,10 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         Number((d.target as NodeType).y),
         Number(d.numEdges),
         Number(d.index),
-        nodeRadius
-      );
-      return `M${x1},${y1}Q${qx},${qy} ${x2},${y2}`;
-    });
+        nodeRadius,
+      )
+      return `M${x1},${y1}Q${qx},${qy} ${x2},${y2}`
+    })
 
     edge.current.select<SVGPathElement>('.result_edge_transparent').attr('d', (d: EdgeType) => {
       const { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
@@ -176,12 +176,12 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         Number((d.target as NodeType).y),
         Number(d.numEdges),
         Number(d.index),
-        nodeRadius
-      );
-      const leftNode = x1 > x2 ? `${x2},${y2}` : `${x1},${y1}`;
-      const rightNode = x1 > x2 ? `${x1},${y1}` : `${x2},${y2}`;
-      return `M${leftNode}Q${qx},${qy} ${rightNode}`;
-    });
+        nodeRadius,
+      )
+      const leftNode = x1 > x2 ? `${x2},${y2}` : `${x1},${y1}`
+      const rightNode = x1 > x2 ? `${x1},${y1}` : `${x2},${y2}`
+      return `M${leftNode}Q${qx},${qy} ${rightNode}`
+    })
   }
 
   /**
@@ -197,66 +197,66 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
           .forceLink<NodeType, EdgeType>()
           .id((d: NodeType) => d.id)
           .distance(175)
-          .strength(0)
+          .strength(0),
       )
-      .on('tick', ticked);
-  }, []);
+      .on('tick', ticked)
+  }, [])
 
   /**
    * Draw the answer graph
    */
   function drawAnswerGraph() {
-    if (!svg.current || !simulation.current) return;
-    const { width: fullWidth, height: fullHeight } = svg.current.node()!.getBoundingClientRect();
-    width.current = fullWidth;
-    height.current = fullHeight;
+    if (!svg.current || !simulation.current) return
+    const { width: fullWidth, height: fullHeight } = svg.current.node()!.getBoundingClientRect()
+    width.current = fullWidth
+    height.current = fullHeight
     // set the svg size
     svg.current
       .attr('width', width.current)
       .attr('height', height.current)
       .attr('preserveAspectRatio', 'xMinYMin meet')
-      .attr('viewBox', [0, 0, width.current, height.current]);
+      .attr('viewBox', [0, 0, width.current, height.current])
     // set the simulation gravity middle
     simulation.current
       .force('center', d3.forceCenter(width.current / 2, height.current / 2).strength(0.5))
-      .force('forceY', d3.forceY(height.current / 2).strength(0.2));
+      .force('forceY', d3.forceY(height.current / 2).strength(0.2))
 
     // keep positions of kept nodes
     const oldNodes = new Map(
-      (node.current ? node.current.data() : []).map((d: NodeType) => [d.id, { x: d.x, y: d.y }])
-    );
+      (node.current ? node.current.data() : []).map((d: NodeType) => [d.id, { x: d.x, y: d.y }]),
+    )
     const sortedNodes = Object.values(answerStore.selectedResult.nodes).sort(
-      (a, b) => (b as NodeType).score - (a as NodeType).score
-    );
+      (a, b) => (b as NodeType).score - (a as NodeType).score,
+    )
     const trimmedNodes = (sortedNodes as NodeType[]).slice(
       0,
-      answerStore.showNodePruneSlider ? Number(debouncedTrimmedNodes) : undefined
-    );
+      answerStore.showNodePruneSlider ? Number(debouncedTrimmedNodes) : undefined,
+    )
     const nodes: NodeType[] = (trimmedNodes as NodeType[]).map((d) =>
       Object.assign(
         oldNodes.get(d.id) || {
           x: Math.random() * width.current,
           y: Math.random() * height.current,
         },
-        d
-      )
-    );
-    const trimmedNodeIds = (trimmedNodes as NodeType[]).map((n) => n.id);
+        d,
+      ),
+    )
+    const trimmedNodeIds = (trimmedNodes as NodeType[]).map((n) => n.id)
     const trimmedEdges = Object.keys(answerStore.selectedResult.edges)
       .filter((key) => {
-        const e = answerStore.selectedResult.edges[key];
+        const e = answerStore.selectedResult.edges[key]
         return (
           trimmedNodeIds.includes(e.source as string) && trimmedNodeIds.includes(e.target as string)
-        );
+        )
       })
       .map((key) => ({
         ...answerStore.selectedResult.edges[key],
         attributes: answerStore.resultJSON.knowledge_graph.edges[key]?.attributes,
         sources: answerStore.resultJSON.knowledge_graph.edges[key]?.sources,
-      }));
-    const edges: EdgeType[] = trimmedEdges.map((d) => ({ ...d }));
-    simulation.current.nodes(nodes);
-    (simulation.current.force('link') as d3.ForceLink<NodeType, EdgeType>).links(edges);
+      }))
+    const edges: EdgeType[] = trimmedEdges.map((d) => ({ ...d }))
+    simulation.current.nodes(nodes)
+    ;(simulation.current.force('link') as d3.ForceLink<NodeType, EdgeType>).links(edges)
 
     node.current = node
       .current!.data(nodes, (d) => d.id)
@@ -272,28 +272,28 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
                 .attr('r', nodeRadius)
                 .attr('fill', (d: NodeType) => (colorMap ? colorMap(d.categories)[1] : '#ccc'))
                 .call((nCircle: d3.Selection<SVGCircleElement, NodeType, any, any>) =>
-                  nCircle.append('title').text((d: NodeType) => d.name)
+                  nCircle.append('title').text((d: NodeType) => d.name),
                 )
                 .style(
                   'transition',
-                  'stroke-width 200ms ease-in-out, stroke 200ms ease-in-out, filter 200ms ease-in-out'
+                  'stroke-width 200ms ease-in-out, stroke 200ms ease-in-out, filter 200ms ease-in-out',
                 )
                 .style('cursor', 'pointer')
                 .on('mouseover', function (this: SVGCircleElement) {
                   d3.select(this)
                     .attr('stroke', '#239cff')
                     .style('filter', 'brightness(1.1)')
-                    .attr('stroke-width', 3);
+                    .attr('stroke-width', 3)
                 })
                 .on('mouseout', function (this: SVGCircleElement) {
                   d3.select(this)
                     .attr('stroke', 'none')
                     .style('filter', 'initial')
-                    .attr('stroke-width', 0);
+                    .attr('stroke-width', 0)
                 })
                 .on('click', function (this: SVGCircleElement) {
-                  handleClickNode(d3.select(this).datum() as NodeType);
-                })
+                  handleClickNode(d3.select(this).datum() as NodeType)
+                }),
             )
             .call((n: d3.Selection<SVGGElement, NodeType, any, any>) =>
               n
@@ -304,7 +304,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
                 .style('font-weight', 600)
                 .attr('alignment-baseline', 'middle')
                 .text((d: NodeType) => d.name)
-                .each(graphUtils.fitTextIntoCircle)
+                .each(graphUtils.fitTextIntoCircle),
             ),
         (update) => update,
         (exit) =>
@@ -314,10 +314,10 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
             .duration(1000)
             .attr('transform', (d: NodeType) => `translate(${d.x},-40)`)
             .call((e: any) => e.select('circle').attr('fill', 'red'))
-            .remove()
-      );
+            .remove(),
+      )
 
-    const edgesWithCurves = edgeUtils.addEdgeCurveProperties(edges as any);
+    const edgesWithCurves = edgeUtils.addEdgeCurveProperties(edges as any)
     edge.current = edge
       .current!.data(edgesWithCurves as any, (d: any) => (d as EdgeType).id)
       .join(
@@ -344,13 +344,13 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
                     .attr('pointer-events', 'none')
                     .attr('xlink:href', (d: EdgeType) => `#result_explorer_edge${d.id}`)
                     .attr('startOffset', '50%')
-                    .text((d: EdgeType) => stringUtils.displayPredicate(d.predicate))
+                    .text((d: EdgeType) => stringUtils.displayPredicate(d.predicate)),
                 )
                 .call((eLabel: any) =>
                   eLabel
                     .append('title')
-                    .text((d: any) => stringUtils.displayPredicate((d as any).predicate))
-                )
+                    .text((d: any) => stringUtils.displayPredicate((d as any).predicate)),
+                ),
             )
             .call((e: d3.Selection<SVGGElement, EdgeType, any, any>) =>
               e
@@ -360,37 +360,39 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
                 .attr('stroke-width', (d: EdgeType) => d.strokeWidth as number)
                 .attr('class', 'result_edge')
                 .attr('marker-end', (d: EdgeType) =>
-                  graphUtils.shouldShowArrow(d as any, symmetricPredicates) ? 'url(#arrow)' : ''
-                )
+                  graphUtils.shouldShowArrow(d as any, symmetricPredicates) ? 'url(#arrow)' : '',
+                ),
             )
             .attr('fill', 'black')
             .attr('stroke', '#999')
             .style('transition', 'stroke 100ms ease-in-out, fill 100ms ease-in-out')
             .style('cursor', 'pointer')
             .on('mouseover', function (this: SVGGElement) {
-              d3.select(this).attr('fill', '#239cff').attr('stroke', '#239cff');
+              d3.select(this).attr('fill', '#239cff').attr('stroke', '#239cff')
             })
             .on('mouseout', function (this: SVGGElement) {
-              d3.select(this).attr('fill', 'black').attr('stroke', '#999');
+              d3.select(this).attr('fill', 'black').attr('stroke', '#999')
             })
             .on('click', function (event: MouseEvent) {
-              handleClickEdge(event, d3.select(this).datum() as any);
+              handleClickEdge(event, d3.select(this).datum() as any)
             }),
         (update) =>
           update
             .call((e: d3.Selection<SVGGElement, EdgeType, any, any>) =>
-              e.select('title').text((d: any) => stringUtils.displayPredicate((d as any).predicate))
+              e
+                .select('title')
+                .text((d: any) => stringUtils.displayPredicate((d as any).predicate)),
             )
             .call((e: d3.Selection<SVGGElement, EdgeType, any, any>) =>
               e
                 .select('text')
                 .select('textPath')
-                .text((d: any) => stringUtils.displayPredicate((d as any).predicate))
+                .text((d: any) => stringUtils.displayPredicate((d as any).predicate)),
             ),
-        (exit) => exit.remove()
-      );
+        (exit) => exit.remove(),
+      )
 
-    simulation.current.alpha(1).restart();
+    simulation.current.alpha(1).restart()
   }
 
   /**
@@ -398,15 +400,15 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
    * and then draw the graph
    */
   function resize() {
-    const container = d3.select('#resultExplorer');
-    const fullWidth = 50;
+    const container = d3.select('#resultExplorer')
+    const fullWidth = 50
     if (answerStore.selectedRowId !== '') {
       // get current width
-      const currentWidth = parseInt(container.style('width'), 10);
+      const currentWidth = parseInt(container.style('width'), 10)
       // find the difference in width
-      const widthDifference = fullWidth - (currentWidth % (fullWidth + 1)); // plus one width for already full width cases
+      const widthDifference = fullWidth - (currentWidth % (fullWidth + 1)) // plus one width for already full width cases
       // calculate transition duration
-      const duration = 1000 * (widthDifference / fullWidth);
+      const duration = 1000 * (widthDifference / fullWidth)
       // resize explorer and then draw the graph
       container
         .transition()
@@ -415,7 +417,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         .style('width', `${fullWidth}%`)
         .style('margin-left', '10px')
         .on('end', drawAnswerGraph)
-        .style('overflow-y', 'unset');
+        .style('overflow-y', 'unset')
     } else {
       // hide graph
       container
@@ -423,46 +425,46 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         .transition()
         .ease(d3.easeCircle)
         .duration(1000)
-        .style('width', '0%');
-      d3.select(svgRef.current).attr('width', '0');
+        .style('width', '0%')
+      d3.select(svgRef.current).attr('width', '0')
     }
   }
 
   const handleClickEdge = (event: MouseEvent, data: EdgeType) => {
-    setPopoverPosition({ x: event.clientX, y: event.clientY });
+    setPopoverPosition({ x: event.clientX, y: event.clientY })
 
-    setPopoverData(data);
-    setPopoverOpen('edge');
-  };
+    setPopoverData(data)
+    setPopoverOpen('edge')
+  }
 
   const handleClickNode = (data: NodeType) => {
-    if (!svgRef.current) return;
-    const { top, left } = svgRef.current.getBoundingClientRect();
+    if (!svgRef.current) return
+    const { top, left } = svgRef.current.getBoundingClientRect()
     setPopoverPosition({
       x: left + (data.x ?? 0),
       y: top + (data.y ?? 0),
-    });
+    })
     setPopoverData({
       name: data.name,
       id: data.id,
       categories: data.categories,
-    });
-    setPopoverOpen('node');
-  };
+    })
+    setPopoverOpen('node')
+  }
 
   useEffect(() => {
-    resize();
+    resize()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [answerStore.selectedResult, answerStore.selectedRowId, debouncedTrimmedNodes, colorMap]);
+  }, [answerStore.selectedResult, answerStore.selectedRowId, debouncedTrimmedNodes, colorMap])
 
   return (
-    <Paper id="resultExplorer" elevation={3}>
-      <h5 className="cardLabel">Answer Explorer</h5>
+    <Paper id='resultExplorer' elevation={3}>
+      <h5 className='cardLabel'>Answer Explorer</h5>
       {Boolean(answerStore.showNodePruneSlider) && (
-        <Box width={200} id="nodeNumSlider">
+        <Box width={200} id='nodeNumSlider'>
           <Slider
             value={numTrimmedNodes}
-            valueLabelDisplay="auto"
+            valueLabelDisplay='auto'
             min={answerStore.numQgNodes}
             max={
               answerStore.selectedResult.nodes
@@ -501,5 +503,5 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         {popoverOpen === 'node' && <NodeAttributesTable nodeData={popoverData as any} />}
       </Popover>
     </Paper>
-  );
+  )
 }

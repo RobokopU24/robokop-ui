@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Button, Alert, Snackbar } from '@mui/material';
+import React, { useState } from 'react'
+import { Button, Alert, Snackbar } from '@mui/material'
 
 /**
  * Generic copy-to-clipboard button
@@ -10,11 +10,11 @@ import { Button, Alert, Snackbar } from '@mui/material';
  * @param {boolean} disabled - is button disabled
  */
 interface ClipboardButtonProps {
-  startIcon?: React.ReactNode;
-  displayText: string;
-  clipboardText: () => string;
-  notificationText: string;
-  disabled?: boolean;
+  startIcon?: React.ReactNode
+  displayText: string
+  clipboardText: () => string
+  notificationText: string
+  disabled?: boolean
 }
 
 export default function ClipboardButton({
@@ -24,7 +24,7 @@ export default function ClipboardButton({
   notificationText,
   disabled,
 }: ClipboardButtonProps) {
-  const [snackbarNotification, updateSnackbarNotification] = useState('');
+  const [snackbarNotification, updateSnackbarNotification] = useState('')
 
   /**
    * Copy text into user clipboard on button click, and then show
@@ -32,30 +32,30 @@ export default function ClipboardButton({
    */
   function copyToClipboard() {
     // Using textarea to keep newlines in JSON
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = clipboardText();
-    document.body.appendChild(textarea);
-    textarea.select();
+    const textarea = document.createElement('textarea')
+    textarea.innerHTML = clipboardText()
+    document.body.appendChild(textarea)
+    textarea.select()
     // focus is needed in case copying is done from modal
     // also needs to come after select for unknown reason
-    textarea.focus();
+    textarea.focus()
     if (
       typeof navigator.clipboard !== 'undefined' &&
       typeof navigator.clipboard.writeText === 'function'
     ) {
-      navigator.clipboard.writeText(textarea.innerHTML);
+      navigator.clipboard.writeText(textarea.innerHTML)
     } else {
-      document.execCommand('copy');
+      document.execCommand('copy')
     }
-    textarea.remove();
-    updateSnackbarNotification(notificationText);
+    textarea.remove()
+    updateSnackbarNotification(notificationText)
   }
 
   return (
     <>
       <Button
         startIcon={startIcon}
-        variant="contained"
+        variant='contained'
         onClick={copyToClipboard}
         disabled={disabled}
       >
@@ -71,8 +71,8 @@ export default function ClipboardButton({
           horizontal: 'center',
         }}
       >
-        <Alert severity="success">{snackbarNotification}</Alert>
+        <Alert severity='success'>{snackbarNotification}</Alert>
       </Snackbar>
     </>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
-import EntryPoint from '../pages/entryPoint/EntryPoint';
+import { createFileRoute } from '@tanstack/react-router'
+import EntryPoint from '../pages/entryPoint/EntryPoint'
 
 export const Route = createFileRoute('/welcome')({
   component: RouteComponent,
@@ -26,8 +26,8 @@ export const Route = createFileRoute('/welcome')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <EntryPoint />;
+  return <EntryPoint />
 }

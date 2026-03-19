@@ -1,31 +1,31 @@
 /* eslint-disable indent */
-import * as d3 from "d3";
-import graphUtils from "./graph";
-import dragUtils from "./drag";
-import strings from "../strings";
-import highlighter from "./highlighter";
+import * as d3 from 'd3'
+import graphUtils from './graph'
+import dragUtils from './drag'
+import strings from '../strings'
+import highlighter from './highlighter'
 
 const rectSize = {
   w: 50,
   h: 25,
-};
+}
 
 const deleteRectOffset = {
   x: -54,
   y: -50,
-};
+}
 const deleteTextOffset = {
   x: (deleteRectOffset.x + (deleteRectOffset.x + rectSize.w)) / 2,
   y: (deleteRectOffset.y + (deleteRectOffset.y + rectSize.h)) / 2,
-};
+}
 const editRectOffset = {
   x: 4,
   y: -50,
-};
+}
 const editTextOffset = {
   x: (editRectOffset.x + (editRectOffset.x + rectSize.w)) / 2,
   y: (editRectOffset.y + (editRectOffset.y + rectSize.h)) / 2,
-};
+}
 
 /**
  * Find curve id regardless of node id order
@@ -34,43 +34,43 @@ const editTextOffset = {
  * @returns {string} `{nodeId}--{nodeId}`
  */
 function findCurveId(edgeCurves: any, id: any): any {
-  const [subject, object] = id.split("--");
+  const [subject, object] = id.split('--')
   const curveId = Object.keys(edgeCurves).find((curve: any) => {
-    const nodeIds = curve.split("--");
+    const nodeIds = curve.split('--')
     if (nodeIds.indexOf(subject) > -1 && nodeIds.indexOf(object) > -1) {
-      return true;
+      return true
     }
-    return false;
-  });
-  return curveId;
+    return false
+  })
+  return curveId
 }
 
 const edgeCurveProps = {
   get: (edgeCurves: any, id: any): any => {
-    const curveId = findCurveId(edgeCurves, id);
-    let flip = false;
+    const curveId = findCurveId(edgeCurves, id)
+    let flip = false
     if (curveId) {
       // n0--n1 != n1--n0
       // we need to flip in order to have all edges right side up
       if (curveId !== id) {
-        flip = true;
+        flip = true
       }
       // return existing edge curve props
-      return { indices: edgeCurves[curveId], flip };
+      return { indices: edgeCurves[curveId], flip }
     }
     // return new edge curve props
-    return { indices: [], flip };
+    return { indices: [], flip }
   },
   set: (edgeCurves: any, id: any, val: any): any => {
-    const curveId = findCurveId(edgeCurves, id);
+    const curveId = findCurveId(edgeCurves, id)
     if (curveId) {
-      edgeCurves[curveId] = val;
+      edgeCurves[curveId] = val
     } else {
-      edgeCurves[id] = val;
+      edgeCurves[id] = val
     }
-    return true;
+    return true
   },
-};
+}
 
 /**
  * Add numEdges, index, and strokeWidth to edge objects
@@ -80,40 +80,40 @@ const edgeCurveProps = {
  * @returns {object[]} list of edges with properties for d3 curves
  */
 function addEdgeCurveProperties(edges: any): any {
-  const curveProps = new Proxy({}, edgeCurveProps);
+  const curveProps = new Proxy({}, edgeCurveProps)
   edges.forEach((e: any, i: any) => {
-    const curve = curveProps[`${e.source.id}--${e.target.id}`];
-    curve.indices.push(i);
-    curveProps[`${e.source.id}--${e.target.id}`] = curve.indices;
-  });
+    const curve = curveProps[`${e.source.id}--${e.target.id}`]
+    curve.indices.push(i)
+    curveProps[`${e.source.id}--${e.target.id}`] = curve.indices
+  })
   edges.forEach((e: any, i: any) => {
-    const curve = curveProps[`${e.source.id}--${e.target.id}`];
-    e.numEdges = curve.indices.length;
-    const edgeIndex = curve.indices.indexOf(i);
-    e.index = edgeIndex;
+    const curve = curveProps[`${e.source.id}--${e.target.id}`]
+    e.numEdges = curve.indices.length
+    const edgeIndex = curve.indices.indexOf(i)
+    e.index = edgeIndex
     // if an even number of edges, move first middle edge to outside
     // to keep edges symmetrical
     if (curve.indices.length % 2 === 0 && edgeIndex === 0) {
-      e.index = curve.indices.length - 1;
+      e.index = curve.indices.length - 1
     }
     // if not the first index (0)
     if (edgeIndex) {
       // all even index should be one less and odd indices
       // should be flipped
-      const edgeL = edgeIndex % 2;
+      const edgeL = edgeIndex % 2
       if (!edgeL) {
-        e.index -= 1;
+        e.index -= 1
       } else {
-        e.index = -e.index;
+        e.index = -e.index
       }
     }
     // flip curve on any inverse edges
     if (curve.flip) {
-      e.index = -e.index;
+      e.index = -e.index
     }
-    e.strokeWidth = "3";
-  });
-  return edges;
+    e.strokeWidth = '3'
+  })
+  return edges
 }
 
 /**
@@ -123,135 +123,149 @@ function addEdgeCurveProperties(edges: any): any {
 function enter(edge: any): any {
   return (
     edge
-      .append("g")
-      .attr("id", (d: any) => d.id)
-      .attr("class", "edge")
+      .append('g')
+      .attr('id', (d: any) => d.id)
+      .attr('class', 'edge')
       // visible line
       .call((e: any) =>
         e
-          .append("path")
-          .attr("stroke", "#999")
-          .attr("fill", "none")
-          .attr("stroke-width", (d: any) => d.strokeWidth)
-          .attr("class", "edgePath")
-          .attr("marker-end", (d: any) => (graphUtils.shouldShowArrow(d, d.symmetric) ? "url(#arrow)" : ""))
+          .append('path')
+          .attr('stroke', '#999')
+          .attr('fill', 'none')
+          .attr('stroke-width', (d: any) => d.strokeWidth)
+          .attr('class', 'edgePath')
+          .attr('marker-end', (d: any) =>
+            graphUtils.shouldShowArrow(d, d.symmetric) ? 'url(#arrow)' : '',
+          ),
       )
       // wider clickable line
       .call((e: any) =>
         e
-          .append("path")
-          .attr("stroke", "transparent")
-          .attr("fill", "none")
-          .attr("stroke-width", 10)
-          .attr("class", (d: any) => `edgeTransparent edge-${d.id}`)
-          .attr("id", (d: any) => `edge${d.id}`)
+          .append('path')
+          .attr('stroke', 'transparent')
+          .attr('fill', 'none')
+          .attr('stroke-width', 10)
+          .attr('class', (d: any) => `edgeTransparent edge-${d.id}`)
+          .attr('id', (d: any) => `edge${d.id}`)
           .call(() =>
             e
-              .append("text")
-              .attr("class", "edgeText")
-              .attr("pointer-events", "none")
-              .style("text-anchor", "middle")
-              .attr("dy", (d: any) => -d.strokeWidth)
-              .append("textPath")
-              .attr("pointer-events", "none")
-              .attr("xlink:href", (d: any) => `#edge${d.id}`)
-              .style("user-select", "none")
-              .attr("startOffset", "50%")
-              .text((d: any) => (d.predicates ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(", ") : ""))
+              .append('text')
+              .attr('class', 'edgeText')
+              .attr('pointer-events', 'none')
+              .style('text-anchor', 'middle')
+              .attr('dy', (d: any) => -d.strokeWidth)
+              .append('textPath')
+              .attr('pointer-events', 'none')
+              .attr('xlink:href', (d: any) => `#edge${d.id}`)
+              .style('user-select', 'none')
+              .attr('startOffset', '50%')
+              .text((d: any) =>
+                d.predicates
+                  ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(', ')
+                  : '',
+              ),
           )
-          .call((eLabel: any) => eLabel.append("title").text((d: any) => (d.predicates ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(", ") : "")))
+          .call((eLabel: any) =>
+            eLabel
+              .append('title')
+              .text((d: any) =>
+                d.predicates
+                  ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(', ')
+                  : '',
+              ),
+          ),
       )
       // source edge end circle
       .call((e: any) =>
         e
-          .append("circle")
-          .attr("r", 5)
-          .attr("fill", "#B5D3E3")
+          .append('circle')
+          .attr('r', 5)
+          .attr('fill', '#B5D3E3')
           // .attr('fill', 'transparent')
-          .attr("stroke", "#999")
-          .attr("stroke-width", 1)
-          .style("opacity", 0)
-          .style("cursor", "pointer")
+          .attr('stroke', '#999')
+          .attr('stroke-width', 1)
+          .style('opacity', 0)
+          .style('cursor', 'pointer')
           // class is how we grab the attached node later
-          .attr("class", "source edgeEnd")
-          .on("mouseover", graphUtils.showElement)
-          .on("mouseout", graphUtils.hideElement)
+          .attr('class', 'source edgeEnd')
+          .on('mouseover', graphUtils.showElement)
+          .on('mouseout', graphUtils.hideElement),
       )
       // target edge end circle
       .call((e: any) =>
         e
-          .append("circle")
-          .attr("r", 5)
-          .attr("fill", "#B5D3E3")
+          .append('circle')
+          .attr('r', 5)
+          .attr('fill', '#B5D3E3')
           // .attr('fill', 'transparent')
-          .attr("stroke", "#999")
-          .attr("stroke-width", 1)
-          .style("opacity", 0)
-          .style("cursor", "pointer")
+          .attr('stroke', '#999')
+          .attr('stroke-width', 1)
+          .style('opacity', 0)
+          .style('cursor', 'pointer')
           // class is how we grab the attached node later
-          .attr("class", "target edgeEnd")
-          .on("mouseover", graphUtils.showElement)
-          .on("mouseout", graphUtils.hideElement)
+          .attr('class', 'target edgeEnd')
+          .on('mouseover', graphUtils.showElement)
+          .on('mouseout', graphUtils.hideElement),
       )
       // edge button group
       .call((eg: any) =>
         eg
-          .append("g")
-          .attr("class", "edgeButtons")
+          .append('g')
+          .attr('class', 'edgeButtons')
           .call((e: any) =>
             e
-              .append("rect")
-              .attr("rx", 5)
-              .attr("ry", 5)
-              .attr("transform", `translate(${deleteRectOffset.x},${deleteRectOffset.y})`)
-              .attr("width", rectSize.w)
-              .attr("height", rectSize.h)
-              .attr("stroke", "black")
-              .attr("fill", "white")
-              .style("filter", "url(#buttonShadow)")
-              .style("display", "none")
-              .attr("class", (d: any) => `${d.id} deleteRect`)
+              .append('rect')
+              .attr('rx', 5)
+              .attr('ry', 5)
+              .attr('transform', `translate(${deleteRectOffset.x},${deleteRectOffset.y})`)
+              .attr('width', rectSize.w)
+              .attr('height', rectSize.h)
+              .attr('stroke', 'black')
+              .attr('fill', 'white')
+              .style('filter', 'url(#buttonShadow)')
+              .style('display', 'none')
+              .attr('class', (d: any) => `${d.id} deleteRect`),
           )
           .call((e: any) =>
             e
-              .append("text")
-              .attr("dx", deleteTextOffset.x)
-              .attr("dy", deleteTextOffset.y)
-              .style("pointer-events", "none")
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .attr("class", (d: any) => `${d.id} deleteLabel`)
-              .style("display", "none")
-              .text("delete")
+              .append('text')
+              .attr('dx', deleteTextOffset.x)
+              .attr('dy', deleteTextOffset.y)
+              .style('pointer-events', 'none')
+              .attr('text-anchor', 'middle')
+              .attr('dominant-baseline', 'middle')
+              .attr('class', (d: any) => `${d.id} deleteLabel`)
+              .style('display', 'none')
+              .text('delete'),
           )
           .call((e: any) =>
             e
-              .append("rect")
-              .attr("rx", 5)
-              .attr("ry", 5)
-              .attr("transform", `translate(${editRectOffset.x},${editRectOffset.y})`)
-              .attr("width", rectSize.w)
-              .attr("height", rectSize.h)
-              .attr("stroke", "black")
-              .attr("fill", "white")
-              .style("filter", "url(#buttonShadow)")
-              .style("display", "none")
-              .attr("class", (d: any) => `${d.id} editRect`)
+              .append('rect')
+              .attr('rx', 5)
+              .attr('ry', 5)
+              .attr('transform', `translate(${editRectOffset.x},${editRectOffset.y})`)
+              .attr('width', rectSize.w)
+              .attr('height', rectSize.h)
+              .attr('stroke', 'black')
+              .attr('fill', 'white')
+              .style('filter', 'url(#buttonShadow)')
+              .style('display', 'none')
+              .attr('class', (d: any) => `${d.id} editRect`),
           )
           .call((e: any) =>
             e
-              .append("text")
-              .attr("dx", editTextOffset.x)
-              .attr("dy", editTextOffset.y)
-              .style("pointer-events", "none")
-              .attr("text-anchor", "middle")
-              .attr("dominant-baseline", "middle")
-              .attr("class", (d: any) => `${d.id} editLabel`)
-              .style("display", "none")
-              .text("edit")
-          )
+              .append('text')
+              .attr('dx', editTextOffset.x)
+              .attr('dy', editTextOffset.y)
+              .style('pointer-events', 'none')
+              .attr('text-anchor', 'middle')
+              .attr('dominant-baseline', 'middle')
+              .attr('class', (d: any) => `${d.id} editLabel`)
+              .style('display', 'none')
+              .text('edit'),
+          ),
       )
-  );
+  )
 }
 
 /**
@@ -260,19 +274,29 @@ function enter(edge: any): any {
  */
 function update(edge: any): any {
   return edge
-    .call((e: any) => e.select("title").text((d: any) => (d.predicates ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(", ") : "")))
     .call((e: any) =>
       e
-        .select(".edgePath")
-        // .attr('stroke-width', (d) => d.strokeWidth)
-        .attr("marker-end", (d: any) => (graphUtils.shouldShowArrow(d, d.symmetric) ? "url(#arrow)" : ""))
+        .select('title')
+        .text((d: any) =>
+          d.predicates ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(', ') : '',
+        ),
     )
     .call((e: any) =>
       e
-        .select("text")
-        .select("textPath")
-        .text((d: any) => (d.predicates ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(", ") : ""))
-    );
+        .select('.edgePath')
+        // .attr('stroke-width', (d) => d.strokeWidth)
+        .attr('marker-end', (d: any) =>
+          graphUtils.shouldShowArrow(d, d.symmetric) ? 'url(#arrow)' : '',
+        ),
+    )
+    .call((e: any) =>
+      e
+        .select('text')
+        .select('textPath')
+        .text((d: any) =>
+          d.predicates ? d.predicates.map((p: any) => strings.displayPredicate(p)).join(', ') : '',
+        ),
+    )
   //   .attr('dy', (d) => -d.strokeWidth));
 }
 
@@ -281,7 +305,7 @@ function update(edge: any): any {
  * @param {object} edge - d3 edge object
  */
 function exit(edge: any): any {
-  return edge.remove();
+  return edge.remove()
 }
 
 /**
@@ -290,21 +314,21 @@ function exit(edge: any): any {
  * @param {function} setEditId - set current edit id
  */
 function attachEdgeClick(editId: any, setEditId: any): void {
-  d3.selectAll(".edgeTransparent").on("click", (event: any, d: any) => {
+  d3.selectAll('.edgeTransparent').on('click', (event: any, d: any) => {
     if (editId !== d.id) {
-      event.stopPropagation();
-      d3.selectAll(".deleteRect,.deleteLabel,.editRect,.editLabel").style("display", "none");
-      d3.selectAll(`.${d.id}`).style("display", "inherit").raise();
-      setEditId(d.id);
-      d3.select(`#${d.id}`).raise();
-      highlighter.clearAllEdges();
-      highlighter.clearAllNodes();
-      highlighter.highlightTextEditorEdge(d.id);
-      highlighter.highlightGraphEdge(d.id);
+      event.stopPropagation()
+      d3.selectAll('.deleteRect,.deleteLabel,.editRect,.editLabel').style('display', 'none')
+      d3.selectAll(`.${d.id}`).style('display', 'inherit').raise()
+      setEditId(d.id)
+      d3.select(`#${d.id}`).raise()
+      highlighter.clearAllEdges()
+      highlighter.clearAllNodes()
+      highlighter.highlightTextEditorEdge(d.id)
+      highlighter.highlightGraphEdge(d.id)
     } else {
-      setEditId("");
+      setEditId('')
     }
-  });
+  })
 }
 
 /**
@@ -313,11 +337,11 @@ function attachEdgeClick(editId: any, setEditId: any): void {
  * @param {function} setEditId - set current edit id
  */
 function attachDeleteClick(deleteEdge: any, setEditId: any): void {
-  d3.selectAll(".edgeButtons > .deleteRect").on("click", (event: any, d: any) => {
-    const { id } = d;
-    setEditId("");
-    deleteEdge(id);
-  });
+  d3.selectAll('.edgeButtons > .deleteRect').on('click', (event: any, d: any) => {
+    const { id } = d
+    setEditId('')
+    deleteEdge(id)
+  })
 }
 
 /**
@@ -326,12 +350,12 @@ function attachDeleteClick(deleteEdge: any, setEditId: any): void {
  * @param {function} setEditId - set current edit id
  */
 function attachEditClick(openEditor: any, setEditId: any): void {
-  d3.selectAll(".edgeButtons > .editRect").on("click", (event: any, d: any) => {
-    const { id } = d;
-    const edgeAnchor = d3.select(`#${id} > .source`).node();
-    setEditId("");
-    openEditor(id, edgeAnchor, "editEdge");
-  });
+  d3.selectAll('.edgeButtons > .editRect').on('click', (event: any, d: any) => {
+    const { id } = d
+    const edgeAnchor = d3.select(`#${id} > .source`).node()
+    setEditId('')
+    openEditor(id, edgeAnchor, 'editEdge')
+  })
 }
 
 /**
@@ -339,23 +363,29 @@ function attachEditClick(openEditor: any, setEditId: any): void {
  * @param {string} editId - current edit id
  */
 function attachMouseHover(editId: any): void {
-  d3.selectAll(".edgeTransparent")
-    .on("mouseover", (event: any, d: any) => {
-      const { id } = d;
-      d3.selectAll(`#${id} > .source, #${id} > .target`).transition().duration(500).style("opacity", 1);
+  d3.selectAll('.edgeTransparent')
+    .on('mouseover', (event: any, d: any) => {
+      const { id } = d
+      d3.selectAll(`#${id} > .source, #${id} > .target`)
+        .transition()
+        .duration(500)
+        .style('opacity', 1)
       if (editId === id || !editId) {
-        highlighter.highlightTextEditorEdge(id);
-        highlighter.highlightGraphEdge(id);
+        highlighter.highlightTextEditorEdge(id)
+        highlighter.highlightGraphEdge(id)
       }
     })
-    .on("mouseout", (event: any, d: any) => {
-      const { id } = d;
-      d3.selectAll(`#${id} > .source, #${id} > .target`).transition().duration(1000).style("opacity", 0);
+    .on('mouseout', (event: any, d: any) => {
+      const { id } = d
+      d3.selectAll(`#${id} > .source, #${id} > .target`)
+        .transition()
+        .duration(1000)
+        .style('opacity', 0)
       if (editId !== id || !editId) {
-        highlighter.clearTextEditorEdge(id);
-        highlighter.clearGraphEdge(id);
+        highlighter.clearTextEditorEdge(id)
+        highlighter.clearGraphEdge(id)
       }
-    });
+    })
 }
 
 /**
@@ -366,22 +396,32 @@ function attachMouseHover(editId: any): void {
  * @param {integer} nodeRadius - radius of node circles
  * @param {function} updateEdge - update edge in query graph
  */
-function attachDrag(simulation: any, width: any, height: any, nodeRadius: any, updateEdge: any): void {
-  d3.selectAll(".edge").call((e: any) => e.selectAll(".edgeEnd").call(dragUtils.dragEdgeEnd(e, simulation, width, height, nodeRadius, updateEdge) as any));
+function attachDrag(
+  simulation: any,
+  width: any,
+  height: any,
+  nodeRadius: any,
+  updateEdge: any,
+): void {
+  d3.selectAll('.edge').call((e: any) =>
+    e
+      .selectAll('.edgeEnd')
+      .call(dragUtils.dragEdgeEnd(e, simulation, width, height, nodeRadius, updateEdge) as any),
+  )
 }
 
 /**
  * Remove all hover edge effects
  */
 function removeMouseHover(): void {
-  d3.selectAll(".edgeTransparent").on("mouseover", null).on("mouseout", null);
+  d3.selectAll('.edgeTransparent').on('mouseover', null).on('mouseout', null)
 }
 
 /**
  * Remove all edge click listeners
  */
 function removeClicks(): void {
-  d3.selectAll(".edgeTransparent").on("click", null);
+  d3.selectAll('.edgeTransparent').on('click', null)
 }
 
 export default {
@@ -399,4 +439,4 @@ export default {
 
   removeClicks,
   removeMouseHover,
-};
+}

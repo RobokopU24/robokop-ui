@@ -1,53 +1,53 @@
-import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { Box, Modal, Skeleton } from '@mui/material';
-import useAnswerStore from '../useAnswerStore';
-import { useQuery } from '@tanstack/react-query';
-import { llmRoutes } from '../../../API/routes';
-import { useQueryBuilderContext } from '../../../context/queryBuilder';
-import Markdown from 'react-markdown';
-import { transformKGToMinimalDynamic } from '../resultsTable/metaDataTransformation';
+import React, { useEffect, useRef, useState, useMemo } from 'react'
+import { Box, Modal, Skeleton } from '@mui/material'
+import useAnswerStore from '../useAnswerStore'
+import { useQuery } from '@tanstack/react-query'
+import { llmRoutes } from '../../../API/routes'
+import { useQueryBuilderContext } from '../../../context/queryBuilder'
+import Markdown from 'react-markdown'
+import { transformKGToMinimalDynamic } from '../resultsTable/metaDataTransformation'
 
 interface SummarizeWithAIModalProps {
-  isOpen: boolean;
-  onModalClose: () => void;
-  answerStore: ReturnType<typeof useAnswerStore>;
+  isOpen: boolean
+  onModalClose: () => void
+  answerStore: ReturnType<typeof useAnswerStore>
 }
 
 function SummarizeWithAIModal({ isOpen, onModalClose, answerStore }: SummarizeWithAIModalProps) {
   const minifiedJsonArray = useMemo(() => {
     if (!answerStore.message.results || !answerStore.message.knowledge_graph) {
-      return [];
+      return []
     }
 
-    const first10Results = answerStore.message.results.slice(0, 10);
+    const first10Results = answerStore.message.results.slice(0, 10)
 
     return first10Results.map((result) => {
       const resultWithKG = {
         knowledge_graph: answerStore.message.knowledge_graph,
         result,
-      };
-      return transformKGToMinimalDynamic(resultWithKG);
-    });
-  }, [answerStore.message.results, answerStore.message.knowledge_graph]);
+      }
+      return transformKGToMinimalDynamic(resultWithKG)
+    })
+  }, [answerStore.message.results, answerStore.message.knowledge_graph])
 
-  console.log('Transformed first 10 rows:', minifiedJsonArray);
+  console.log('Transformed first 10 rows:', minifiedJsonArray)
 
-  const [streamedText, setStreamedText] = useState<string>('');
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [streamedText, setStreamedText] = useState<string>('')
+  const abortControllerRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
-    if (isOpen) setStreamedText('');
-  }, [isOpen]);
+    if (isOpen) setStreamedText('')
+  }, [isOpen])
 
   const { refetch } = useQuery({
     queryKey: ['summaryLinks', answerStore.message],
     enabled: false,
     queryFn: async () => {
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        abortControllerRef.current.abort()
       }
 
-      abortControllerRef.current = new AbortController();
+      abortControllerRef.current = new AbortController()
 
       const response = await fetch(llmRoutes.summarizeGraph, {
         method: 'POST',
@@ -56,59 +56,59 @@ function SummarizeWithAIModal({ isOpen, onModalClose, answerStore }: SummarizeWi
         },
         body: JSON.stringify({ graphs: minifiedJsonArray }),
         signal: abortControllerRef.current.signal,
-      });
+      })
 
       if (!response.body) {
-        throw new Error('No response body');
+        throw new Error('No response body')
       }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+      const reader = response.body.getReader()
+      const decoder = new TextDecoder()
 
-      let full = '';
+      let full = ''
 
       try {
         while (true) {
-          const { done, value } = await reader.read();
+          const { done, value } = await reader.read()
           if (done) {
-            break;
+            break
           }
-          const chunk = decoder.decode(value);
-          full += chunk;
-          setStreamedText((prev) => prev + chunk);
+          const chunk = decoder.decode(value)
+          full += chunk
+          setStreamedText((prev) => prev + chunk)
         }
       } catch (error) {
         if (error instanceof Error && error.name === 'AbortError') {
-          console.log('Stream aborted');
-          return '';
+          console.log('Stream aborted')
+          return ''
         }
-        throw error;
+        throw error
       } finally {
-        reader.releaseLock();
+        reader.releaseLock()
       }
 
-      return full;
+      return full
     },
-  });
+  })
 
   useEffect(() => {
     if (isOpen) {
-      refetch();
+      refetch()
     } else {
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-        abortControllerRef.current = null;
+        abortControllerRef.current.abort()
+        abortControllerRef.current = null
       }
     }
-  }, [isOpen, refetch]);
+  }, [isOpen, refetch])
 
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
+        abortControllerRef.current.abort()
       }
-    };
-  }, []);
+    }
+  }, [])
 
   return (
     <Modal
@@ -152,12 +152,12 @@ function SummarizeWithAIModal({ isOpen, onModalClose, answerStore }: SummarizeWi
           </Markdown>
         ) : (
           <>
-            {Array(10).fill(<Skeleton variant="rounded" width="100%" height={20} sx={{ mb: 1 }} />)}
+            {Array(10).fill(<Skeleton variant='rounded' width='100%' height={20} sx={{ mb: 1 }} />)}
           </>
         )}
       </Box>
     </Modal>
-  );
+  )
 }
 
-export default SummarizeWithAIModal;
+export default SummarizeWithAIModal

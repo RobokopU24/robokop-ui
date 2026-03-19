@@ -1,41 +1,41 @@
-import React, { useEffect } from 'react';
-import useBiolinkModel from '../stores/useBiolinkModel';
-import API from '../API';
-import { useAlert } from './AlertProvider';
-import theme from '../theme';
-import BiolinkContext from '../context/biolink';
-import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
-import { ThemeProvider as StylesThemeProvider } from '@mui/styles';
-import { AuthProvider } from '../context/AuthContext';
-import Header from './header/Header';
-import Footer from './footer/Footer';
-import { PostHogProvider } from 'posthog-js/react';
-import { QueryBuilderProvider } from '../context/queryBuilder';
-import { queryClient } from '../utils/queryClient';
+import React, { useEffect } from 'react'
+import useBiolinkModel from '../stores/useBiolinkModel'
+import API from '../API'
+import { useAlert } from './AlertProvider'
+import theme from '../theme'
+import BiolinkContext from '../context/biolink'
+import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import { ThemeProvider as StylesThemeProvider } from '@mui/styles'
+import { AuthProvider } from '../context/AuthContext'
+import Header from './header/Header'
+import Footer from './footer/Footer'
+import { PostHogProvider } from 'posthog-js/react'
+import { QueryBuilderProvider } from '../context/queryBuilder'
+import { queryClient } from '../utils/queryClient'
 
 interface RootComponentWrapperProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 function RootComponentWrapper({ children }: RootComponentWrapperProps) {
-  const biolink = useBiolinkModel();
-  const { displayAlert } = useAlert();
+  const biolink = useBiolinkModel()
+  const { displayAlert } = useAlert()
 
   async function fetchBiolink() {
-    const response = await API.biolink.getModelSpecification();
+    const response = await API.biolink.getModelSpecification()
     if (response.status === 'error') {
       displayAlert(
         'error',
-        'Failed to contact server to download biolink model. You will not be able to select general nodes or predicates. Please try again later.'
-      );
-      return;
+        'Failed to contact server to download biolink model. You will not be able to select general nodes or predicates. Please try again later.',
+      )
+      return
     }
-    biolink.setBiolinkModel(response);
+    biolink.setBiolinkModel(response)
   }
 
   useEffect(() => {
-    fetchBiolink();
-  }, []);
+    fetchBiolink()
+  }, [])
 
   return (
     <PostHogProvider
@@ -52,9 +52,9 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
           <MuiThemeProvider theme={theme}>
             <StylesThemeProvider theme={theme}>
               <QueryBuilderProvider>
-                <div id="pageContainer">
+                <div id='pageContainer'>
                   <Header />
-                  <div id="contentContainer">{children}</div>
+                  <div id='contentContainer'>{children}</div>
                   <Footer />
                 </div>
               </QueryBuilderProvider>
@@ -63,7 +63,7 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
         </BiolinkContext.Provider>
       </AuthProvider>
     </PostHogProvider>
-  );
+  )
 }
 
-export default RootComponentWrapper;
+export default RootComponentWrapper

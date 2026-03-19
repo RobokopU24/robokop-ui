@@ -1,23 +1,23 @@
-import { IconButton, Modal } from '@mui/material';
-import Close from '@mui/icons-material/Close';
-import React, { useState } from 'react';
+import { IconButton, Modal } from '@mui/material'
+import Close from '@mui/icons-material/Close'
+import React, { useState } from 'react'
 
 interface FigureProps {
-  image: string;
-  imageAlt: string;
-  children?: React.ReactNode;
-  figureStyle?: React.CSSProperties;
+  image: string
+  imageAlt: string
+  children?: React.ReactNode
+  figureStyle?: React.CSSProperties
 }
 
 const Figure: React.FC<FigureProps> = ({ image, imageAlt, children, figureStyle }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
 
   return (
     <>
       <figure style={figureStyle}>
         <button
           style={{ all: 'unset', cursor: 'pointer' }}
-          type="button"
+          type='button'
           onClick={() => setOpen(true)}
         >
           <img src={image} alt={imageAlt} />
@@ -27,7 +27,7 @@ const Figure: React.FC<FigureProps> = ({ image, imageAlt, children, figureStyle 
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        aria-labelledby="Make image fullscreen"
+        aria-labelledby='Make image fullscreen'
         aria-describedby={imageAlt}
         style={{
           display: 'flex',
@@ -73,7 +73,7 @@ const Figure: React.FC<FigureProps> = ({ image, imageAlt, children, figureStyle 
         </div>
       </Modal>
     </>
-  );
-};
+  )
+}
 
-export default Figure;
+export default Figure

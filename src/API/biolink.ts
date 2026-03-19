@@ -1,19 +1,19 @@
-import utils from './utils';
-import { api } from './baseUrlProxy';
+import utils from './utils'
+import { api } from './baseUrlProxy'
 
 const routes = {
   /**
    * Get biolink model specification
    */
   async getModelSpecification() {
-    let response;
+    let response
     try {
-      response = await api.get('/api/biolink');
+      response = await api.get('/api/biolink')
     } catch (error) {
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
-    return response.data;
+    return response.data
   },
-};
+}
 
-export default routes;
+export default routes

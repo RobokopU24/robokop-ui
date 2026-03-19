@@ -1,12 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
-import Info from '../../../pages/details/Info';
-import API from '../../../API';
+import { createFileRoute } from '@tanstack/react-router'
+import Info from '../../../pages/details/Info'
+import API from '../../../API'
 
 export const Route = createFileRoute('/details/$details_id/')({
   component: RouteComponent,
   loader: async ({ params }) => {
-    const nodeData = await API.details.getNodeDetails(params.details_id);
-    return { nodeData };
+    const nodeData = await API.details.getNodeDetails(params.details_id)
+    return { nodeData }
   },
   head: ({ loaderData }) => ({
     meta: [
@@ -28,10 +28,10 @@ export const Route = createFileRoute('/details/$details_id/')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  const { details_id } = Route.useParams();
-  const { nodeData } = Route.useLoaderData();
-  return <Info details_id={details_id} nodeData={nodeData} />;
+  const { details_id } = Route.useParams()
+  const { nodeData } = Route.useLoaderData()
+  return <Info details_id={details_id} nodeData={nodeData} />
 }

@@ -1,15 +1,15 @@
-import React from 'react';
-import { Container, Grid, Typography, Card, Button, Divider } from '@mui/material';
-import { blue } from '@mui/material/colors';
-import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Link } from '@tanstack/react-router';
+import React from 'react'
+import { Container, Grid, Typography, Card, Button, Divider } from '@mui/material'
+import { blue } from '@mui/material/colors'
+import ArrowForward from '@mui/icons-material/ArrowForward'
+import { Link } from '@tanstack/react-router'
 
 export default function Guide() {
   return (
-    <Container sx={{ my: 6 }} maxWidth="md">
-      <Grid container spacing={4} justifyContent="center">
+    <Container sx={{ my: 6 }} maxWidth='md'>
+      <Grid container spacing={4} justifyContent='center'>
         <Grid>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant='h4' gutterBottom>
             ROBOKOP Quick Start Guide
           </Typography>
           <Divider sx={{ mb: 2 }} />
@@ -34,13 +34,13 @@ export default function Guide() {
             elevation={4}
             sx={{ my: 4, p: 3, display: 'flex', flexDirection: 'column', gap: 2 }}
           >
-            <Typography variant="h6">
+            <Typography variant='h6'>
               Looking for a step-by-step introduction to ROBOKOP?
             </Typography>
             <Button
               component={Link}
-              to="/tutorial"
-              variant="contained"
+              to='/tutorial'
+              variant='contained'
               endIcon={<ArrowForward />}
               sx={{
                 backgroundColor: blue[600],
@@ -55,7 +55,7 @@ export default function Guide() {
             </Button>
           </Card>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Ask a Question
           </Typography>
           <Typography component={'p'}>
@@ -71,7 +71,7 @@ export default function Guide() {
             Uniform Resource Identifier) (e.g., MONDO:0004989 for breast cancer).
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Receive an Answer
           </Typography>
           <Typography component={'p'}>
@@ -92,7 +92,7 @@ export default function Guide() {
             knowledge sources are integrated into the ROBOKOP KG and the reasoning engine matures.
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Understand an Answer
           </Typography>
           <Typography component={'p'}>
@@ -103,7 +103,7 @@ export default function Guide() {
             knowledge sources within the ROBOKOP KG.
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Interpret a Score and Rank
           </Typography>
           <Typography component={'p'}>
@@ -120,7 +120,7 @@ export default function Guide() {
             derived from OmniCorp.
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Explore an Answer
           </Typography>
           <Typography component={'p'}>
@@ -145,7 +145,7 @@ export default function Guide() {
             provided as total counts.
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Refine the Answer Set
           </Typography>
           <Typography component={'p'}>
@@ -171,72 +171,72 @@ export default function Guide() {
             may find this process to be challenging. For help with node and edge categories, please
             refer to{' '}
             <a
-              href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9372416/"
-              target="_blank"
-              rel="noreferrer"
+              href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9372416/'
+              target='_blank'
+              rel='noreferrer'
             >
               Unni et al. 2022
             </a>{' '}
             and the{' '}
-            <a href="https://biolink.github.io/biolink-model/" target="_blank" rel="noreferrer">
+            <a href='https://biolink.github.io/biolink-model/' target='_blank' rel='noreferrer'>
               Biolink GitHub website
             </a>
             . Users may also find this{' '}
-            <a href="http://tree-viz-biolink.herokuapp.com/" target="_blank" rel="noreferrer">
+            <a href='http://tree-viz-biolink.herokuapp.com/' target='_blank' rel='noreferrer'>
               Biolink tree visualization
             </a>{' '}
             to be helpful. For help with identifying more specific named nodes and CURIEs, users are
             encouraged to explore ontologies such as{' '}
-            <a href="https://monarchinitiative.org/" target="_blank" rel="noreferrer">
+            <a href='https://monarchinitiative.org/' target='_blank' rel='noreferrer'>
               Monarch Disease Ontology (MONDO)
             </a>
             .
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Survey the Knowledge Sources
           </Typography>
           <Typography component={'p'}>
             Information on ROBOKOP’s knowledge sources, including URLs, their publicly available
             application programming interfaces (APIs), and other resources, can be found on the{' '}
             <a
-              href="https://robokop.renci.org/api-docs/docs/category/automat"
-              target="_blank"
-              rel="noreferrer"
+              href='https://robokop.renci.org/api-docs/docs/category/automat'
+              target='_blank'
+              rel='noreferrer'
             >
               Automat page
             </a>
             .
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Review the Open-source Licensing
           </Typography>
           <Typography component={'p'}>
             ROBOKOP is an open-source software application licensed under the{' '}
-            <a href="https://opensource.org/license/mit/" target="_blank" rel="noreferrer">
+            <a href='https://opensource.org/license/mit/' target='_blank' rel='noreferrer'>
               MIT license
             </a>
             . All software code can be found on the{' '}
-            <a href="https://github.com/RobokopU24" target="_blank" rel="noreferrer">
+            <a href='https://github.com/RobokopU24' target='_blank' rel='noreferrer'>
               ROBOKOP GitHub repository
             </a>
             .
           </Typography>
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Find Additional User Documentation
           </Typography>
           <Typography component={'p'}>
             Users who are seeking additional information can review{' '}
-            <Link to="/tutorial">the ROBOKOP tutorial</Link> or refer to the publications below.
-            Users may also submit a <a href="https://robokop.renci.org/#contact">HELP request</a>.
+            <Link to='/tutorial'>the ROBOKOP tutorial</Link> or refer to the publications below.
+            Users may also submit a <a href='https://robokop.renci.org/#contact'>HELP request</a>.
           </Typography>
           <Typography component={'p'}>
             Bizon C, Cox S, Balhoff J, Kebede Y, Wang P, Morton K, Fecho K, Tropsha A. ROBOKOP KG
             and KGB: integrated knowledge graphs from federated sources. J Chem Inf Model 2019 Dec
             23;59(12):4968–4973. doi: 10.1021/acs.jcim.9b00683.{' '}
-            <a href="https://pubmed.ncbi.nlm.nih.gov/31769676/" target="_blank" rel="noreferrer">
+            <a href='https://pubmed.ncbi.nlm.nih.gov/31769676/' target='_blank' rel='noreferrer'>
               https://pubmed.ncbi.nlm.nih.gov/31769676/
             </a>
             .
@@ -245,7 +245,7 @@ export default function Guide() {
             Morton K, Wang P, Bizon C, Cox S, Balhoff J, Kebede Y, Fecho K, Tropsha A. ROBOKOP: an
             abstraction layer and user interface for knowledge graphs to support question answering.
             Bioinformatics 2019;pii:btz604. doi: 10.1093/bioinformatics/btz604.{' '}
-            <a href="https://pubmed.ncbi.nlm.nih.gov/31410449/" target="_blank" rel="noreferrer">
+            <a href='https://pubmed.ncbi.nlm.nih.gov/31410449/' target='_blank' rel='noreferrer'>
               https://pubmed.ncbi.nlm.nih.gov/31410449/
             </a>
             .
@@ -253,5 +253,5 @@ export default function Guide() {
         </Grid>
       </Grid>
     </Container>
-  );
+  )
 }

@@ -1,12 +1,12 @@
-import { Section } from './Section/Section';
+import { Section } from './Section/Section'
 
 function License() {
   return (
-    <Section title="License" index={4}>
+    <Section title='License' index={4}>
       <p>
         The ROBOKOP system and the ROBOKOP knowledge graph &quot;KG&quot; are governed under an
         open-source{' '}
-        <a href="https://opensource.org/license/mit/" target="_blank">
+        <a href='https://opensource.org/license/mit/' target='_blank'>
           MIT License
         </a>
         . Both resources make use of open-source primary data sources. While we make every effort to
@@ -22,7 +22,7 @@ function License() {
         applications and comply with all applicable legal and ethical guidelines.
       </p>
     </Section>
-  );
+  )
 }
 
-export default License;
+export default License

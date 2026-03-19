@@ -1,18 +1,18 @@
-import React from 'react';
-import DetailsResultCard from './DetailsResultCard';
+import React from 'react'
+import DetailsResultCard from './DetailsResultCard'
 
 interface NameResultsProps {
-  nameResults: any[];
+  nameResults: any[]
 }
 
 function NameResults({ nameResults }: NameResultsProps) {
   return (
-    <div className="details-card-multi-grid">
+    <div className='details-card-multi-grid'>
       {nameResults.map((result, index) => (
-        <DetailsResultCard key={index} result={result} type="name" />
+        <DetailsResultCard key={index} result={result} type='name' />
       ))}
     </div>
-  );
+  )
 }
 
-export default NameResults;
+export default NameResults

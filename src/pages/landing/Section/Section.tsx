@@ -1,11 +1,11 @@
-import styles from './Section.module.css';
-import { toKebabCase } from '../toKebabCase';
+import styles from './Section.module.css'
+import { toKebabCase } from '../toKebabCase'
 
 interface SectionProps {
-  children?: React.ReactNode;
-  title: string;
-  hideTitle?: boolean;
-  index: number;
+  children?: React.ReactNode
+  title: string
+  hideTitle?: boolean
+  index: number
 }
 
 export const Section = ({ children, title, index, hideTitle = false }: SectionProps) => {
@@ -19,5 +19,5 @@ export const Section = ({ children, title, index, hideTitle = false }: SectionPr
 
       {children}
     </section>
-  );
-};
+  )
+}

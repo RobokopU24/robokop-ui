@@ -1,16 +1,16 @@
-import React from 'react';
-import { Box, IconButton, Modal } from '@mui/material';
-import Close from '@mui/icons-material/Close';
-import { Sankey } from './Sankey';
+import React from 'react'
+import { Box, IconButton, Modal } from '@mui/material'
+import Close from '@mui/icons-material/Close'
+import { Sankey } from './Sankey'
 
 function SankeyGraphModal({
   isOpen,
   onClose,
   graphData,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  graphData: any;
+  isOpen: boolean
+  onClose: () => void
+  graphData: any
 }) {
   return (
     <Modal
@@ -46,7 +46,7 @@ function SankeyGraphModal({
         <Sankey data={graphData} height={3400} />
       </Box>
     </Modal>
-  );
+  )
 }
 
-export default SankeyGraphModal;
+export default SankeyGraphModal

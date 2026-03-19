@@ -1,15 +1,15 @@
-import React from 'react';
+import React from 'react'
 
 export default function ShowPropertyValue({
   propertyValue,
 }: {
-  propertyValue: string | number | boolean | Array<string | number>;
+  propertyValue: string | number | boolean | Array<string | number>
 }) {
   if (typeof propertyValue === 'boolean') {
     if (propertyValue) {
-      return <span>Yes</span>;
+      return <span>Yes</span>
     }
-    return <span>No</span>;
+    return <span>No</span>
   } else if (Array.isArray(propertyValue)) {
     return (
       <span
@@ -19,8 +19,8 @@ export default function ShowPropertyValue({
           <div key={m}>{m}</div>
         ))}
       </span>
-    );
+    )
   } else {
-    return <span>{propertyValue}</span>;
+    return <span>{propertyValue}</span>
   }
 }

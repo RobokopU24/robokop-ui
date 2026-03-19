@@ -1,12 +1,12 @@
 interface Hierarchies {
-  [category: string]: string[];
+  [category: string]: string[]
 }
 
-type Category = string;
+type Category = string
 
-type ConceptColorMap = { [category: string]: string };
+type ConceptColorMap = { [category: string]: string }
 
-export const undefinedColor = '#FFEEA3';
+export const undefinedColor = '#FFEEA3'
 
 export const conceptColorMap: ConceptColorMap = {
   'biolink:AnatomicalEntity': '#e5d8bd', // Brown
@@ -39,44 +39,44 @@ export const conceptColorMap: ConceptColorMap = {
   'biolink:Protein': '#ccebc5', // Green like gene
   'biolink:SequenceVariant': '#00c4e6', // Light teal
   'biolink:SmallMolecule': '#7b68ee', // Medium Slate Blue
-};
+}
 
 export default function getNodeCategoryColorMap(hierarchies: Hierarchies) {
   return (categories: Category | Category[]): [Category | null, string] => {
     if (!categories || !Object.keys(hierarchies).length) {
-      return [null, undefinedColor];
+      return [null, undefinedColor]
     }
     if (!Array.isArray(categories)) {
-      categories = [categories]; // eslint-disable-line
+      categories = [categories] // eslint-disable-line
     }
     // traverse up hierarchy until we find a category we have a color for
-    let category: Category | undefined;
-    (categories as Category[]).forEach((c) => {
+    let category: Category | undefined
+    ;(categories as Category[]).forEach((c) => {
       if (!category) {
-        const hierarchy = hierarchies[c];
+        const hierarchy = hierarchies[c]
         if (hierarchy) {
-          const index = hierarchy.indexOf(c);
-          const parentCategories = hierarchy.slice(index);
-          const bestKnownCategory = parentCategories.find((h) => h in conceptColorMap);
+          const index = hierarchy.indexOf(c)
+          const parentCategories = hierarchy.slice(index)
+          const bestKnownCategory = parentCategories.find((h) => h in conceptColorMap)
           if (bestKnownCategory !== undefined) {
-            category = bestKnownCategory;
+            category = bestKnownCategory
           }
         }
       }
-    });
+    })
     if (category !== undefined) {
-      return [category, conceptColorMap[category]];
+      return [category, conceptColorMap[category]]
     }
 
     // only if we have no predefined color in the hierarchy
-    return [null, undefinedColor];
-  };
+    return [null, undefinedColor]
+  }
 }
 
 export function getContrastColor(hex: string): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  return brightness > 128 ? '#000000' : '#FFFFFF';
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness > 128 ? '#000000' : '#FFFFFF'
 }

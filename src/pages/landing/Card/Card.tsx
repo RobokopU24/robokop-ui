@@ -1,16 +1,16 @@
-import { type HTMLAttributeAnchorTarget } from 'react';
-import { ExternalLinkIcon } from '../icons/ExternalLinkIcon/ExternalLinkIcon';
-import styles from './Card.module.css';
-import { InternalLinkIcon } from '../icons/InternalLinkIcon/InternalLinkIcon';
+import { type HTMLAttributeAnchorTarget } from 'react'
+import { ExternalLinkIcon } from '../icons/ExternalLinkIcon/ExternalLinkIcon'
+import styles from './Card.module.css'
+import { InternalLinkIcon } from '../icons/InternalLinkIcon/InternalLinkIcon'
 
 interface CardProps {
-  children: React.ReactNode;
-  title: string;
-  href: string;
-  target?: HTMLAttributeAnchorTarget | undefined;
-  icon?: React.ReactNode;
-  gradient?: 'blue' | 'purple';
-  warning?: string;
+  children: React.ReactNode
+  title: string
+  href: string
+  target?: HTMLAttributeAnchorTarget | undefined
+  icon?: React.ReactNode
+  gradient?: 'blue' | 'purple'
+  warning?: string
 }
 
 export const Card = ({ children, title, href, target, icon, gradient, warning }: CardProps) => {
@@ -49,5 +49,5 @@ export const Card = ({ children, title, href, target, icon, gradient, warning }:
         )}
       </article>
     </a>
-  );
-};
+  )
+}

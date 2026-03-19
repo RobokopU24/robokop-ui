@@ -1,46 +1,46 @@
-import React from 'react';
-import FaGoogle from '@mui/icons-material/Google';
-import FaGithub from '@mui/icons-material/GitHub';
-import FaFingerprint from '@mui/icons-material/Fingerprint';
-import API from '../API/routes';
-import axios from 'axios';
-import { useAlert } from './AlertProvider';
-import { useAuth } from '../context/AuthContext';
-import { usePasskey } from '../hooks/usePasskey';
-import { Dialog, DialogTitle, DialogContent, Button, IconButton, Input } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import React from 'react'
+import FaGoogle from '@mui/icons-material/Google'
+import FaGithub from '@mui/icons-material/GitHub'
+import FaFingerprint from '@mui/icons-material/Fingerprint'
+import API from '../API/routes'
+import axios from 'axios'
+import { useAlert } from './AlertProvider'
+import { useAuth } from '../context/AuthContext'
+import { usePasskey } from '../hooks/usePasskey'
+import { Dialog, DialogTitle, DialogContent, Button, IconButton, Input } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface LoginDialogProps {
-  open: boolean;
-  onClose: () => void;
+  open: boolean
+  onClose: () => void
 }
 
 function LoginDialog({ open, onClose }: LoginDialogProps) {
-  const { displayAlert } = useAlert();
-  const [email, setEmail] = React.useState('');
-  const { login } = useAuth();
-  const { loginWithPasskey, browserSupport } = usePasskey();
+  const { displayAlert } = useAlert()
+  const [email, setEmail] = React.useState('')
+  const { login } = useAuth()
+  const { loginWithPasskey, browserSupport } = usePasskey()
   const handlePasskeyLogin = async () => {
     try {
-      const response = await loginWithPasskey();
-      login(response.user, response.token);
-      onClose();
+      const response = await loginWithPasskey()
+      login(response.user, response.token)
+      onClose()
     } catch (err) {
-      console.error('Passkey login error:', err);
+      console.error('Passkey login error:', err)
       displayAlert(
         'error',
-        'Unable to login with passkey or no passkey registered. Please try again later. Please continue with another login method.'
-      );
+        'Unable to login with passkey or no passkey registered. Please try again later. Please continue with another login method.',
+      )
     }
-  };
+  }
 
   const handleGoogleLogin = () => {
-    window.location.href = API.authRoutes.google;
-  };
+    window.location.href = API.authRoutes.google
+  }
 
   const handleGithubLogin = () => {
-    window.location.href = API.authRoutes.github;
-  };
+    window.location.href = API.authRoutes.github
+  }
 
   const handleMagicLinkLogin = () => {
     axios
@@ -50,21 +50,21 @@ function LoginDialog({ open, onClose }: LoginDialogProps) {
       .then((response) => {
         displayAlert(
           'success',
-          response.data.message || 'Login link sent to your email. Please check your inbox.'
-        );
-        setEmail('');
-        onClose();
+          response.data.message || 'Login link sent to your email. Please check your inbox.',
+        )
+        setEmail('')
+        onClose()
       })
       .catch((error) => {
         displayAlert(
           'error',
-          error.error || error.message || 'Failed to send magic link. Please try again.'
-        );
-      });
-  };
+          error.error || error.message || 'Failed to send magic link. Please try again.',
+        )
+      })
+  }
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth='xs' fullWidth>
       <DialogTitle>
         <div
           style={{
@@ -74,7 +74,7 @@ function LoginDialog({ open, onClose }: LoginDialogProps) {
           }}
         >
           <p style={{ margin: 0 }}>Login</p>
-          <IconButton style={{ fontSize: '18px' }} title="Close" onClick={onClose}>
+          <IconButton style={{ fontSize: '18px' }} title='Close' onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </div>
@@ -89,14 +89,14 @@ function LoginDialog({ open, onClose }: LoginDialogProps) {
           }}
         >
           <Input
-            placeholder="Email"
-            type="email"
+            placeholder='Email'
+            type='email'
             fullWidth
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <Button variant="contained" color="primary" onClick={handleMagicLinkLogin}>
+          <Button variant='contained' color='primary' onClick={handleMagicLinkLogin}>
             Login
           </Button>
           <div
@@ -112,16 +112,16 @@ function LoginDialog({ open, onClose }: LoginDialogProps) {
             <p style={{ margin: 0, color: '#aaa', fontSize: '1rem' }}>or</p>
             <div style={{ height: '1px', backgroundColor: '#ccc', flex: 1 }} />
           </div>
-          <Button onClick={handleGithubLogin} variant="outlined" fullWidth startIcon={<FaGithub />}>
+          <Button onClick={handleGithubLogin} variant='outlined' fullWidth startIcon={<FaGithub />}>
             Login with GitHub
           </Button>
-          <Button onClick={handleGoogleLogin} variant="outlined" fullWidth startIcon={<FaGoogle />}>
+          <Button onClick={handleGoogleLogin} variant='outlined' fullWidth startIcon={<FaGoogle />}>
             Login with Google
           </Button>
           {browserSupport && (
             <Button
               onClick={handlePasskeyLogin}
-              variant="outlined"
+              variant='outlined'
               fullWidth
               startIcon={<FaFingerprint />}
             >
@@ -131,7 +131,7 @@ function LoginDialog({ open, onClose }: LoginDialogProps) {
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 
-export default LoginDialog;
+export default LoginDialog

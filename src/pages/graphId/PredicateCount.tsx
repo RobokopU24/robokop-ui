@@ -1,41 +1,69 @@
-import React, { useMemo, useState } from "react";
-import { CardContent, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Pagination, Select, MenuItem, FormControl, TextField, InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, getSortedRowModel, SortingState, getPaginationRowModel } from "@tanstack/react-table";
-import PredicateCountDetailsModal from "./PredicateCountDetailsModal";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
-import { GraphSchemaV2 } from "../../API/graphMetadata";
+import React, { useMemo, useState } from 'react'
+import {
+  CardContent,
+  Divider,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Box,
+  Typography,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  TextField,
+  InputAdornment,
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  SortingState,
+  getPaginationRowModel,
+} from '@tanstack/react-table'
+import PredicateCountDetailsModal from './PredicateCountDetailsModal'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
+import { GraphSchemaV2 } from '../../API/graphMetadata'
 
 type PredicateData = {
-  predicate: string;
-  count: number;
-  value: { property: string; count: number }[];
-};
+  predicate: string
+  count: number
+  value: { property: string; count: number }[]
+}
 
-declare module "@tanstack/react-table" {
+declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
-    align?: "left" | "center" | "right";
+    align?: 'left' | 'center' | 'right'
   }
 }
 
-const columnHelper = createColumnHelper<PredicateData>();
+const columnHelper = createColumnHelper<PredicateData>()
 
 function PredicateCount({ graphData, schema }: { graphData?: any; schema?: GraphSchemaV2 }) {
-  const [sorting, setSorting] = useState<SortingState>([{ id: "count", desc: true }]);
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
-  const { pageIndex, pageSize } = pagination;
-  const [searchQuery, setSearchQuery] = useState("");
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'count', desc: true }])
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
+  const { pageIndex, pageSize } = pagination
+  const [searchQuery, setSearchQuery] = useState('')
 
   const data = useMemo(() => {
-    const hashmap: Record<string, { property: string; count: number }[]> = {};
-    for (const [property, objectList] of Object.entries(schema?.schema.edges_summary.predicates_by_knowledge_source || {})) {
+    const hashmap: Record<string, { property: string; count: number }[]> = {}
+    for (const [property, objectList] of Object.entries(
+      schema?.schema.edges_summary.predicates_by_knowledge_source || {},
+    )) {
       for (const [predicate, count] of Object.entries(objectList as object)) {
         if (hashmap[predicate]) {
-          hashmap[predicate].push({ property, count: Number(count) });
+          hashmap[predicate].push({ property, count: Number(count) })
         } else {
-          hashmap[predicate] = [{ property, count: Number(count) }];
+          hashmap[predicate] = [{ property, count: Number(count) }]
         }
       }
     }
@@ -43,31 +71,37 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
       predicate,
       count: hashmap[predicate].reduce((sum, item) => sum + item.count, 0),
       value: hashmap[predicate],
-    }));
-  }, [schema]);
+    }))
+  }, [schema])
 
   const filteredData = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter((row) => row.predicate.toLowerCase().includes(q));
-  }, [data, searchQuery]);
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return data
+    return data.filter((row) => row.predicate.toLowerCase().includes(q))
+  }, [data, searchQuery])
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("predicate", {
-        header: "Predicate",
-        cell: (info) => <ExpandableRows sourceKey={info.getValue()} value={info.row.original.value} count={info.row.original.count} />,
+      columnHelper.accessor('predicate', {
+        header: 'Predicate',
+        cell: (info) => (
+          <ExpandableRows
+            sourceKey={info.getValue()}
+            value={info.row.original.value}
+            count={info.row.original.count}
+          />
+        ),
       }),
-      columnHelper.accessor("count", {
-        header: "Count",
+      columnHelper.accessor('count', {
+        header: 'Count',
         cell: () => null,
         enableSorting: true,
         size: 0,
-        meta: { align: "right" as const },
+        meta: { align: 'right' as const },
       }),
     ],
     [],
-  );
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -81,25 +115,25 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  });
+  })
 
   return (
     <CardContent sx={{ p: 1 }}>
       <Box>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-          <Typography variant="h6">Predicate Counts</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography variant='h6'>Predicate Counts</Typography>
           <TextField
-            size="small"
-            placeholder="Search"
+            size='small'
+            placeholder='Search'
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+              setSearchQuery(e.target.value)
+              setPagination((prev) => ({ ...prev, pageIndex: 0 }))
             }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
+                <InputAdornment position='start'>
+                  <SearchIcon fontSize='small' />
                 </InputAdornment>
               ),
             }}
@@ -110,11 +144,11 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
           <Box
             sx={{
               py: 2,
-              height: "100%",
-              minHeight: "200px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              height: '100%',
+              minHeight: '200px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <Typography>No predicate data available.</Typography>
@@ -125,10 +159,10 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
               component={Paper}
               sx={{
                 height: 600,
-                overflow: "auto",
-                "&::-webkit-scrollbar": { width: "8px" },
-                "&::-webkit-scrollbar-thumb": { backgroundColor: "#c1c1c1", borderRadius: "4px" },
-                "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#a8a8a8" },
+                overflow: 'auto',
+                '&::-webkit-scrollbar': { width: '8px' },
+                '&::-webkit-scrollbar-thumb': { backgroundColor: '#c1c1c1', borderRadius: '4px' },
+                '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#a8a8a8' },
               }}
             >
               <Table stickyHeader>
@@ -162,8 +196,8 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        const sorted = header.column.getIsSorted(); // false | 'asc' | 'desc'
-                        const canSort = header.column.getCanSort();
+                        const sorted = header.column.getIsSorted() // false | 'asc' | 'desc'
+                        const canSort = header.column.getCanSort()
 
                         return (
                           <TableCell
@@ -171,46 +205,61 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
                             align={header.column.columnDef.meta?.align}
                             onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                             sx={{
-                              cursor: canSort ? "pointer" : "default",
-                              userSelect: "none",
+                              cursor: canSort ? 'pointer' : 'default',
+                              userSelect: 'none',
                               py: 1.5,
                               px: 2,
-                              verticalAlign: "middle",
-                              whiteSpace: "nowrap",
-                              ...(header.column.id === "count" && {
+                              verticalAlign: 'middle',
+                              whiteSpace: 'nowrap',
+                              ...(header.column.id === 'count' && {
                                 pr: 12,
                               }),
                             }}
                           >
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: header.column.columnDef.meta?.align === "right" ? "flex-end" : "flex-start",
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent:
+                                  header.column.columnDef.meta?.align === 'right'
+                                    ? 'flex-end'
+                                    : 'flex-start',
                                 gap: 0.5,
                               }}
                             >
-                              <Typography variant="subtitle2" fontWeight="bold" sx={{ display: "inline-flex", alignItems: "center" }}>
-                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                              <Typography
+                                variant='subtitle2'
+                                fontWeight='bold'
+                                sx={{ display: 'inline-flex', alignItems: 'center' }}
+                              >
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(header.column.columnDef.header, header.getContext())}
                               </Typography>
                               {canSort && (
                                 <Box
-                                  component="span"
+                                  component='span'
                                   sx={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    color: sorted ? "text.primary" : "text.disabled",
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    color: sorted ? 'text.primary' : 'text.disabled',
                                     opacity: sorted ? 1 : 0.5,
-                                    transition: "color 0.2s, opacity 0.2s",
-                                    "&:hover": { opacity: 1 },
+                                    transition: 'color 0.2s, opacity 0.2s',
+                                    '&:hover': { opacity: 1 },
                                   }}
                                 >
-                                  {sorted === "asc" ? <ArrowDropUpIcon fontSize="small" /> : sorted === "desc" ? <ArrowDropDownIcon fontSize="small" /> : <UnfoldMoreIcon fontSize="small" />}
+                                  {sorted === 'asc' ? (
+                                    <ArrowDropUpIcon fontSize='small' />
+                                  ) : sorted === 'desc' ? (
+                                    <ArrowDropDownIcon fontSize='small' />
+                                  ) : (
+                                    <UnfoldMoreIcon fontSize='small' />
+                                  )}
                                 </Box>
                               )}
                             </Box>
                           </TableCell>
-                        );
+                        )
                       })}
                     </TableRow>
                   ))}
@@ -226,17 +275,18 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
                           sx={{
                             p: 0,
                             m: 0,
-                            ...(cell.column.id === "count" && {
+                            ...(cell.column.id === 'count' && {
                               width: 0,
                               maxWidth: 0,
                               minWidth: 0,
-                              border: "none",
+                              border: 'none',
                               padding: 0,
-                              overflow: "hidden",
+                              overflow: 'hidden',
                             }),
                           }}
                         >
-                          {cell.column.id !== "count" && flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {cell.column.id !== 'count' &&
+                            flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
                     </TableRow>
@@ -247,15 +297,15 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
 
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 mt: 2,
               }}
             >
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Typography variant="body2">Page size:</Typography>
-                <FormControl size="small" sx={{ minWidth: 80 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant='body2'>Page size:</Typography>
+                <FormControl size='small' sx={{ minWidth: 80 }}>
                   <Select
                     value={pageSize}
                     onChange={(e) =>
@@ -275,44 +325,74 @@ function PredicateCount({ graphData, schema }: { graphData?: any; schema?: Graph
                 </FormControl>
               </Box>
 
-              <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <Typography variant="body2">
-                  Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of {filteredData.length} results
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Typography variant='body2'>
+                  Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
+                  {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
+                  {filteredData.length} results
                 </Typography>
-                <Pagination count={Math.ceil(filteredData.length / pageSize)} page={pageIndex + 1} onChange={(_, page) => setPagination((prev) => ({ ...prev, pageIndex: page - 1 }))} color="primary" size="small" showFirstButton showLastButton />
+                <Pagination
+                  count={Math.ceil(filteredData.length / pageSize)}
+                  page={pageIndex + 1}
+                  onChange={(_, page) =>
+                    setPagination((prev) => ({ ...prev, pageIndex: page - 1 }))
+                  }
+                  color='primary'
+                  size='small'
+                  showFirstButton
+                  showLastButton
+                />
               </Box>
             </Box>
           </>
         )}
       </Box>
     </CardContent>
-  );
+  )
 }
 
-export default PredicateCount;
+export default PredicateCount
 
-function ExpandableRows({ sourceKey, value, count }: { sourceKey: string; value: { property: string; count: number }[]; count: number }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+function ExpandableRows({
+  sourceKey,
+  value,
+  count,
+}: {
+  sourceKey: string
+  value: { property: string; count: number }[]
+  count: number
+}) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
   return (
     <Box
-      className="hover-row"
+      className='hover-row'
       sx={{
-        padding: "8px 16px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
+        padding: '8px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
       }}
     >
-      {isModalOpen && <PredicateCountDetailsModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} value={value} sourceKey={sourceKey} />}
-      <Typography component="span">{sourceKey}</Typography>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Typography component="span" sx={{ ml: 2, fontSize: 14, float: "right", fontWeight: "bold" }}>
-          {typeof count === "number" ? count.toLocaleString() : JSON.stringify(count)}
+      {isModalOpen && (
+        <PredicateCountDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          value={value}
+          sourceKey={sourceKey}
+        />
+      )}
+      <Typography component='span'>{sourceKey}</Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography
+          component='span'
+          sx={{ ml: 2, fontSize: 14, float: 'right', fontWeight: 'bold' }}
+        >
+          {typeof count === 'number' ? count.toLocaleString() : JSON.stringify(count)}
         </Typography>
-        <button className="details-card-button" onClick={() => setIsModalOpen(true)}>
+        <button className='details-card-button' onClick={() => setIsModalOpen(true)}>
           Details
         </button>
       </Box>
     </Box>
-  );
+  )
 }

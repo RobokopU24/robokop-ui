@@ -1,27 +1,27 @@
-import React, { useState } from 'react';
-import Cards from './Cards';
-import ExampleModal from './ExampleModal';
-import { useQueryBuilderContext } from '../../context/queryBuilder';
-import cloneDeep from 'lodash/cloneDeep';
-import { useNavigate } from '@tanstack/react-router';
-import TemplateModal from './TemplateModal';
+import React, { useState } from 'react'
+import Cards from './Cards'
+import ExampleModal from './ExampleModal'
+import { useQueryBuilderContext } from '../../context/queryBuilder'
+import cloneDeep from 'lodash/cloneDeep'
+import { useNavigate } from '@tanstack/react-router'
+import TemplateModal from './TemplateModal'
 
 function EntryPoint() {
-  const queryBuilder = useQueryBuilderContext();
-  const navigate = useNavigate();
+  const queryBuilder = useQueryBuilderContext()
+  const navigate = useNavigate()
 
-  const [savedState, setSavedState] = useState<any>(null);
-  const [isExampleModalOpen, setExampleModalOpen] = useState(false);
-  const [isTemplateModalOpen, setTemplateModalOpen] = useState(false);
+  const [savedState, setSavedState] = useState<any>(null)
+  const [isExampleModalOpen, setExampleModalOpen] = useState(false)
+  const [isTemplateModalOpen, setTemplateModalOpen] = useState(false)
 
   const handleCancel = () => {
     if (savedState) {
       queryBuilder.dispatch({
         type: 'restoreGraph',
         payload: savedState,
-      });
+      })
     }
-  };
+  }
 
   const cardsData = [
     {
@@ -30,8 +30,8 @@ function EntryPoint() {
       description: 'Select one of the existing queries from our set of examples provided',
       buttonText: 'View Examples',
       action: () => {
-        setSavedState(cloneDeep(queryBuilder.query_graph));
-        setExampleModalOpen(true);
+        setSavedState(cloneDeep(queryBuilder.query_graph))
+        setExampleModalOpen(true)
       },
     },
     {
@@ -40,8 +40,8 @@ function EntryPoint() {
       description: 'Use any of the customizable templates available from the list',
       buttonText: 'Explore Templates',
       action: () => {
-        setSavedState(cloneDeep(queryBuilder.query_graph));
-        setTemplateModalOpen(true);
+        setSavedState(cloneDeep(queryBuilder.query_graph))
+        setTemplateModalOpen(true)
       },
     },
     {
@@ -51,7 +51,7 @@ function EntryPoint() {
       buttonText: 'Create Query',
       action: () => navigate({ to: '/question-builder' }),
     },
-  ];
+  ]
   return (
     <div
       style={{
@@ -64,7 +64,7 @@ function EntryPoint() {
     >
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <p style={{ fontSize: '30px', fontWeight: 400, margin: '0 8px 0 0' }}>Welcome to </p>
-        <img src="/logo.svg" alt="Logo" />
+        <img src='/logo.svg' alt='Logo' />
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', gap: '32px', marginTop: '48px' }}>
         {cardsData.map((card, index) => (
@@ -89,7 +89,7 @@ function EntryPoint() {
         onCancel={handleCancel}
       />
     </div>
-  );
+  )
 }
 
-export default EntryPoint;
+export default EntryPoint

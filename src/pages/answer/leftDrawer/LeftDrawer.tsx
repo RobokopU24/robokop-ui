@@ -1,48 +1,57 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { isPremiumOrAdmin } from "../../../utils/roles";
-import { Drawer, Toolbar, List, ListItemButton, ListItemIcon, ListItemText, Checkbox, IconButton } from "@mui/material";
+import React, { useCallback, useEffect, useState } from 'react'
+import { isPremiumOrAdmin } from '../../../utils/roles'
+import {
+  Drawer,
+  Toolbar,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  IconButton,
+} from '@mui/material'
 
-import PublishIcon from "@mui/icons-material/Publish";
-import GetAppIcon from "@mui/icons-material/GetApp";
-import SummarizeIcon from "@mui/icons-material/Summarize";
+import PublishIcon from '@mui/icons-material/Publish'
+import GetAppIcon from '@mui/icons-material/GetApp'
+import SummarizeIcon from '@mui/icons-material/Summarize'
 
-import DownloadDialog from "../../../components/DownloadDialog";
+import DownloadDialog from '../../../components/DownloadDialog'
 
-import "./leftDrawer.css";
-import { useQueryBuilderContext } from "../../../context/queryBuilder";
-import SummarizeWithAIModal from "./SummarizeWithAIModal";
-import SummarizeTableWithAIModal from "./SummarizeTableWithAIModal";
-import { useAuth } from "../../../context/AuthContext";
-import LoginWarning from "./LoginWarning";
-import { useFeatureAccess } from "../../../hooks";
+import './leftDrawer.css'
+import { useQueryBuilderContext } from '../../../context/queryBuilder'
+import SummarizeWithAIModal from './SummarizeWithAIModal'
+import SummarizeTableWithAIModal from './SummarizeTableWithAIModal'
+import { useAuth } from '../../../context/AuthContext'
+import LoginWarning from './LoginWarning'
+import { useFeatureAccess } from '../../../hooks'
 
 interface DisplayStateItem {
-  show: boolean;
-  disabled: boolean;
-  label: string;
+  show: boolean
+  disabled: boolean
+  label: string
 }
 
 interface DisplayState {
-  [key: string]: DisplayStateItem;
+  [key: string]: DisplayStateItem
 }
 
 interface UpdateDisplayStateAction {
-  type: "toggle";
+  type: 'toggle'
   payload: {
-    component: string;
-    show: boolean;
-  };
+    component: string
+    show: boolean
+  }
 }
 
 interface LeftDrawerProps {
-  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  displayState: DisplayState;
-  updateDisplayState: (action: UpdateDisplayStateAction) => void;
-  message: Record<string, any>;
-  saveAnswer: () => Promise<void>;
-  deleteAnswer: () => Promise<void>;
-  owned: boolean;
-  answerStore: any;
+  onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void
+  displayState: DisplayState
+  updateDisplayState: (action: UpdateDisplayStateAction) => void
+  message: Record<string, any>
+  saveAnswer: () => Promise<void>
+  deleteAnswer: () => Promise<void>
+  owned: boolean
+  answerStore: any
 }
 
 /**
@@ -55,49 +64,65 @@ interface LeftDrawerProps {
  * @param {function} deleteAnswer - delete an answer from Robokache
  * @param {boolean} owned - does the user own this answer
  */
-export default function LeftDrawer({ onUpload, displayState, updateDisplayState, message, answerStore }: LeftDrawerProps) {
-  const [downloadOpen, setDownloadOpen] = useState(false);
-  const [downloadQueryOpen, setDownloadQueryOpen] = useState(false);
-  const [summarizeWithAIOpen, setSummarizeWithAIOpen] = useState(false);
-  const [summarizeTableWithAIOpen, setSummarizeTableWithAIOpen] = useState(false);
-  const [loginWarningOpen, setLoginWarningOpen] = useState(false);
-  const [warningType, setWarningType] = useState<"login" | "premium" | null>(null);
+export default function LeftDrawer({
+  onUpload,
+  displayState,
+  updateDisplayState,
+  message,
+  answerStore,
+}: LeftDrawerProps) {
+  const [downloadOpen, setDownloadOpen] = useState(false)
+  const [downloadQueryOpen, setDownloadQueryOpen] = useState(false)
+  const [summarizeWithAIOpen, setSummarizeWithAIOpen] = useState(false)
+  const [summarizeTableWithAIOpen, setSummarizeTableWithAIOpen] = useState(false)
+  const [loginWarningOpen, setLoginWarningOpen] = useState(false)
+  const [warningType, setWarningType] = useState<'login' | 'premium' | null>(null)
 
   function toggleDisplay(component: string, show: boolean) {
-    updateDisplayState({ type: "toggle", payload: { component, show } });
+    updateDisplayState({ type: 'toggle', payload: { component, show } })
   }
-  const queryBuilder = useQueryBuilderContext();
-  const { user } = useAuth();
-  const { canAccess } = useFeatureAccess();
+  const queryBuilder = useQueryBuilderContext()
+  const { user } = useAuth()
+  const { canAccess } = useFeatureAccess()
 
   function toggleSummarizeWithAI() {
     if (!user) {
-      setWarningType("login");
-      setLoginWarningOpen(true);
+      setWarningType('login')
+      setLoginWarningOpen(true)
     } else {
-      if (!canAccess("table-summary")) {
-        setWarningType("premium");
-        setLoginWarningOpen(true);
+      if (!canAccess('table-summary')) {
+        setWarningType('premium')
+        setLoginWarningOpen(true)
       } else {
-        setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen);
+        setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen)
       }
     }
   }
 
   return (
     <Drawer
-      container={document.getElementById("contentContainer")}
-      variant="permanent"
+      container={document.getElementById('contentContainer')}
+      variant='permanent'
       open
       classes={{
-        paper: "leftDrawer",
+        paper: 'leftDrawer',
       }}
     >
-      {loginWarningOpen && <LoginWarning isOpen={loginWarningOpen} onClose={() => setLoginWarningOpen(false)} warningType={warningType} />}
+      {loginWarningOpen && (
+        <LoginWarning
+          isOpen={loginWarningOpen}
+          onClose={() => setLoginWarningOpen(false)}
+          warningType={warningType}
+        />
+      )}
       <Toolbar />
       <List>
         {Object.entries(displayState).map(([key, val]) => (
-          <ListItemButton key={key} onClick={() => toggleDisplay(key, !val.show)} disabled={val.disabled}>
+          <ListItemButton
+            key={key}
+            onClick={() => toggleDisplay(key, !val.show)}
+            disabled={val.disabled}
+          >
             <ListItemIcon>
               <Checkbox checked={val.show} disableRipple />
             </ListItemIcon>
@@ -107,51 +132,94 @@ export default function LeftDrawer({ onUpload, displayState, updateDisplayState,
         <ListItemButton
           disabled={!Object.keys(message).length}
           onClick={() => {
-            setDownloadQueryOpen(true);
+            setDownloadQueryOpen(true)
           }}
         >
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Download" disableRipple>
+            <IconButton
+              component='span'
+              style={{ fontSize: '18px' }}
+              title='Download'
+              disableRipple
+            >
               <GetAppIcon />
             </IconButton>
           </ListItemIcon>
-          <ListItemText primary="Download Query" />
+          <ListItemText primary='Download Query' />
         </ListItemButton>
         <ListItemButton
           disabled={!Object.keys(message).length}
           onClick={() => {
-            setDownloadOpen(true);
+            setDownloadOpen(true)
           }}
         >
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Download" disableRipple>
+            <IconButton
+              component='span'
+              style={{ fontSize: '18px' }}
+              title='Download'
+              disableRipple
+            >
               <GetAppIcon />
             </IconButton>
           </ListItemIcon>
-          <ListItemText primary="Download Answer" />
+          <ListItemText primary='Download Answer' />
         </ListItemButton>
-        <ListItemButton component="label">
+        <ListItemButton component='label'>
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Upload Answer" disableRipple>
+            <IconButton
+              component='span'
+              style={{ fontSize: '18px' }}
+              title='Upload Answer'
+              disableRipple
+            >
               <PublishIcon />
             </IconButton>
           </ListItemIcon>
-          <ListItemText primary="Upload Answer" />
-          <input accept=".json" hidden style={{ display: "none" }} type="file" onChange={(e) => onUpload(e)} />
+          <ListItemText primary='Upload Answer' />
+          <input
+            accept='.json'
+            hidden
+            style={{ display: 'none' }}
+            type='file'
+            onChange={(e) => onUpload(e)}
+          />
         </ListItemButton>
-        <ListItemButton component="label" onClick={() => toggleSummarizeWithAI()}>
+        <ListItemButton component='label' onClick={() => toggleSummarizeWithAI()}>
           <ListItemIcon>
-            <IconButton component="span" style={{ fontSize: "18px" }} title="Summarize table with AI" disableRipple>
+            <IconButton
+              component='span'
+              style={{ fontSize: '18px' }}
+              title='Summarize table with AI'
+              disableRipple
+            >
               <SummarizeIcon />
             </IconButton>
           </ListItemIcon>
-          <ListItemText primary="Summarize table with AI" />
+          <ListItemText primary='Summarize table with AI' />
         </ListItemButton>
       </List>
       <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={message} />
-      <DownloadDialog open={downloadQueryOpen} setOpen={setDownloadQueryOpen} message={queryBuilder.state.message.message} download_type="all_queries" />
-      {summarizeWithAIOpen && <SummarizeWithAIModal isOpen={summarizeWithAIOpen} onModalClose={() => setSummarizeWithAIOpen(false)} answerStore={answerStore} />}
-      {summarizeTableWithAIOpen && <SummarizeTableWithAIModal isOpen={summarizeTableWithAIOpen} onModalClose={() => setSummarizeTableWithAIOpen(false)} answerStore={answerStore} />}
+      <DownloadDialog
+        open={downloadQueryOpen}
+        setOpen={setDownloadQueryOpen}
+        message={queryBuilder.state.message.message}
+        download_type='all_queries'
+      />
+      {summarizeWithAIOpen && (
+        <SummarizeWithAIModal
+          isOpen={summarizeWithAIOpen}
+          onModalClose={() => setSummarizeWithAIOpen(false)}
+          answerStore={answerStore}
+        />
+      )}
+      {summarizeTableWithAIOpen && (
+        <SummarizeTableWithAIModal
+          isOpen={summarizeTableWithAIOpen}
+          onModalClose={() => setSummarizeTableWithAIOpen(false)}
+          answerStore={answerStore}
+        />
+      )}
     </Drawer>
-  );
+  )
 }

@@ -1,18 +1,18 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
 }
 
 .list {
-    padding-left: 1em;
+  padding-left: 1em;
 }
 
 .list li {
-    padding-left: 1ch;
-    margin-bottom: 0.5em;
+  padding-left: 1ch;
+  margin-bottom: 0.5em;
 }
 
 .list a {
-    word-break: break-all;
+  word-break: break-all;
 }
