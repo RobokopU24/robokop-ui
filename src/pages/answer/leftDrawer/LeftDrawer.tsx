@@ -149,7 +149,7 @@ export default function LeftDrawer({ onUpload, displayState, updateDisplayState,
         </ListItemButton>
       </List>
       <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={message} />
-      <DownloadDialog open={downloadQueryOpen} setOpen={setDownloadQueryOpen} message={queryBuilder.query_graph} download_type="all_queries" />
+      <DownloadDialog open={downloadQueryOpen} setOpen={setDownloadQueryOpen} message={queryBuilder.state.message.message} download_type="all_queries" />
       {summarizeWithAIOpen && <SummarizeWithAIModal isOpen={summarizeWithAIOpen} onModalClose={() => setSummarizeWithAIOpen(false)} answerStore={answerStore} />}
       {summarizeTableWithAIOpen && <SummarizeTableWithAIModal isOpen={summarizeTableWithAIOpen} onModalClose={() => setSummarizeTableWithAIOpen(false)} answerStore={answerStore} />}
     </Drawer>

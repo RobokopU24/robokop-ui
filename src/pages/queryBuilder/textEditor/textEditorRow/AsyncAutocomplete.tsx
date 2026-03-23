@@ -357,10 +357,6 @@ export function AsyncAutocomplete<T = any>({
     setInputValue(newValue);
     onInputChange?.(newValue);
 
-    if (value && newValue !== getOptionLabel(value)) {
-      onChange?.(null);
-    }
-
     if (!open && newValue) {
       setOpen(true);
     }
@@ -410,11 +406,11 @@ export function AsyncAutocomplete<T = any>({
 
   const handleClear = (event: React.MouseEvent) => {
     event.stopPropagation();
-    onChange?.(null);
     setInputValue("");
     onInputChange?.("");
     setAsyncResults({});
     setSourceLoadingStates({});
+    setOpen(true);
   };
 
   // Sync input value with prop value only when not actively editing

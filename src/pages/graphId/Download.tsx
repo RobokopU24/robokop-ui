@@ -52,7 +52,7 @@ function DownloadSection() {
   );
 
   return (
-    <Box sx={{ mt: 5 }} id="download">
+    <Box sx={{ marginTop: "36px" }} id="download">
       <Card variant="outlined">
         <CardHeader title="Releases and Download Options" sx={{ pb: 0 }} />
         <CardContent>
