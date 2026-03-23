@@ -29,12 +29,7 @@ export default function LandingPage() {
             tool to explore relevant publications.
           </p>
         </Card>
-        <Card
-          title='Explore the Graphs'
-          href='/explore/graphs'
-          icon={<DataIcon />}
-          gradient='purple'
-        >
+        <Card title='Explore the Graphs' href='/graphs' icon={<DataIcon />} gradient='purple'>
           <p>
             Learn about the data in ROBOKOP and explore the knowledge graph using our data browser.
           </p>

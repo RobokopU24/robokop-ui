@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import API from '../../../../API'
-import { queryClient } from '../../../../utils/queryClient'
+import API from '../../../API'
+import { queryClient } from '../../../utils/queryClient'
 import { useQuery } from '@tanstack/react-query'
-import GraphId from '../../../../pages/graphId/GraphId'
+import GraphId from '../../../pages/graphId/GraphId'
 
-export const Route = createFileRoute('/explore/graphs/$graph_id/')({
+export const Route = createFileRoute('/graphs/$graph_id/')({
   component: RouteComponent,
   ssr: false,
   loader: async ({ params }) => {

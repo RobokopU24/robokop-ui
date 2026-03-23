@@ -25,6 +25,7 @@ import { Route as CitationsRouteImport } from './routes/citations'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProfileIndexRouteImport } from './routes/profile/index'
+import { Route as GraphsIndexRouteImport } from './routes/graphs/index'
 import { Route as ExploreIndexRouteImport } from './routes/explore/index'
 import { Route as DetailsIndexRouteImport } from './routes/details/index'
 import { Route as AnswerIndexRouteImport } from './routes/answer/index'
@@ -32,11 +33,10 @@ import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as ActivateUserIndexRouteImport } from './routes/activate-user/index'
 import { Route as ExploreEnrichmentAnalysisRouteImport } from './routes/explore/enrichment-analysis'
 import { Route as ShareShare_idIndexRouteImport } from './routes/share/$share_id/index'
-import { Route as ExploreGraphsIndexRouteImport } from './routes/explore/graphs/index'
+import { Route as GraphsGraph_idIndexRouteImport } from './routes/graphs/$graph_id/index'
 import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/drug-chemical/index'
 import { Route as DetailsDetails_idIndexRouteImport } from './routes/details/$details_id/index'
 import { Route as AnswerAnswer_idIndexRouteImport } from './routes/answer/$answer_id/index'
-import { Route as ExploreGraphsGraph_idIndexRouteImport } from './routes/explore/graphs/$graph_id/index'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -118,6 +118,11 @@ const ProfileIndexRoute = ProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraphsIndexRoute = GraphsIndexRouteImport.update({
+  id: '/graphs/',
+  path: '/graphs/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ExploreIndexRoute = ExploreIndexRouteImport.update({
   id: '/explore/',
   path: '/explore/',
@@ -154,9 +159,9 @@ const ShareShare_idIndexRoute = ShareShare_idIndexRouteImport.update({
   path: '/share/$share_id/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreGraphsIndexRoute = ExploreGraphsIndexRouteImport.update({
-  id: '/explore/graphs/',
-  path: '/explore/graphs/',
+const GraphsGraph_idIndexRoute = GraphsGraph_idIndexRouteImport.update({
+  id: '/graphs/$graph_id/',
+  path: '/graphs/$graph_id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ExploreDrugChemicalIndexRoute =
@@ -175,12 +180,6 @@ const AnswerAnswer_idIndexRoute = AnswerAnswer_idIndexRouteImport.update({
   path: '/answer/$answer_id/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreGraphsGraph_idIndexRoute =
-  ExploreGraphsGraph_idIndexRouteImport.update({
-    id: '/explore/graphs/$graph_id/',
-    path: '/explore/graphs/$graph_id/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -204,13 +203,13 @@ export interface FileRoutesByFullPath {
   '/answer': typeof AnswerIndexRoute
   '/details': typeof DetailsIndexRoute
   '/explore': typeof ExploreIndexRoute
+  '/graphs': typeof GraphsIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/answer/$answer_id': typeof AnswerAnswer_idIndexRoute
   '/details/$details_id': typeof DetailsDetails_idIndexRoute
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
-  '/explore/graphs': typeof ExploreGraphsIndexRoute
+  '/graphs/$graph_id': typeof GraphsGraph_idIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
-  '/explore/graphs/$graph_id': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -234,13 +233,13 @@ export interface FileRoutesByTo {
   '/answer': typeof AnswerIndexRoute
   '/details': typeof DetailsIndexRoute
   '/explore': typeof ExploreIndexRoute
+  '/graphs': typeof GraphsIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/answer/$answer_id': typeof AnswerAnswer_idIndexRoute
   '/details/$details_id': typeof DetailsDetails_idIndexRoute
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
-  '/explore/graphs': typeof ExploreGraphsIndexRoute
+  '/graphs/$graph_id': typeof GraphsGraph_idIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
-  '/explore/graphs/$graph_id': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -265,13 +264,13 @@ export interface FileRoutesById {
   '/answer/': typeof AnswerIndexRoute
   '/details/': typeof DetailsIndexRoute
   '/explore/': typeof ExploreIndexRoute
+  '/graphs/': typeof GraphsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/answer/$answer_id/': typeof AnswerAnswer_idIndexRoute
   '/details/$details_id/': typeof DetailsDetails_idIndexRoute
   '/explore/drug-chemical/': typeof ExploreDrugChemicalIndexRoute
-  '/explore/graphs/': typeof ExploreGraphsIndexRoute
+  '/graphs/$graph_id/': typeof GraphsGraph_idIndexRoute
   '/share/$share_id/': typeof ShareShare_idIndexRoute
-  '/explore/graphs/$graph_id/': typeof ExploreGraphsGraph_idIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -297,13 +296,13 @@ export interface FileRouteTypes {
     | '/answer'
     | '/details'
     | '/explore'
+    | '/graphs'
     | '/profile'
     | '/answer/$answer_id'
     | '/details/$details_id'
     | '/explore/drug-chemical'
-    | '/explore/graphs'
+    | '/graphs/$graph_id'
     | '/share/$share_id'
-    | '/explore/graphs/$graph_id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -327,13 +326,13 @@ export interface FileRouteTypes {
     | '/answer'
     | '/details'
     | '/explore'
+    | '/graphs'
     | '/profile'
     | '/answer/$answer_id'
     | '/details/$details_id'
     | '/explore/drug-chemical'
-    | '/explore/graphs'
+    | '/graphs/$graph_id'
     | '/share/$share_id'
-    | '/explore/graphs/$graph_id'
   id:
     | '__root__'
     | '/'
@@ -357,13 +356,13 @@ export interface FileRouteTypes {
     | '/answer/'
     | '/details/'
     | '/explore/'
+    | '/graphs/'
     | '/profile/'
     | '/answer/$answer_id/'
     | '/details/$details_id/'
     | '/explore/drug-chemical/'
-    | '/explore/graphs/'
+    | '/graphs/$graph_id/'
     | '/share/$share_id/'
-    | '/explore/graphs/$graph_id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -388,13 +387,13 @@ export interface RootRouteChildren {
   AnswerIndexRoute: typeof AnswerIndexRoute
   DetailsIndexRoute: typeof DetailsIndexRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
+  GraphsIndexRoute: typeof GraphsIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   AnswerAnswer_idIndexRoute: typeof AnswerAnswer_idIndexRoute
   DetailsDetails_idIndexRoute: typeof DetailsDetails_idIndexRoute
   ExploreDrugChemicalIndexRoute: typeof ExploreDrugChemicalIndexRoute
-  ExploreGraphsIndexRoute: typeof ExploreGraphsIndexRoute
+  GraphsGraph_idIndexRoute: typeof GraphsGraph_idIndexRoute
   ShareShare_idIndexRoute: typeof ShareShare_idIndexRoute
-  ExploreGraphsGraph_idIndexRoute: typeof ExploreGraphsGraph_idIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -511,6 +510,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graphs/': {
+      id: '/graphs/'
+      path: '/graphs'
+      fullPath: '/graphs'
+      preLoaderRoute: typeof GraphsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/explore/': {
       id: '/explore/'
       path: '/explore'
@@ -560,11 +566,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShareShare_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore/graphs/': {
-      id: '/explore/graphs/'
-      path: '/explore/graphs'
-      fullPath: '/explore/graphs'
-      preLoaderRoute: typeof ExploreGraphsIndexRouteImport
+    '/graphs/$graph_id/': {
+      id: '/graphs/$graph_id/'
+      path: '/graphs/$graph_id'
+      fullPath: '/graphs/$graph_id'
+      preLoaderRoute: typeof GraphsGraph_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/explore/drug-chemical/': {
@@ -586,13 +592,6 @@ declare module '@tanstack/react-router' {
       path: '/answer/$answer_id'
       fullPath: '/answer/$answer_id'
       preLoaderRoute: typeof AnswerAnswer_idIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore/graphs/$graph_id/': {
-      id: '/explore/graphs/$graph_id/'
-      path: '/explore/graphs/$graph_id'
-      fullPath: '/explore/graphs/$graph_id'
-      preLoaderRoute: typeof ExploreGraphsGraph_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -620,13 +619,13 @@ const rootRouteChildren: RootRouteChildren = {
   AnswerIndexRoute: AnswerIndexRoute,
   DetailsIndexRoute: DetailsIndexRoute,
   ExploreIndexRoute: ExploreIndexRoute,
+  GraphsIndexRoute: GraphsIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   AnswerAnswer_idIndexRoute: AnswerAnswer_idIndexRoute,
   DetailsDetails_idIndexRoute: DetailsDetails_idIndexRoute,
   ExploreDrugChemicalIndexRoute: ExploreDrugChemicalIndexRoute,
-  ExploreGraphsIndexRoute: ExploreGraphsIndexRoute,
+  GraphsGraph_idIndexRoute: GraphsGraph_idIndexRoute,
   ShareShare_idIndexRoute: ShareShare_idIndexRoute,
-  ExploreGraphsGraph_idIndexRoute: ExploreGraphsGraph_idIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

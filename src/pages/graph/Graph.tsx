@@ -89,7 +89,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
                   >
                     <Link
                       className='details-card-button'
-                      to='/explore/graphs/$graph_id'
+                      to='/graphs/$graph_id'
                       params={{ graph_id: graph.graph_id }}
                     >
                       Details →
