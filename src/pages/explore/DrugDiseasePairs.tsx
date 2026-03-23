@@ -186,7 +186,6 @@ export default function DrugDiseasePairs() {
   React.useEffect(() => {
     let ignore = false
     setIsLoading(true)
-
     ;(async () => {
       try {
         if (ignore) return
