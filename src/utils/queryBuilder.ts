@@ -178,7 +178,7 @@ function removeAttachedEdges(q_graph: { edges: { [x: string]: any } }, nodeId: a
  * @param {object} query_graph - query graph object
  * @returns isValid boolean and an error message
  */
-function isValidGraph(query_graph: { nodes: {}; edges: any }) {
+function isValidGraph(query_graph: { nodes: object; edges: any }) {
   let isValid = true
   let errMsg = ''
   const nodeIds = Object.keys(query_graph.nodes)

@@ -47,7 +47,7 @@ export default function getNodeCategoryColorMap(hierarchies: Hierarchies) {
       return [null, undefinedColor]
     }
     if (!Array.isArray(categories)) {
-      categories = [categories] // eslint-disable-line
+      categories = [categories]
     }
     // traverse up hierarchy until we find a category we have a color for
     let category: Category | undefined

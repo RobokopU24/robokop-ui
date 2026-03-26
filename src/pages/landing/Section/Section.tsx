@@ -1,5 +1,6 @@
 import styles from './Section.module.css'
 import { toKebabCase } from '../toKebabCase'
+import React from 'react'
 
 interface SectionProps {
   children?: React.ReactNode

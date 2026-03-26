@@ -60,7 +60,7 @@ const constructCsvObj = (message: {
     `${node_label} (CURIE)`,
   ])
 
-  let csvHeaderEdgeLabelsMerged = new Set()
+  const csvHeaderEdgeLabelsMerged = new Set()
   message.results.forEach(
     (result: {
       node_bindings: ArrayLike<unknown> | { [s: string]: unknown }

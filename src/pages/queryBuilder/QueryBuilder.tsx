@@ -79,7 +79,6 @@ export default function QueryBuilder() {
   // Display modal for the user to create a passkey if they don't have one
   useEffect(() => {
     if (user && browserSupport) {
-      // eslint-disable-next-line no-underscore-dangle
       if (user._count?.WebAuthnCredential === 0 && passkeyPopupDenied !== 'true') {
         setRegisterPasskeyOpen(true)
       }

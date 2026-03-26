@@ -1,14 +1,14 @@
 'use client'
 
-import { createContext, useState, useContext, useEffect } from 'react'
+import React, { createContext, useState, useContext, useEffect } from 'react'
 
 interface IRecaptcha {
   enterprise: {
-    ready: Function
-    render: Function
-    reset: Function
-    getResponse: Function
-    execute: Function
+    ready: (callback: () => void) => void
+    render: (element: string | HTMLElement, options: Record<string, unknown>) => string
+    reset: (opt_widget_id?: string) => void
+    getResponse: (opt_widget_id?: string) => string
+    execute: (publicKey: string, options: Record<string, unknown>) => Promise<string>
   }
 }
 

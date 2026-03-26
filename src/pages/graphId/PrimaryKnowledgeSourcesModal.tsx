@@ -23,9 +23,9 @@ function PrimaryKnowledgeSourcesModal({
   value: { property: string; count: number }[] | undefined
   sourceKey: string
 }) {
-  let sankeyNodes = new Set<string>(sourceKey ? [sourceKey] : [])
+  const sankeyNodes = new Set<string>(sourceKey ? [sourceKey] : [])
 
-  let sankeyLinks: Array<{ source: string; target: string; value: number }> = []
+  const sankeyLinks: Array<{ source: string; target: string; value: number }> = []
   Object.entries(value || {}).forEach(([_, count]) => {
     sankeyNodes.add(count.property)
     sankeyLinks.push({

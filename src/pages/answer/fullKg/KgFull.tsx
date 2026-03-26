@@ -124,7 +124,6 @@ export default function KgFull({ message }: KgFullProps) {
           break
         }
         default:
-          // eslint-disable-next-line no-console
           console.log('unhandled worker message')
       }
     }

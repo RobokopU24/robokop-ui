@@ -11,14 +11,11 @@ import {
 } from '@mui/material'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-// @ts-ignore
-import shortid from 'shortid'
 import Markdown from 'react-markdown'
 import { transformKGToMinimalDynamic } from './metaDataTransformation'
 import { useQuery } from '@tanstack/react-query'
 import { llmRoutes } from '../../../API/routes'
 import { useAuth } from '../../../context/AuthContext'
-import { isPremiumOrAdmin } from '../../../utils/roles'
 import { useFeatureAccess } from '../../../hooks'
 
 interface ExpansionState {

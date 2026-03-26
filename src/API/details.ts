@@ -2,7 +2,7 @@ import axios from 'axios'
 import utils from './utils'
 const baseRoutes = {
   async getNodeDetails(nodeId: string) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/node/${nodeId}`,
@@ -31,7 +31,7 @@ const baseRoutes = {
     predicate: string,
     category?: string,
   ) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/edges/${nodeId}?limit=${pageSize}&offset=${
@@ -56,7 +56,7 @@ const baseRoutes = {
   },
 
   async getNodeEdgeSummary(nodeId: string) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/edge_summary/${nodeId}`,
@@ -78,7 +78,7 @@ const baseRoutes = {
   },
 
   async getNodeEdgeCount(nodeId: string) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/edges/${nodeId}?count_only=true`,

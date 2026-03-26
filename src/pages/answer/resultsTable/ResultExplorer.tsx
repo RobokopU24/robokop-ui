@@ -70,7 +70,7 @@ type PopoverType = 'node' | 'edge' | null
 type PopoverDataType =
   | Pick<NodeType, 'name' | 'id' | 'categories'>
   | Pick<EdgeType, 'attributes' | 'sources'>
-  | {}
+  | object
 
 /**
  * Selected result graph
