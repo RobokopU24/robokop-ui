@@ -66,12 +66,12 @@ function Graph({ graphData, isLoading }: GraphProps) {
                       </div>
                       <div>
                         <Chip
-                          label={`Nodes: ${stringUtils.formatNumber(graph.node_count) || '—'}`}
+                          label={`Nodes: ${stringUtils.formatNumber(graph.nodes_count) || '—'}`}
                           size='small'
                           sx={{ mr: 1, fontSize: '0.75rem' }}
                         />
                         <Chip
-                          label={`Edges: ${stringUtils.formatNumber(graph.edge_counts) || '—'}`}
+                          label={`Edges: ${stringUtils.formatNumber(graph.edges_counts) || '—'}`}
                           size='small'
                           sx={{ fontSize: '0.75rem' }}
                         />
@@ -94,7 +94,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
                     <Link
                       className='details-card-button'
                       to='/graphs/$graph_id'
-                      params={{ graph_id: graphIdWithoutAutomat(graph.graph_id) }}
+                      params={{ graph_id: graph.graph_id }}
                     >
                       Details →
                     </Link>

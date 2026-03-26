@@ -1,68 +1,87 @@
-import { createFileRoute } from '@tanstack/react-router'
-import API from '../../../API'
-import { queryClient } from '../../../utils/queryClient'
-import { useQuery } from '@tanstack/react-query'
-import GraphId from '../../../pages/graphId/GraphId'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/graphs/$graph_id/')({
+  beforeLoad: ({ params }) => {
+    throw redirect({
+      to: '/graphs/$graph_id/$graph_version',
+      params: {
+        graph_id: params.graph_id,
+        graph_version: 'latest',
+      },
+    })
+  },
   component: RouteComponent,
-  ssr: false,
-  loader: async ({ params }) => {
-    const [v2Metadata, schemaV2] = await Promise.all([
-      queryClient.ensureQueryData({
-        queryKey: ['graph-metadata-v2', params.graph_id],
-        queryFn: () => API.graphMetadata.graphMetadataV2(params.graph_id),
-      }),
-      queryClient.ensureQueryData({
-        queryKey: ['graph-schema-v2', params.graph_id],
-        queryFn: () => API.graphMetadata.graphSchemaV2(params.graph_id!),
-      }),
-    ])
-
-    return {
-      v2Metadata,
-      schemaV2,
-    }
-  },
-  head: ({ loaderData, params }) => {
-    const cachedData: any = queryClient.getQueryData(['graph-metadata', params.graph_id])
-    const cachedMetadataV2: any =
-      loaderData?.v2Metadata ?? queryClient.getQueryData(['graph-metadata-v2', params.graph_id])
-
-    return {
-      meta: [
-        {
-          title: cachedData ? `${cachedData.graph_name} | ROBOKOP` : 'Graph | ROBOKOP',
-        },
-      ],
-      scripts: cachedMetadataV2
-        ? [
-            {
-              type: 'application/ld+json',
-              children: JSON.stringify(cachedMetadataV2),
-            },
-          ]
-        : [],
-    }
-  },
 })
 
 function RouteComponent() {
-  const { graph_id } = Route.useParams()
-
-  const { data: v2Metadata, isPending: v2Pending } = useQuery({
-    queryKey: ['graph-metadata-v2', graph_id],
-    queryFn: () => API.graphMetadata.graphMetadataV2(graph_id!),
-    enabled: !!graph_id,
-  })
-
-  const { data: schemaV2, isPending: schemaPending } = useQuery({
-    queryKey: ['graph-schema-v2', graph_id],
-    queryFn: () => API.graphMetadata.graphSchemaV2(graph_id!),
-    enabled: !!graph_id,
-  })
-
-  if (v2Pending || schemaPending) return 'Loading...'
-
-  return <GraphId v2Metadata={v2Metadata ?? null} schemaV2={schemaV2 ?? null} />
+  return <div>Redirecting...</div>
 }
+
+// import { createFileRoute } from '@tanstack/react-router'
+// import API from '../../../API'
+// import { queryClient } from '../../../utils/queryClient'
+// import { useQuery } from '@tanstack/react-query'
+// import GraphId from '../../../pages/graphId/GraphId'
+
+// export const Route = createFileRoute('/graphs/$graph_id/')({
+//   component: RouteComponent,
+//   ssr: false,
+//   loader: async ({ params }) => {
+//     const [v2Metadata, schemaV2] = await Promise.all([
+//       queryClient.ensureQueryData({
+//         queryKey: ['graph-metadata-v2', params.graph_id],
+//         queryFn: () => API.graphMetadata.graphMetadataV2(params.graph_id),
+//       }),
+//       queryClient.ensureQueryData({
+//         queryKey: ['graph-schema-v2', params.graph_id],
+//         queryFn: () => API.graphMetadata.graphSchemaV2(params.graph_id!),
+//       }),
+//     ])
+
+//     return {
+//       v2Metadata,
+//       schemaV2,
+//     }
+//   },
+//   head: ({ loaderData, params }) => {
+//     const cachedData: any = queryClient.getQueryData(['graph-metadata', params.graph_id])
+//     const cachedMetadataV2: any =
+//       loaderData?.v2Metadata ?? queryClient.getQueryData(['graph-metadata-v2', params.graph_id])
+
+//     return {
+//       meta: [
+//         {
+//           title: cachedData ? `${cachedData.graph_name} | ROBOKOP` : 'Graph | ROBOKOP',
+//         },
+//       ],
+//       scripts: cachedMetadataV2
+//         ? [
+//             {
+//               type: 'application/ld+json',
+//               children: JSON.stringify(cachedMetadataV2),
+//             },
+//           ]
+//         : [],
+//     }
+//   },
+// })
+
+// function RouteComponent() {
+//   const { graph_id } = Route.useParams()
+
+//   const { data: v2Metadata, isPending: v2Pending } = useQuery({
+//     queryKey: ['graph-metadata-v2', graph_id],
+//     queryFn: () => API.graphMetadata.graphMetadataV2(graph_id!),
+//     enabled: !!graph_id,
+//   })
+
+//   const { data: schemaV2, isPending: schemaPending } = useQuery({
+//     queryKey: ['graph-schema-v2', graph_id],
+//     queryFn: () => API.graphMetadata.graphSchemaV2(graph_id!),
+//     enabled: !!graph_id,
+//   })
+
+//   if (v2Pending || schemaPending) return 'Loading...'
+
+//   return <GraphId v2Metadata={v2Metadata ?? null} schemaV2={schemaV2 ?? null} />
+// }

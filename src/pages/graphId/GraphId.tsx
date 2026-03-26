@@ -5,14 +5,12 @@ import axios from 'axios'
 import React from 'react'
 import { GraphMetadataV2, GraphSchemaV2 } from '../../API/graphMetadata'
 import { fileRoutes } from '../../API/routes'
-import { getGraphMetadataDownloads } from '../../functions/graphFunctions'
 import DownloadSection from '../graphId/Download'
 import '../graphId/GraphId.css'
 import NodeCuriePrefixes from '../graphId/NodeCuriePrefixes'
 import PredicateCount from '../graphId/PredicateCount'
 import PrimaryKnowledgeSources from '../graphId/PrimaryKnowledgeSources'
 import SankeyGraphModal from '../graphId/SankeyGraphModal'
-import StringTableDisplay from '../graphId/StringTableDisplay'
 import BreadcrumbsComponent from './BreadcrumbsComponent'
 import ConformanceSchema from './ConformanceSchema'
 import ContactPoint from './ContactPoint'
@@ -23,11 +21,22 @@ import SidebarV2 from './Sidebar'
 import { getAttributesAndCounts, transformSchemaToLinks } from './functions'
 import NodeProperties from './NodeProperties'
 import EdgeProperties from './EdgeProperties'
+import {
+  getGraphDownloadList,
+  getGraphVersionList,
+  GraphDownloadData,
+  graphMetadata,
+} from '../../API/graphRegistry'
+import Releases from './Releases'
 
 const COMMON_SIDEBAR_ITEMS = [
   {
     title: 'Description',
     id: 'description',
+  },
+  {
+    title: 'Releases',
+    id: 'releases',
   },
   {
     title: 'Download',
@@ -93,7 +102,7 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
     downloadLink!.replace('https://robokop.renci.org', 'https://stars.renci.org/var/plater') +
     'neo4j.dump'
   const { data: fileSize } = useQuery({
-    queryKey: ['graph-metadata-v2', graph_id, 'file-size'],
+    queryKey: ['graph-metadata', graph_id, 'file-size'],
     queryFn: async () => {
       const results = await axios.post(fileRoutes.fileSize, {
         fileUrl: validDownloadLink,
@@ -101,22 +110,36 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
       return results.data.size
     },
   })
+
+  const displayVersion = v2Metadata?.version || 'N/A'
   const { data: downloadData } = useQuery({
-    queryKey: ['graph-metadata', graph_id, 'download'],
-    queryFn: () => getGraphMetadataDownloads(graph_id!),
+    queryKey: ['graph-metadata', graph_id, displayVersion, 'download'],
+    queryFn: () => getGraphDownloadList(graph_id!, displayVersion!),
   })
+
+  const { data: releaseData, isLoading: isReleaseDataLoading } = useQuery({
+    queryKey: ['releases', graph_id],
+    queryFn: () => getGraphVersionList(graph_id!),
+    enabled: !!graph_id,
+  })
+  const isLatestInReleaseData = releaseData?.find((v) => v === 'latest') !== undefined
+  const { data: schemaV2Latest } = useQuery({
+    queryKey: ['graph-metadata', graph_id, 'latest'],
+    queryFn: () => graphMetadata(graph_id!, 'latest'),
+    enabled: isLatestInReleaseData,
+  })
+  const latestVersionID = schemaV2Latest?.version
 
   const graphDatasetV2 = React.useMemo(() => {
     return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] }
   }, [schemaV2])
 
-  const latestMetadataUrl = downloadData?.data
-    ?.at(-1)
-    ?.links?.filter((link: any) => link.url.includes('meta.json'))[0]?.url
+  const latestMetadataUrl = downloadData?.filter((file: GraphDownloadData) =>
+    file.file_path.includes('meta.json'),
+  )?.[0]?.file_path
 
   const displayName = v2Metadata?.name || ''
   const displayDescription = v2Metadata?.description || 'No description available'
-  const displayVersion = v2Metadata?.version || 'N/A'
 
   const edgePropertiesData = getAttributesAndCounts(schemaV2?.schema.edges || [])
 
@@ -195,7 +218,14 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
           </Grid>
         </Grid>
       </Box>
-      <DownloadSection />
+      <Box>
+        <Releases
+          latestVersion={latestVersionID}
+          releases={releaseData}
+          loading={isReleaseDataLoading}
+        />
+        <DownloadSection version={displayVersion} />
+      </Box>
     </Container>
   )
 }

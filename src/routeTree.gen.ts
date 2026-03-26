@@ -37,6 +37,7 @@ import { Route as GraphsGraph_idIndexRouteImport } from './routes/graphs/$graph_
 import { Route as ExploreDrugChemicalIndexRouteImport } from './routes/explore/drug-chemical/index'
 import { Route as DetailsDetails_idIndexRouteImport } from './routes/details/$details_id/index'
 import { Route as AnswerAnswer_idIndexRouteImport } from './routes/answer/$answer_id/index'
+import { Route as GraphsGraph_idGraph_versionIndexRouteImport } from './routes/graphs/$graph_id/$graph_version/index'
 
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
@@ -180,6 +181,12 @@ const AnswerAnswer_idIndexRoute = AnswerAnswer_idIndexRouteImport.update({
   path: '/answer/$answer_id/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GraphsGraph_idGraph_versionIndexRoute =
+  GraphsGraph_idGraph_versionIndexRouteImport.update({
+    id: '/graphs/$graph_id/$graph_version/',
+    path: '/graphs/$graph_id/$graph_version/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
   '/graphs/$graph_id': typeof GraphsGraph_idIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
+  '/graphs/$graph_id/$graph_version': typeof GraphsGraph_idGraph_versionIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -240,6 +248,7 @@ export interface FileRoutesByTo {
   '/explore/drug-chemical': typeof ExploreDrugChemicalIndexRoute
   '/graphs/$graph_id': typeof GraphsGraph_idIndexRoute
   '/share/$share_id': typeof ShareShare_idIndexRoute
+  '/graphs/$graph_id/$graph_version': typeof GraphsGraph_idGraph_versionIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -271,6 +280,7 @@ export interface FileRoutesById {
   '/explore/drug-chemical/': typeof ExploreDrugChemicalIndexRoute
   '/graphs/$graph_id/': typeof GraphsGraph_idIndexRoute
   '/share/$share_id/': typeof ShareShare_idIndexRoute
+  '/graphs/$graph_id/$graph_version/': typeof GraphsGraph_idGraph_versionIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical'
     | '/graphs/$graph_id'
     | '/share/$share_id'
+    | '/graphs/$graph_id/$graph_version'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -333,6 +344,7 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical'
     | '/graphs/$graph_id'
     | '/share/$share_id'
+    | '/graphs/$graph_id/$graph_version'
   id:
     | '__root__'
     | '/'
@@ -363,6 +375,7 @@ export interface FileRouteTypes {
     | '/explore/drug-chemical/'
     | '/graphs/$graph_id/'
     | '/share/$share_id/'
+    | '/graphs/$graph_id/$graph_version/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -394,6 +407,7 @@ export interface RootRouteChildren {
   ExploreDrugChemicalIndexRoute: typeof ExploreDrugChemicalIndexRoute
   GraphsGraph_idIndexRoute: typeof GraphsGraph_idIndexRoute
   ShareShare_idIndexRoute: typeof ShareShare_idIndexRoute
+  GraphsGraph_idGraph_versionIndexRoute: typeof GraphsGraph_idGraph_versionIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -594,6 +608,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnswerAnswer_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/graphs/$graph_id/$graph_version/': {
+      id: '/graphs/$graph_id/$graph_version/'
+      path: '/graphs/$graph_id/$graph_version'
+      fullPath: '/graphs/$graph_id/$graph_version'
+      preLoaderRoute: typeof GraphsGraph_idGraph_versionIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -626,6 +647,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreDrugChemicalIndexRoute: ExploreDrugChemicalIndexRoute,
   GraphsGraph_idIndexRoute: GraphsGraph_idIndexRoute,
   ShareShare_idIndexRoute: ShareShare_idIndexRoute,
+  GraphsGraph_idGraph_versionIndexRoute: GraphsGraph_idGraph_versionIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

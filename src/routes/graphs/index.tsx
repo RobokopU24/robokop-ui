@@ -17,7 +17,7 @@ function RouteComponent() {
     queryKey: ['graph-registry'],
     queryFn: async () => {
       const registry = await graphRegistryList()
-      const sortedGraphData = registry.sort((a, b) => b.node_count - a.node_count)
+      const sortedGraphData = registry.sort((a, b) => b.nodes_count - a.nodes_count)
       return sortedGraphData
     },
   })
