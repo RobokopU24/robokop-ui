@@ -1,15 +1,19 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import SummaryModal from './SummaryModal'
 import { useAuth } from '../../../context/AuthContext'
-import { isPremiumOrAdmin } from '../../../utils/roles'
 import LoginWarning from '../leftDrawer/LoginWarning'
 import { useFeatureAccess } from '../../../hooks'
 
 interface Attribute {
   attribute_type_id: string
-  value: string | string[]
+  value: string | number | boolean | (string | number | boolean)[]
+}
+
+interface Qualifier {
+  qualifier_type_id: string
+  qualifier_value: string
 }
 
 interface Source {
@@ -21,6 +25,7 @@ interface Source {
 interface AttributesTableProps {
   attributes: Attribute[]
   sources: Source[]
+  qualifiers?: Qualifier[]
 }
 
 const headerStyles = { fontWeight: 'bold', backgroundColor: '#eee' }
@@ -31,7 +36,9 @@ const StyledTableBody = styled(TableBody)(() => ({
   },
 }))
 
-const ValueCell: React.FC<{ value: string | string[] }> = ({ value }) => (
+const ValueCell: React.FC<{ value: string | number | boolean | (string | number | boolean)[] }> = ({
+  value,
+}) => (
   <TableCell>
     <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
       {Array.isArray(value) ? (
@@ -127,7 +134,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
   )
 }
 
-const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources }) => (
+const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources, qualifiers }) => (
   <Box style={{ maxHeight: 500, maxWidth: 800, overflow: 'auto' }}>
     <Table size='small' aria-label='edge attributes table'>
       <TableHead style={{ position: 'sticky', top: 0 }}>
@@ -142,13 +149,26 @@ const AttributesTable: React.FC<AttributesTableProps> = ({ attributes, sources }
             <TableCell style={{ verticalAlign: 'top' }}>{attribute.attribute_type_id}</TableCell>
             {attribute.attribute_type_id === 'biolink:publications' ? (
               <>
-                <PublicationLinkCell value={attribute.value} />
+                <PublicationLinkCell
+                  value={
+                    Array.isArray(attribute.value)
+                      ? attribute.value.map((valueItem) => String(valueItem))
+                      : String(attribute.value)
+                  }
+                />
               </>
             ) : (
               <ValueCell value={attribute.value} />
             )}
           </TableRow>
         ))}
+        {Array.isArray(qualifiers) &&
+          qualifiers.map((qualifier, index) => (
+            <TableRow key={`qualifier-${index}`}>
+              <TableCell style={{ verticalAlign: 'top' }}>{qualifier.qualifier_type_id}</TableCell>
+              <TableCell style={{ verticalAlign: 'top' }}>{qualifier.qualifier_value}</TableCell>
+            </TableRow>
+          ))}
         <TableRow>
           <TableCell>Sources</TableCell>
           <TableCell>

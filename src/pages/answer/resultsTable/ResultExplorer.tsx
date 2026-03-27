@@ -47,6 +47,7 @@ interface EdgeType extends d3.SimulationLinkDatum<NodeType> {
   index?: number
   attributes?: any[]
   sources?: any[]
+  qualifiers?: any[]
 }
 
 interface AnswerStoreType {
@@ -60,7 +61,8 @@ interface AnswerStoreType {
   metaData?: any
   resultJSON: {
     knowledge_graph: {
-      edges: { [id: string]: { attributes: any[]; sources: any[] } }
+      nodes: { [id: string]: { name?: string; categories?: string[]; attributes?: any[] } }
+      edges: { [id: string]: { attributes: any[]; sources: any[]; qualifiers?: any[] } }
     }
   }
 }
@@ -69,7 +71,7 @@ type PopoverType = 'node' | 'edge' | null
 
 type PopoverDataType =
   | Pick<NodeType, 'name' | 'id' | 'categories'>
-  | Pick<EdgeType, 'attributes' | 'sources'>
+  | Pick<EdgeType, 'attributes' | 'sources' | 'qualifiers'>
   | object
 
 /**
@@ -253,6 +255,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         ...answerStore.selectedResult.edges[key],
         attributes: answerStore.resultJSON.knowledge_graph.edges[key]?.attributes,
         sources: answerStore.resultJSON.knowledge_graph.edges[key]?.sources,
+        qualifiers: answerStore.resultJSON.knowledge_graph.edges[key]?.qualifiers,
       }))
     const edges: EdgeType[] = trimmedEdges.map((d) => ({ ...d }))
     simulation.current.nodes(nodes)
@@ -440,14 +443,16 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
   const handleClickNode = (data: NodeType) => {
     if (!svgRef.current) return
     const { top, left } = svgRef.current.getBoundingClientRect()
+    const nodeDetails = answerStore.resultJSON.knowledge_graph.nodes?.[data.id]
     setPopoverPosition({
       x: left + (data.x ?? 0),
       y: top + (data.y ?? 0),
     })
     setPopoverData({
-      name: data.name,
+      name: nodeDetails?.name || data.name,
       id: data.id,
-      categories: data.categories,
+      categories: nodeDetails?.categories || data.categories,
+      attributes: nodeDetails?.attributes || [],
     })
     setPopoverOpen('node')
   }
@@ -490,6 +495,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
           <AttributesTable
             attributes={(popoverData as any).attributes}
             sources={(popoverData as any).sources}
+            qualifiers={(popoverData as any).qualifiers}
           />
         )}
       </Popover>
