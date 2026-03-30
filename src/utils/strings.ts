@@ -68,7 +68,6 @@ function displayCategory(arg: string | string[]) {
     // split pascal case
     const splitCategory = pascalCategory.split(/(?=[A-Z][a-z])/g)
     return splitCategory.join(' ')
-    // eslint-disable-next-line no-unused-vars
   } catch (err) {
     return ''
   }
@@ -107,6 +106,7 @@ function displayPredicate(arg: string) {
   }
   try {
     // remove 'biolink:'
+    // eslint-disable-next-line no-unsafe-optional-chaining
     const [, snake_type] = label?.split(':')
     // split snake case
     const out = snake_type?.split(/_/g)

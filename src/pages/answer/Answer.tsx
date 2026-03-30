@@ -45,8 +45,8 @@ interface EdgeType {
   strokeWidth?: number
   numEdges?: number
   index?: number
-  attributes?: any[]
-  sources?: any[]
+  attributes?: unknown[]
+  sources?: unknown[]
 }
 interface AnswerStoreType {
   numQgNodes: number
@@ -56,19 +56,20 @@ interface AnswerStoreType {
     edges: { [id: string]: EdgeType }
   }
   selectedRowId: string
-  metaData?: any
+  metaData?: Record<string, unknown>
   resultJSON: {
     knowledge_graph: {
-      edges: { [id: string]: { attributes: any[]; sources: any[] } }
+      nodes: { [id: string]: { name?: string; categories?: string[]; attributes?: unknown[] } }
+      edges: { [id: string]: { attributes: unknown[]; sources: unknown[]; qualifiers?: unknown[] } }
     }
-    result?: any
+    result?: unknown
   }
-  tableHeaders: any[]
+  tableHeaders: unknown[]
   message: {
-    results: any[]
-    [key: string]: any
+    results: unknown[]
+    [key: string]: unknown
   }
-  selectRow: (row: any, id: string | number) => void
+  selectRow: (row: unknown, id: string | number) => void
 }
 
 interface DisplayStateItem {
@@ -121,12 +122,14 @@ export default function Answer({ answer_id }: AnswerProps) {
    * Validate a TRAPI message and either display any errors or initialize the answer store
    * @param answerResponse - Either an object with error message or stringified message object
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function validateAndInitializeMessage(answerResponse: any): void {
     if (answerResponse && answerResponse.status && answerResponse.status === 'error') {
       pageStatus.setFailure(answerResponse.message)
       return
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let answerResponseJSON: any
     try {
       answerResponseJSON = JSON.parse(answerResponse)
@@ -238,6 +241,7 @@ export default function Answer({ answer_id }: AnswerProps) {
           })
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [answer_id, isLoading])
 
   /**
@@ -252,6 +256,7 @@ export default function Answer({ answer_id }: AnswerProps) {
       fr.onload = (e) => {
         if (!e.target) return
         const fileContents = e.target.result
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let msg: any = {}
         try {
           msg = JSON.parse(typeof fileContents === 'string' ? fileContents : '')
@@ -411,6 +416,7 @@ export default function Answer({ answer_id }: AnswerProps) {
                 )}
                 {displayState.kgFull.show && answerStore.message.knowledge_graph && (
                   <KgFull
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     message={answerStore.message as { knowledge_graph: { nodes: any; edges: any } }}
                   />
                 )}

@@ -3,7 +3,7 @@ import { Download, OpenInNew } from '@mui/icons-material'
 import { formatFileSize } from '../../utils/getFileSize'
 import stringUtils from '../../utils/strings'
 import { formatBuildDate } from '../../utils/dateTime'
-import { GraphMetadataV2, GraphSchemaV2 } from '../../API/graphMetadata'
+import { GraphMetadataV2 } from '../../API/graphMetadata'
 
 interface HeaderCardProps {
   displayName: string
@@ -40,6 +40,9 @@ function HeaderCard({
       }
     })
   }
+  const metadataHref = latestMetadataUrl
+    ? `${window.location.origin}/graphs/${latestMetadataUrl.replace(/^\/+/, '')}`
+    : undefined
   return (
     <Card variant='outlined' sx={{ mt: 2 }} id='description'>
       <CardContent>
@@ -135,14 +138,14 @@ function HeaderCard({
               Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
             </a>
             <p>•</p>
-            {latestMetadataUrl && (
+            {metadataHref && (
               <a
                 className='external-links'
-                href={latestMetadataUrl}
+                href={metadataHref}
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                Latest Metadata <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
+                Metadata <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
               </a>
             )}
             {v2Metadata?.license && (

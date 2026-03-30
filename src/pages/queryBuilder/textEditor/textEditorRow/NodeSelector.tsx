@@ -93,7 +93,7 @@ export default function NodeSelector({
     includeSets = false,
   } = nodeOptions
   const { displayAlert } = useAlert()
-  // @ts-ignore: context type is not strict
+  // @ts-expect-ignore: context type is not strict
   const { concepts } = useContext(BiolinkContext) as { concepts: string[] }
 
   /**

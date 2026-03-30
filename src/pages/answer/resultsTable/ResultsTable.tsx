@@ -67,7 +67,8 @@ interface AnswerStoreType {
   metaData?: any
   resultJSON: {
     knowledge_graph: {
-      edges: { [id: string]: { attributes: any[]; sources: any[] } }
+      nodes: { [id: string]: { name?: string; categories?: string[]; attributes?: any[] } }
+      edges: { [id: string]: { attributes: any[]; sources: any[]; qualifiers?: any[] } }
     }
     result?: any
   }

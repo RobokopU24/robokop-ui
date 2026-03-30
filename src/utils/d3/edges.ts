@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import * as d3 from 'd3'
 import graphUtils from './graph'
 import dragUtils from './drag'

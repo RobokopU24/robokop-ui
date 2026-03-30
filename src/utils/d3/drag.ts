@@ -129,14 +129,8 @@ function dragEdgeEnd(
       updateEdge(id, mapping[type as keyof EdgeEndMapping], (droppedCircle as any).id)
     } else {
       // edge was dropped in space, put it back to previous nodes
-      let {
-        x1,
-        y1,
-        qx,
-        qy,
-        x2,
-        y2, // eslint-disable-line prefer-const
-      } = graphUtils.getCurvedEdgePos(
+      // eslint-disable-next-line prefer-const
+      let { x1, y1, qx, qy, x2, y2 } = graphUtils.getCurvedEdgePos(
         d.source.x,
         d.source.y,
         d.target.x,

@@ -3,13 +3,17 @@ import { Chip, Container, Skeleton, styled, Typography } from '@mui/material'
 import { Link } from '@tanstack/react-router'
 import stringUtils from '../../utils/strings'
 import '../details/Details.css'
+import { GraphRegistryEntry } from '../../API/graphRegistry'
 
 interface GraphProps {
-  graphData: any[]
+  graphData: GraphRegistryEntry[]
   isLoading?: boolean
 }
 
 function Graph({ graphData, isLoading }: GraphProps) {
+  const graphIdWithoutAutomat = (graphId: string) => {
+    return graphId.replace(/_Automat$/, '')
+  }
   return (
     <Container sx={{ width: '100%', maxWidth: 1200, my: 8 }}>
       <Typography variant='h4' component='h1' mb={1} sx={{ fontWeight: 500, textAlign: 'center' }}>
@@ -62,12 +66,12 @@ function Graph({ graphData, isLoading }: GraphProps) {
                       </div>
                       <div>
                         <Chip
-                          label={`Nodes: ${stringUtils.formatNumber(graph.totalNodeCount) || '—'}`}
+                          label={`Nodes: ${stringUtils.formatNumber(graph.nodes_count) || '—'}`}
                           size='small'
                           sx={{ mr: 1, fontSize: '0.75rem' }}
                         />
                         <Chip
-                          label={`Edges: ${stringUtils.formatNumber(graph.totalEdgeCount) || '—'}`}
+                          label={`Edges: ${stringUtils.formatNumber(graph.edges_counts) || '—'}`}
                           size='small'
                           sx={{ fontSize: '0.75rem' }}
                         />
@@ -75,7 +79,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
                     </div>
 
                     <div className='details-card-value'>
-                      {graph.description || 'No description available'}
+                      {graph.summary || 'No description available'}
                     </div>
                   </div>
                   <div
@@ -89,7 +93,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
                   >
                     <Link
                       className='details-card-button'
-                      to='/explore/graphs/$graph_id'
+                      to='/graphs/$graph_id'
                       params={{ graph_id: graph.graph_id }}
                     >
                       Details →

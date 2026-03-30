@@ -6,7 +6,7 @@ function BreadcrumbsComponent({ displayName }: { displayName: string }) {
     <Breadcrumbs aria-label='graph breadcrumbs'>
       <Typography
         component={Link}
-        to='/explore/graphs'
+        to='/graphs'
         color='text.secondary'
         variant='body2'
         sx={{ textDecoration: 'none' }}

@@ -1,4 +1,4 @@
-import { type HTMLAttributeAnchorTarget } from 'react'
+import React, { type HTMLAttributeAnchorTarget } from 'react'
 import { ExternalLinkIcon } from '../icons/ExternalLinkIcon/ExternalLinkIcon'
 import styles from './Card.module.css'
 import { InternalLinkIcon } from '../icons/InternalLinkIcon/InternalLinkIcon'

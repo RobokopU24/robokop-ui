@@ -85,7 +85,7 @@ function findConnectedNodes(
  * @param {string} startingNode - node id
  * @returns {string[]} topologically sorted nodes
  */
-export function sortNodes(query_graph: { edges: any; nodes: {} }, startingNode: string) {
+export function sortNodes(query_graph: { edges: any; nodes: object }, startingNode: string) {
   const sortedNodes = [startingNode]
   findConnectedNodes(query_graph.edges, sortedNodes)
   // TODO: handle detached sub-graphs, right now those nodes will be tacked on the end in insertion order

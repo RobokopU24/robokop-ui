@@ -27,20 +27,19 @@ import {
 import { useQuery } from '@tanstack/react-query'
 import { formatFileSize } from '../../utils/getFileSize'
 import { formatBuildDate } from '../../utils/dateTime'
-import { getGraphMetadataDownloads } from '../../functions/graphFunctions'
+import { getGraphDownloadList } from '../../API/graphRegistry'
 
-function DownloadSection() {
+interface DownloadSectionProps {
+  version: string
+}
+
+function DownloadSection({ version }: DownloadSectionProps) {
   const { graph_id } = useParams({ strict: false })
-  const [expanded, setExpanded] = React.useState<string | false>(false)
 
   const { data: downloadData, isLoading: isLoadingDownload } = useQuery({
-    queryKey: ['graph-metadata', graph_id, 'download'],
-    queryFn: () => getGraphMetadataDownloads(graph_id!),
+    queryKey: ['graph-metadata', graph_id, version, 'download'],
+    queryFn: () => getGraphDownloadList(graph_id!, version!),
   })
-
-  const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpanded(isExpanded ? panel : false)
-  }
 
   const renderSkeleton = () => (
     <Box>
@@ -74,16 +73,85 @@ function DownloadSection() {
   )
 
   return (
-    <Box sx={{ marginTop: '36px' }} id='download'>
+    <Box sx={{ marginTop: '36px', minWidth: '400px' }} id='download'>
       <Card variant='outlined'>
-        <CardHeader title='Releases and Download Options' sx={{ pb: 0 }} />
+        <CardHeader title='Download Options' sx={{ pb: 0 }} />
         <CardContent>
           <Box>
             {isLoadingDownload ? (
               renderSkeleton()
-            ) : downloadData?.data?.length > 0 ? (
+            ) : downloadData && downloadData.length > 0 ? (
               <Box>
-                {[...downloadData.data].reverse().map((file: any, index: number) => (
+                <TableContainer>
+                  <Table size='small'>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>
+                          <Typography variant='subtitle2' fontWeight='bold'>
+                            File Name
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant='subtitle2' fontWeight='bold'>
+                            Size
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {downloadData.map((link, idx: number) => (
+                        <TableRow
+                          key={idx}
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: 'action.hover',
+                            },
+                          }}
+                        >
+                          <TableCell>
+                            <Link
+                              href={`${window.location.origin}/graphs/${link.file_path.replace(/^\/+/, '')}`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                textDecoration: 'none',
+                                color: 'primary.main',
+                                '&:hover': {
+                                  textDecoration: 'underline',
+                                },
+                              }}
+                            >
+                              <OpenInNewIcon fontSize='small' />
+                              <Typography variant='body2' fontWeight={500}>
+                                {link.file_path.split('/').pop() || 'Download'}
+                              </Typography>
+                            </Link>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant='body2' color='text.secondary'>
+                              {link.file_size_bytes
+                                ? formatFileSize(link.file_size_bytes)
+                                : 'Unknown'}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            ) : (
+              renderEmptyState()
+            )}
+            {/* {renderEmptyState()} */}
+            {/* {isLoadingDownload ? (
+              renderSkeleton()
+            ) : downloadData && downloadData.length > 0 ? (
+              <Box>
+                {downloadData.map((file, index: number) => (
                   <Accordion
                     key={index}
                     expanded={expanded === file.id}
@@ -145,11 +213,7 @@ function DownloadSection() {
                                     Upload Date
                                   </Typography>
                                 </TableCell>
-                                {/* <TableCell align="center">
-                            <Typography variant="subtitle2" fontWeight="bold">
-                              Action
-                            </Typography>
-                          </TableCell> */}
+
                               </TableRow>
                             </TableHead>
                             <TableBody>
@@ -214,7 +278,7 @@ function DownloadSection() {
               </Box>
             ) : (
               renderEmptyState()
-            )}
+            )} */}
           </Box>
         </CardContent>
       </Card>

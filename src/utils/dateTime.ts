@@ -1,5 +1,5 @@
 export function formatBuildDate(buildTime: string) {
-  const [datePart, timePart] = buildTime?.split(' ')
+  const [datePart, timePart] = buildTime.split(' ')
 
   if (!timePart) {
     const date = new Date(buildTime)
@@ -10,8 +10,8 @@ export function formatBuildDate(buildTime: string) {
       day: 'numeric',
     })
   } else {
-    const [month, day, year] = datePart?.split('-').map(Number)
-    const [hours, minutes, seconds] = timePart?.split(':').map(Number)
+    const [month, day, year] = datePart.split('-').map(Number)
+    const [hours, minutes, seconds] = timePart.split(':').map(Number)
 
     const fullYear = 2000 + year
 

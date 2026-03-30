@@ -197,6 +197,7 @@ export function AsyncAutocomplete<T = any>({
 
   const listRef = useRef<Array<HTMLElement | null>>([])
   const listContentRef = useRef<Array<string | null>>([])
+  // eslint-disable-next-line no-undef
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const { refs, floatingStyles, context } = useFloating({
