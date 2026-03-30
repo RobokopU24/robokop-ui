@@ -30,6 +30,11 @@ interface NodeData {
   id?: string | number | (string | number)[]
   categories?: string | number | (string | number)[]
   count?: string | number | (string | number)[]
+  attributes?: Array<{
+    attribute_type_id?: string
+    original_attribute_name?: string
+    value?: string | number | boolean | (string | number | boolean)[]
+  }>
 }
 
 interface NodeAttributesTableProps {
@@ -37,7 +42,7 @@ interface NodeAttributesTableProps {
 }
 
 const NodeAttributesTable: React.FC<NodeAttributesTableProps> = ({ nodeData }) => {
-  const { name, id, categories, count } = nodeData
+  const { name, id, categories, count, attributes } = nodeData
 
   return (
     <Box style={{ maxHeight: 500, overflow: 'auto' }}>
@@ -79,6 +84,26 @@ const NodeAttributesTable: React.FC<NodeAttributesTableProps> = ({ nodeData }) =
               <ValueCell value={count} />
             </TableRow>
           )}
+
+          {Array.isArray(attributes) &&
+            attributes.map((attribute, index) => (
+              <TableRow key={`attribute-${index}`} style={{ verticalAlign: 'top' }}>
+                <TableCell>
+                  {attribute.original_attribute_name || attribute.attribute_type_id}
+                </TableCell>
+                <TableCell>
+                  <ul style={{ padding: 0, margin: 0, listStyleType: 'none' }}>
+                    {Array.isArray(attribute.value) ? (
+                      attribute.value.map((valueItem, valueIndex) => (
+                        <li key={valueIndex}>{valueItem}</li>
+                      ))
+                    ) : (
+                      <li>{attribute.value}</li>
+                    )}
+                  </ul>
+                </TableCell>
+              </TableRow>
+            ))}
         </StyledTableBody>
       </Table>
     </Box>
