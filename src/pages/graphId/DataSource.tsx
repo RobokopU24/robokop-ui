@@ -115,7 +115,6 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                                     href={source.license}
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    title='License'
                                     sx={{
                                       display: '-webkit-box',
                                       WebkitLineClamp: 1,
