@@ -1,23 +1,23 @@
-import API from '../API/index';
+import API from '../API/index'
 
 export default async function fetchCuries(
   entity: any,
   displayAlert: (arg0: string, arg1: string) => void,
   cancel: any,
-  biolinkType: any
+  biolinkType: any,
 ) {
   // Get list of curies that match this search term
-  const response = await API.nameResolver.entityLookup(entity, 100, cancel, biolinkType);
+  const response = await API.nameResolver.entityLookup(entity, 100, cancel, biolinkType)
   if (response.status === 'error') {
     displayAlert(
       'error',
-      'Failed to contact name resolver to search curies. Please try again later.'
-    );
-    return [];
+      'Failed to contact name resolver to search curies. Please try again later.',
+    )
+    return []
   }
 
   if (!Array.isArray(response)) {
-    return [];
+    return []
   }
 
   return response.map(({ curie, label, types, taxa }) => ({
@@ -25,5 +25,5 @@ export default async function fetchCuries(
     categories: types,
     ids: [curie],
     taxa,
-  }));
+  }))
 }

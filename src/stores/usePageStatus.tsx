@@ -1,12 +1,12 @@
-import { Alert, Box } from "@mui/material";
-import { withStyles } from "@mui/styles";
-import React, { useState, useCallback } from "react";
+import { Alert, Box } from '@mui/material'
+import { withStyles } from '@mui/styles'
+import React, { useState, useCallback } from 'react'
 
-import Loading from "../components/loading/Loading";
+import Loading from '../components/loading/Loading'
 
 const CenteredAlert = withStyles({
-  root: { justifyContent: "center" },
-})(Alert);
+  root: { justifyContent: 'center' },
+})(Alert)
 
 /**
  * Store to manage page error handling.
@@ -17,37 +17,37 @@ const CenteredAlert = withStyles({
  */
 export default function usePageStatus(startAsLoading: any, initialLoadingMessage?: string) {
   // Full page loading indicator
-  const [loading, toggleLoading] = useState(!!startAsLoading);
-  const [loadingMessage, setLoadingMessage] = useState(initialLoadingMessage || "");
+  const [loading, toggleLoading] = useState(!!startAsLoading)
+  const [loadingMessage, setLoadingMessage] = useState(initialLoadingMessage || '')
   // Full page error indicator
-  const [error, setError] = useState("");
+  const [error, setError] = useState('')
 
   function setLoading(msg: any) {
-    setError("");
+    setError('')
     if (msg) {
-      setLoadingMessage(msg);
+      setLoadingMessage(msg)
     }
-    toggleLoading(true);
+    toggleLoading(true)
   }
 
   function setSuccess() {
-    setError("");
-    setLoadingMessage("");
-    toggleLoading(false);
+    setError('')
+    setLoadingMessage('')
+    toggleLoading(false)
   }
 
   function setFailure(newErr: React.SetStateAction<string>) {
-    setError(newErr);
-    toggleLoading(false);
+    setError(newErr)
+    toggleLoading(false)
   }
 
   function Display() {
     if (error) {
       return (
         <Box mt={10}>
-          <CenteredAlert severity="error">{error}</CenteredAlert>
+          <CenteredAlert severity='error'>{error}</CenteredAlert>
         </Box>
-      );
+      )
     }
 
     if (loading) {
@@ -55,11 +55,11 @@ export default function usePageStatus(startAsLoading: any, initialLoadingMessage
         <Box mt={10}>
           <Loading positionStatic message={loadingMessage} />
         </Box>
-      );
+      )
     }
 
     // Nothing to render
-    return null;
+    return null
   }
 
   return {
@@ -68,5 +68,5 @@ export default function usePageStatus(startAsLoading: any, initialLoadingMessage
     setFailure,
     Display: useCallback(Display, [loading, error]),
     displayPage: !loading && !error,
-  };
+  }
 }

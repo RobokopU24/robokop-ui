@@ -1,17 +1,17 @@
-import React from 'react';
-import { Container, Grid, Typography, Divider } from '@mui/material';
+import React from 'react'
+import { Container, Grid, Typography, Divider } from '@mui/material'
 
 export default function TermsOfService() {
   return (
-    <Container sx={{ my: 6 }} maxWidth="md">
-      <Grid container spacing={4} justifyContent="center">
+    <Container sx={{ my: 6 }} maxWidth='md'>
+      <Grid container spacing={4} justifyContent='center'>
         <Grid>
-          <Typography variant="h4" gutterBottom textAlign="center">
+          <Typography variant='h4' gutterBottom textAlign='center'>
             Terms of Service
           </Typography>
           <Divider sx={{ mb: 2 }} />
 
-          <Typography variant="body1" textAlign="justify">
+          <Typography variant='body1' textAlign='justify'>
             The ROBOKOP website (&lsquo;ROBOKOP&rsquo;) has been designed to provide you with access
             to biomedical exploration and inference tools developed by RENCI and CoVar LLC
             (hereafter referred to as the ‘ROBOKOP team’). The ROBOKOP team authorizes you to access
@@ -110,5 +110,5 @@ export default function TermsOfService() {
         </Grid>
       </Grid>
     </Container>
-  );
+  )
 }

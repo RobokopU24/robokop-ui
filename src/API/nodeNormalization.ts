@@ -1,6 +1,6 @@
-import axios from 'axios';
-import utils from './utils';
-import { api } from './baseUrlProxy';
+import axios from 'axios'
+import utils from './utils'
+import { api } from './baseUrlProxy'
 
 const baseRoutes = {
   /**
@@ -10,21 +10,21 @@ const baseRoutes = {
   async getNormalizedNodes(curies: any, cancel: any) {
     const config = {
       cancelToken: cancel,
-    };
+    }
     try {
-      const response = await api.post('/api/node_norm', curies, config);
-      return response.data;
+      const response = await api.post('/api/node_norm', curies, config)
+      return response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
-};
+}
 
 const routes = {
   getNormalizedNodes: baseRoutes.getNormalizedNodes,
-};
+}
 
-export default routes;
+export default routes

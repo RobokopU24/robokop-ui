@@ -1,8 +1,8 @@
-import axios from 'axios';
-import utils from './utils';
+import axios from 'axios'
+import utils from './utils'
 const baseRoutes = {
   async getNodeDetails(nodeId: string) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/node/${nodeId}`,
@@ -10,17 +10,17 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
+      const response = await axios(config)
 
-      return response.data;
+      return response.data
       // return testData1;
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
 
@@ -29,9 +29,9 @@ const baseRoutes = {
     pageSize: number,
     pageNumber: number,
     predicate: string,
-    category?: string
+    category?: string,
   ) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/edges/${nodeId}?limit=${pageSize}&offset=${
@@ -41,22 +41,22 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
+      const response = await axios(config)
 
-      return response.data;
+      return response.data
       // return testData1;
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
 
   async getNodeEdgeSummary(nodeId: string) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/edge_summary/${nodeId}`,
@@ -64,21 +64,21 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
+      const response = await axios(config)
 
-      return response.data;
+      return response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
 
   async getNodeEdgeCount(nodeId: string) {
-    let config = {
+    const config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: `https://robokop-automat.apps.renci.org/robokopkg/edges/${nodeId}?count_only=true`,
@@ -86,24 +86,24 @@ const baseRoutes = {
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    };
+    }
     try {
-      const response = await axios(config);
-      return response.data;
+      const response = await axios(config)
+      return response.data
     } catch (error) {
       if (axios.isCancel(error)) {
-        return {};
+        return {}
       }
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
-};
+}
 
 const routes = {
   getNodeEdges: baseRoutes.getNodeEdges,
   getNodeDetails: baseRoutes.getNodeDetails,
   getNodeEdgeSummary: baseRoutes.getNodeEdgeSummary,
   getNodeEdgeCount: baseRoutes.getNodeEdgeCount,
-};
+}
 
-export default routes;
+export default routes

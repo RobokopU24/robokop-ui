@@ -1,6 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router';
-import ProtectedRoute from '../../components/ProtectedRoute';
-import Profile from '../../pages/Profile';
+import { createFileRoute } from '@tanstack/react-router'
+import ProtectedRoute from '../../components/ProtectedRoute'
+import Profile from '../../pages/Profile'
 
 export const Route = createFileRoute('/profile/')({
   component: RouteComponent,
@@ -27,12 +27,12 @@ export const Route = createFileRoute('/profile/')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
   return (
     <ProtectedRoute>
       <Profile />
     </ProtectedRoute>
-  );
+  )
 }

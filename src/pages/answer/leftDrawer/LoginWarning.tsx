@@ -1,14 +1,14 @@
-import { Modal } from '@mui/material';
-import React from 'react';
+import { Modal } from '@mui/material'
+import React from 'react'
 
 function LoginWarning({
   isOpen,
   onClose,
   warningType = 'login',
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  warningType?: 'login' | 'premium' | null;
+  isOpen: boolean
+  onClose: () => void
+  warningType?: 'login' | 'premium' | null
 }) {
   return (
     <Modal open={isOpen} onClose={onClose}>
@@ -27,12 +27,12 @@ function LoginWarning({
         {warningType === 'premium' && (
           <h2>This feature is available for premium users only. Please upgrade your account.</h2>
         )}
-        <button onClick={onClose} className="button-cancel" style={{ marginTop: '20px' }}>
+        <button onClick={onClose} className='button-cancel' style={{ marginTop: '20px' }}>
           Close
         </button>
       </div>
     </Modal>
-  );
+  )
 }
 
-export default LoginWarning;
+export default LoginWarning

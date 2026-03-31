@@ -1,14 +1,14 @@
 #answerContentContainer {
-    margin-left: 200px;
+  margin-left: 200px;
 }
 #answerPageSplashMessage {
-    width: 100%;
-    text-align: center;
-    padding-top: 35vh;
+  width: 100%;
+  text-align: center;
+  padding-top: 35vh;
 }
 .cardLabel {
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    color: grey;
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  color: grey;
 }

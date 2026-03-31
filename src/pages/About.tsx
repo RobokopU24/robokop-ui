@@ -1,17 +1,17 @@
-import React from 'react';
-import { Container, Grid, Typography, Divider, Link } from '@mui/material';
+import React from 'react'
+import { Container, Grid, Typography, Divider, Link } from '@mui/material'
 
 export default function About() {
   return (
-    <Container maxWidth="md" sx={{ my: 6 }}>
+    <Container maxWidth='md' sx={{ my: 6 }}>
       <Grid container spacing={2}>
         <Grid>
-          <Typography variant="h4" gutterBottom>
+          <Typography variant='h4' gutterBottom>
             About ROBOKOP
           </Typography>
           <Divider sx={{ mb: 2 }} />
 
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Overview
           </Typography>
           <Typography component={'p'}>
@@ -35,7 +35,7 @@ export default function About() {
           </Typography>
 
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Questions and Answers
           </Typography>
           <Typography component={'p'}>
@@ -59,14 +59,14 @@ export default function About() {
             diverse underlying knowledge sources. For more information on Biolink Model, please
             refer to{' '}
             <Link
-              href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9372416/"
-              target="_blank"
-              rel="noreferrer"
+              href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9372416/'
+              target='_blank'
+              rel='noreferrer'
             >
               Unni et al. 2022
             </Link>{' '}
             and the{' '}
-            <Link href="https://biolink.github.io/biolink-model/" target="_blank" rel="noreferrer">
+            <Link href='https://biolink.github.io/biolink-model/' target='_blank' rel='noreferrer'>
               Biolink GitHub website
             </Link>
             .
@@ -79,7 +79,7 @@ export default function About() {
           </Typography>
 
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Answer Scoring and Ranking
           </Typography>
           <Typography component={'p'}>
@@ -98,43 +98,64 @@ export default function About() {
           </Typography>
 
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             ROBOKOP Knowledge Sources
           </Typography>
           <Typography component={'p'}>
             Information on ROBOKOP’s knowledge sources, including URLs, their publicly available
             application programming interfaces (APIs), and other resources, can be found on the{' '}
-            <Link href="https://robokop-automat.apps.renci.org" target="_blank" rel="noreferrer noopener">Automat page</Link>.
+            <Link
+              href='https://robokop-automat.apps.renci.org'
+              target='_blank'
+              rel='noreferrer noopener'
+            >
+              Automat page
+            </Link>
+            .
           </Typography>
 
           <Typography component={'p'} sx={{ mt: 2 }}>
             Users may request the addition of new knowledge sources to ROBOKOP by submitting an
             issue on the New Source Proposal{' '}
-            <Link href="https://github.com/RobokopU24/NewSourceProposals/issues/new?template=new-source-proposal.yml" target="_blank" rel="noreferrer noopener">Github repo</Link>.
+            <Link
+              href='https://github.com/RobokopU24/NewSourceProposals/issues/new?template=new-source-proposal.yml'
+              target='_blank'
+              rel='noreferrer noopener'
+            >
+              Github repo
+            </Link>
+            .
           </Typography>
 
           <Divider sx={{ my: 3 }} />
-          <Typography variant="h5" gutterBottom>
+          <Typography variant='h5' gutterBottom>
             Open-source Licensing
           </Typography>
           <Typography component={'p'}>
             ROBOKOP is an open-source software application licensed under the{' '}
-            <Link href="https://opensource.org/license/mit/" target="_blank" rel="noreferrer">
+            <Link href='https://opensource.org/license/mit/' target='_blank' rel='noreferrer'>
               MIT license
             </Link>
             . All software code can be found on the{' '}
-            <Link href="https://github.com/RobokopU24" target="_blank" rel="noreferrer">
+            <Link href='https://github.com/RobokopU24' target='_blank' rel='noreferrer'>
               ROBOKOP GitHub repository
             </Link>
             .
           </Typography>
 
           <Typography component={'p'} sx={{ mt: 2 }}>
-            All issues and questions can be submitted to the{" "}
-            <Link href="https://github.com/RobokopU24/Feedback/issues" target="_blank" rel="noreferrer noopener">ROBOKOP Feedback issues page</Link>.
+            All issues and questions can be submitted to the{' '}
+            <Link
+              href='https://github.com/RobokopU24/Feedback/issues'
+              target='_blank'
+              rel='noreferrer noopener'
+            >
+              ROBOKOP Feedback issues page
+            </Link>
+            .
           </Typography>
         </Grid>
       </Grid>
     </Container>
-  );
+  )
 }

@@ -1,7 +1,7 @@
-import axios from 'axios';
-import utils from './utils';
+import axios from 'axios'
+import utils from './utils'
 
-const ranker = 'http://robokop.renci.org:6011/api';
+const ranker = 'http://robokop.renci.org:6011/api'
 
 const baseRoutes = {
   /**
@@ -15,12 +15,12 @@ const baseRoutes = {
       url: `${ranker}/entity_lookup`,
       method: 'POST',
       data: entity_name,
-    };
+    }
     try {
-      const response = await axios(config);
-      return response.data;
+      const response = await axios(config)
+      return response.data
     } catch (error: any) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error)
     }
   },
   /**
@@ -31,19 +31,19 @@ const baseRoutes = {
       url: `${ranker}/count_predicates`,
       method: 'POST',
       data: [firstNode, secondNode],
-    };
+    }
     try {
-      const response = await axios(config);
-      return response.data;
+      const response = await axios(config)
+      return response.data
     } catch (error: any) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error)
     }
   },
-};
+}
 
 const routes = {
   entityLookup: baseRoutes.entityLookup,
   predicateLookup: baseRoutes.predicateLookup,
-};
+}
 
-export default routes;
+export default routes

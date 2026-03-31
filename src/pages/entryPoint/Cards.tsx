@@ -1,11 +1,11 @@
-import React from 'react';
+import React from 'react'
 
 interface CardsProps {
-  icon: string;
-  title: string;
-  description: string;
-  buttonText: string;
-  action: () => void;
+  icon: string
+  title: string
+  description: string
+  buttonText: string
+  action: () => void
 }
 
 function Cards({ icon, title, description, buttonText, action }: CardsProps) {
@@ -35,11 +35,11 @@ function Cards({ icon, title, description, buttonText, action }: CardsProps) {
       </div>
       <h3 style={{ margin: '20px 0 0 0', fontWeight: 500 }}>{title}</h3>
       <p style={{ color: '#5E5E5E', fontSize: '14px', margin: '12px 0 32px 0' }}>{description}</p>
-      <button onClick={action} className="primary-button">
+      <button onClick={action} className='primary-button'>
         <p style={{ margin: 0, fontWeight: 400, fontSize: '14px' }}>{buttonText}</p>
       </button>
     </div>
-  );
+  )
 }
 
-export default Cards;
+export default Cards

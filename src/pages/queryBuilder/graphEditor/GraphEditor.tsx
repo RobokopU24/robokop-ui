@@ -1,163 +1,168 @@
-import React, { useReducer, useEffect, useState, cloneElement } from "react";
-import { Popover, Button, Paper, Tooltip } from "@mui/material";
-import { useQueryBuilderContext } from "../../../context/queryBuilder";
-import nodeUtils from "../../../utils/d3/nodes";
-import DownloadDialog from "../../../components/DownloadDialog";
-import { NodeOption } from "../textEditor/types";
+import React, { useReducer, useEffect, useState, cloneElement } from 'react'
+import { Popover, Button, Paper, Tooltip } from '@mui/material'
+import { useQueryBuilderContext } from '../../../context/queryBuilder'
+import nodeUtils from '../../../utils/d3/nodes'
+import DownloadDialog from '../../../components/DownloadDialog'
+import { NodeOption } from '../textEditor/types'
 
-import QueryGraph from "./QueryGraph";
-import NodeSelector from "../textEditor/textEditorRow/NodeSelector";
-import PredicateSelector from "../textEditor/textEditorRow/PredicateSelector";
-import queryGraphUtils from "../../../utils/queryGraph";
+import QueryGraph from './QueryGraph'
+import NodeSelector from '../textEditor/textEditorRow/NodeSelector'
+import PredicateSelector from '../textEditor/textEditorRow/PredicateSelector'
+import queryGraphUtils from '../../../utils/queryGraph'
 
-import "./graphEditor.css";
-import SaveQuery from "../saveQuery/SaveQuery";
-import { useAuth } from "../../../context/AuthContext";
-import API from "../../../API/routes";
-import axios from "axios";
-import ShareQuery from "../shareQuery/ShareQuery";
+import './graphEditor.css'
+import SaveQuery from '../saveQuery/SaveQuery'
+import { useAuth } from '../../../context/AuthContext'
+import API from '../../../API/routes'
+import axios from 'axios'
+import ShareQuery from '../shareQuery/ShareQuery'
 
-import AddIcon from "@mui/icons-material/Add";
-import AddLinkIcon from "@mui/icons-material/AddLink";
-import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
-import ShareIcon from "@mui/icons-material/Share";
-import EditIcon from "@mui/icons-material/Edit";
-import DownloadIcon from "@mui/icons-material/Download";
+import AddIcon from '@mui/icons-material/Add'
+import AddLinkIcon from '@mui/icons-material/AddLink'
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder'
+import ShareIcon from '@mui/icons-material/Share'
+import EditIcon from '@mui/icons-material/Edit'
+import DownloadIcon from '@mui/icons-material/Download'
 
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { useAlert } from "../../../components/AlertProvider";
-import RestartAlt from "@mui/icons-material/RestartAlt";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
-import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+import { useAlert } from '../../../components/AlertProvider'
+import RestartAlt from '@mui/icons-material/RestartAlt'
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'
 
-const width = 600;
-const height = 400;
+const width = 600
+const height = 400
 
 // Define types for click state
 interface ClickState {
-  creatingConnection: boolean;
-  chosenTerms: string[];
-  clickedId: string;
-  popoverId: string;
-  popoverAnchor: HTMLElement | null;
-  popoverType: string;
+  creatingConnection: boolean
+  chosenTerms: string[]
+  clickedId: string
+  popoverId: string
+  popoverAnchor: HTMLElement | null
+  popoverType: string
 }
 
 // Define types for click actions
 type ClickAction =
-  | { type: "startConnection"; payload: { anchor: HTMLElement } }
-  | { type: "connectTerm"; payload: { id: string } }
-  | { type: "connectionMade" }
-  | { type: "click"; payload: { id: string } }
-  | { type: "openEditor"; payload: { id: string; type: string; anchor: HTMLElement } }
-  | { type: "closeEditor" };
+  | { type: 'startConnection'; payload: { anchor: HTMLElement } }
+  | { type: 'connectTerm'; payload: { id: string } }
+  | { type: 'connectionMade' }
+  | { type: 'click'; payload: { id: string } }
+  | { type: 'openEditor'; payload: { id: string; type: string; anchor: HTMLElement } }
+  | { type: 'closeEditor' }
 
 function clickReducer(state: ClickState, action: ClickAction): ClickState {
   switch (action.type) {
-    case "startConnection": {
-      const { anchor } = action.payload;
-      state.creatingConnection = true;
-      state.popoverId = "";
-      state.popoverAnchor = anchor;
-      state.popoverType = "newEdge";
-      break;
+    case 'startConnection': {
+      const { anchor } = action.payload
+      state.creatingConnection = true
+      state.popoverId = ''
+      state.popoverAnchor = anchor
+      state.popoverType = 'newEdge'
+      break
     }
-    case "connectTerm": {
-      const { id } = action.payload;
+    case 'connectTerm': {
+      const { id } = action.payload
       if (!state.chosenTerms.includes(id)) {
-        state.chosenTerms = [...state.chosenTerms, id];
+        state.chosenTerms = [...state.chosenTerms, id]
       }
-      break;
+      break
     }
-    case "connectionMade": {
-      state.creatingConnection = false;
-      state.chosenTerms = [];
-      break;
+    case 'connectionMade': {
+      state.creatingConnection = false
+      state.chosenTerms = []
+      break
     }
-    case "click": {
-      const { id } = action.payload;
-      state.clickedId = id;
-      break;
+    case 'click': {
+      const { id } = action.payload
+      state.clickedId = id
+      break
     }
-    case "openEditor": {
-      const { id, type, anchor } = action.payload;
-      state.popoverId = id;
-      state.popoverType = type;
-      state.popoverAnchor = anchor;
-      break;
+    case 'openEditor': {
+      const { id, type, anchor } = action.payload
+      state.popoverId = id
+      state.popoverType = type
+      state.popoverAnchor = anchor
+      break
     }
-    case "closeEditor": {
-      state.popoverId = "";
-      state.popoverType = "";
-      state.popoverAnchor = null;
-      break;
+    case 'closeEditor': {
+      state.popoverId = ''
+      state.popoverType = ''
+      state.popoverAnchor = null
+      break
     }
     default: {
-      return state;
+      return state
     }
   }
-  return { ...state };
+  return { ...state }
 }
 
 interface GraphEditorProps {
-  editJson?: () => void;
-  downloadQuery: () => void;
-  onSubmit?: () => void;
-  buttonOptions?: { label: string; onClick: () => void; disabled: boolean }[];
+  editJson?: () => void
+  downloadQuery: () => void
+  onSubmit?: () => void
+  buttonOptions?: { label: string; onClick: () => void; disabled: boolean }[]
 }
 
 /**
  * Query Builder graph editor interface
  */
-export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonOptions }: GraphEditorProps) {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+export default function GraphEditor({
+  editJson,
+  downloadQuery,
+  onSubmit,
+  buttonOptions,
+}: GraphEditorProps) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
-  const queryBuilder = useQueryBuilderContext();
-  const { user } = useAuth();
-  const { displayAlert } = useAlert();
+  const queryBuilder = useQueryBuilderContext()
+  const { user } = useAuth()
+  const { displayAlert } = useAlert()
 
-  const { query_graph } = queryBuilder;
-  const [downloadOpen, setDownloadOpen] = useState(false);
-  const [showSaveQuery, toggleSaveQuery] = useState(false);
-  const [showShareQuery, toggleShareQuery] = useState(false);
+  const { query_graph } = queryBuilder
+  const [downloadOpen, setDownloadOpen] = useState(false)
+  const [showSaveQuery, toggleSaveQuery] = useState(false)
+  const [showShareQuery, toggleShareQuery] = useState(false)
 
   const [clickState, clickDispatch] = useReducer(clickReducer, {
     creatingConnection: false,
     chosenTerms: [],
-    clickedId: "",
-    popoverId: "",
+    clickedId: '',
+    popoverId: '',
     popoverAnchor: null,
-    popoverType: "",
-  });
+    popoverType: '',
+  })
 
   function addEdge() {
-    queryBuilder.dispatch({ type: "addEdge", payload: clickState.chosenTerms });
+    queryBuilder.dispatch({ type: 'addEdge', payload: clickState.chosenTerms })
   }
 
   function addHop() {
     if (!Object.keys(query_graph.nodes).length) {
       // add a node to an empty graph
-      queryBuilder.dispatch({ type: "addNode", payload: {} });
+      queryBuilder.dispatch({ type: 'addNode', payload: {} })
     } else {
       // add a node and edge
-      queryBuilder.dispatch({ type: "addHop", payload: {} });
+      queryBuilder.dispatch({ type: 'addHop', payload: {} })
     }
   }
 
   function editNode(id: string, node: NodeOption | null) {
-    queryBuilder.dispatch({ type: "editNode", payload: { id, node } });
+    queryBuilder.dispatch({ type: 'editNode', payload: { id, node } })
   }
 
   function resetGraph() {
-    queryBuilder.dispatch({ type: "resetGraph", payload: {} });
+    queryBuilder.dispatch({ type: 'resetGraph', payload: {} })
   }
 
   /**
@@ -166,62 +171,62 @@ export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonO
    */
   useEffect(() => {
     if (clickState.creatingConnection && clickState.chosenTerms.length >= 2) {
-      addEdge();
-      clickDispatch({ type: "connectionMade" });
+      addEdge()
+      clickDispatch({ type: 'connectionMade' })
       // remove border from connected nodes
-      nodeUtils.removeBorder();
+      nodeUtils.removeBorder()
     }
-  }, [clickState]);
+  }, [clickState])
 
   const graphActions = [
     {
-      tooltip: "Add New Term",
+      tooltip: 'Add New Term',
       onClick: addHop,
       icon: <AddIcon />,
       disabled: false,
     },
     {
-      tooltip: "Connect Terms",
+      tooltip: 'Connect Terms',
       onClick: (e: React.MouseEvent<HTMLElement>) => {
-        clickDispatch({ type: "startConnection", payload: { anchor: e.currentTarget } });
+        clickDispatch({ type: 'startConnection', payload: { anchor: e.currentTarget } })
         // auto close after 5 seconds
         setTimeout(() => {
-          clickDispatch({ type: "closeEditor" });
-          nodeUtils.removeBorder();
-        }, 5000);
+          clickDispatch({ type: 'closeEditor' })
+          nodeUtils.removeBorder()
+        }, 5000)
       },
       icon: <AddLinkIcon />,
       disabled: false,
     },
     {
-      tooltip: "Edit JSON",
+      tooltip: 'Edit JSON',
       onClick: editJson,
       icon: <EditIcon />,
       disabled: false,
     },
     {
-      tooltip: "Download Query",
+      tooltip: 'Download Query',
       onClick: downloadQuery,
       icon: <DownloadIcon />,
       disabled: false,
     },
     {
-      tooltip: "Reset Graph",
+      tooltip: 'Reset Graph',
       onClick: resetGraph,
       icon: <RestartAlt />,
       disabled: false,
     },
     {
-      icon: "divider",
+      icon: 'divider',
     },
     {
-      tooltip: user ? "Bookmark Graph" : "Login to save your query",
+      tooltip: user ? 'Bookmark Graph' : 'Login to save your query',
       onClick: () => toggleSaveQuery(true),
       icon: <BookmarkBorderIcon />,
       disabled: !user,
     },
     {
-      tooltip: "Share Graph",
+      tooltip: 'Share Graph',
       onClick: () => toggleShareQuery(true),
       icon: <ShareIcon />,
       disabled: false,
@@ -232,34 +237,38 @@ export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonO
     //   icon: <img src="/react-icons/fiBookOpen.svg" alt="Example" />,
     //   disabled: false,
     // },
-  ];
+  ]
 
-  const divRef = React.createRef<HTMLDivElement>();
+  const divRef = React.createRef<HTMLDivElement>()
 
   return (
-    <div id="queryGraphEditor">
-      <div id="graphContainer" style={{ height: "100%", width: "100%", position: "relative", overflow: "hidden" }} ref={divRef}>
-        <div className="buttons-container">
+    <div id='queryGraphEditor'>
+      <div
+        id='graphContainer'
+        style={{ height: '100%', width: '100%', position: 'relative', overflow: 'hidden' }}
+        ref={divRef}
+      >
+        <div className='buttons-container'>
           {graphActions.map((action, index) => (
             <>
-              {action.icon !== "divider" && typeof action.icon !== "string" ? (
+              {action.icon !== 'divider' && typeof action.icon !== 'string' ? (
                 <div
-                  className="button-icon"
+                  className='button-icon'
                   key={index}
                   onClick={
                     action.disabled
                       ? () => {
-                          displayAlert("info", "Please log in to use this feature.");
+                          displayAlert('info', 'Please log in to use this feature.')
                         }
                       : action.onClick
                   }
                   style={{ opacity: action.disabled ? 0.5 : 1 }}
                 >
-                  <div className="icon">{cloneElement(action.icon, { className: "" })}</div>
-                  <div className="icon-label">{action.tooltip}</div>
+                  <div className='icon'>{cloneElement(action.icon, { className: '' })}</div>
+                  <div className='icon-label'>{action.tooltip}</div>
                 </div>
               ) : (
-                <div className="divider" key={index}></div>
+                <div className='divider' key={index}></div>
               )}
             </>
           ))}
@@ -305,7 +314,13 @@ export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonO
             ))}
           </div>
         </div> */}
-        <QueryGraph height={height} width={width} clickState={clickState} updateClickState={clickDispatch as any} graphRef={divRef} />
+        <QueryGraph
+          height={height}
+          width={width}
+          clickState={clickState}
+          updateClickState={clickDispatch as any}
+          graphRef={divRef}
+        />
         {/* <div id="graphBottomButtons">
           <Button
             onClick={() => {
@@ -338,17 +353,17 @@ export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonO
         <Popover
           open={Boolean(clickState.popoverAnchor)}
           anchorEl={clickState.popoverAnchor}
-          onClose={() => clickDispatch({ type: "closeEditor" })}
+          onClose={() => clickDispatch({ type: 'closeEditor' })}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "left",
+            vertical: 'top',
+            horizontal: 'left',
           }}
           transformOrigin={{
-            vertical: "bottom",
-            horizontal: "left",
+            vertical: 'bottom',
+            horizontal: 'left',
           }}
         >
-          {(clickState.popoverType === "editNode" || clickState.popoverType === "newNode") && (
+          {(clickState.popoverType === 'editNode' || clickState.popoverType === 'newNode') && (
             <NodeSelector
               properties={query_graph.nodes[clickState.popoverId]}
               id={clickState.popoverId}
@@ -360,53 +375,71 @@ export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonO
               }}
             />
           )}
-          {clickState.popoverType === "editEdge" && <PredicateSelector id={clickState.popoverId} />}
-          {clickState.popoverType === "newEdge" && (
-            <Paper style={{ padding: "10px" }}>
+          {clickState.popoverType === 'editEdge' && <PredicateSelector id={clickState.popoverId} />}
+          {clickState.popoverType === 'newEdge' && (
+            <Paper style={{ padding: '10px' }}>
               <p>Select two terms to connect!</p>
             </Paper>
           )}
         </Popover>
-        <DownloadDialog open={downloadOpen} setOpen={setDownloadOpen} message={queryBuilder.state.message} download_type="query" />
+        <DownloadDialog
+          open={downloadOpen}
+          setOpen={setDownloadOpen}
+          message={queryBuilder.state.message}
+          download_type='query'
+        />
         <SaveQuery show={showSaveQuery} close={() => toggleSaveQuery(false)} />
         <ShareQuery show={showShareQuery} close={() => toggleShareQuery(false)} />
         <div
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: 10,
-            right: "50%",
-            transform: "translateX(50%)",
-            display: "flex",
-            gap: "10px",
+            right: '50%',
+            transform: 'translateX(50%)',
+            display: 'flex',
+            gap: '10px',
           }}
         >
           <button
-            id="demo-positioned-button"
-            aria-controls={open ? "demo-positioned-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
+            id='demo-positioned-button'
+            aria-controls={open ? 'demo-positioned-menu' : undefined}
+            aria-haspopup='true'
+            aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
             style={{
-              backgroundColor: "white",
-              width: "270px",
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px 12px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              backgroundColor: 'white',
+              width: '270px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              padding: '8px 12px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            Load a query {open ? <UnfoldLessIcon style={{ marginLeft: "8px" }} /> : <UnfoldMoreIcon style={{ marginLeft: "8px" }} />}
+            Load a query{' '}
+            {open ? (
+              <UnfoldLessIcon style={{ marginLeft: '8px' }} />
+            ) : (
+              <UnfoldMoreIcon style={{ marginLeft: '8px' }} />
+            )}
           </button>
-          <Menu id="demo-positioned-menu" aria-labelledby="demo-positioned-button" anchorEl={anchorEl} open={open} onClose={handleClose} anchorOrigin={{ vertical: "top", horizontal: "center" }} transformOrigin={{ vertical: "bottom", horizontal: "center" }}>
+          <Menu
+            id='demo-positioned-menu'
+            aria-labelledby='demo-positioned-button'
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          >
             {buttonOptions?.map((option, index) => (
               <MenuItem
                 key={index}
                 onClick={() => {
-                  option.onClick();
-                  handleClose();
+                  option.onClick()
+                  handleClose()
                 }}
                 disabled={option.disabled}
               >
@@ -414,11 +447,11 @@ export default function GraphEditor({ editJson, downloadQuery, onSubmit, buttonO
               </MenuItem>
             ))}
           </Menu>
-          <button className="primary-button" onClick={onSubmit}>
+          <button className='primary-button' onClick={onSubmit}>
             Submit
           </button>
         </div>
       </div>
     </div>
-  );
+  )
 }

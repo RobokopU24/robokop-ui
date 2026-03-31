@@ -1,14 +1,14 @@
-import styles from './ContactForm.module.css';
-import type { Path, UseFormRegister, Validate } from 'react-hook-form';
-import type { IForm } from './ContactForm';
-import { toKebabCase } from '../toKebabCase';
+import styles from './ContactForm.module.css'
+import type { Path, UseFormRegister, Validate } from 'react-hook-form'
+import type { IForm } from './ContactForm'
+import { toKebabCase } from '../toKebabCase'
 
 interface TextAreaProps {
-  label: Path<IForm>;
-  register: UseFormRegister<IForm>;
-  required?: boolean;
-  validate?: Validate<string, IForm> | Record<string, Validate<string, IForm>>;
-  rows?: number;
+  label: Path<IForm>
+  register: UseFormRegister<IForm>
+  required?: boolean
+  validate?: Validate<string, IForm> | Record<string, Validate<string, IForm>>
+  rows?: number
 }
 
 export const TextArea = ({ label, register, required, validate, rows }: TextAreaProps) => {
@@ -23,5 +23,5 @@ export const TextArea = ({ label, register, required, validate, rows }: TextArea
         required={required}
       ></textarea>
     </div>
-  );
-};
+  )
+}

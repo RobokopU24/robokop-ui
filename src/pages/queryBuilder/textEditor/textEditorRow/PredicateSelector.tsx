@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useMemo, useContext, useEffect } from 'react';
-import BiolinkContext from '../../../../context/biolink';
-import strings from '../../../../utils/strings';
-import { useQueryBuilderContext } from '../../../../context/queryBuilder';
-import highlighter from '../../../../utils/d3/highlighter';
-import { Autocomplete, TextField } from '@mui/material';
-import { BiolinkPredicate, BiolinkContextType } from '../types';
+import React, { useMemo, useContext, useEffect } from 'react'
+import BiolinkContext from '../../../../context/biolink'
+import strings from '../../../../utils/strings'
+import { useQueryBuilderContext } from '../../../../context/queryBuilder'
+import highlighter from '../../../../utils/d3/highlighter'
+import { Autocomplete, TextField } from '@mui/material'
+import { BiolinkPredicate, BiolinkContextType } from '../types'
 
 // Props interface
 interface PredicateSelectorProps {
-  id: string;
+  id: string
 }
 
 /**
@@ -18,14 +18,14 @@ interface PredicateSelectorProps {
  * @returns list of categories or biolink:NamedThing
  */
 function getCategories(categories: string[] | undefined): string[] {
-  return (Array.isArray(categories) && categories.length && categories) || ['biolink:NamedThing'];
+  return (Array.isArray(categories) && categories.length && categories) || ['biolink:NamedThing']
 }
 
 export default function PredicateSelector({ id }: PredicateSelectorProps) {
-  const biolink = useContext(BiolinkContext) as BiolinkContextType;
-  const queryBuilder = useQueryBuilderContext();
-  const { query_graph } = queryBuilder;
-  const edge = query_graph.edges[id];
+  const biolink = useContext(BiolinkContext) as BiolinkContextType
+  const queryBuilder = useQueryBuilderContext()
+  const { query_graph } = queryBuilder
+  const edge = query_graph.edges[id]
 
   /**
    * Get list of valid predicates from selected node categories
@@ -33,32 +33,32 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
    */
   function getFilteredPredicateList(): string[] | null {
     if (!biolink || !biolink.predicates || !biolink.predicates.length) {
-      return null;
+      return null
     }
     if (edge.subject === undefined || edge.object === undefined) {
-      return null;
+      return null
     }
-    const subjectNode = query_graph.nodes[edge.subject];
-    const objectNode = query_graph.nodes[edge.object];
+    const subjectNode = query_graph.nodes[edge.subject]
+    const objectNode = query_graph.nodes[edge.object]
 
     // get list of categories from each node
-    const subjectCategories = getCategories(subjectNode.categories);
-    const objectCategories = getCategories(objectNode.categories);
+    const subjectCategories = getCategories(subjectNode.categories)
+    const objectCategories = getCategories(objectNode.categories)
 
     // get hierarchies of all involved node categories
     const subjectNodeCategoryHierarchy = subjectCategories.flatMap(
-      (subjectCategory: string) => biolink.ancestorsMap?.[subjectCategory] ?? []
-    );
+      (subjectCategory: string) => biolink.ancestorsMap?.[subjectCategory] ?? [],
+    )
     const objectNodeCategoryHierarchy = objectCategories.flatMap(
-      (objectCategory: string) => biolink.ancestorsMap?.[objectCategory] ?? []
-    );
+      (objectCategory: string) => biolink.ancestorsMap?.[objectCategory] ?? [],
+    )
 
     // if we get categories back that aren't in the biolink model
     if (!subjectNodeCategoryHierarchy || !objectNodeCategoryHierarchy) {
-      return null;
+      return null
     }
 
-    return biolink.predicates.map(({ predicate }: BiolinkPredicate) => predicate);
+    return biolink.predicates.map(({ predicate }: BiolinkPredicate) => predicate)
   }
 
   const filteredPredicateList =
@@ -71,10 +71,10 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
         ? JSON.stringify(query_graph.nodes[edge.object].categories)
         : '',
       biolink,
-    ]) || [];
+    ]) || []
 
   function editPredicates(predicates: string[]) {
-    queryBuilder.dispatch({ type: 'editPredicate', payload: { id, predicates } });
+    queryBuilder.dispatch({ type: 'editPredicate', payload: { id, predicates } })
   }
 
   useEffect(() => {
@@ -82,10 +82,10 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
       const keptPredicates =
         (edge.predicates &&
           edge.predicates.filter((p: string) => filteredPredicateList.indexOf(p) > -1)) ||
-        [];
-      editPredicates(keptPredicates);
+        []
+      editPredicates(keptPredicates)
     }
-  }, [filteredPredicateList]);
+  }, [filteredPredicateList])
 
   return (
     <Autocomplete
@@ -96,17 +96,17 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Predicate"
-          variant="outlined"
-          className="edgeDropdown"
-          margin="dense"
+          label='Predicate'
+          variant='outlined'
+          className='edgeDropdown'
+          margin='dense'
           onFocus={() => {
-            highlighter.highlightGraphEdge(id);
-            highlighter.highlightTextEditorEdge(id);
+            highlighter.highlightGraphEdge(id)
+            highlighter.highlightTextEditorEdge(id)
           }}
           onBlur={() => {
-            highlighter.clearGraphEdge(id);
-            highlighter.clearTextEditorEdge(id);
+            highlighter.clearGraphEdge(id)
+            highlighter.clearTextEditorEdge(id)
           }}
           InputProps={{
             ...params.InputProps,
@@ -121,7 +121,7 @@ export default function PredicateSelector({ id }: PredicateSelectorProps) {
       multiple
       limitTags={1}
       disableCloseOnSelect
-      size="small"
+      size='small'
     />
-  );
+  )
 }

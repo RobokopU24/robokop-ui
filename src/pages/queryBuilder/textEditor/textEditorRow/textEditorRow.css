@@ -1,133 +1,132 @@
 .textEditorSelector {
-    /* margin: 0px 10px; */
-    min-width: 200px;
+  /* margin: 0px 10px; */
+  min-width: 200px;
 }
 
-
-.referenceNode>.nodeDropdown {
-    background-color: #f2f2f2;
+.referenceNode > .nodeDropdown {
+  background-color: #f2f2f2;
 }
 
 .node-option-tooltip-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 summary {
-    display: list-item;
-    cursor: pointer;
+  display: list-item;
+  cursor: pointer;
 }
 
 .qualifiers-wrapper {
-    /* padding: 2.5rem; */
-    border-top: 1px solid #e0e0e0;
+  /* padding: 2.5rem; */
+  border-top: 1px solid #e0e0e0;
 }
 
 .qualifiers-dropdown {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }
 
 .qualifiers-list {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .editor-row-wrapper {
-    display: flex;
-    flex-direction: column;
-    background-color: #f9f9f9;
-    box-shadow: 0px 0px 5px #00000031;
-    border: 1px solid #e0e0e0;
-    border-radius: 16px;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  box-shadow: 0px 0px 5px #00000031;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .textEditorRow {
-    padding: 12px;
+  padding: 12px;
 }
 
 .dropdown-toggle {
-    border: none;
-    background-color: #efefef;
-    padding: 4px;
-    border-radius: 0px 0px 16px 16px;
+  border: none;
+  background-color: #efefef;
+  padding: 4px;
+  border-radius: 0px 0px 16px 16px;
 }
 
 .dropdown-toggle:hover {
-    background-color: #e6e6e6;
+  background-color: #e6e6e6;
 }
 
 .dropdown-toggle:active {
-    background-color: #e0e0e0;
+  background-color: #e0e0e0;
 }
 
 .dropdown-toggle:focus-visible {
-    outline: 2px solid blue;
-    outline-offset: -2px;
+  outline: 2px solid blue;
+  outline-offset: -2px;
 }
 
 .css-19qnlrw-MuiFormLabel-root-MuiInputLabel-root {
-    margin-top: -6px;
+  margin-top: -6px;
 }
 
 .css-1tlcqt-MuiAutocomplete-root .MuiOutlinedInput-root .MuiAutocomplete-input {
-    padding: 0px !important;
+  padding: 0px !important;
 }
 
 .editor-container {
-    padding: 1rem 0rem;
-    display: grid;
-    grid-template-columns: 6rem 1fr 1fr 1fr 3rem;
-    gap: 1rem;
-    align-items: center;
-    /* optional vertical centering */
+  padding: 1rem 0rem;
+  display: grid;
+  grid-template-columns: 6rem 1fr 1fr 1fr 3rem;
+  gap: 1rem;
+  align-items: center;
+  /* optional vertical centering */
 }
 
 .editor-item {
-    text-align: center;
+  text-align: center;
 }
 
 .editor-flex-container {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .editor-item.three-span {
-    grid-column: 2 / span 3;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+  grid-column: 2 / span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .full-span {
-    grid-column: 1 / span 3;
-    text-align: start;
-    color: gray;
-    font-size: 0.9rem;
+  grid-column: 1 / span 3;
+  text-align: start;
+  color: gray;
+  font-size: 0.9rem;
 }
 
 .qualifier-section {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(3, 1fr);
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 hr {
-    border: none;
-    height: 1px;
-    background-color: rgb(226, 226, 226);
-    width: 100%;
-    margin: 0.5rem 0rem;
+  border: none;
+  height: 1px;
+  background-color: rgb(226, 226, 226);
+  width: 100%;
+  margin: 0.5rem 0rem;
 }
 
 .sub-heading {
-    text-align: start;
-    color: gray;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+  text-align: start;
+  color: gray;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }

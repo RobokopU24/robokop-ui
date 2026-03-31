@@ -5,10 +5,10 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        VITE_DEPLOYMENT: "ROBOKOP"
-        VITE_BACKEND_API_URL: "https://robokop-ui-api.apps.renci.org"
+        VITE_DEPLOYMENT: 'ROBOKOP'
+        VITE_BACKEND_API_URL: 'https://robokop-ui-api.apps.renci.org'
         VITE_APP_VERSION: ${VITE_APP_VERSION:-0.0.0}
         VITE_BUILD_DATE: ${VITE_BUILD_DATE:-}
     ports:
-      - "8080:80"
+      - '8080:80'
     restart: unless-stopped

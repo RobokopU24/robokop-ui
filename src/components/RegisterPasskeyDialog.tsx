@@ -1,40 +1,40 @@
-import React from 'react';
-import { useAlert } from './AlertProvider';
-import { useAuth } from '../context/AuthContext';
-import { usePasskey } from '../hooks/usePasskey';
-import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import React from 'react'
+import { useAlert } from './AlertProvider'
+import { useAuth } from '../context/AuthContext'
+import { usePasskey } from '../hooks/usePasskey'
+import { Button, Dialog, DialogContent, DialogTitle, IconButton } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 
 interface RegisterPasskeyDialogProps {
-  open: boolean;
-  onClose: () => void;
+  open: boolean
+  onClose: () => void
 }
 
 function RegisterPasskeyDialog({ open, onClose }: RegisterPasskeyDialogProps) {
-  const { displayAlert } = useAlert();
-  const { user, setUser } = useAuth();
-  const { registerPasskey } = usePasskey();
+  const { displayAlert } = useAlert()
+  const { user, setUser } = useAuth()
+  const { registerPasskey } = usePasskey()
 
   const handleRegisterPasskey = async () => {
     try {
-      await registerPasskey();
+      await registerPasskey()
       if (user) {
-        setUser({ ...user, _count: { ...user._count, WebAuthnCredential: 1 } });
+        setUser({ ...user, _count: { ...user._count, WebAuthnCredential: 1 } })
       }
-      displayAlert('success', 'Passkey registered successfully!');
-      onClose();
+      displayAlert('success', 'Passkey registered successfully!')
+      onClose()
     } catch (error) {
-      console.error('Error registering passkey:', error);
-      displayAlert('error', 'Failed to register passkey. Please try again.');
+      console.error('Error registering passkey:', error)
+      displayAlert('error', 'Failed to register passkey. Please try again.')
     }
-  };
+  }
 
   const skipSetup = () => {
-    localStorage.setItem('passkeyPopupDenied', 'true');
-    onClose();
-  };
+    localStorage.setItem('passkeyPopupDenied', 'true')
+    onClose()
+  }
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="xs" fullWidth>
+    <Dialog open={open} onClose={onClose} maxWidth='xs' fullWidth>
       <DialogTitle>
         <div
           style={{
@@ -44,7 +44,7 @@ function RegisterPasskeyDialog({ open, onClose }: RegisterPasskeyDialogProps) {
           }}
         >
           <p style={{ margin: 0 }}>Set a passkey</p>
-          <IconButton style={{ fontSize: '18px' }} title="Close" onClick={onClose}>
+          <IconButton style={{ fontSize: '18px' }} title='Close' onClick={onClose}>
             <CloseIcon />
           </IconButton>
         </div>
@@ -64,7 +64,7 @@ function RegisterPasskeyDialog({ open, onClose }: RegisterPasskeyDialogProps) {
               marginBottom: '20px',
             }}
           >
-            <Button variant="contained" color="primary" onClick={handleRegisterPasskey}>
+            <Button variant='contained' color='primary' onClick={handleRegisterPasskey}>
               Register Passkey
             </Button>
             <Button onClick={skipSetup}>Skip for now</Button>
@@ -72,7 +72,7 @@ function RegisterPasskeyDialog({ open, onClose }: RegisterPasskeyDialogProps) {
         </div>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 
-export default RegisterPasskeyDialog;
+export default RegisterPasskeyDialog

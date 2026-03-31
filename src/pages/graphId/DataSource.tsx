@@ -1,38 +1,61 @@
-import React from "react";
-import { Accordion, AccordionDetails, AccordionSummary, Card, CardContent, Chip, Divider, Grid, Link as MuiLink, List, ListItem, ListItemText, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { OpenInNew } from "@mui/icons-material";
-import { GraphMetadataV2 } from "../../API/graphMetadata";
-import { isUrl } from "../../functions/isUrl";
+import React from 'react'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  Grid,
+  Link as MuiLink,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Tooltip,
+  Typography,
+} from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import { OpenInNew } from '@mui/icons-material'
+import { GraphMetadataV2 } from '../../API/graphMetadata'
+import { isUrl } from '../../functions/isUrl'
 
 interface DataSourceProps {
-  v2Metadata: GraphMetadataV2;
+  v2Metadata: GraphMetadataV2
 }
 
 function DataSource({ v2Metadata }: DataSourceProps) {
   return (
     <>
       {v2Metadata?.isBasedOn?.length > 0 && (
-        <Grid size={12} id="data-sources">
-          <Card variant="outlined">
+        <Grid size={12} id='data-sources'>
+          <Card variant='outlined'>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant='h6' gutterBottom>
                 Data Sources ({v2Metadata.isBasedOn.length})
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
                 This knowledge graph integrates data from the following sources:
               </Typography>
-              <TableContainer component={Paper} variant="outlined">
-                <Table size="small" sx={{ tableLayout: "fixed" }}>
+              <TableContainer component={Paper} variant='outlined'>
+                <Table size='small' sx={{ tableLayout: 'fixed' }}>
                   <TableHead>
                     <TableRow>
-                      <TableCell sx={{ width: "20%" }}>
+                      <TableCell sx={{ width: '20%' }}>
                         <strong>Name</strong>
                       </TableCell>
-                      <TableCell sx={{ width: "55%" }}>
+                      <TableCell sx={{ width: '55%' }}>
                         <strong>Description</strong>
                       </TableCell>
-                      <TableCell sx={{ width: "25%" }}>
+                      <TableCell sx={{ width: '25%' }}>
                         <strong>Links & License</strong>
                       </TableCell>
                     </TableRow>
@@ -41,24 +64,47 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                     {v2Metadata.isBasedOn.map((source, index) => (
                       <TableRow key={index}>
                         <TableCell>
-                          <Typography variant="body2" fontWeight="medium">
+                          <Typography variant='body2' fontWeight='medium'>
                             {source.url ? (
-                              <MuiLink href={source.url} target="_blank" rel="noopener noreferrer" title="Source URL">
-                                {source.name || source.id} <OpenInNew fontSize="small" sx={{ transform: "scale(0.85) translateY(5px)" }} />
+                              <MuiLink
+                                href={source.url}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                title='Source URL'
+                              >
+                                {source.name || source.id}{' '}
+                                <OpenInNew
+                                  fontSize='small'
+                                  sx={{ transform: 'scale(0.85) translateY(5px)' }}
+                                />
                               </MuiLink>
                             ) : (
                               source.name || source.id
                             )}
                           </Typography>
-                          {source.version && <Chip label={source.version} size="small" variant="outlined" sx={{ color: "#848484", mt: 1 }} />}
+                          {source.version && (
+                            <Chip
+                              label={source.version}
+                              size='small'
+                              variant='outlined'
+                              sx={{ color: '#848484', mt: 1 }}
+                            />
+                          )}
                         </TableCell>
                         <TableCell sx={{ maxWidth: 800 }}>
-                          <Typography variant="body2">{source.description || "No description available"}</Typography>
+                          <Typography variant='body2'>
+                            {source.description || 'No description available'}
+                          </Typography>
                         </TableCell>
                         <TableCell>
-                          <Stack direction="column" spacing={0.5}>
+                          <Stack direction='column' spacing={0.5}>
                             {source.citation && (
-                              <MuiLink href={source.citation[0]} target="_blank" rel="noopener noreferrer" title="Citation">
+                              <MuiLink
+                                href={source.citation[0]}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                title='Citation'
+                              >
                                 DOI
                               </MuiLink>
                             )}
@@ -67,17 +113,17 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                                 <Tooltip title={source.license} arrow>
                                   <MuiLink
                                     href={source.license}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    title="License"
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    title='License'
                                     sx={{
-                                      display: "-webkit-box",
+                                      display: '-webkit-box',
                                       WebkitLineClamp: 1,
-                                      WebkitBoxOrient: "vertical",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                      maxWidth: "100%",
-                                      wordBreak: "break-all",
+                                      WebkitBoxOrient: 'vertical',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      maxWidth: '100%',
+                                      wordBreak: 'break-all',
                                     }}
                                   >
                                     {source.license}
@@ -86,14 +132,14 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                               ) : (
                                 <Tooltip title={source.license} arrow>
                                   <Typography
-                                    variant="caption"
-                                    color="text.secondary"
+                                    variant='caption'
+                                    color='text.secondary'
                                     sx={{
-                                      display: "-webkit-box",
+                                      display: '-webkit-box',
                                       WebkitLineClamp: 2,
-                                      WebkitBoxOrient: "vertical",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
+                                      WebkitBoxOrient: 'vertical',
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
                                     }}
                                   >
                                     {source.license}
@@ -108,33 +154,42 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                 </Table>
               </TableContainer>
 
-              <Accordion variant="outlined" sx={{ mt: 2 }}>
+              <Accordion variant='outlined' sx={{ mt: 2 }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography variant="subtitle2">Full Citations</Typography>
+                  <Typography variant='subtitle2'>Full Citations</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <List dense>
                     {v2Metadata.isBasedOn
-                      .filter((source) => Array.isArray(source.citation) && source.citation.length >= 2 && source.citation.every((c) => c.trim() !== ""))
+                      .filter(
+                        (source) =>
+                          Array.isArray(source.citation) &&
+                          source.citation.length >= 2 &&
+                          source.citation.every((c) => c.trim() !== ''),
+                      )
                       .map((source, index, arr) => (
                         <React.Fragment key={index}>
                           <ListItem>
                             <ListItemText
                               primary={
                                 <span>
-                                  {source.name}{" "}
-                                  <a href={source.citation[0]} target="_blank" rel="noopener noreferrer">
+                                  {source.name}{' '}
+                                  <a
+                                    href={source.citation[0]}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                  >
                                     {source.citation[0]}
                                   </a>
                                 </span>
                               }
                               secondary={source.citation[1]}
                               secondaryTypographyProps={{
-                                sx: { whiteSpace: "pre-wrap" },
+                                sx: { whiteSpace: 'pre-wrap' },
                               }}
                             />
                           </ListItem>
-                          {index < arr.length - 1 && <Divider component="li" />}
+                          {index < arr.length - 1 && <Divider component='li' />}
                         </React.Fragment>
                       ))}
                   </List>
@@ -145,7 +200,7 @@ function DataSource({ v2Metadata }: DataSourceProps) {
         </Grid>
       )}
     </>
-  );
+  )
 }
 
-export default DataSource;
+export default DataSource

@@ -1,13 +1,10 @@
-import styles from './CardContainer.module.css';
+import React from 'react'
+import styles from './CardContainer.module.css'
 
 interface CardContainerProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const CardContainer = ({ children }: CardContainerProps) => {
-  return (
-    <div className={styles.container}>
-      {children}
-    </div>
-  )
+  return <div className={styles.container}>{children}</div>
 }

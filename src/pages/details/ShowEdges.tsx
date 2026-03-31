@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
-import Link from '@mui/material/Link';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Button from '@mui/material/Button';
+import Link from '@mui/material/Link'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/material/Box'
+import CircularProgress from '@mui/material/CircularProgress'
+import Button from '@mui/material/Button'
 
-import API from '../../API';
+import API from '../../API'
 
-import propertyFriendlyNames from './property-friendly-names.json';
-import strings from '../../utils/strings';
-import useBiolinkModel from '../../stores/useBiolinkModel';
-import { useAlert } from '../../components/AlertProvider';
+import propertyFriendlyNames from './property-friendly-names.json'
+import strings from '../../utils/strings'
+import useBiolinkModel from '../../stores/useBiolinkModel'
+import { useAlert } from '../../components/AlertProvider'
 import {
   Chip,
   Paper,
@@ -21,18 +21,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from '@mui/material';
-import { conceptColorMap, undefinedColor } from '../../utils/colors';
+} from '@mui/material'
+import { conceptColorMap, undefinedColor } from '../../utils/colors'
 
 interface ShowEdgesProps {
-  node: any;
-  nodeId: string;
-  selectedPredicate: string;
-  setPredicateSelection: React.Dispatch<React.SetStateAction<string>>;
-  selectedCategory: string;
-  setCategorySelection: React.Dispatch<React.SetStateAction<string>>;
-  totalCount?: number;
-  resetTotalCount?: () => void;
+  node: any
+  nodeId: string
+  selectedPredicate: string
+  setPredicateSelection: React.Dispatch<React.SetStateAction<string>>
+  selectedCategory: string
+  setCategorySelection: React.Dispatch<React.SetStateAction<string>>
+  totalCount?: number
+  resetTotalCount?: () => void
 }
 
 export default function ShowEdges({
@@ -45,29 +45,29 @@ export default function ShowEdges({
   totalCount = 0,
   resetTotalCount = () => {},
 }: ShowEdgesProps) {
-  const biolink = useBiolinkModel();
-  const { displayAlert } = useAlert();
+  const biolink = useBiolinkModel()
+  const { displayAlert } = useAlert()
 
-  const [loading, setLoading] = useState(false);
-  const [hasEdgesDataError, setHasEdgesDataError] = useState(false);
+  const [loading, setLoading] = useState(false)
+  const [hasEdgesDataError, setHasEdgesDataError] = useState(false)
 
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(10)
 
-  const [currentPageNumber, setCurrentPageNumber] = useState(0);
+  const [currentPageNumber, setCurrentPageNumber] = useState(0)
 
-  const [edgeData, setEdgeData] = useState([]);
+  const [edgeData, setEdgeData] = useState([])
 
   // Load biolink on page load
   async function fetchBiolink() {
-    const response = await API.biolink.getModelSpecification();
+    const response = await API.biolink.getModelSpecification()
     if (response.status === 'error') {
       displayAlert(
         'error',
-        'Failed to contact server to download biolink model. You will not be able to select general nodes or predicates. Please try again later.'
-      );
-      return;
+        'Failed to contact server to download biolink model. You will not be able to select general nodes or predicates. Please try again later.',
+      )
+      return
     }
-    biolink.setBiolinkModel(response);
+    biolink.setBiolinkModel(response)
   }
 
   async function fetchEdges() {
@@ -76,54 +76,54 @@ export default function ShowEdges({
       pageSize,
       currentPageNumber,
       selectedPredicate,
-      selectedCategory
-    );
+      selectedCategory,
+    )
 
     if (edgeResponse.status === 'error') {
-      setHasEdgesDataError(true);
-      setEdgeData([]);
+      setHasEdgesDataError(true)
+      setEdgeData([])
     } else {
-      setHasEdgesDataError(false);
-      setEdgeData(edgeResponse.edges);
+      setHasEdgesDataError(false)
+      setEdgeData(edgeResponse.edges)
     }
   }
 
   const handleNextPage = async () => {
-    const nextPageNumber = currentPageNumber + 1;
+    const nextPageNumber = currentPageNumber + 1
 
     const nextPageResponse = await API.details.getNodeEdges(
       nodeId,
       pageSize,
       nextPageNumber,
       selectedPredicate,
-      selectedCategory
-    );
+      selectedCategory,
+    )
 
     if (nextPageResponse.status === 'error') {
-      displayAlert('error', 'Failed to fetch next page data');
-      return;
+      displayAlert('error', 'Failed to fetch next page data')
+      return
     }
 
     if (nextPageResponse.edges.length === 0) {
-      displayAlert('info', 'Next page is empty');
-      return;
+      displayAlert('info', 'Next page is empty')
+      return
     }
 
-    setCurrentPageNumber(nextPageNumber);
-  };
+    setCurrentPageNumber(nextPageNumber)
+  }
 
   const handlePreviousPage = () => {
     if (currentPageNumber > 0) {
-      setCurrentPageNumber(currentPageNumber - 1);
+      setCurrentPageNumber(currentPageNumber - 1)
     }
-  };
+  }
 
   useEffect(() => {
-    setCurrentPageNumber(0);
-  }, [selectedPredicate, selectedCategory, pageSize]);
+    setCurrentPageNumber(0)
+  }, [selectedPredicate, selectedCategory, pageSize])
 
   useEffect(() => {
-    fetchBiolink();
+    fetchBiolink()
     // if (selectedPredicate !== 'all') {
     //   fetchEdges()
     //   .finally(() => {
@@ -131,32 +131,32 @@ export default function ShowEdges({
     //   });
     // }
     // setLoading(false);
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (selectedPredicate !== 'all') {
-      setLoading(true);
+      setLoading(true)
       fetchEdges().finally(() => {
-        setLoading(false);
-      });
+        setLoading(false)
+      })
     }
-  }, [currentPageNumber, pageSize, selectedPredicate, selectedCategory]);
+  }, [currentPageNumber, pageSize, selectedPredicate, selectedCategory])
 
   const ShowEdgeInfo = ({ edge }: { edge: any }) => {
-    const isIncoming = edge.edge.direction === '<';
+    const isIncoming = edge.edge.direction === '<'
     const predicate =
       propertyFriendlyNames[edge.edge.predicate as keyof typeof propertyFriendlyNames] ??
-      edge.edge.predicate;
+      edge.edge.predicate
 
     return (
       <TableRow>
         <TableCell>
           {isIncoming ? (
-            <Link href={'./' + edge.adj_node.id} underline="hover">
+            <Link href={'./' + edge.adj_node.id} underline='hover'>
               {edge.adj_node.name}
               <Chip
                 label={edge.adj_node.id}
-                size="small"
+                size='small'
                 sx={{
                   backgroundColor: conceptColorMap[edge.adj_node.category] || undefinedColor,
                   ml: 1,
@@ -172,11 +172,11 @@ export default function ShowEdges({
           {isIncoming ? (
             node.name
           ) : (
-            <Link href={'./' + edge.adj_node.id} underline="hover">
+            <Link href={'./' + edge.adj_node.id} underline='hover'>
               {edge.adj_node.name}
               <Chip
                 label={edge.adj_node.id}
-                size="small"
+                size='small'
                 sx={{
                   backgroundColor: conceptColorMap[edge.adj_node.category] || undefinedColor,
                   ml: 1,
@@ -186,11 +186,11 @@ export default function ShowEdges({
           )}
         </TableCell>
       </TableRow>
-    );
-  };
+    )
+  }
 
   return loading ? (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+    <Box display='flex' justifyContent='center' alignItems='center' height='100%'>
       <CircularProgress />
       <Typography sx={{ ml: 2 }}>Loading edges...</Typography>
     </Box>
@@ -202,15 +202,15 @@ export default function ShowEdges({
         </Box>
       ) : (
         <Box>
-          <Box mb={1} display="flex" justifyContent="space-between" alignItems="center" mt={-6}>
-            <Box display="flex" alignItems="center">
-              <Typography component="span" sx={{ mr: 2 }}>
+          <Box mb={1} display='flex' justifyContent='space-between' alignItems='center' mt={-6}>
+            <Box display='flex' alignItems='center'>
+              <Typography component='span' sx={{ mr: 2 }}>
                 Filters:&nbsp;
                 {(selectedPredicate === 'all' || selectedPredicate === '') &&
                 selectedCategory === '' ? (
                   <Chip
-                    label="None"
-                    size="small"
+                    label='None'
+                    size='small'
                     sx={{
                       backgroundColor: conceptColorMap['None'] || undefinedColor,
                     }}
@@ -225,7 +225,7 @@ export default function ShowEdges({
                             {strings.displayPredicate(selectedPredicate)}
                           </p>
                         }
-                        size="small"
+                        size='small'
                         sx={{
                           backgroundColor: conceptColorMap[selectedPredicate] || undefinedColor,
                         }}
@@ -240,7 +240,7 @@ export default function ShowEdges({
                             {strings.displayCategory(selectedCategory)}
                           </p>
                         }
-                        size="small"
+                        size='small'
                         sx={{
                           backgroundColor: conceptColorMap[selectedCategory] || undefinedColor,
                         }}
@@ -252,11 +252,11 @@ export default function ShowEdges({
             </Box>
             <p
               onClick={() => {
-                setPredicateSelection('all');
-                setEdgeData([]);
-                setCategorySelection('');
-                setCurrentPageNumber(0);
-                resetTotalCount();
+                setPredicateSelection('all')
+                setEdgeData([])
+                setCategorySelection('')
+                setCurrentPageNumber(0)
+                resetTotalCount()
               }}
               style={{
                 fontSize: 'small',
@@ -291,17 +291,17 @@ export default function ShowEdges({
                 <TableHead sx={{ backgroundColor: 'action.hover' }}>
                   <TableRow>
                     <TableCell>
-                      <Typography variant="subtitle2" fontWeight="bold">
+                      <Typography variant='subtitle2' fontWeight='bold'>
                         Subject
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="subtitle2" fontWeight="bold">
+                      <Typography variant='subtitle2' fontWeight='bold'>
                         Predicate
                       </Typography>
                     </TableCell>
                     <TableCell>
-                      <Typography variant="subtitle2" fontWeight="bold">
+                      <Typography variant='subtitle2' fontWeight='bold'>
                         Object
                       </Typography>
                     </TableCell>
@@ -321,12 +321,12 @@ export default function ShowEdges({
               sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2">Page size: {pageSize}</Typography>
+                <Typography variant='body2'>Page size: {pageSize}</Typography>
                 <select
                   value={pageSize}
                   onChange={(e) => {
-                    setPageSize(parseInt(e.target.value, 10));
-                    setCurrentPageNumber(0);
+                    setPageSize(parseInt(e.target.value, 10))
+                    setCurrentPageNumber(0)
                   }}
                   style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ccc' }}
                 >
@@ -339,13 +339,13 @@ export default function ShowEdges({
 
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Button
-                  variant="outlined"
+                  variant='outlined'
                   onClick={handlePreviousPage}
                   disabled={currentPageNumber === 0}
                 >
                   Previous
                 </Button>
-                <Button variant="outlined" onClick={handleNextPage}>
+                <Button variant='outlined' onClick={handleNextPage}>
                   Next
                 </Button>
               </Box>
@@ -354,5 +354,5 @@ export default function ShowEdges({
         </Box>
       )}
     </Box>
-  );
+  )
 }

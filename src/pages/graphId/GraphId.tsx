@@ -1,126 +1,165 @@
-import { Box, Card, Container, Grid } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "@tanstack/react-router";
-import axios from "axios";
-import React from "react";
-import { GraphMetadataV2, GraphSchemaV2 } from "../../API/graphMetadata";
-import { fileRoutes } from "../../API/routes";
-import { getGraphMetadataDownloads } from "../../functions/graphFunctions";
-import DownloadSection from "../graphId/Download";
-import "../graphId/GraphId.css";
-import NodeCuriePrefixes from "../graphId/NodeCuriePrefixes";
-import PredicateCount from "../graphId/PredicateCount";
-import PrimaryKnowledgeSources from "../graphId/PrimaryKnowledgeSources";
-import SankeyGraphModal from "../graphId/SankeyGraphModal";
-import StringTableDisplay from "../graphId/StringTableDisplay";
-import BreadcrumbsComponent from "./BreadcrumbsComponent";
-import ConformanceSchema from "./ConformanceSchema";
-import ContactPoint from "./ContactPoint";
-import CreatorsFunders from "./CreatorsFunders";
-import DataSource from "./DataSource";
-import HeaderCard from "./HeaderCard";
-import SidebarV2 from "./Sidebar";
-import { getAttributesAndCounts, transformSchemaToLinks } from "./functions";
-import NodeProperties from "./NodeProperties";
-import EdgeProperties from "./EdgeProperties";
+import { Box, Card, Container, Grid } from '@mui/material'
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
+import axios from 'axios'
+import React from 'react'
+import { GraphMetadataV2, GraphSchemaV2 } from '../../API/graphMetadata'
+import { fileRoutes } from '../../API/routes'
+import DownloadSection from '../graphId/Download'
+import '../graphId/GraphId.css'
+import NodeCuriePrefixes from '../graphId/NodeCuriePrefixes'
+import PredicateCount from '../graphId/PredicateCount'
+import PrimaryKnowledgeSources from '../graphId/PrimaryKnowledgeSources'
+import SankeyGraphModal from '../graphId/SankeyGraphModal'
+import BreadcrumbsComponent from './BreadcrumbsComponent'
+import ConformanceSchema from './ConformanceSchema'
+import ContactPoint from './ContactPoint'
+import CreatorsFunders from './CreatorsFunders'
+import DataSource from './DataSource'
+import HeaderCard from './HeaderCard'
+import SidebarV2 from './Sidebar'
+import { getAttributesAndCounts, transformSchemaToLinks } from './functions'
+import NodeProperties from './NodeProperties'
+import EdgeProperties from './EdgeProperties'
+import {
+  getGraphDownloadList,
+  getGraphVersionList,
+  GraphDownloadData,
+  graphMetadata,
+} from '../../API/graphRegistry'
+import Releases from './Releases'
 
 const COMMON_SIDEBAR_ITEMS = [
   {
-    title: "Description",
-    id: "description",
+    title: 'Description',
+    id: 'description',
   },
   {
-    title: "Download",
-    id: "download",
+    title: 'Releases',
+    id: 'releases',
   },
   {
-    title: "Predicate Counts",
-    id: "predicate-counts",
+    title: 'Download',
+    id: 'download',
   },
   {
-    title: "Node CURIE Prefixes",
-    id: "node-curie-prefixes",
+    title: 'Predicate Counts',
+    id: 'predicate-counts',
   },
   {
-    title: "Edge Properties",
-    id: "edge-properties",
+    title: 'Node CURIE Prefixes',
+    id: 'node-curie-prefixes',
   },
   {
-    title: "Primary Knowledge Sources",
-    id: "primary-knowledge-sources",
+    title: 'Edge Properties',
+    id: 'edge-properties',
+  },
+  {
+    title: 'Primary Knowledge Sources',
+    id: 'primary-knowledge-sources',
   },
   // {
   //   title: "Aggregator Knowledge Sources",
   //   id: "aggregator-knowledge-sources",
   // },
   {
-    title: "Node Properties",
-    id: "node-properties",
+    title: 'Node Properties',
+    id: 'node-properties',
   },
-];
+]
 
 const V2_METADATA_SIDEBAR_ITEMS = [
   {
-    title: "Data Sources",
-    id: "data-sources",
+    title: 'Data Sources',
+    id: 'data-sources',
   },
   {
-    title: "Creators & Funders",
-    id: "creators-funders",
+    title: 'Creators & Funders',
+    id: 'creators-funders',
   },
   {
-    title: "Contact Points",
-    id: "contact-points",
+    title: 'Contact Points',
+    id: 'contact-points',
   },
   {
-    title: "Conformance & Schema",
-    id: "conformance-schema",
+    title: 'Conformance & Schema',
+    id: 'conformance-schema',
   },
-];
+]
 
 interface GraphIdV2Props {
-  v2Metadata: GraphMetadataV2 | null;
-  schemaV2: GraphSchemaV2 | null;
+  v2Metadata: GraphMetadataV2 | null
+  schemaV2: GraphSchemaV2 | null
 }
 
 function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
-  const { graph_id } = useParams({ strict: false });
-  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false);
-  const downloadLink = v2Metadata?.distribution?.find((dist) => dist["@type"] === "DataDownload")?.contentUrl;
-  const validDownloadLink = downloadLink!.replace("https://robokop.renci.org", "https://stars.renci.org/var/plater") + "neo4j.dump";
+  const { graph_id } = useParams({ strict: false })
+  const [isSankeyGraphModalOpen, setIsSankeyGraphModalOpen] = React.useState(false)
+  const downloadLink = v2Metadata?.distribution?.find(
+    (dist) => dist['@type'] === 'DataDownload',
+  )?.contentUrl
+  const validDownloadLink =
+    downloadLink!.replace('https://robokop.renci.org', 'https://stars.renci.org/var/plater') +
+    'neo4j.dump'
   const { data: fileSize } = useQuery({
-    queryKey: ["graph-metadata-v2", graph_id, "file-size"],
+    queryKey: ['graph-metadata', graph_id, 'file-size'],
     queryFn: async () => {
       const results = await axios.post(fileRoutes.fileSize, {
         fileUrl: validDownloadLink,
-      });
-      return results.data.size;
+      })
+      return results.data.size
     },
-  });
+  })
+
+  const displayVersion = v2Metadata?.version || 'N/A'
   const { data: downloadData } = useQuery({
-    queryKey: ["graph-metadata", graph_id, "download"],
-    queryFn: () => getGraphMetadataDownloads(graph_id!),
-  });
+    queryKey: ['graph-metadata', graph_id, displayVersion, 'download'],
+    queryFn: () => getGraphDownloadList(graph_id!, displayVersion!),
+  })
+
+  const { data: releaseData, isLoading: isReleaseDataLoading } = useQuery({
+    queryKey: ['releases', graph_id],
+    queryFn: () => getGraphVersionList(graph_id!),
+    enabled: !!graph_id,
+  })
+  const isLatestInReleaseData = releaseData?.find((v) => v === 'latest') !== undefined
+  const { data: schemaV2Latest } = useQuery({
+    queryKey: ['graph-metadata', graph_id, 'latest'],
+    queryFn: () => graphMetadata(graph_id!, 'latest'),
+    enabled: isLatestInReleaseData,
+  })
+  const latestVersionID = schemaV2Latest?.version
 
   const graphDatasetV2 = React.useMemo(() => {
-    return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] };
-  }, [schemaV2]);
+    return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] }
+  }, [schemaV2])
 
-  const latestMetadataUrl = downloadData?.data?.at(-1)?.links?.filter((link: any) => link.url.includes("meta.json"))[0]?.url;
+  const latestMetadataUrl = downloadData?.filter((file: GraphDownloadData) =>
+    file.file_path.includes('meta.json'),
+  )?.[0]?.file_path
 
-  const displayName = v2Metadata?.name || "";
-  const displayDescription = v2Metadata?.description || "No description available";
-  const displayVersion = v2Metadata?.version || "N/A";
+  const displayName = v2Metadata?.name || ''
+  const displayDescription = v2Metadata?.description || 'No description available'
 
-  const edgePropertiesData = getAttributesAndCounts(schemaV2?.schema.edges || []);
+  const edgePropertiesData = getAttributesAndCounts(schemaV2?.schema.edges || [])
 
-  const sidebarItems = v2Metadata !== null && Object.entries(v2Metadata).length > 0 ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS] : COMMON_SIDEBAR_ITEMS;
+  const sidebarItems =
+    v2Metadata !== null && Object.entries(v2Metadata).length > 0
+      ? [...COMMON_SIDEBAR_ITEMS, ...V2_METADATA_SIDEBAR_ITEMS]
+      : COMMON_SIDEBAR_ITEMS
 
   return (
-    <Container className="graph-id-v2-container" sx={{ my: 6, maxWidth: "1920px !important", display: "flex", gap: 4 }}>
+    <Container
+      className='graph-id-v2-container'
+      sx={{ my: 6, maxWidth: '1920px !important', display: 'flex', gap: 4 }}
+    >
       <SidebarV2 listOfContents={sidebarItems} />
       <Box>
-        <SankeyGraphModal isOpen={isSankeyGraphModalOpen} onClose={() => setIsSankeyGraphModalOpen(false)} graphData={graphDatasetV2} />
+        <SankeyGraphModal
+          isOpen={isSankeyGraphModalOpen}
+          onClose={() => setIsSankeyGraphModalOpen(false)}
+          graphData={graphDatasetV2}
+        />
         <BreadcrumbsComponent displayName={displayName} />
         <HeaderCard
           displayName={displayName}
@@ -136,23 +175,23 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
 
         <Grid size={8} sx={{ mt: 2 }}>
           <Grid container spacing={2}>
-            <Grid size={12} id="predicate-counts">
-              <Card variant="outlined">
+            <Grid size={12} id='predicate-counts'>
+              <Card variant='outlined'>
                 <PredicateCount schema={schemaV2!} />
               </Card>
             </Grid>
-            <Grid size={12} id="node-curie-prefixes">
-              <Card variant="outlined">
+            <Grid size={12} id='node-curie-prefixes'>
+              <Card variant='outlined'>
                 <NodeCuriePrefixes schema={schemaV2!} />
               </Card>
             </Grid>
-            <Grid size={12} id="edge-properties">
-              <Card variant="outlined">
+            <Grid size={12} id='edge-properties'>
+              <Card variant='outlined'>
                 <EdgeProperties data={edgePropertiesData} />
               </Card>
             </Grid>
             <Grid size={12}>
-              <Card variant="outlined" id="primary-knowledge-sources">
+              <Card variant='outlined' id='primary-knowledge-sources'>
                 <PrimaryKnowledgeSources schema={schemaV2!} />
               </Card>
             </Grid>
@@ -163,7 +202,7 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
               </Card>
             </Grid> */}
             <Grid size={12}>
-              <Card variant="outlined" id="node-properties">
+              <Card variant='outlined' id='node-properties'>
                 <NodeProperties schema={schemaV2!} />
               </Card>
             </Grid>
@@ -179,9 +218,16 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
           </Grid>
         </Grid>
       </Box>
-      <DownloadSection />
+      <Box>
+        <Releases
+          latestVersion={latestVersionID}
+          releases={releaseData}
+          loading={isReleaseDataLoading}
+        />
+        <DownloadSection version={displayVersion} />
+      </Box>
     </Container>
-  );
+  )
 }
 
-export default GraphId;
+export default GraphId

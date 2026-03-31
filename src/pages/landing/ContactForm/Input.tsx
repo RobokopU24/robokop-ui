@@ -1,15 +1,15 @@
-import styles from './ContactForm.module.css';
-import type { Path, UseFormRegister, Validate } from 'react-hook-form';
-import type { IForm } from './ContactForm';
-import type { HTMLInputTypeAttribute } from 'react';
-import { toKebabCase } from '../toKebabCase';
+import styles from './ContactForm.module.css'
+import type { Path, UseFormRegister, Validate } from 'react-hook-form'
+import type { IForm } from './ContactForm'
+import type { HTMLInputTypeAttribute } from 'react'
+import { toKebabCase } from '../toKebabCase'
 
 interface InputProps {
-  label: Path<IForm>;
-  register: UseFormRegister<IForm>;
-  required?: boolean;
-  type?: HTMLInputTypeAttribute;
-  validate?: Validate<string, IForm> | Record<string, Validate<string, IForm>>;
+  label: Path<IForm>
+  register: UseFormRegister<IForm>
+  required?: boolean
+  type?: HTMLInputTypeAttribute
+  validate?: Validate<string, IForm> | Record<string, Validate<string, IForm>>
 }
 
 export const Input = ({ label, register, required, type, validate }: InputProps) => {
@@ -23,5 +23,5 @@ export const Input = ({ label, register, required, type, validate }: InputProps)
         id={toKebabCase(label)}
       />
     </div>
-  );
-};
+  )
+}

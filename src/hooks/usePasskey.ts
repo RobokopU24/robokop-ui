@@ -1,57 +1,57 @@
-import { useState } from 'react';
+import { useState } from 'react'
 import {
   startAuthentication,
   startRegistration,
   browserSupportsWebAuthn,
-} from '@simplewebauthn/browser';
-import axios from 'axios';
-import routes from '../API/routes';
+} from '@simplewebauthn/browser'
+import axios from 'axios'
+import routes from '../API/routes'
 
 interface Passkey {
-  id: string;
-  createdAt: string;
-  deviceType: string;
+  id: string
+  createdAt: string
+  deviceType: string
 }
 
 export const usePasskey = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [registrationError, setRegistrationError] = useState<string | null>(null);
-  const [passkeys, setPasskeys] = useState<Passkey[]>([]);
-  const [loadingPasskeys, setLoadingPasskeys] = useState(false);
-  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [registrationError, setRegistrationError] = useState<string | null>(null)
+  const [passkeys, setPasskeys] = useState<Passkey[]>([])
+  const [loadingPasskeys, setLoadingPasskeys] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
 
   const getAuthHeader = () => ({
     'Content-Type': 'application/json',
     Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-  });
+  })
 
   const fetchPasskeys = async () => {
-    setLoadingPasskeys(true);
-    setError(null);
+    setLoadingPasskeys(true)
+    setError(null)
     try {
       const response = await axios.get(routes.passkeyRoutes.list, {
         headers: getAuthHeader(),
         withCredentials: true,
-      });
-      setPasskeys(response.data);
+      })
+      setPasskeys(response.data)
     } catch (fetchError) {
-      console.error('Error fetching passkeys:', fetchError);
-      setError('Failed to load passkeys');
+      console.error('Error fetching passkeys:', fetchError)
+      setError('Failed to load passkeys')
     } finally {
-      setLoadingPasskeys(false);
+      setLoadingPasskeys(false)
     }
-  };
+  }
 
   const deletePasskey = async (id: string) => {
-    setDeleteLoading(id);
+    setDeleteLoading(id)
     try {
       await axios.delete(`${routes.passkeyRoutes.base}/${id}`, {
         headers: getAuthHeader(),
         withCredentials: true,
-      });
+      })
 
-      setPasskeys(passkeys.filter((passkey) => passkey.id !== id));
+      setPasskeys(passkeys.filter((passkey) => passkey.id !== id))
     } catch (deleteError) {
       if (
         typeof deleteError === 'object' &&
@@ -59,17 +59,17 @@ export const usePasskey = () => {
         'response' in deleteError &&
         (deleteError as any).response
       ) {
-        throw new Error((deleteError as any).response.data?.message || 'Error deleting passkey');
+        throw new Error((deleteError as any).response.data?.message || 'Error deleting passkey')
       }
-      throw deleteError;
+      throw deleteError
     } finally {
-      setDeleteLoading(null);
+      setDeleteLoading(null)
     }
-  };
+  }
 
   const registerPasskey = async (email?: string) => {
-    setIsLoading(true);
-    setRegistrationError(null);
+    setIsLoading(true)
+    setRegistrationError(null)
     try {
       const { data: optionsJSON } = await axios.post(
         routes.passkeyRoutes.generateRegistrationOptions,
@@ -77,10 +77,10 @@ export const usePasskey = () => {
         {
           headers: getAuthHeader(),
           withCredentials: true,
-        }
-      );
+        },
+      )
 
-      const registrationResponse = await startRegistration({ optionsJSON });
+      const registrationResponse = await startRegistration({ optionsJSON })
 
       const verifyResponse = await axios.post(
         routes.passkeyRoutes.verifyRegistration,
@@ -88,45 +88,45 @@ export const usePasskey = () => {
         {
           headers: getAuthHeader(),
           withCredentials: true,
-        }
-      );
+        },
+      )
 
       if (!verifyResponse.data.verified) {
-        throw new Error('Passkey registration failed');
+        throw new Error('Passkey registration failed')
       }
 
       if (!email) {
-        await fetchPasskeys();
+        await fetchPasskeys()
       }
 
-      return verifyResponse.data;
+      return verifyResponse.data
     } catch (registerError) {
       if (registerError && typeof registerError === 'object' && 'message' in registerError) {
         setRegistrationError(
-          (registerError as { message: string }).message || 'Failed to register passkey'
-        );
+          (registerError as { message: string }).message || 'Failed to register passkey',
+        )
       } else {
-        setRegistrationError('Failed to register passkey');
+        setRegistrationError('Failed to register passkey')
       }
-      throw registerError;
+      throw registerError
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   const loginWithPasskey = async () => {
-    setIsLoading(true);
-    setError(null);
+    setIsLoading(true)
+    setError(null)
     try {
       const { data: optionsJSON } = await axios.post(
         routes.passkeyRoutes.generateAuthenticationOptions,
         {},
         {
           withCredentials: true,
-        }
-      );
+        },
+      )
 
-      const authResponse = await startAuthentication({ optionsJSON });
+      const authResponse = await startAuthentication({ optionsJSON })
 
       const verifyResponse = await axios.post(
         routes.passkeyRoutes.verifyAuthentication,
@@ -136,27 +136,27 @@ export const usePasskey = () => {
             'Content-Type': 'application/json',
           },
           withCredentials: true,
-        }
-      );
+        },
+      )
 
       if (!verifyResponse.data.verified) {
-        throw new Error('Passkey authentication failed');
+        throw new Error('Passkey authentication failed')
       }
 
-      return verifyResponse.data;
+      return verifyResponse.data
     } catch (loginError) {
       if (loginError && typeof loginError === 'object' && 'message' in loginError) {
-        setError((loginError as { message: string }).message || 'Failed to login with passkey');
+        setError((loginError as { message: string }).message || 'Failed to login with passkey')
       } else {
-        setError('Failed to login with passkey');
+        setError('Failed to login with passkey')
       }
-      throw loginError;
+      throw loginError
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
-  const browserSupport = browserSupportsWebAuthn();
+  const browserSupport = browserSupportsWebAuthn()
 
   return {
     registerPasskey,
@@ -170,5 +170,5 @@ export const usePasskey = () => {
     deleteLoading,
     error,
     registrationError,
-  };
-};
+  }
+}

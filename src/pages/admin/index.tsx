@@ -1,77 +1,93 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import PeopleIcon from "@mui/icons-material/People";
-import SecurityIcon from "@mui/icons-material/Security";
-import BadgeIcon from "@mui/icons-material/Badge";
-import { useAuth } from "../../context/AuthContext";
+import React from 'react'
+import Box from '@mui/material/Box'
+import Tabs from '@mui/material/Tabs'
+import Tab from '@mui/material/Tab'
+import PeopleIcon from '@mui/icons-material/People'
+import SecurityIcon from '@mui/icons-material/Security'
+import BadgeIcon from '@mui/icons-material/Badge'
+import { useAuth } from '../../context/AuthContext'
 // import { isAdmin } from "../../utils/roles";
-import UserTable from "./UserTable";
-import FeatureAccessTable from "./FeatureAccessTable";
-import RolesTable from "./RolesTable";
-import { useFeatureAccess } from "../../hooks";
+import UserTable from './UserTable'
+import FeatureAccessTable from './FeatureAccessTable'
+import RolesTable from './RolesTable'
+import { useFeatureAccess } from '../../hooks'
 
 interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
+  children?: React.ReactNode
+  index: number
+  value: number
 }
 
 function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props
 
   return (
-    <div role="tabpanel" hidden={value !== index} id={`admin-tabpanel-${index}`} aria-labelledby={`admin-tab-${index}`} {...other}>
+    <div
+      role='tabpanel'
+      hidden={value !== index}
+      id={`admin-tabpanel-${index}`}
+      aria-labelledby={`admin-tab-${index}`}
+      {...other}
+    >
       {value === index && <Box sx={{ pt: 2 }}>{children}</Box>}
     </div>
-  );
+  )
 }
 
 function a11yProps(index: number) {
   return {
     id: `admin-tab-${index}`,
-    "aria-controls": `admin-tabpanel-${index}`,
-  };
+    'aria-controls': `admin-tabpanel-${index}`,
+  }
 }
 
 function AdminPage() {
-  const { user, loading } = useAuth();
-  const [tabValue, setTabValue] = React.useState(0);
-  const { hasRole } = useFeatureAccess();
-  const isAdmin = hasRole("admin");
-  console.log("User in AdminPage:", user);
+  const { user, loading } = useAuth()
+  const [tabValue, setTabValue] = React.useState(0)
+  const { hasRole } = useFeatureAccess()
+  const isAdmin = hasRole('admin')
+  console.log('User in AdminPage:', user)
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
-  };
+    setTabValue(newValue)
+  }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>
   }
 
   if (!user || !isAdmin) {
-    return <div>Access Denied</div>;
+    return <div>Access Denied</div>
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+    <Box sx={{ width: '100%' }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
-          aria-label="admin panel tabs"
+          aria-label='admin panel tabs'
           sx={{
-            "& .MuiTab-root": {
-              textTransform: "none",
+            '& .MuiTab-root': {
+              textTransform: 'none',
               fontWeight: 500,
-              fontSize: "0.95rem",
+              fontSize: '0.95rem',
             },
           }}
         >
-          <Tab icon={<PeopleIcon />} iconPosition="start" label="User Management" {...a11yProps(0)} />
-          <Tab icon={<BadgeIcon />} iconPosition="start" label="Roles" {...a11yProps(1)} />
-          <Tab icon={<SecurityIcon />} iconPosition="start" label="Feature Access" {...a11yProps(2)} />
+          <Tab
+            icon={<PeopleIcon />}
+            iconPosition='start'
+            label='User Management'
+            {...a11yProps(0)}
+          />
+          <Tab icon={<BadgeIcon />} iconPosition='start' label='Roles' {...a11yProps(1)} />
+          <Tab
+            icon={<SecurityIcon />}
+            iconPosition='start'
+            label='Feature Access'
+            {...a11yProps(2)}
+          />
         </Tabs>
       </Box>
       <TabPanel value={tabValue} index={0}>
@@ -84,7 +100,7 @@ function AdminPage() {
         <FeatureAccessTable />
       </TabPanel>
     </Box>
-  );
+  )
 }
 
-export default AdminPage;
+export default AdminPage

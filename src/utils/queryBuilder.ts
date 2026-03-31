@@ -1,27 +1,27 @@
-import transform from 'lodash/transform';
-import omitBy from 'lodash/omitBy';
-import pick from 'lodash/pick';
+import transform from 'lodash/transform'
+import omitBy from 'lodash/omitBy'
+import pick from 'lodash/pick'
 
 /**
  * Get the next unused Node ID in the query_graph for insertion
  */
 function getNextNodeID(q_graph: { nodes: any }) {
-  let index = 0;
+  let index = 0
   while (`n${index}` in q_graph.nodes) {
-    index += 1;
+    index += 1
   }
-  return `n${index}`;
+  return `n${index}`
 }
 
 /**
  * Get the next unused Edge ID in the query_graph for insertion
  */
 function getNextEdgeID(q_graph: { edges: any }) {
-  let index = 0;
+  let index = 0
   while (`e${index}` in q_graph.edges) {
-    index += 1;
+    index += 1
   }
-  return `e${index}`;
+  return `e${index}`
 }
 
 /**
@@ -29,16 +29,16 @@ function getNextEdgeID(q_graph: { edges: any }) {
  * @returns an object with keys as node ids and values as number of edges
  */
 function getNumEdgesPerNode(q_graph: {
-  edges: { [key: string]: { subject: string; object: string } };
+  edges: { [key: string]: { subject: string; object: string } }
 }): { [nodeId: string]: number } {
   return transform(
     q_graph.edges,
     (result: { [nodeId: string]: number }, value) => {
-      result[value.object] = result[value.object] ? result[value.object] + 1 : 1;
-      result[value.subject] = result[value.subject] ? result[value.subject] + 1 : 1;
+      result[value.object] = result[value.object] ? result[value.object] + 1 : 1
+      result[value.subject] = result[value.subject] ? result[value.subject] + 1 : 1
     },
-    {}
-  );
+    {},
+  )
 }
 
 /**
@@ -50,17 +50,17 @@ function getNumEdgesPerNode(q_graph: {
 function getConnectedEdges(
   edges: {
     [x: string]: {
-      subject: string;
-      object: any;
-    };
+      subject: string
+      object: any
+    }
   },
-  nodeId: string
+  nodeId: string,
 ) {
   return new Set(
     Object.keys(edges).filter(
-      (eId) => edges[eId].subject === nodeId || edges[eId].object === nodeId
-    )
-  );
+      (eId) => edges[eId].subject === nodeId || edges[eId].object === nodeId,
+    ),
+  )
 }
 
 /**
@@ -74,37 +74,37 @@ function getConnectedEdges(
  * @param {object} q_graph - valid query graph with nodes and edges
  * @returns {string} the id of the root node in the query graph
  */
-type QueryGraphNode = { id?: unknown };
-type QueryGraph = { edges: any; nodes: { [s: string]: QueryGraphNode } };
+type QueryGraphNode = { id?: unknown }
+type QueryGraph = { edges: any; nodes: { [s: string]: QueryGraphNode } }
 
 function getRootNode(q_graph: QueryGraph, rootNode: string | null) {
   if (rootNode && getConnectedEdges(q_graph.edges, rootNode).size > 0) {
-    return rootNode;
+    return rootNode
   }
   // create nodes object with pinned boolean property
   const nodes = Object.entries(q_graph.nodes).map(([key, node]) => {
-    const n = node as { id?: unknown };
+    const n = node as { id?: unknown }
     return {
       key,
       pinned: n.id && Array.isArray(n.id) && n.id.length > 0,
-    };
-  });
+    }
+  })
   // create node map of total edge connections
-  const edgeNums = getNumEdgesPerNode(q_graph);
+  const edgeNums = getNumEdgesPerNode(q_graph)
   // split nodes into pinned and unpinned arrays
-  const unpinnedNodes = nodes.filter((node) => !node.pinned && node.key in edgeNums);
-  const pinnedNodes = nodes.filter((node) => node.pinned && node.key in edgeNums);
+  const unpinnedNodes = nodes.filter((node) => !node.pinned && node.key in edgeNums)
+  const pinnedNodes = nodes.filter((node) => node.pinned && node.key in edgeNums)
   // sort nodes by edge connections, then return the first one in the list
   // is also first one inserted
-  let root = (nodes.length && nodes[0].key) || null;
+  let root = (nodes.length && nodes[0].key) || null
   if (unpinnedNodes.length) {
-    unpinnedNodes.sort((a, b) => edgeNums[b.key] - edgeNums[a.key]);
-    root = unpinnedNodes[0].key;
+    unpinnedNodes.sort((a, b) => edgeNums[b.key] - edgeNums[a.key])
+    root = unpinnedNodes[0].key
   } else if (pinnedNodes.length) {
-    pinnedNodes.sort((a, b) => edgeNums[b.key] - edgeNums[a.key]);
-    root = pinnedNodes[0].key;
+    pinnedNodes.sort((a, b) => edgeNums[b.key] - edgeNums[a.key])
+    root = pinnedNodes[0].key
   }
-  return root;
+  return root
 }
 
 /**
@@ -114,46 +114,46 @@ function getRootNode(q_graph: QueryGraph, rootNode: string | null) {
  */
 function removeDetachedFromRoot(
   q_graph: { edges: Partial<any>; nodes: Pick<any, any> },
-  rootNode: any
+  rootNode: any,
 ) {
   // all edges start out as disconnected and we'll remove them when we find a connection to root
-  const disconnectedEdges = Object.keys(q_graph.edges);
+  const disconnectedEdges = Object.keys(q_graph.edges)
   // we add to connected nodes, starting default with the root node
-  const connectedNodes = [rootNode];
-  let foundConnections = true;
+  const connectedNodes = [rootNode]
+  let foundConnections = true
   // traverse graph and delete all edges not connected
   while (foundConnections) {
-    foundConnections = false;
+    foundConnections = false
     // loop over all connected nodes to find edges that are connected to them
     for (let i = 0; i < connectedNodes.length; i += 1) {
-      const nodeId = connectedNodes[i];
+      const nodeId = connectedNodes[i]
       for (let j = 0; j < disconnectedEdges.length; j += 1) {
-        const edgeId = disconnectedEdges[j];
-        const edge = q_graph.edges[edgeId];
+        const edgeId = disconnectedEdges[j]
+        const edge = q_graph.edges[edgeId]
         // if edge is connected to node
         if (edge.subject === nodeId || edge.object === nodeId) {
           // add nodes to connected list
           if (!(connectedNodes.indexOf(edge.subject) > -1)) {
-            connectedNodes.push(edge.subject);
+            connectedNodes.push(edge.subject)
           }
           if (!(connectedNodes.indexOf(edge.object) > -1)) {
-            connectedNodes.push(edge.object);
+            connectedNodes.push(edge.object)
           }
           // remove connected edge from disconnected list
-          const index = disconnectedEdges.indexOf(edgeId);
-          disconnectedEdges.splice(index, 1);
-          j -= 1;
+          const index = disconnectedEdges.indexOf(edgeId)
+          disconnectedEdges.splice(index, 1)
+          j -= 1
           // loop again with added nodes
-          foundConnections = true;
+          foundConnections = true
         }
       }
     }
   }
   // remove any edges still in the disconnectedEdges list
-  q_graph.edges = omitBy(q_graph.edges, (e, id) => disconnectedEdges.indexOf(id) > -1);
+  q_graph.edges = omitBy(q_graph.edges, (e, id) => disconnectedEdges.indexOf(id) > -1)
   // keep all nodes that are attached to existing edges
-  q_graph.nodes = pick(q_graph.nodes, connectedNodes);
-  return q_graph;
+  q_graph.nodes = pick(q_graph.nodes, connectedNodes)
+  return q_graph
 }
 
 /**
@@ -163,14 +163,14 @@ function removeDetachedFromRoot(
  * @returns trimDetached query graph
  */
 function removeAttachedEdges(q_graph: { edges: { [x: string]: any } }, nodeId: any) {
-  const edgeIds = Object.keys(q_graph.edges).map((id) => id);
+  const edgeIds = Object.keys(q_graph.edges).map((id) => id)
   edgeIds.forEach((eId) => {
-    const currentEdge = q_graph.edges[eId];
+    const currentEdge = q_graph.edges[eId]
     if (currentEdge.subject === nodeId || currentEdge.object === nodeId) {
-      delete q_graph.edges[eId];
+      delete q_graph.edges[eId]
     }
-  });
-  return q_graph;
+  })
+  return q_graph
 }
 
 /**
@@ -178,23 +178,23 @@ function removeAttachedEdges(q_graph: { edges: { [x: string]: any } }, nodeId: a
  * @param {object} query_graph - query graph object
  * @returns isValid boolean and an error message
  */
-function isValidGraph(query_graph: { nodes: {}; edges: any }) {
-  let isValid = true;
-  let errMsg = '';
-  const nodeIds = Object.keys(query_graph.nodes);
+function isValidGraph(query_graph: { nodes: object; edges: any }) {
+  let isValid = true
+  let errMsg = ''
+  const nodeIds = Object.keys(query_graph.nodes)
   if (!nodeIds.length) {
-    isValid = false;
-    errMsg = 'There are no terms left. Please add a new term to continue.';
+    isValid = false
+    errMsg = 'There are no terms left. Please add a new term to continue.'
   }
   for (let i = 0; i < nodeIds.length; i += 1) {
-    const id = nodeIds[i];
+    const id = nodeIds[i]
     if (getConnectedEdges(query_graph.edges, id).size === 0) {
-      isValid = false;
-      errMsg = 'There is at least one disconnected term in this question.';
-      break;
+      isValid = false
+      errMsg = 'There is at least one disconnected term in this question.'
+      break
     }
   }
-  return { isValid, errMsg };
+  return { isValid, errMsg }
 }
 
 export default {
@@ -206,4 +206,4 @@ export default {
   removeAttachedEdges,
   getRootNode,
   isValidGraph,
-};
+}

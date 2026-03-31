@@ -1,21 +1,21 @@
-import { Badge, Collapse, IconButton, Tooltip } from '@mui/material';
-import ArrowDownward from '@mui/icons-material/ArrowDownward';
-import ArrowUpward from '@mui/icons-material/ArrowUpward';
-import FilterList from '@mui/icons-material/FilterList';
-import SwapVert from '@mui/icons-material/SwapVert';
-import { flexRender, Header } from '@tanstack/react-table';
-import React from 'react';
-import DebouncedFilterBox from './DebouncedFilterBox';
+import { Badge, Collapse, IconButton, Tooltip } from '@mui/material'
+import ArrowDownward from '@mui/icons-material/ArrowDownward'
+import ArrowUpward from '@mui/icons-material/ArrowUpward'
+import FilterList from '@mui/icons-material/FilterList'
+import SwapVert from '@mui/icons-material/SwapVert'
+import { flexRender, Header } from '@tanstack/react-table'
+import React from 'react'
+import DebouncedFilterBox from './DebouncedFilterBox'
 
 interface HeaderCellProps {
-  header: Header<unknown, unknown>;
+  header: Header<unknown, unknown>
 }
 
 /**
  * @param {{ header: import('@tanstack/react-table').Header<unknown, unknown> }} props
  */
 export default function HeaderCell({ header }: HeaderCellProps) {
-  const [isFilterOpen, setIsFilterOpen] = React.useState(header.column.getIsFiltered());
+  const [isFilterOpen, setIsFilterOpen] = React.useState(header.column.getIsFiltered())
 
   return (
     <div style={{ display: 'flex', gap: 8, flexDirection: 'column' }}>
@@ -30,7 +30,7 @@ export default function HeaderCell({ header }: HeaderCellProps) {
           <div style={{ display: 'flex', gap: 8 }}>
             {header.column.getCanSort() && (
               <Tooltip
-                placement="top"
+                placement='top'
                 title={
                   {
                     asc: 'Sort ascending',
@@ -39,7 +39,7 @@ export default function HeaderCell({ header }: HeaderCellProps) {
                 }
               >
                 <IconButton
-                  size="small"
+                  size='small'
                   color={header.column.getIsSorted() ? 'primary' : undefined}
                   onClick={header.column.getToggleSortingHandler()}
                 >
@@ -52,12 +52,12 @@ export default function HeaderCell({ header }: HeaderCellProps) {
             )}
 
             {header.column.getCanFilter() && (
-              <Tooltip title="Filter column" placement="top">
-                <Badge variant="dot" color="primary" invisible={!header.column.getIsFiltered()}>
+              <Tooltip title='Filter column' placement='top'>
+                <Badge variant='dot' color='primary' invisible={!header.column.getIsFiltered()}>
                   <IconButton
-                    size="small"
+                    size='small'
                     onClick={() => {
-                      setIsFilterOpen(!isFilterOpen);
+                      setIsFilterOpen(!isFilterOpen)
                     }}
                   >
                     <FilterList />
@@ -79,5 +79,5 @@ export default function HeaderCell({ header }: HeaderCellProps) {
         </Collapse>
       )}
     </div>
-  );
+  )
 }

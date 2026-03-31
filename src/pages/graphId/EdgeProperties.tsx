@@ -1,57 +1,83 @@
-import React, { useMemo, useState, useEffect } from "react";
-import { CardContent, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box, Typography, Pagination, Select, MenuItem, FormControl, TextField, InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { createColumnHelper, flexRender, getCoreRowModel, useReactTable, getSortedRowModel, SortingState, getPaginationRowModel } from "@tanstack/react-table";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
+import React, { useMemo, useState, useEffect } from 'react'
+import {
+  CardContent,
+  Divider,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Box,
+  Typography,
+  Pagination,
+  Select,
+  MenuItem,
+  FormControl,
+  TextField,
+  InputAdornment,
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getSortedRowModel,
+  SortingState,
+  getPaginationRowModel,
+} from '@tanstack/react-table'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 
 type EdgePropertyData = {
-  name: string;
-  value: number;
-};
+  name: string
+  value: number
+}
 
-declare module "@tanstack/react-table" {
+declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
-    align?: "left" | "center" | "right";
+    align?: 'left' | 'center' | 'right'
   }
 }
 
-const columnHelper = createColumnHelper<EdgePropertyData>();
+const columnHelper = createColumnHelper<EdgePropertyData>()
 
 function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
-  const [sorting, setSorting] = React.useState<SortingState>([{ id: "value", desc: true }]);
-  const [pageSize, setPageSize] = useState(10);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [sorting, setSorting] = React.useState<SortingState>([{ id: 'value', desc: true }])
+  const [pageSize, setPageSize] = useState(10)
+  const [pageIndex, setPageIndex] = useState(0)
+  const [searchQuery, setSearchQuery] = useState('')
 
   const filteredData = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter((row) => row.name.toLowerCase().includes(q));
-  }, [data, searchQuery]);
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return data
+    return data.filter((row) => row.name.toLowerCase().includes(q))
+  }, [data, searchQuery])
 
   // Reset page index when page size changes
   useEffect(() => {
-    setPageIndex(0);
-  }, [pageSize]);
+    setPageIndex(0)
+  }, [pageSize])
 
   const columns = useMemo(
     () => [
-      columnHelper.accessor("name", {
-        header: "Name",
+      columnHelper.accessor('name', {
+        header: 'Name',
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("value", {
-        header: "Count",
+      columnHelper.accessor('value', {
+        header: 'Count',
         cell: (info) => info.getValue().toLocaleString(),
         meta: {
-          align: "right" as const,
+          align: 'right' as const,
         },
       }),
     ],
     [],
-  );
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -65,38 +91,38 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
     },
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
-      if (typeof updater === "function") {
-        const newState = updater({ pageIndex, pageSize });
-        setPageIndex(newState.pageIndex);
-        setPageSize(newState.pageSize);
+      if (typeof updater === 'function') {
+        const newState = updater({ pageIndex, pageSize })
+        setPageIndex(newState.pageIndex)
+        setPageSize(newState.pageSize)
       } else {
-        setPageIndex(updater.pageIndex);
-        setPageSize(updater.pageSize);
+        setPageIndex(updater.pageIndex)
+        setPageSize(updater.pageSize)
       }
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: false,
-  });
+  })
 
   return (
     <CardContent sx={{ p: 1 }}>
       <Box>
-        <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 1 }}>
-          <Typography variant="h6">Edge Properties</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography variant='h6'>Edge Properties</Typography>
           <TextField
-            size="small"
-            placeholder="Search"
+            size='small'
+            placeholder='Search'
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPageIndex(0);
+              setSearchQuery(e.target.value)
+              setPageIndex(0)
             }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
+                <InputAdornment position='start'>
+                  <SearchIcon fontSize='small' />
                 </InputAdornment>
               ),
             }}
@@ -107,11 +133,11 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
           <Box
             sx={{
               py: 2,
-              height: "100%",
-              minHeight: "200px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              height: '100%',
+              minHeight: '200px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <Typography>No edge property data available.</Typography>
@@ -122,19 +148,19 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
               component={Paper}
               sx={{
                 height: 600,
-                overflow: "auto",
-                "&::-webkit-scrollbar": {
-                  width: "8px",
+                overflow: 'auto',
+                '&::-webkit-scrollbar': {
+                  width: '8px',
                 },
-                "&::-webkit-scrollbar-track": {
-                  backgroundColor: "#f1f1f1",
+                '&::-webkit-scrollbar-track': {
+                  backgroundColor: '#f1f1f1',
                 },
-                "&::-webkit-scrollbar-thumb": {
-                  backgroundColor: "#c1c1c1",
-                  borderRadius: "4px",
+                '&::-webkit-scrollbar-thumb': {
+                  backgroundColor: '#c1c1c1',
+                  borderRadius: '4px',
                 },
-                "&::-webkit-scrollbar-thumb:hover": {
-                  backgroundColor: "#a8a8a8",
+                '&::-webkit-scrollbar-thumb:hover': {
+                  backgroundColor: '#a8a8a8',
                 },
               }}
             >
@@ -143,8 +169,8 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        const sorted = header.column.getIsSorted(); // false | 'asc' | 'desc'
-                        const canSort = header.column.getCanSort();
+                        const sorted = header.column.getIsSorted() // false | 'asc' | 'desc'
+                        const canSort = header.column.getCanSort()
 
                         return (
                           <TableCell
@@ -152,43 +178,58 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
                             align={header.column.columnDef.meta?.align}
                             onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                             sx={{
-                              cursor: canSort ? "pointer" : "default",
-                              userSelect: "none",
+                              cursor: canSort ? 'pointer' : 'default',
+                              userSelect: 'none',
                               py: 1.5,
                               px: 2,
-                              verticalAlign: "middle",
-                              whiteSpace: "nowrap",
+                              verticalAlign: 'middle',
+                              whiteSpace: 'nowrap',
                             }}
                           >
                             <Box
                               sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: header.column.columnDef.meta?.align === "right" ? "flex-end" : "flex-start",
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent:
+                                  header.column.columnDef.meta?.align === 'right'
+                                    ? 'flex-end'
+                                    : 'flex-start',
                                 gap: 0.5,
                               }}
                             >
-                              <Typography variant="subtitle2" fontWeight="bold" sx={{ display: "inline-flex", alignItems: "center" }}>
-                                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                              <Typography
+                                variant='subtitle2'
+                                fontWeight='bold'
+                                sx={{ display: 'inline-flex', alignItems: 'center' }}
+                              >
+                                {header.isPlaceholder
+                                  ? null
+                                  : flexRender(header.column.columnDef.header, header.getContext())}
                               </Typography>
                               {canSort && (
                                 <Box
-                                  component="span"
+                                  component='span'
                                   sx={{
-                                    display: "inline-flex",
-                                    alignItems: "center",
-                                    color: sorted ? "text.primary" : "text.disabled",
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    color: sorted ? 'text.primary' : 'text.disabled',
                                     opacity: sorted ? 1 : 0.5,
-                                    transition: "color 0.2s, opacity 0.2s",
-                                    "&:hover": { opacity: 1 },
+                                    transition: 'color 0.2s, opacity 0.2s',
+                                    '&:hover': { opacity: 1 },
                                   }}
                                 >
-                                  {sorted === "asc" ? <ArrowDropUpIcon fontSize="small" /> : sorted === "desc" ? <ArrowDropDownIcon fontSize="small" /> : <UnfoldMoreIcon fontSize="small" />}
+                                  {sorted === 'asc' ? (
+                                    <ArrowDropUpIcon fontSize='small' />
+                                  ) : sorted === 'desc' ? (
+                                    <ArrowDropDownIcon fontSize='small' />
+                                  ) : (
+                                    <UnfoldMoreIcon fontSize='small' />
+                                  )}
                                 </Box>
                               )}
                             </Box>
                           </TableCell>
-                        );
+                        )
                       })}
                     </TableRow>
                   ))}
@@ -197,7 +238,12 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
                   {table.getRowModel().rows.map((row) => (
                     <TableRow key={row.id} hover>
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} component={cell.column.id === "name" ? "th" : "td"} scope={cell.column.id === "name" ? "row" : undefined} align={cell.column.columnDef.meta?.align}>
+                        <TableCell
+                          key={cell.id}
+                          component={cell.column.id === 'name' ? 'th' : 'td'}
+                          scope={cell.column.id === 'name' ? 'row' : undefined}
+                          align={cell.column.columnDef.meta?.align}
+                        >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
@@ -210,20 +256,20 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
             {filteredData.length > 0 && (
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   mt: 2,
                 }}
               >
-                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <Typography variant="body2">Page size:</Typography>
-                  <FormControl size="small" sx={{ minWidth: 80 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant='body2'>Page size:</Typography>
+                  <FormControl size='small' sx={{ minWidth: 80 }}>
                     <Select
                       value={pageSize}
                       onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setPageIndex(0);
+                        setPageSize(Number(e.target.value))
+                        setPageIndex(0)
                       }}
                       displayEmpty
                     >
@@ -235,18 +281,20 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
                   </FormControl>
                 </Box>
 
-                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  <Typography variant="body2">
-                    Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of {filteredData.length} results
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Typography variant='body2'>
+                    Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
+                    {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
+                    {filteredData.length} results
                   </Typography>
                   <Pagination
                     count={Math.ceil(filteredData.length / pageSize)}
                     page={pageIndex + 1}
                     onChange={(event, page) => {
-                      setPageIndex(page - 1);
+                      setPageIndex(page - 1)
                     }}
-                    color="primary"
-                    size="small"
+                    color='primary'
+                    size='small'
                     showFirstButton
                     showLastButton
                   />
@@ -257,7 +305,7 @@ function EdgeProperties({ data }: { data: EdgePropertyData[] }) {
         )}
       </Box>
     </CardContent>
-  );
+  )
 }
 
-export default EdgeProperties;
+export default EdgeProperties

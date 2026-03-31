@@ -1,24 +1,33 @@
-import { Card, CardContent, Grid, Link as MuiLink, List, ListItem, ListItemText, Typography } from "@mui/material";
-import { GraphMetadataV2 } from "../../API/graphMetadata";
+import {
+  Card,
+  CardContent,
+  Grid,
+  Link as MuiLink,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material'
+import { GraphMetadataV2 } from '../../API/graphMetadata'
 
 interface CreatorsFundersProps {
-  v2Metadata: GraphMetadataV2;
+  v2Metadata: GraphMetadataV2
 }
 
 function CreatorsFunders({ v2Metadata }: CreatorsFundersProps) {
   return (
     <>
       {(v2Metadata?.creator?.length > 0 || v2Metadata?.funder?.length > 0) && (
-        <Grid size={12} id="creators-funders">
-          <Card variant="outlined">
+        <Grid size={12} id='creators-funders'>
+          <Card variant='outlined'>
             <CardContent>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant='h6' gutterBottom>
                 Creators & Funders
               </Typography>
               <Grid container spacing={2}>
                 {v2Metadata?.creator?.length > 0 && (
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
                       Creators
                     </Typography>
                     <List dense>
@@ -28,21 +37,27 @@ function CreatorsFunders({ v2Metadata }: CreatorsFundersProps) {
                             primary={creator.name}
                             secondary={
                               <>
-                                <Typography component="span" variant="body2" color="text.secondary">
-                                  {creator["@type"]}
+                                <Typography component='span' variant='body2' color='text.secondary'>
+                                  {creator['@type']}
                                 </Typography>
                                 {creator.url && (
                                   <>
-                                    {" • "}
-                                    <MuiLink href={creator.url} target="_blank" rel="noopener noreferrer">
+                                    {' • '}
+                                    <MuiLink
+                                      href={creator.url}
+                                      target='_blank'
+                                      rel='noopener noreferrer'
+                                    >
                                       Website
                                     </MuiLink>
                                   </>
                                 )}
                                 {creator.email && (
                                   <>
-                                    {" • "}
-                                    <MuiLink href={`mailto:${creator.email}`}>{creator.email}</MuiLink>
+                                    {' • '}
+                                    <MuiLink href={`mailto:${creator.email}`}>
+                                      {creator.email}
+                                    </MuiLink>
                                   </>
                                 )}
                               </>
@@ -55,7 +70,7 @@ function CreatorsFunders({ v2Metadata }: CreatorsFundersProps) {
                 )}
                 {v2Metadata?.funder?.length > 0 && (
                   <Grid size={{ xs: 12, md: 6 }}>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography variant='subtitle2' color='text.secondary' gutterBottom>
                       Funders
                     </Typography>
                     <List dense>
@@ -63,11 +78,11 @@ function CreatorsFunders({ v2Metadata }: CreatorsFundersProps) {
                         <ListItem key={index} disablePadding sx={{ mb: 1 }}>
                           <ListItemText
                             primary={
-                              <MuiLink href={funder.url} target="_blank" rel="noopener noreferrer">
+                              <MuiLink href={funder.url} target='_blank' rel='noopener noreferrer'>
                                 {funder.name}
                               </MuiLink>
                             }
-                            secondary={funder["@id"]}
+                            secondary={funder['@id']}
                           />
                         </ListItem>
                       ))}
@@ -80,7 +95,7 @@ function CreatorsFunders({ v2Metadata }: CreatorsFundersProps) {
         </Grid>
       )}
     </>
-  );
+  )
 }
 
-export default CreatorsFunders;
+export default CreatorsFunders

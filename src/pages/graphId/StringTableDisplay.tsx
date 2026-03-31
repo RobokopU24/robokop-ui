@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react'
 import {
   CardContent,
   Divider,
@@ -17,11 +17,11 @@ import {
   FormControl,
   TextField,
   InputAdornment,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'
 import {
   createColumnHelper,
   flexRender,
@@ -30,33 +30,33 @@ import {
   getSortedRowModel,
   SortingState,
   getPaginationRowModel,
-} from '@tanstack/react-table';
+} from '@tanstack/react-table'
 
-type RowType = { property: string };
+type RowType = { property: string }
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
-    align?: 'left' | 'center' | 'right';
+    align?: 'left' | 'center' | 'right'
   }
 }
 
-const columnHelper = createColumnHelper<RowType>();
+const columnHelper = createColumnHelper<RowType>()
 
 function StringTableDisplay({ tableData, title }: { tableData: string[]; title: string }) {
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'property', desc: false }]);
-  const [pageSize, setPageSize] = useState(50);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'property', desc: false }])
+  const [pageSize, setPageSize] = useState(50)
+  const [pageIndex, setPageIndex] = useState(0)
+  const [searchQuery, setSearchQuery] = useState('')
 
-  const data = useMemo(() => (tableData || []).map((property) => ({ property })), [tableData]);
+  const data = useMemo(() => (tableData || []).map((property) => ({ property })), [tableData])
 
   const filteredData = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter((row) => row.property.toLowerCase().includes(q));
-  }, [data, searchQuery]);
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return data
+    return data.filter((row) => row.property.toLowerCase().includes(q))
+  }, [data, searchQuery])
 
-  useEffect(() => setPageIndex(0), [pageSize]);
+  useEffect(() => setPageIndex(0), [pageSize])
 
   const columns = useMemo(
     () => [
@@ -66,8 +66,8 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
         meta: { align: 'left' },
       }),
     ],
-    []
-  );
+    [],
+  )
 
   const table = useReactTable({
     data: filteredData,
@@ -76,37 +76,37 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
     onSortingChange: setSorting,
     onPaginationChange: (updater) => {
       if (typeof updater === 'function') {
-        const newState = updater({ pageIndex, pageSize });
-        setPageIndex(newState.pageIndex);
-        setPageSize(newState.pageSize);
+        const newState = updater({ pageIndex, pageSize })
+        setPageIndex(newState.pageIndex)
+        setPageSize(newState.pageSize)
       } else {
-        setPageIndex(updater.pageIndex);
-        setPageSize(updater.pageSize);
+        setPageIndex(updater.pageIndex)
+        setPageSize(updater.pageSize)
       }
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  });
+  })
 
   return (
     <CardContent sx={{ p: 1 }}>
       <Box>
         {/* Header Section */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant='h6'>{title}</Typography>
           <TextField
-            size="small"
-            placeholder="Search"
+            size='small'
+            placeholder='Search'
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPageIndex(0);
+              setSearchQuery(e.target.value)
+              setPageIndex(0)
             }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
+                <InputAdornment position='start'>
+                  <SearchIcon fontSize='small' />
                 </InputAdornment>
               ),
             }}
@@ -139,13 +139,13 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
                 overflow: 'auto',
               }}
             >
-              <Table stickyHeader size="small">
+              <Table stickyHeader size='small'>
                 <TableHead sx={{ backgroundColor: 'action.hover' }}>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
                       {headerGroup.headers.map((header) => {
-                        const sorted = header.column.getIsSorted(); // 'asc' | 'desc' | false
-                        const canSort = header.column.getCanSort();
+                        const sorted = header.column.getIsSorted() // 'asc' | 'desc' | false
+                        const canSort = header.column.getCanSort()
                         return (
                           <TableCell
                             key={header.id}
@@ -169,12 +169,12 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
                                 gap: 0.4,
                               }}
                             >
-                              <Typography variant="subtitle2" fontWeight="bold">
+                              <Typography variant='subtitle2' fontWeight='bold'>
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                               </Typography>
                               {canSort && (
                                 <Box
-                                  component="span"
+                                  component='span'
                                   sx={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
@@ -184,17 +184,17 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
                                   }}
                                 >
                                   {sorted === 'asc' ? (
-                                    <ArrowDropUpIcon fontSize="small" />
+                                    <ArrowDropUpIcon fontSize='small' />
                                   ) : sorted === 'desc' ? (
-                                    <ArrowDropDownIcon fontSize="small" />
+                                    <ArrowDropDownIcon fontSize='small' />
                                   ) : (
-                                    <UnfoldMoreIcon fontSize="small" />
+                                    <UnfoldMoreIcon fontSize='small' />
                                   )}
                                 </Box>
                               )}
                             </Box>
                           </TableCell>
-                        );
+                        )
                       })}
                     </TableRow>
                   ))}
@@ -224,13 +224,13 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
               }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2">Page size:</Typography>
-                <FormControl size="small" sx={{ minWidth: 80 }}>
+                <Typography variant='body2'>Page size:</Typography>
+                <FormControl size='small' sx={{ minWidth: 80 }}>
                   <Select
                     value={pageSize}
                     onChange={(e) => {
-                      setPageSize(Number(e.target.value));
-                      setPageIndex(0);
+                      setPageSize(Number(e.target.value))
+                      setPageIndex(0)
                     }}
                     displayEmpty
                   >
@@ -243,7 +243,7 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="body2">
+                <Typography variant='body2'>
                   Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
                   {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
                   {filteredData.length} results
@@ -252,8 +252,8 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
                   count={Math.ceil(filteredData.length / pageSize)}
                   page={pageIndex + 1}
                   onChange={(event, page) => setPageIndex(page - 1)}
-                  color="primary"
-                  size="small"
+                  color='primary'
+                  size='small'
                   showFirstButton
                   showLastButton
                 />
@@ -263,7 +263,7 @@ function StringTableDisplay({ tableData, title }: { tableData: string[]; title: 
         )}
       </Box>
     </CardContent>
-  );
+  )
 }
 
-export default StringTableDisplay;
+export default StringTableDisplay

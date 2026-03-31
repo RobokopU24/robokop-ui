@@ -1,8 +1,8 @@
-import { toKebabCase } from '../toKebabCase';
-import styles from './Navigation.module.css';
+import { toKebabCase } from '../toKebabCase'
+import styles from './Navigation.module.css'
 
 interface NavigationProps {
-  sections: string[];
+  sections: string[]
 }
 
 export const Navigation = ({ sections }: NavigationProps) => {
@@ -23,5 +23,5 @@ export const Navigation = ({ sections }: NavigationProps) => {
         <li><a href="#contact">Contact</a></li> */}
       </ul>
     </nav>
-  );
-};
+  )
+}

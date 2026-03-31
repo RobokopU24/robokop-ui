@@ -1,14 +1,14 @@
-import React from 'react';
-import { Container, Typography, Box, Divider, Link as MuiLink } from '@mui/material';
-import { Link } from '@tanstack/react-router';
+import React from 'react'
+import { Container, Typography, Box, Divider, Link as MuiLink } from '@mui/material'
+import { Link } from '@tanstack/react-router'
 
 export default function Explore() {
   return (
     <Container sx={{ my: 6 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant='h5' gutterBottom>
         Explore
       </Typography>
-      <Typography variant="body1" sx={{ mb: 3 }}>
+      <Typography variant='body1' sx={{ mb: 3 }}>
         Click a link below to view a tool or a curated dataset that can be further explored in the
         ROBOKOP query builder or answer explorer.
       </Typography>
@@ -16,10 +16,10 @@ export default function Explore() {
       <Divider sx={{ mb: 4 }} />
 
       <Box sx={{ mb: 6 }}>
-        <MuiLink component={Link} to={`/explore/enrichment-analysis`} underline="hover">
+        <MuiLink component={Link} to={`/explore/enrichment-analysis`} underline='hover'>
           Enrichment Analysis
           <Box
-            component="span"
+            component='span'
             sx={{
               fontSize: '0.75rem',
               backgroundColor: '#e9e9e9',
@@ -37,7 +37,7 @@ export default function Explore() {
       </Box>
 
       <Box>
-        <MuiLink component={Link} to={`/explore/drug-chemical`} underline="hover">
+        <MuiLink component={Link} to={`/explore/drug-chemical`} underline='hover'>
           Drug to Disease Pairs
         </MuiLink>
         <Typography sx={{ mt: 1 }}>
@@ -49,5 +49,5 @@ export default function Explore() {
         </Typography>
       </Box>
     </Container>
-  );
+  )
 }

@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
-import DrugDiseasePairs from '../../../pages/explore/DrugDiseasePairs';
+import { createFileRoute } from '@tanstack/react-router'
+import DrugDiseasePairs from '../../../pages/explore/DrugDiseasePairs'
 
 export const Route = createFileRoute('/explore/drug-chemical/')({
   component: RouteComponent,
@@ -26,8 +26,8 @@ export const Route = createFileRoute('/explore/drug-chemical/')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <DrugDiseasePairs />;
+  return <DrugDiseasePairs />
 }

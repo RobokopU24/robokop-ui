@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   Box,
   Container,
@@ -10,9 +10,9 @@ import {
   TableRow,
   TableCell,
   TablePagination,
-} from '@mui/material';
-import ArrowRight from '@mui/icons-material/ArrowRight';
-import { Link, useNavigate } from '@tanstack/react-router';
+} from '@mui/material'
+import ArrowRight from '@mui/icons-material/ArrowRight'
+import { Link, useNavigate } from '@tanstack/react-router'
 import {
   createColumnHelper,
   flexRender,
@@ -21,32 +21,32 @@ import {
   ColumnDef,
   SortingState,
   ColumnFiltersState,
-} from '@tanstack/react-table';
-import explorePage from '../../API/explorePage';
-import Loading from '../../components/loading/Loading';
-import { useQueryBuilderContext } from '../../context/queryBuilder';
-import HeaderCell from './HeaderCell';
-import { makeStyles } from '@mui/styles';
+} from '@tanstack/react-table'
+import explorePage from '../../API/explorePage'
+import Loading from '../../components/loading/Loading'
+import { useQueryBuilderContext } from '../../context/queryBuilder'
+import HeaderCell from './HeaderCell'
+import { makeStyles } from '@mui/styles'
 
 // Type definitions
 interface DrugDiseasePair {
-  drug_name: string;
-  drug_id: string;
-  disease_name: string;
-  disease_id: string;
-  score: number;
-  known: number;
+  drug_name: string
+  drug_id: string
+  disease_name: string
+  disease_id: string
+  score: number
+  known: number
 }
 
 interface ApiResponse {
-  rows: DrugDiseasePair[];
-  num_of_results: number;
-  limit: number;
-  offset: number;
+  rows: DrugDiseasePair[]
+  num_of_results: number
+  limit: number
+  offset: number
 }
 
 interface ChipProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 const useStyles = makeStyles({
@@ -68,9 +68,9 @@ const useStyles = makeStyles({
       paddingLeft: 0,
     },
   },
-});
+})
 
-const fetchPairs = explorePage.getDrugChemicalPairs;
+const fetchPairs = explorePage.getDrugChemicalPairs
 
 function Chip({ children }: ChipProps) {
   return (
@@ -85,23 +85,23 @@ function Chip({ children }: ChipProps) {
     >
       {children}
     </span>
-  );
+  )
 }
 
 export default function DrugDiseasePairs() {
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 20 });
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 20 })
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [data, setData] = React.useState<ApiResponse>({
     rows: [],
     num_of_results: 0,
     limit: 0,
     offset: 0,
-  });
-  const [isLoading, setIsLoading] = React.useState(true);
+  })
+  const [isLoading, setIsLoading] = React.useState(true)
 
-  const queryBuilder = useQueryBuilderContext();
-  const navigate = useNavigate();
+  const queryBuilder = useQueryBuilderContext()
+  const navigate = useNavigate()
 
   const handleStartQuery = (pair: DrugDiseasePair) => {
     const query = {
@@ -116,14 +116,14 @@ export default function DrugDiseasePairs() {
           },
         },
       },
-    };
-    queryBuilder.dispatch({ type: 'saveGraph', payload: query });
-    navigate({ to: '/question-builder' });
-  };
+    }
+    queryBuilder.dispatch({ type: 'saveGraph', payload: query })
+    navigate({ to: '/question-builder' })
+  }
 
-  const classes = useStyles();
+  const classes = useStyles()
 
-  const columnHelper = createColumnHelper<DrugDiseasePair>();
+  const columnHelper = createColumnHelper<DrugDiseasePair>()
   const columns = React.useMemo<ColumnDef<DrugDiseasePair, any>[]>(
     () => [
       columnHelper.accessor('disease_name', {
@@ -159,8 +159,8 @@ export default function DrugDiseasePairs() {
         id: 'startQueryButton',
         cell: (props) => (
           <Button
-            variant="contained"
-            size="small"
+            variant='contained'
+            size='small'
             sx={{ fontSize: '0.75rem', textTransform: 'none' }}
             endIcon={<ArrowRight />}
             onClick={() => handleStartQuery(props.row.original)}
@@ -170,39 +170,38 @@ export default function DrugDiseasePairs() {
         ),
       }),
     ],
-    []
-  );
+    [],
+  )
 
   const sortParam = React.useMemo(
     () => Object.fromEntries(sorting.map(({ id, desc }) => [id, desc ? 'desc' : 'asc'])),
-    [sorting]
-  );
+    [sorting],
+  )
 
   const filterParam = React.useMemo(
     () => Object.fromEntries(columnFilters.map(({ id, value }) => [id, value])),
-    [columnFilters]
-  );
+    [columnFilters],
+  )
 
   React.useEffect(() => {
-    let ignore = false;
-    setIsLoading(true);
-
-    (async () => {
+    let ignore = false
+    setIsLoading(true)
+    ;(async () => {
       try {
-        if (ignore) return;
-        const result = await fetchPairs({ pagination, sort: sortParam, filters: filterParam });
-        setData(result);
+        if (ignore) return
+        const result = await fetchPairs({ pagination, sort: sortParam, filters: filterParam })
+        setData(result)
       } catch (e) {
-        console.error('Error fetching drug-disease pairs:', e);
+        console.error('Error fetching drug-disease pairs:', e)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    })();
+    })()
 
     return () => {
-      ignore = true;
-    };
-  }, [pagination, JSON.stringify(sortParam), JSON.stringify(filterParam)]);
+      ignore = true
+    }
+  }, [pagination, JSON.stringify(sortParam), JSON.stringify(filterParam)])
 
   const table = useReactTable({
     data: data.rows || [],
@@ -216,14 +215,14 @@ export default function DrugDiseasePairs() {
     state: { pagination, sorting, columnFilters },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-  });
+  })
 
   return (
     <Container sx={{ my: 6 }}>
-      <Typography variant="body2" component={Link} to="/explore">
+      <Typography variant='body2' component={Link} to='/explore'>
         ← View all datasets
       </Typography>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant='h4' gutterBottom>
         Drug - Disease Pairs
       </Typography>
       <Typography gutterBottom>
@@ -257,7 +256,7 @@ export default function DrugDiseasePairs() {
           </Box>
         )}
 
-        <Table size="small" className={classes.table}>
+        <Table size='small' className={classes.table}>
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -284,22 +283,22 @@ export default function DrugDiseasePairs() {
 
         {data.num_of_results > 0 ? (
           <TablePagination
-            component="div"
+            component='div'
             count={data.num_of_results}
             page={pagination.pageIndex}
             onPageChange={(_, page) => setPagination((prev) => ({ ...prev, pageIndex: page }))}
             rowsPerPage={pagination.pageSize}
             onRowsPerPageChange={(e) => {
-              setPagination({ pageIndex: 0, pageSize: parseInt(e.target.value, 10) });
+              setPagination({ pageIndex: 0, pageSize: parseInt(e.target.value, 10) })
             }}
             rowsPerPageOptions={[10, 20, 50, 100]}
           />
         ) : (
-          <Typography align="center" sx={{ my: 4 }}>
+          <Typography align='center' sx={{ my: 4 }}>
             No results found. Please try a different filter.
           </Typography>
         )}
       </Box>
     </Container>
-  );
+  )
 }

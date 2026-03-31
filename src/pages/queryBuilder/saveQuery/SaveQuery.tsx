@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 
 import {
   Dialog,
@@ -8,29 +8,29 @@ import {
   DialogContent,
   Button,
   TextField,
-} from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import queryGraphUtils from '../../../utils/queryGraph';
-import routes from '../../../API/routes';
-import { useQueryBuilderContext } from '../../../context/queryBuilder';
-import { authApi } from '../../../API/baseUrlProxy';
-import { useAlert } from '../../../components/AlertProvider';
+} from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import queryGraphUtils from '../../../utils/queryGraph'
+import routes from '../../../API/routes'
+import { useQueryBuilderContext } from '../../../context/queryBuilder'
+import { authApi } from '../../../API/baseUrlProxy'
+import { useAlert } from '../../../components/AlertProvider'
 
 function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
-  const { displayAlert } = useAlert();
+  const { displayAlert } = useAlert()
 
-  const queryBuilder = useQueryBuilderContext();
-  const prunedQueryGraph = queryGraphUtils.prune(queryBuilder.query_graph);
+  const queryBuilder = useQueryBuilderContext()
+  const prunedQueryGraph = queryGraphUtils.prune(queryBuilder.query_graph)
 
-  const [queryName, setQueryName] = useState('');
-  const queryData = { message: { query_graph: prunedQueryGraph } };
+  const [queryName, setQueryName] = useState('')
+  const queryData = { message: { query_graph: prunedQueryGraph } }
   useEffect(() => {
-    if (!show) setQueryName('');
-  }, [show]);
+    if (!show) setQueryName('')
+  }, [show])
 
   const handleCancel = () => {
-    close();
-  };
+    close()
+  }
 
   const handleSave = () => {
     authApi
@@ -39,17 +39,17 @@ function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
         query: queryData,
       })
       .then(() => {
-        displayAlert('success', 'Query bookmarked successfully');
-        close();
+        displayAlert('success', 'Query bookmarked successfully')
+        close()
       })
       .catch((error) => {
         // TODO: Handle error
-        console.error('Error saving query:', error);
-      });
-  };
+        console.error('Error saving query:', error)
+      })
+  }
 
   return (
-    <Dialog open={show} onClose={close} fullWidth maxWidth="sm">
+    <Dialog open={show} onClose={close} fullWidth maxWidth='sm'>
       <DialogTitle>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <p style={{ margin: 0 }}>Bookmark Query</p>
@@ -57,7 +57,7 @@ function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
             style={{
               fontSize: '18px',
             }}
-            title="Close Editor"
+            title='Close Editor'
             onClick={close}
           >
             <CloseIcon />
@@ -66,7 +66,7 @@ function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
       </DialogTitle>
       <DialogContent>
         <TextField
-          label="Query name"
+          label='Query name'
           fullWidth
           value={queryName}
           onChange={(e) => setQueryName(e.target.value)}
@@ -74,20 +74,20 @@ function SaveQuery({ show, close }: { show: boolean; close: () => void }) {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCancel} color="secondary">
+        <Button onClick={handleCancel} color='secondary'>
           Cancel
         </Button>
         <Button
           onClick={handleSave}
-          color="primary"
-          variant="contained"
+          color='primary'
+          variant='contained'
           disabled={!queryName.trim()}
         >
           Save
         </Button>
       </DialogActions>
     </Dialog>
-  );
+  )
 }
 
-export default SaveQuery;
+export default SaveQuery

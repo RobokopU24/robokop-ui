@@ -1,5 +1,5 @@
-import utils from './utils';
-import { api } from './baseUrlProxy';
+import utils from './utils'
+import { api } from './baseUrlProxy'
 
 const routes = {
   async getDrugChemicalPairs({
@@ -7,11 +7,11 @@ const routes = {
     sort,
     filters,
   }: {
-    pagination: { pageIndex: number; pageSize: number };
-    sort: any;
-    filters: any;
+    pagination: { pageIndex: number; pageSize: number }
+    sort: any
+    filters: any
   }) {
-    let response;
+    let response
     try {
       response = await api.post('/api/explore/drug-disease', {
         pagination: {
@@ -20,12 +20,12 @@ const routes = {
         },
         sort,
         filters,
-      });
+      })
     } catch (error: any) {
-      return utils.handleAxiosError(error);
+      return utils.handleAxiosError(error)
     }
-    return response.data;
+    return response.data
   },
-};
+}
 
-export default routes;
+export default routes

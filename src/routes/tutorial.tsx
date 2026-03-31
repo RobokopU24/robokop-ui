@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
-import Tutorial from '../pages/Tutorial';
+import { createFileRoute } from '@tanstack/react-router'
+import Tutorial from '../pages/Tutorial'
 
 export const Route = createFileRoute('/tutorial')({
   component: RouteComponent,
@@ -26,8 +26,8 @@ export const Route = createFileRoute('/tutorial')({
       },
     ],
   }),
-});
+})
 
 function RouteComponent() {
-  return <Tutorial />;
+  return <Tutorial />
 }

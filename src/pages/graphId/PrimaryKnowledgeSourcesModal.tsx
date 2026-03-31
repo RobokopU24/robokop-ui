@@ -7,10 +7,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-} from '@mui/material';
-import React from 'react';
-import Close from '@mui/icons-material/Close';
-import { Sankey } from './Sankey';
+} from '@mui/material'
+import React from 'react'
+import Close from '@mui/icons-material/Close'
+import { Sankey } from './Sankey'
 
 function PrimaryKnowledgeSourcesModal({
   isOpen,
@@ -18,27 +18,27 @@ function PrimaryKnowledgeSourcesModal({
   value,
   sourceKey,
 }: {
-  isOpen: boolean;
-  onClose: () => void;
-  value: { property: string; count: number }[] | undefined;
-  sourceKey: string;
+  isOpen: boolean
+  onClose: () => void
+  value: { property: string; count: number }[] | undefined
+  sourceKey: string
 }) {
-  let sankeyNodes = new Set<string>(sourceKey ? [sourceKey] : []);
+  const sankeyNodes = new Set<string>(sourceKey ? [sourceKey] : [])
 
-  let sankeyLinks: Array<{ source: string; target: string; value: number }> = [];
+  const sankeyLinks: Array<{ source: string; target: string; value: number }> = []
   Object.entries(value || {}).forEach(([_, count]) => {
-    sankeyNodes.add(count.property);
+    sankeyNodes.add(count.property)
     sankeyLinks.push({
       source: count.property,
       target: sourceKey,
       value: typeof count.count === 'number' ? count.count : 0,
-    });
-  });
+    })
+  })
 
   const sankeyData = {
     nodes: Array.from(sankeyNodes).map((id) => ({ id })),
     links: sankeyLinks,
-  };
+  }
 
   return (
     <Modal
@@ -72,23 +72,23 @@ function PrimaryKnowledgeSourcesModal({
           <Sankey data={sankeyData} />
         </Box>
         <Table
-          size="small"
-          aria-label="predicates table"
+          size='small'
+          aria-label='predicates table'
           sx={{ border: '1px solid #ddd', mt: 2, borderRadius: 8 }}
         >
           <TableHead>
             <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
               <TableCell>Property</TableCell>
-              <TableCell align="right">Count</TableCell>
+              <TableCell align='right'>Count</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {Object.entries(value || {}).map(([predicate, count]) => (
               <TableRow key={predicate} hover>
-                <TableCell component="th" scope="row">
+                <TableCell component='th' scope='row'>
                   {count.property}
                 </TableCell>
-                <TableCell align="right">
+                <TableCell align='right'>
                   {typeof count.count === 'number'
                     ? count.count.toLocaleString()
                     : JSON.stringify(count.count)}
@@ -99,7 +99,7 @@ function PrimaryKnowledgeSourcesModal({
         </Table>
       </Box>
     </Modal>
-  );
+  )
 }
 
-export default PrimaryKnowledgeSourcesModal;
+export default PrimaryKnowledgeSourcesModal

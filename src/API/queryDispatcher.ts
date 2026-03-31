@@ -1,5 +1,5 @@
-import utils from './utils';
-import { api } from './baseUrlProxy';
+import utils from './utils'
+import { api } from './baseUrlProxy'
 
 const baseRoutes = {
   /**
@@ -17,19 +17,19 @@ const baseRoutes = {
         ara,
       },
       headers: {} as Record<string, string>,
-    };
-    config.headers.Authorization = token;
+    }
+    config.headers.Authorization = token
     try {
-      const response = await api(config);
-      return response.data;
+      const response = await api(config)
+      return response.data
     } catch (error) {
-      return utils.handleAxiosError(error as any);
+      return utils.handleAxiosError(error as any)
     }
   },
-};
+}
 
 const routes = {
   getAnswer: baseRoutes.getAnswer,
-};
+}
 
-export default routes;
+export default routes

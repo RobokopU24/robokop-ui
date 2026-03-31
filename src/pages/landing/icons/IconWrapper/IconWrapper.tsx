@@ -1,13 +1,10 @@
-import styles from './IconWrapper.module.css';
+import React from 'react'
+import styles from './IconWrapper.module.css'
 
 interface IconWrapperProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const IconWrapper = ({ children }: IconWrapperProps) => {
-  return (
-    <div className={styles.wrapper}>
-      {children}
-    </div>
-  )
+  return <div className={styles.wrapper}>{children}</div>
 }

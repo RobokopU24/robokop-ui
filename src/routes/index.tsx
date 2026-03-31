@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
-import LandingPage from '../pages/landing';
+import { createFileRoute } from '@tanstack/react-router'
+import LandingPage from '../pages/landing'
 
 export const Route = createFileRoute('/')({
   component: Home,
@@ -10,8 +10,8 @@ export const Route = createFileRoute('/')({
       },
     ],
   }),
-});
+})
 
 function Home() {
-  return <LandingPage />;
+  return <LandingPage />
 }

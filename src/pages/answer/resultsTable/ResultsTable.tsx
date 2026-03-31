@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useEffect, JSX } from 'react';
-import type { SxProps, Theme } from '@mui/material/styles';
+import React, { useMemo, useState, useEffect, JSX } from 'react'
+import type { SxProps, Theme } from '@mui/material/styles'
 import {
   Divider,
   Paper,
@@ -18,8 +18,8 @@ import {
   TextField,
   InputAdornment,
   TableSortLabel,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+} from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
 import {
   flexRender,
   getCoreRowModel,
@@ -27,72 +27,73 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import type { SortingState, ColumnFiltersState, ColumnDef } from '@tanstack/react-table';
-import EmptyTable from '../../../components/shared/emptyTableRows/EmptyTable';
-import ResultExplorer from './ResultExplorer';
-import './resultsTable.css';
+} from '@tanstack/react-table'
+import type { SortingState, ColumnFiltersState, ColumnDef } from '@tanstack/react-table'
+import EmptyTable from '../../../components/shared/emptyTableRows/EmptyTable'
+import ResultExplorer from './ResultExplorer'
+import './resultsTable.css'
 
 interface NodeType {
-  id: string;
-  name: string;
-  categories: string[];
-  score: number;
-  x?: number;
-  y?: number;
-  fx?: number | null;
-  fy?: number | null;
+  id: string
+  name: string
+  categories: string[]
+  score: number
+  x?: number
+  y?: number
+  fx?: number | null
+  fy?: number | null
 }
 
 interface EdgeType {
-  id: string;
-  source: string | NodeType;
-  target: string | NodeType;
-  predicate: string;
-  strokeWidth?: number;
-  numEdges?: number;
-  index?: number;
-  attributes?: any[];
-  sources?: any[];
+  id: string
+  source: string | NodeType
+  target: string | NodeType
+  predicate: string
+  strokeWidth?: number
+  numEdges?: number
+  index?: number
+  attributes?: any[]
+  sources?: any[]
 }
 
 interface AnswerStoreType {
-  numQgNodes: number;
-  showNodePruneSlider: boolean;
+  numQgNodes: number
+  showNodePruneSlider: boolean
   selectedResult: {
-    nodes: { [id: string]: NodeType };
-    edges: { [id: string]: EdgeType };
-  };
-  selectedRowId: string;
-  metaData?: any;
+    nodes: { [id: string]: NodeType }
+    edges: { [id: string]: EdgeType }
+  }
+  selectedRowId: string
+  metaData?: any
   resultJSON: {
     knowledge_graph: {
-      edges: { [id: string]: { attributes: any[]; sources: any[] } };
-    };
-    result?: any;
-  };
-  tableHeaders: any[];
+      nodes: { [id: string]: { name?: string; categories?: string[]; attributes?: any[] } }
+      edges: { [id: string]: { attributes: any[]; sources: any[]; qualifiers?: any[] } }
+    }
+    result?: any
+  }
+  tableHeaders: any[]
   message: {
-    results: any[];
-    [key: string]: any;
-  };
-  selectRow: (row: any, id: string | number) => void;
+    results: any[]
+    [key: string]: any
+  }
+  selectRow: (row: any, id: string | number) => void
 }
 
 interface ResultsTableProps {
-  answerStore: AnswerStoreType;
-  containerSx?: SxProps<Theme>;
+  answerStore: AnswerStoreType
+  containerSx?: SxProps<Theme>
 }
 
 // -------------------- Component --------------------
 export default function ResultsTable({ answerStore, containerSx }: ResultsTableProps): JSX.Element {
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'score', desc: true }]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [pageSize, setPageSize] = useState<number>(15);
-  const [pageIndex, setPageIndex] = useState<number>(0);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'score', desc: true }])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [pageSize, setPageSize] = useState<number>(15)
+  const [pageIndex, setPageIndex] = useState<number>(0)
+  const [searchQuery, setSearchQuery] = useState<string>('')
 
-  const data = useMemo<any[]>(() => answerStore.message.results || [], [answerStore.message]);
+  const data = useMemo<any[]>(() => answerStore.message.results || [], [answerStore.message])
 
   const columns = useMemo<ColumnDef<any, any>[]>(() => {
     return answerStore.tableHeaders.map((header: any): ColumnDef<any, any> => {
@@ -106,24 +107,23 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
           color: header.color,
           width: header.width,
         } as any,
-      };
+      }
 
-      if (typeof header.accessor === 'function') (columnDef as any).accessorFn = header.accessor;
-      else if (typeof header.accessor === 'string')
-        (columnDef as any).accessorKey = header.accessor;
+      if (typeof header.accessor === 'function') (columnDef as any).accessorFn = header.accessor
+      else if (typeof header.accessor === 'string') (columnDef as any).accessorKey = header.accessor
 
-      if (header.filter === 'equals') (columnDef as any).filterFn = 'equals';
-      return columnDef;
-    });
-  }, [answerStore.tableHeaders]);
+      if (header.filter === 'equals') (columnDef as any).filterFn = 'equals'
+      return columnDef
+    })
+  }, [answerStore.tableHeaders])
 
   const filteredData = useMemo<any[]>(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return data;
-    return data.filter((row) => JSON.stringify(row).toLowerCase().includes(q));
-  }, [data, searchQuery]);
+    const q = searchQuery.trim().toLowerCase()
+    if (!q) return data
+    return data.filter((row) => JSON.stringify(row).toLowerCase().includes(q))
+  }, [data, searchQuery])
 
-  useEffect(() => setPageIndex(0), [pageSize]);
+  useEffect(() => setPageIndex(0), [pageSize])
 
   const table = useReactTable<any>({
     data: filteredData,
@@ -139,25 +139,25 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-  });
+  })
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', minHeight: 800, ...containerSx }}>
       <Box sx={{ flexGrow: 1, display: 'inline-block', width: 'auto', maxWidth: '100%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-          <Typography variant="h6">Results</Typography>
+          <Typography variant='h6'>Results</Typography>
           <TextField
-            size="small"
-            placeholder="Search"
+            size='small'
+            placeholder='Search'
             value={searchQuery}
             onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setPageIndex(0);
+              setSearchQuery(e.target.value)
+              setPageIndex(0)
             }}
             InputProps={{
               startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon fontSize="small" />
+                <InputAdornment position='start'>
+                  <SearchIcon fontSize='small' />
                 </InputAdornment>
               ),
             }}
@@ -187,7 +187,7 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
                 display: 'inline-block',
               }}
             >
-              <Table stickyHeader size="small">
+              <Table stickyHeader size='small'>
                 <TableHead>
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id}>
@@ -234,7 +234,7 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
                       </TableRow>
                     ))
                   ) : (
-                    <EmptyTable numRows={15} numCells={columns.length} text="No Results" />
+                    <EmptyTable numRows={15} numCells={columns.length} text='No Results' />
                   )}
                 </TableBody>
               </Table>
@@ -244,13 +244,13 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 2 }}
             >
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2">Page size:</Typography>
-                <FormControl size="small" sx={{ minWidth: 80 }}>
+                <Typography variant='body2'>Page size:</Typography>
+                <FormControl size='small' sx={{ minWidth: 80 }}>
                   <Select
                     value={pageSize}
                     onChange={(e) => {
-                      setPageSize(Number(e.target.value));
-                      setPageIndex(0);
+                      setPageSize(Number(e.target.value))
+                      setPageIndex(0)
                     }}
                     displayEmpty
                   >
@@ -264,7 +264,7 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Typography variant="body2">
+                <Typography variant='body2'>
                   Showing {filteredData.length === 0 ? 0 : pageIndex * pageSize + 1} to{' '}
                   {Math.min((pageIndex + 1) * pageSize, filteredData.length)} of{' '}
                   {filteredData.length} results
@@ -273,8 +273,8 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
                   count={Math.ceil(filteredData.length / pageSize)}
                   page={pageIndex + 1}
                   onChange={(_event, page) => setPageIndex(page - 1)}
-                  color="primary"
-                  size="small"
+                  color='primary'
+                  size='small'
                   showFirstButton
                   showLastButton
                 />
@@ -285,5 +285,5 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
       </Box>
       <ResultExplorer answerStore={answerStore} />
     </Box>
-  );
+  )
 }
