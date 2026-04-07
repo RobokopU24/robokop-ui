@@ -171,6 +171,8 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
           setIsSankeyGraphModalOpen={setIsSankeyGraphModalOpen}
           graph_id={graph_id}
           downloadLink={validDownloadLink}
+          nodeCount={schemaV2?.schema.nodes_summary.total_count || 0}
+          edgeCount={schemaV2?.schema.edges_summary.total_count || 0}
         />
 
         <Grid size={8} sx={{ mt: 2 }}>
