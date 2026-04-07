@@ -15,6 +15,8 @@ interface HeaderCardProps {
   setIsSankeyGraphModalOpen: (isOpen: boolean) => void
   graph_id: string | undefined
   downloadLink: string
+  nodeCount: number
+  edgeCount: number
 }
 
 function HeaderCard({
@@ -27,19 +29,9 @@ function HeaderCard({
   setIsSankeyGraphModalOpen,
   graph_id,
   downloadLink,
+  nodeCount,
+  edgeCount,
 }: HeaderCardProps) {
-  let totalNodeCount = 0
-  let totalEdgeCount = 0
-  if (v2Metadata?.hasPart && Array.isArray(v2Metadata.hasPart)) {
-    v2Metadata.hasPart.forEach((part) => {
-      if (part['orion:nodeCount']) {
-        totalNodeCount += part['orion:nodeCount']
-      }
-      if (part['orion:edgeCount']) {
-        totalEdgeCount += part['orion:edgeCount']
-      }
-    })
-  }
   const metadataHref = latestMetadataUrl
     ? `${window.location.origin}/graphs/${latestMetadataUrl.replace(/^\/+/, '')}`
     : undefined
@@ -72,13 +64,13 @@ function HeaderCard({
           </Box>
           <Stack direction='row' spacing={1} flexWrap='wrap' useFlexGap>
             <Chip
-              label={`${stringUtils.formatNumber(totalNodeCount)} nodes`}
+              label={`${stringUtils.formatNumber(nodeCount)} nodes`}
               size='small'
               color='default'
               variant='outlined'
             />
             <Chip
-              label={`${stringUtils.formatNumber(totalEdgeCount)} edges`}
+              label={`${stringUtils.formatNumber(edgeCount)} edges`}
               size='small'
               color='default'
               variant='outlined'
