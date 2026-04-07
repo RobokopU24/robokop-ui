@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { baseAPI } from './routes'
 
-export const GRAPH_REGISTRY_ROUTE = 'https://robokop-graph-registry.apps.renci.org'
+export const GRAPH_REGISTRY_ROUTE = `${baseAPI}/graph-registry`
 
 export interface GraphRegistryEntry {
   graph_id: string
