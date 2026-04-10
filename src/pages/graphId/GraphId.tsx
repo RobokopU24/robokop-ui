@@ -122,13 +122,6 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
     queryFn: () => getGraphVersionList(graph_id!),
     enabled: !!graph_id,
   })
-  const isLatestInReleaseData = releaseData?.find((v) => v === 'latest') !== undefined
-  const { data: schemaV2Latest } = useQuery({
-    queryKey: ['graph-metadata', graph_id, 'latest'],
-    queryFn: () => graphMetadata(graph_id!, 'latest'),
-    enabled: isLatestInReleaseData,
-  })
-  const latestVersionID = schemaV2Latest?.version
 
   const graphDatasetV2 = React.useMemo(() => {
     return schemaV2 ? transformSchemaToLinks(schemaV2) : { nodes: [], links: [] }
@@ -221,11 +214,7 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
         </Grid>
       </Box>
       <Box>
-        <Releases
-          latestVersion={latestVersionID}
-          releases={releaseData}
-          loading={isReleaseDataLoading}
-        />
+        <Releases releases={releaseData} loading={isReleaseDataLoading} />
         <DownloadSection version={displayVersion} />
       </Box>
     </Container>
