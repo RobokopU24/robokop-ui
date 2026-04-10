@@ -18,25 +18,16 @@ import {
   Typography,
 } from '@mui/material'
 import { OpenInNew as OpenInNewIcon, Update as UpdateIcon } from '@mui/icons-material'
+import { ReleasesData } from '../../API/graphRegistry'
 
 export interface ReleasesProps {
-  latestVersion?: string
-  releases?: string[]
+  releases?: ReleasesData[]
   loading?: boolean
 }
 
-function Releases({ latestVersion, releases, loading }: ReleasesProps) {
+function Releases({ releases, loading }: ReleasesProps) {
+  console.log('releases', { releases, loading })
   const { graph_id, graph_version } = useParams({ strict: false })
-
-  const formatVersionList = (versionList: string[], latestVersion: string | undefined) => {
-    return versionList
-      .filter((entry) => entry !== 'latest')
-      .map((entry) => ({
-        version: entry,
-        latest: entry === latestVersion,
-      }))
-  }
-  const formattedReleases = formatVersionList(releases || [], latestVersion)
 
   const isViewingVersion = (version: string, isLatest: boolean) => {
     if (!graph_version) return false
@@ -82,7 +73,7 @@ function Releases({ latestVersion, releases, loading }: ReleasesProps) {
         <CardContent>
           {loading ? (
             renderSkeleton()
-          ) : formattedReleases.length > 0 ? (
+          ) : releases && releases.length > 0 ? (
             <TableContainer>
               <Table size='small'>
                 <TableHead>
@@ -92,10 +83,15 @@ function Releases({ latestVersion, releases, loading }: ReleasesProps) {
                         Version
                       </Typography>
                     </TableCell>
+                    <TableCell align='right'>
+                      <Typography variant='subtitle2' fontWeight='bold'>
+                        Date
+                      </Typography>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {formattedReleases.map((release) => {
+                  {releases?.map((release) => {
                     const isActiveVersion = isViewingVersion(release.version, release.latest)
 
                     return (
@@ -134,6 +130,11 @@ function Releases({ latestVersion, releases, loading }: ReleasesProps) {
                               />
                             ) : null}
                           </Link>
+                        </TableCell>
+                        <TableCell align='right'>
+                          <Typography variant='body2' color='text.secondary'>
+                            {new Date(release.release_date).toLocaleDateString()}
+                          </Typography>
                         </TableCell>
                       </TableRow>
                     )

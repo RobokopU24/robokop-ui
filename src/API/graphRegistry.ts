@@ -15,6 +15,12 @@ export interface GraphDownloadData {
   file_size_bytes: number
 }
 
+export interface ReleasesData {
+  latest: boolean
+  release_date: string
+  version: string
+}
+
 export const graphRegistryList = async (): Promise<GraphRegistryEntry[]> => {
   const response = await axios.get(`${GRAPH_REGISTRY_ROUTE}/registry`)
   if (response.status === 200) {
@@ -56,7 +62,7 @@ export const getGraphDownloadList = async (
   }
 }
 
-export const getGraphVersionList = async (graph_id: string): Promise<string[]> => {
+export const getGraphVersionList = async (graph_id: string): Promise<ReleasesData[]> => {
   const response = await axios.get(`${GRAPH_REGISTRY_ROUTE}/versions/${graph_id}`)
   if (response.status === 200) {
     return response.data
