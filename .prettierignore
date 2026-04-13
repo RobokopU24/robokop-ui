@@ -3,3 +3,4 @@ build
 .tanstack
 node_modules
 coverage
+src/routeTree.gen.ts
