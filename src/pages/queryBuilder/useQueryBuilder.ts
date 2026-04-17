@@ -133,8 +133,13 @@ function reducer(state: QueryBuilderState, action: QueryBuilderAction): QueryBui
     }
     case 'editPredicate': {
       const { id, predicates }: { id: string; predicates: string[] } = action.payload
+      const prevPredicates = newState.message.message.query_graph.edges[id].predicates
       newState.message.message.query_graph.edges[id].predicates = predicates
-      delete newState.message.message.query_graph.edges[id].qualifier_constraints
+      const predicatesChanged =
+        JSON.stringify(prevPredicates?.slice().sort()) !== JSON.stringify(predicates.slice().sort())
+      if (predicatesChanged) {
+        delete newState.message.message.query_graph.edges[id].qualifier_constraints
+      }
       break
     }
     case 'editQualifiers': {

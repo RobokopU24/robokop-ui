@@ -1,5 +1,7 @@
 import React from 'react'
+import snakeCase from 'lodash/snakeCase'
 import { useQueryBuilderContext } from '../../../../context/queryBuilder'
+import strings from '../../../../utils/strings'
 import { TextField, Autocomplete } from '@mui/material'
 
 // Types for the query builder context
@@ -97,8 +99,46 @@ const getQualifierOptions = ({ range, subpropertyOf }: QualifierOption): string[
 //   return best;
 // };
 
+function hydrateQualifiersFromEdge(
+  edge:
+    | {
+        qualifier_constraints?: Array<{
+          qualifier_set: Array<{ qualifier_type_id: string; qualifier_value: string }>
+        }>
+      }
+    | undefined,
+  availableFields: { name: string; options: string[] }[],
+): Record<string, string | null> {
+  if (!edge?.qualifier_constraints?.[0]?.qualifier_set?.length) return {}
+
+  const fieldsByTypeId = new Map<string, { name: string; options: string[] }>()
+  for (const field of availableFields) {
+    fieldsByTypeId.set(`biolink:${snakeCase(field.name)}`, field)
+  }
+
+  const hydrated: Record<string, string | null> = {}
+  for (const item of edge.qualifier_constraints[0].qualifier_set) {
+    const field = fieldsByTypeId.get(item.qualifier_type_id)
+    if (!field) continue
+
+    const displayValue = strings.displayPredicate(item.qualifier_value)
+    if (field.options.includes(displayValue)) {
+      hydrated[field.name] = displayValue
+    } else {
+      const fallback = field.options.find(
+        (opt) => snakeCase(opt) === item.qualifier_value.replace(/^biolink:/, ''),
+      )
+      if (fallback) {
+        hydrated[field.name] = fallback
+      }
+    }
+  }
+  return hydrated
+}
+
 export default function QualifiersSelector({ id, associations }: QualifiersSelectorProps) {
   const queryBuilder = useQueryBuilderContext()
+  const isHydratingRef = React.useRef(true)
 
   const associationOptions: AssociationOption[] = associations
     .filter((a: AssociationData) => a.qualifiers.length > 0)
@@ -111,16 +151,29 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
       })),
     }))
 
+  const edge = queryBuilder.query_graph.edges[id]
+  const allFields = associationOptions[0]?.qualifiers ?? []
+
   const [value, setValue] = React.useState<AssociationOption | null>(associationOptions[0] || null)
-  const [qualifiers, setQualifiers] = React.useState<Record<string, string | null>>({})
+  const [qualifiers, setQualifiers] = React.useState<Record<string, string | null>>(() =>
+    hydrateQualifiersFromEdge(edge, allFields),
+  )
 
   const associationKey = associations.map((a) => a.association.uuid).join(',')
   React.useEffect(() => {
-    setValue(associationOptions[0] || null)
-    setQualifiers({})
+    const picked = associationOptions[0] || null
+    setValue(picked)
+    const fields = picked?.qualifiers ?? []
+    const hydrated = hydrateQualifiersFromEdge(edge, fields)
+    isHydratingRef.current = true
+    setQualifiers(hydrated)
   }, [associationKey])
 
   React.useEffect(() => {
+    if (isHydratingRef.current) {
+      isHydratingRef.current = false
+      return
+    }
     queryBuilder.dispatch({ type: 'editQualifiers', payload: { id, qualifiers } })
   }, [qualifiers])
 
