@@ -204,6 +204,7 @@ export default function QualifiersSelector({ id, associations }: QualifiersSelec
                 value={value}
                 onChange={(_, newValue) => {
                   setValue(newValue)
+                  setQualifiers({})
                 }}
                 disableClearable
                 size='small'
