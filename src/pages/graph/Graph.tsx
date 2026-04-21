@@ -11,11 +11,16 @@ interface GraphProps {
 }
 
 function Graph({ graphData, isLoading }: GraphProps) {
-  const graphIdWithoutAutomat = (graphId: string) => {
-    return graphId.replace(/_Automat$/, '')
-  }
   return (
-    <Container sx={{ width: '100%', maxWidth: 1200, my: 8 }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        width: '100%',
+        maxWidth: { xs: '1200px', xl: '1920px !important' },
+        mx: 'auto',
+        my: 8,
+      }}
+    >
       <Typography variant='h4' component='h1' mb={1} sx={{ fontWeight: 500, textAlign: 'center' }}>
         ROBOKOP Graphs
       </Typography>
@@ -108,12 +113,14 @@ function Graph({ graphData, isLoading }: GraphProps) {
 
 export default Graph
 
-const Grid = styled('div')`
-  display: grid;
-  gap: 2rem;
-  grid-template-columns: 1fr;
-
-  @media (min-width: 900px) {
-    grid-template-columns: 1fr 1fr;
-  }
-`
+const Grid = styled('div')(({ theme }) => ({
+  display: 'grid',
+  gap: '2rem',
+  gridTemplateColumns: '1fr',
+  [theme.breakpoints.up('md')]: {
+    gridTemplateColumns: '1fr 1fr',
+  },
+  [theme.breakpoints.up('xl')]: {
+    gridTemplateColumns: '1fr 1fr 1fr',
+  },
+}))
