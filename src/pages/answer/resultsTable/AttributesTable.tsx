@@ -96,6 +96,7 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
           isOpen={loginWarningOpen}
           onClose={() => setLoginWarningOpen(false)}
           warningType={warningType}
+          onSetupBYOK={() => setByokSettingsOpen(true)}
         />
       )}
       {byokPromptOpen && (

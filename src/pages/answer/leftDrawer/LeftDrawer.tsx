@@ -120,6 +120,7 @@ export default function LeftDrawer({
           isOpen={loginWarningOpen}
           onClose={() => setLoginWarningOpen(false)}
           warningType={warningType}
+          onSetupBYOK={() => setByokSettingsOpen(true)}
         />
       )}
       {byokPromptOpen && (
