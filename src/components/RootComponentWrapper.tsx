@@ -7,6 +7,7 @@ import BiolinkContext from '../context/biolink'
 import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { ThemeProvider as StylesThemeProvider } from '@mui/styles'
 import { AuthProvider } from '../context/AuthContext'
+import { BYOKProvider } from '../context/BYOKContext'
 import Header from './header/Header'
 import Footer from './footer/Footer'
 import { PostHogProvider } from 'posthog-js/react'
@@ -48,19 +49,21 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
       }}
     >
       <AuthProvider>
-        <BiolinkContext.Provider value={biolink}>
-          <MuiThemeProvider theme={theme}>
-            <StylesThemeProvider theme={theme}>
-              <QueryBuilderProvider>
-                <div id='pageContainer'>
-                  <Header />
-                  <div id='contentContainer'>{children}</div>
-                  <Footer />
-                </div>
-              </QueryBuilderProvider>
-            </StylesThemeProvider>
-          </MuiThemeProvider>
-        </BiolinkContext.Provider>
+        <BYOKProvider>
+          <BiolinkContext.Provider value={biolink}>
+            <MuiThemeProvider theme={theme}>
+              <StylesThemeProvider theme={theme}>
+                <QueryBuilderProvider>
+                  <div id='pageContainer'>
+                    <Header />
+                    <div id='contentContainer'>{children}</div>
+                    <Footer />
+                  </div>
+                </QueryBuilderProvider>
+              </StylesThemeProvider>
+            </MuiThemeProvider>
+          </BiolinkContext.Provider>
+        </BYOKProvider>
       </AuthProvider>
     </PostHogProvider>
   )

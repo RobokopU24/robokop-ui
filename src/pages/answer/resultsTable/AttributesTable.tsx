@@ -3,7 +3,11 @@ import { Box, Button, Table, TableBody, TableCell, TableHead, TableRow } from '@
 import { styled } from '@mui/material/styles'
 import SummaryModal from './SummaryModal'
 import { useAuth } from '../../../context/AuthContext'
+import { useBYOK } from '../../../context/BYOKContext'
 import LoginWarning from '../leftDrawer/LoginWarning'
+import BYOKKeyPrompt from '../../../components/BYOKSettings/BYOKKeyPrompt'
+import BYOKSettingsModal from '../../../components/BYOKSettings/BYOKSettingsModal'
+import LoginDialog from '../../../components/LoginDialog'
 import { useFeatureAccess } from '../../../hooks'
 
 interface Attribute {
@@ -62,21 +66,24 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
   }
   const [isSummaryModalOpen, setIsSummaryModalOpen] = React.useState(false)
   const { user } = useAuth()
+  const { isActive: byokActive } = useBYOK()
   const [loginWarningOpen, setLoginWarningOpen] = React.useState(false)
+  const [byokPromptOpen, setByokPromptOpen] = React.useState(false)
+  const [byokSettingsOpen, setByokSettingsOpen] = React.useState(false)
+  const [loginDialogOpen, setLoginDialogOpen] = React.useState(false)
   const [warningType, setWarningType] = useState<'login' | 'premium' | null>(null)
   const { canAccess } = useFeatureAccess()
 
   function toggleSummarizeWithAI() {
-    if (!user) {
-      setWarningType('login')
+    if (byokActive) {
+      setIsSummaryModalOpen(!isSummaryModalOpen)
+    } else if (!user) {
+      setByokPromptOpen(true)
+    } else if (!canAccess('publication-summary')) {
+      setWarningType('premium')
       setLoginWarningOpen(true)
     } else {
-      if (!canAccess('publication-summary')) {
-        setWarningType('premium')
-        setLoginWarningOpen(true)
-      } else {
-        setIsSummaryModalOpen(!isSummaryModalOpen)
-      }
+      setIsSummaryModalOpen(!isSummaryModalOpen)
     }
   }
 
@@ -91,6 +98,16 @@ const PublicationLinkCell: React.FC<{ value: string | string[] }> = ({ value }) 
           warningType={warningType}
         />
       )}
+      {byokPromptOpen && (
+        <BYOKKeyPrompt
+          open={byokPromptOpen}
+          onClose={() => setByokPromptOpen(false)}
+          onLoginClick={() => setLoginDialogOpen(true)}
+          onSetupBYOK={() => setByokSettingsOpen(true)}
+        />
+      )}
+      <BYOKSettingsModal open={byokSettingsOpen} onClose={() => setByokSettingsOpen(false)} />
+      <LoginDialog open={loginDialogOpen} onClose={() => setLoginDialogOpen(false)} />
       {isSummaryModalOpen && (
         <SummaryModal
           isOpen={isSummaryModalOpen}
