@@ -14,7 +14,7 @@ import {
   useFloating,
 } from '@floating-ui/react'
 import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
+import { api } from '../../../API/baseUrlProxy'
 
 async function nameLookup({
   name,
@@ -29,7 +29,7 @@ async function nameLookup({
   taxaFilter?: string[]
   signal: AbortSignal
 }) {
-  const { data } = await axios.get('https://robokop-name-resolver.apps.renci.org/lookup', {
+  const { data } = await api.get('/api/name_resolver', {
     signal,
     params: {
       string: name,
