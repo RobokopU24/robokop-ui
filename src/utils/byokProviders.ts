@@ -119,18 +119,18 @@ async function streamAzure(
 ): Promise<void> {
   const deployment = config.azureDeployment ?? ''
 
-  // Strip trailing slash and any API-specific suffix the user may have copied from the portal
-  // (e.g. the portal shows .../openai/v1/responses as the default endpoint URL)
+  // Strip trailing slash, /api/projects/... and /openai/... so we always reconstruct the path.
   const endpoint = (config.azureEndpoint ?? '')
     .replace(/\/$/, '')
-    .replace(/\/(responses|chat\/completions|completions)\/?$/, '')
+    .replace(/\/api\/projects.*$/, '')
+    .replace(/\/openai.*$/, '')
 
-  // Azure AI Foundry project endpoints (/api/projects/...) use the OpenAI-compatible
-  // /chat/completions path directly with model in the body; no api-version query param.
-  // Classic Azure OpenAI endpoints (*.openai.azure.com) use the deployment path + api-version.
-  const isAIFoundry = endpoint.includes('/api/projects/')
+  // AI Foundry (services.ai.azure.com) uses the v1 API: model goes in the body, no api-version.
+  // Classic Azure OpenAI (openai.azure.com) uses the deployment URL with api-version.
+  const isAIFoundry = endpoint.includes('services.ai.azure.com')
+
   const url = isAIFoundry
-    ? `${endpoint}/chat/completions`
+    ? `${endpoint}/openai/v1/chat/completions`
     : `${endpoint}/openai/deployments/${deployment}/chat/completions?api-version=2024-02-01`
 
   const body = isAIFoundry
