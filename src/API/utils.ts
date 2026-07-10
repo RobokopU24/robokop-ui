@@ -1,11 +1,14 @@
 import isString from 'lodash/isString'
 
 function handleAxiosError(error: {
-  response: { status: any; data: { message: any; detail: any } }
+  response?: { status: any; data: { message?: any; detail?: any; debug?: any } }
 }) {
-  const output: { message?: string; status?: string } = {}
+  const output: { message?: string; status?: string; debug?: any } = {}
   if (error.response) {
     const axiosErrorPrefix = `Error in response with code ${error.response.status}: `
+    if (error.response.data.debug) {
+      output.debug = error.response.data.debug
+    }
     if (error.response.data.message) {
       // Data object contains a 'message' property
       // so we assume it includes info and we don't need the prefix

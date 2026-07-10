@@ -46,10 +46,18 @@ export const releasesRoutes = {
 const llmEndpoint = `${baseAuthURL}/llm`
 export const llmRoutes = {
   base: llmEndpoint,
+  prompts: `${llmEndpoint}/prompts`,
+  savedPrompts: `${llmEndpoint}/saved-prompts`,
   summarizeLinks: `${llmEndpoint}/stream-summaries`,
   summarizeGraph: `${llmEndpoint}/stream-graph-summary`,
   summarizeKGNodes: `${llmEndpoint}/stream-kg-nodes-summary`,
   summarizeTable: `${llmEndpoint}/stream-table-summary`,
+}
+
+const llmModelsEndpoint = `${baseAuthURL}/llm-models`
+export const llmModelRoutes = {
+  base: llmModelsEndpoint,
+  active: `${llmModelsEndpoint}/active`,
 }
 
 const adminEndpoint = `${baseAuthURL}/admin`
@@ -82,6 +90,7 @@ export default {
   fileRoutes,
   releasesRoutes,
   llmRoutes,
+  llmModelRoutes,
   adminRoutes,
   featuresRoutes,
   rolesRoutes,

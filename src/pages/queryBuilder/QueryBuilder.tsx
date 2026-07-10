@@ -110,8 +110,17 @@ export default function QueryBuilder() {
     })
 
     if (response.status === 'error') {
-      const failedToAnswer = 'Please try asking this question later.'
-      displayAlert('error', `${response.message}. ${failedToAnswer}`)
+      const fallbackMessage =
+        'Unable to process this query. Please review node categories, predicates, and edge directions.'
+      const errorMessage = response.message || fallbackMessage
+      if (!import.meta.env.PROD && response.debug) {
+        console.error('[quick_answer] upstream debug', {
+          upstreamStatus: response.debug.upstreamStatus,
+          upstreamSource: response.debug.upstreamSource,
+          upstreamError: response.debug.upstreamError,
+        })
+      }
+      displayAlert('error', errorMessage)
       // go back to rendering query builder
       pageStatus.setSuccess()
     } else {

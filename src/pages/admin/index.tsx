@@ -5,11 +5,13 @@ import Tab from '@mui/material/Tab'
 import PeopleIcon from '@mui/icons-material/People'
 import SecurityIcon from '@mui/icons-material/Security'
 import BadgeIcon from '@mui/icons-material/Badge'
+import SmartToyIcon from '@mui/icons-material/SmartToy'
 import { useAuth } from '../../context/AuthContext'
 // import { isAdmin } from "../../utils/roles";
 import UserTable from './UserTable'
 import FeatureAccessTable from './FeatureAccessTable'
 import RolesTable from './RolesTable'
+import LlmModelsTable from './LlmModelsTable'
 import { useFeatureAccess } from '../../hooks'
 
 interface TabPanelProps {
@@ -88,6 +90,7 @@ function AdminPage() {
             label='Feature Access'
             {...a11yProps(2)}
           />
+          <Tab icon={<SmartToyIcon />} iconPosition='start' label='AI Models' {...a11yProps(3)} />
         </Tabs>
       </Box>
       <TabPanel value={tabValue} index={0}>
@@ -98,6 +101,9 @@ function AdminPage() {
       </TabPanel>
       <TabPanel value={tabValue} index={2}>
         <FeatureAccessTable />
+      </TabPanel>
+      <TabPanel value={tabValue} index={3}>
+        <LlmModelsTable />
       </TabPanel>
     </Box>
   )
