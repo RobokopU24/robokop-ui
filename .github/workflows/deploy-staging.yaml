@@ -16,7 +16,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set image tag
+      - name: Set the image tag
         run: echo "TAG=staging-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Log in to GHCR
