@@ -13,6 +13,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d | head -c 80
+          echo
       - name: Checkout code
         uses: actions/checkout@v4
 
