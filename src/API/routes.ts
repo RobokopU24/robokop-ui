@@ -66,6 +66,7 @@ export const adminRoutes = {
   users: `${adminEndpoint}/users`,
   userRole: `${adminEndpoint}/user-role`,
   featureAccess: `${adminEndpoint}/feature-access`,
+  prompts: `${adminEndpoint}/prompts`,
 }
 
 const featuresEndpoint = `${baseAuthURL}/features`
