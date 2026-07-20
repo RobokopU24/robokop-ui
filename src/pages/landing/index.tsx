@@ -30,7 +30,9 @@ export default function LandingPage() {
           </p>
         </Card>
         <Card title='Graph Registry' href='/graphs' icon={<DataIcon />} gradient='purple'>
-          <p>Learn about the data in ROBOKOP and explore knowledge graph using our data browser.</p>
+          <p>
+            Learn about the data in ROBOKOP and explore the knowledge graph using our data browser.
+          </p>
         </Card>
       </CardContainer>
     </Section>
