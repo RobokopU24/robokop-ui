@@ -46,5 +46,7 @@ jobs:
           build-args: |
             VITE_DEPLOYMENT=${{ secrets.VITE_DEPLOYMENT }}
             VITE_BACKEND_API_URL=${{ secrets.VITE_BACKEND_API_URL }}
+            VITE_PUBLIC_POSTHOG_KEY=${{ secrets.VITE_PUBLIC_POSTHOG_KEY }}
+            VITE_PUBLIC_POSTHOG_HOST=${{ secrets.VITE_PUBLIC_POSTHOG_HOST }}
             VITE_APP_VERSION=${{ steps.get_version.outputs.VERSION }}
             VITE_BUILD_DATE=${{ github.event.release.published_at }}
