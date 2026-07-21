@@ -28,6 +28,7 @@ import API from '../API/routes'
 import { authApi } from '../API/baseUrlProxy'
 import { useAlert } from '../components/AlertProvider'
 import { usePasskey } from '../hooks/usePasskey'
+import PreferencesTab from './profile/PreferencesTab'
 
 interface Passkey {
   id: string
@@ -212,6 +213,7 @@ const Profile: React.FC = () => {
           >
             <Tab label='Saved Queries' />
             <Tab label='Passkeys' />
+            <Tab label='Preferences' />
           </Tabs>
 
           {activeTab === 0 && (
@@ -319,6 +321,8 @@ const Profile: React.FC = () => {
               )}
             </>
           )}
+
+          {activeTab === 2 && <PreferencesTab />}
         </Paper>
       </Grid>
 
