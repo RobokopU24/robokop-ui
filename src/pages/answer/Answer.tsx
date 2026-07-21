@@ -122,14 +122,13 @@ export default function Answer({ answer_id }: AnswerProps) {
    * Validate a TRAPI message and either display any errors or initialize the answer store
    * @param answerResponse - Either an object with error message or stringified message object
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   function validateAndInitializeMessage(answerResponse: any): void {
     if (answerResponse && answerResponse.status && answerResponse.status === 'error') {
       pageStatus.setFailure(answerResponse.message)
       return
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let answerResponseJSON: any
     try {
       answerResponseJSON = JSON.parse(answerResponse)
@@ -256,7 +255,7 @@ export default function Answer({ answer_id }: AnswerProps) {
       fr.onload = (e) => {
         if (!e.target) return
         const fileContents = e.target.result
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
         let msg: any = {}
         try {
           msg = JSON.parse(typeof fileContents === 'string' ? fileContents : '')
@@ -416,7 +415,6 @@ export default function Answer({ answer_id }: AnswerProps) {
                 )}
                 {displayState.kgFull.show && answerStore.message.knowledge_graph && (
                   <KgFull
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     message={answerStore.message as { knowledge_graph: { nodes: any; edges: any } }}
                   />
                 )}

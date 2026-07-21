@@ -30,10 +30,16 @@ export const getAdminPrompts = async (type?: string): Promise<AdminPrompt[]> => 
   return [res.data]
 }
 
-export const updateAdminPrompt = async (type: string, promptTemplate: string): Promise<AdminPrompt> => {
-  const res = await authApi.put<AdminPrompt>(`${API.adminRoutes.prompts}/${encodeURIComponent(type)}`, {
-    promptTemplate,
-  })
+export const updateAdminPrompt = async (
+  type: string,
+  promptTemplate: string,
+): Promise<AdminPrompt> => {
+  const res = await authApi.put<AdminPrompt>(
+    `${API.adminRoutes.prompts}/${encodeURIComponent(type)}`,
+    {
+      promptTemplate,
+    },
+  )
 
   return res.data
 }

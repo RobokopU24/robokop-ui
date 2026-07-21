@@ -11,7 +11,11 @@ import Typography from '@mui/material/Typography'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { isAxiosError } from 'axios'
 import { useAlert } from '../../components/AlertProvider'
-import { AdminPrompt, getAdminPrompts, updateAdminPrompt } from '../../functions/adminPromptFunctions'
+import {
+  AdminPrompt,
+  getAdminPrompts,
+  updateAdminPrompt,
+} from '../../functions/adminPromptFunctions'
 
 const preferredPromptOrder = ['article-summary', 'kg-nodes-summary', 'table-summary']
 
