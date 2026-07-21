@@ -1,6 +1,9 @@
 export const baseAPI = import.meta.env.VITE_BACKEND_API_URL
 export const baseAuthURL = `${baseAPI}/api`
 
+// WebSocket URL derived from the backend API URL (http -> ws, https -> wss)
+export const byokWsURL = baseAPI.replace(/^http/, 'ws') + '/ws/byok'
+
 const authEndpoint = `${baseAuthURL}/auth`
 const authRoutes = {
   validateToken: `${authEndpoint}/validate-token`,

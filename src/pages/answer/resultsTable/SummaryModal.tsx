@@ -3,6 +3,7 @@ import { Box, Modal, Skeleton } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import { llmRoutes } from '../../../API/routes'
 import Markdown from 'react-markdown'
+import { useBYOK } from '../../../context/BYOKContext'
 
 function SummaryModal({
   isOpen,
@@ -15,6 +16,7 @@ function SummaryModal({
   links: string[]
   ids: string[]
 }) {
+  const { isActive, sessionToken } = useBYOK()
   const [streamedText, setStreamedText] = useState<string>('')
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -36,7 +38,8 @@ function SummaryModal({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(isActive ? { 'X-BYOK-Session': sessionToken } : {}),
+          ...(!isActive && token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ urls: links, ids: ids }),
         signal: abortControllerRef.current.signal,

@@ -22,7 +22,11 @@ import { useQueryBuilderContext } from '../../../context/queryBuilder'
 import SummarizeWithAIModal from './SummarizeWithAIModal'
 import SummarizeTableWithAIModal from './SummarizeTableWithAIModal'
 import { useAuth } from '../../../context/AuthContext'
+import { useBYOK } from '../../../context/BYOKContext'
 import LoginWarning from './LoginWarning'
+import BYOKKeyPrompt from '../../../components/BYOKSettings/BYOKKeyPrompt'
+import BYOKSettingsModal from '../../../components/BYOKSettings/BYOKSettingsModal'
+import LoginDialog from '../../../components/LoginDialog'
 import { useFeatureAccess } from '../../../hooks'
 
 interface DisplayStateItem {
@@ -76,6 +80,9 @@ export default function LeftDrawer({
   const [summarizeWithAIOpen, setSummarizeWithAIOpen] = useState(false)
   const [summarizeTableWithAIOpen, setSummarizeTableWithAIOpen] = useState(false)
   const [loginWarningOpen, setLoginWarningOpen] = useState(false)
+  const [byokPromptOpen, setByokPromptOpen] = useState(false)
+  const [byokSettingsOpen, setByokSettingsOpen] = useState(false)
+  const [loginDialogOpen, setLoginDialogOpen] = useState(false)
   const [warningType, setWarningType] = useState<'login' | 'premium' | null>(null)
 
   function toggleDisplay(component: string, show: boolean) {
@@ -83,19 +90,19 @@ export default function LeftDrawer({
   }
   const queryBuilder = useQueryBuilderContext()
   const { user } = useAuth()
+  const { isActive: byokActive } = useBYOK()
   const { canAccess } = useFeatureAccess()
 
   function toggleSummarizeWithAI() {
-    if (!user) {
-      setWarningType('login')
+    if (byokActive) {
+      setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen)
+    } else if (!user) {
+      setByokPromptOpen(true)
+    } else if (!canAccess('table-summary')) {
+      setWarningType('premium')
       setLoginWarningOpen(true)
     } else {
-      if (!canAccess('table-summary')) {
-        setWarningType('premium')
-        setLoginWarningOpen(true)
-      } else {
-        setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen)
-      }
+      setSummarizeTableWithAIOpen(!summarizeTableWithAIOpen)
     }
   }
 
@@ -113,8 +120,19 @@ export default function LeftDrawer({
           isOpen={loginWarningOpen}
           onClose={() => setLoginWarningOpen(false)}
           warningType={warningType}
+          onSetupBYOK={() => setByokSettingsOpen(true)}
         />
       )}
+      {byokPromptOpen && (
+        <BYOKKeyPrompt
+          open={byokPromptOpen}
+          onClose={() => setByokPromptOpen(false)}
+          onLoginClick={() => setLoginDialogOpen(true)}
+          onSetupBYOK={() => setByokSettingsOpen(true)}
+        />
+      )}
+      <BYOKSettingsModal open={byokSettingsOpen} onClose={() => setByokSettingsOpen(false)} />
+      <LoginDialog open={loginDialogOpen} onClose={() => setLoginDialogOpen(false)} />
       <Toolbar />
       <List>
         {Object.entries(displayState).map(([key, val]) => (

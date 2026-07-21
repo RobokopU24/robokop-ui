@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import React, { useContext, useRef, useState } from 'react'
-import axios from 'axios'
+import { api } from '../../API/baseUrlProxy'
 import NodeInputBox from '../../pages/explore/enrichment-analysis/NodeInputBox'
 import BiolinkContext from '../../context/biolink'
 import { Button, Container } from '@mui/material'
@@ -113,7 +113,7 @@ function EnrichedQueries() {
       curies,
       `biolink:${relationship}`,
     )
-    const { data } = await axios.post('https://answercoalesce.renci.org/query', query, {
+    const { data } = await api.post('/api/enrichment/query', query, {
       signal: controller.signal,
     })
     setResults(extractResultsStructured(data))

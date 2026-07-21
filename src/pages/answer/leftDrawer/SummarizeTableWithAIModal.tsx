@@ -7,6 +7,7 @@ import Markdown from 'react-markdown'
 import { graphQueryContext } from './graphQueryContext'
 import BiolinkContext from '../../../context/biolink'
 import { BiolinkContextType } from '../../queryBuilder/textEditor/types'
+import { useBYOK } from '../../../context/BYOKContext'
 
 interface SummarizeTableWithAIModalProps {
   isOpen: boolean
@@ -86,6 +87,7 @@ function SummarizeTableWithAIModal({
     return markdown
   }
 
+  const { isActive, sessionToken } = useBYOK()
   const [streamedText, setStreamedText] = useState<string>('')
   const abortControllerRef = useRef<AbortController | null>(null)
 
@@ -112,7 +114,8 @@ function SummarizeTableWithAIModal({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(isActive ? { 'X-BYOK-Session': sessionToken } : {}),
+          ...(!isActive && token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({
           tableData: tableDataMarkdown,

@@ -1,5 +1,6 @@
-import React from 'react'
-import { AppBar, Avatar, Button, IconButton, Toolbar } from '@mui/material'
+import React, { useState } from 'react'
+import { AppBar, Avatar, Box, Button, IconButton, Toolbar } from '@mui/material'
+import KeyIcon from '@mui/icons-material/Key'
 
 import './header.css'
 
@@ -11,10 +12,14 @@ import { isAdmin } from '../../utils/roles'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import DropdownMenu, { type MenuItemConfig } from '../shared/DropdownMenu'
 import { useFeatureAccess } from '../../hooks'
+import { useBYOK } from '../../context/BYOKContext'
+import BYOKSettingsModal from '../BYOKSettings/BYOKSettingsModal'
 
 function Header() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const { isActive, wsStatus } = useBYOK()
+  const [byokSettingsOpen, setByokSettingsOpen] = useState(false)
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const [loginDialogOpen, setLoginDialogOpen] = React.useState(false)
@@ -67,14 +72,46 @@ function Header() {
 
   const { canAccess } = useFeatureAccess()
 
+  const byokStatusDot = isActive ? (
+    <Box
+      component='span'
+      sx={{
+        display: 'inline-block',
+        width: 7,
+        height: 7,
+        borderRadius: '50%',
+        bgcolor:
+          wsStatus === 'connected'
+            ? 'success.main'
+            : wsStatus === 'connecting'
+              ? 'warning.main'
+              : 'text.disabled',
+        ml: 0.75,
+        verticalAlign: 'middle',
+      }}
+    />
+  ) : null
+
+  const byokLabel = (
+    <Box component='span' sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+      <KeyIcon sx={{ fontSize: 15, opacity: 0.7 }} />
+      Use own API key (BYOK)
+      {byokStatusDot}
+    </Box>
+  )
+
   const accountItems: MenuItemConfig[] = user
     ? [
         //TODO: Fix this
         ...(canAccess('admin') ? [{ to: '/admin', label: 'Admin' }] : []),
         { key: 'profile', label: 'Profile', onClick: handleProfileClick },
+        { key: 'byok', label: byokLabel, onClick: () => setByokSettingsOpen(true) },
         { key: 'logout', label: 'Logout', onClick: handleLogout },
       ]
-    : [{ key: 'login', label: 'Login', onClick: handleLoginClick }]
+    : [
+        { key: 'login', label: 'Login', onClick: handleLoginClick },
+        { key: 'byok', label: byokLabel, onClick: () => setByokSettingsOpen(true) },
+      ]
 
   return (
     <AppBar position='relative' className='header'>
@@ -187,6 +224,7 @@ function Header() {
         </div>
       </Toolbar>
       <LoginDialog open={loginDialogOpen} onClose={() => setLoginDialogOpen(false)} />
+      <BYOKSettingsModal open={byokSettingsOpen} onClose={() => setByokSettingsOpen(false)} />
     </AppBar>
   )
 }
