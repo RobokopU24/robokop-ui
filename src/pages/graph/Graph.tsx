@@ -22,7 +22,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
       }}
     >
       <Typography variant='h4' component='h1' mb={1} sx={{ fontWeight: 500, textAlign: 'center' }}>
-        ROBOKOP Graphs
+        ROBOKOP Atlas
       </Typography>
       <Typography
         variant='body1'
