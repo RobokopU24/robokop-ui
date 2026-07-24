@@ -1,9 +1,12 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
+import { formatBuildDate } from '../../utils/dateTime'
 import './footer.css'
 
-const version = import.meta.env.VITE_APP_VERSION
-const buildDate = import.meta.env.VITE_BUILD_DATE
+const rawVersion = import.meta.env.VITE_APP_VERSION as string | undefined
+const version = rawVersion?.replace(/^v/i, '')
+const buildDate = import.meta.env.VITE_BUILD_DATE as string | undefined
+const formattedBuildDate = buildDate ? formatBuildDate(buildDate) : undefined
 
 export default function Footer() {
   return (
@@ -34,11 +37,11 @@ export default function Footer() {
         </a>
         . <Link to='/termsofservice'>Terms of Service</Link>.
       </p>
-      {(version || buildDate) && (
+      {(version || formattedBuildDate) && (
         <p className='footer-version'>
           {version && <>v{version}</>}
-          {version && buildDate && ' | '}
-          {buildDate && <>Deployed: {buildDate}</>}
+          {version && formattedBuildDate && ' | '}
+          {formattedBuildDate && <>Deployed: {formattedBuildDate}</>}
         </p>
       )}
     </footer>
