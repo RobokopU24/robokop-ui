@@ -1,6 +1,3 @@
-import { Button } from '@mui/material'
-import { withStyles } from '@mui/styles'
-import { blue } from '@mui/material/colors'
 import React, { useState, useEffect, useRef } from 'react'
 import usePageStatus from '../../stores/usePageStatus'
 import { useAuth } from '../../context/AuthContext'
@@ -24,6 +21,7 @@ import ExampleModal from '../entryPoint/ExampleModal'
 import TemplateModal from '../entryPoint/TemplateModal'
 import BookmarkModal from '../entryPoint/BookmarkModal'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
+import posthog from 'posthog-js'
 
 /**
  * Query Builder parent component
@@ -103,6 +101,9 @@ export default function QueryBuilder() {
         object: { id: edge.object, categories: objectNode?.categories, ids: objectNode?.ids },
         qualifier_constraints: edge.qualifier_constraints ?? 'none',
       })
+    })
+    posthog.capture('question_builder_search', {
+      query: prunedQueryGraph, // the text/structured query the user entered
     })
 
     const response = await API.ara.getQuickAnswer(ara, {
