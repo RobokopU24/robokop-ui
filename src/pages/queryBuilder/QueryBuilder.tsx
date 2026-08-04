@@ -102,8 +102,9 @@ export default function QueryBuilder() {
         qualifier_constraints: edge.qualifier_constraints ?? 'none',
       })
     })
+    console.log('[Submit] Pruned Query Graph:', JSON.stringify(prunedQueryGraph))
     posthog.capture('question_builder_search', {
-      query: prunedQueryGraph, // the text/structured query the user entered
+      query: JSON.stringify(prunedQueryGraph),
     })
 
     const response = await API.ara.getQuickAnswer(ara, {
