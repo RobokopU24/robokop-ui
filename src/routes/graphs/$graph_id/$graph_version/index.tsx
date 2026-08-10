@@ -1,21 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { queryClient } from '../../../../utils/queryClient'
 import { useQuery } from '@tanstack/react-query'
-import { graphSchema } from '../../../../API/graphRegistry'
+import { graphMetadata, graphSchema } from '../../../../API/graphRegistry'
 import GraphId from '../../../../pages/graphId/GraphId'
-import type { GraphMetadataV2 } from '../../../../API/graphMetadata'
-
-const LOCAL_GRAPH_METADATA_URL = '/graph-metadata-new.json'
-
-const loadLocalGraphMetadata = async (): Promise<GraphMetadataV2> => {
-  const response = await fetch(LOCAL_GRAPH_METADATA_URL)
-
-  if (!response.ok) {
-    throw new Error(`Failed to load local graph metadata: ${response.statusText}`)
-  }
-
-  return response.json()
-}
 
 // export const Route = createFileRoute('/graphs/$graph_id/$graph_version/')({
 //   component: RouteComponent,
@@ -27,7 +14,7 @@ export const Route = createFileRoute('/graphs/$graph_id/$graph_version/')({
     const [v2Metadata, schemaV2] = await Promise.all([
       queryClient.ensureQueryData({
         queryKey: ['graph-metadata', params.graph_id, params.graph_version],
-        queryFn: loadLocalGraphMetadata,
+        queryFn: () => graphMetadata(params.graph_id!, params.graph_version!),
       }),
       queryClient.ensureQueryData({
         queryKey: ['graph-schema', params.graph_id, params.graph_version],
@@ -73,7 +60,7 @@ function RouteComponent() {
 
   const { data: v2Metadata, isPending: v2Pending } = useQuery({
     queryKey: ['graph-metadata', graph_id, graph_version],
-    queryFn: loadLocalGraphMetadata,
+    queryFn: () => graphMetadata(graph_id!, graph_version!),
     enabled: !!graph_id,
   })
 
