@@ -20,11 +20,13 @@ import { alpha } from '@mui/material/styles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded'
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded'
-import { useQuery } from '@tanstack/react-query'
+import SaveRoundedIcon from '@mui/icons-material/SaveRounded'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import Markdown from 'react-markdown'
 import { llmRoutes } from '../API/routes'
 import savedPromptsApi, { SavedPrompt } from '../API/savedPrompts'
 import { getActiveLlmModels, getDefaultModelId } from '../functions/llmModelFunctions'
+import { useAlert } from './AlertProvider'
 
 interface AISummaryModalProps {
   isOpen: boolean
@@ -61,6 +63,8 @@ function AISummaryModal({
   buildAuthHeaders,
   buildRequestBody,
 }: AISummaryModalProps) {
+  const queryClient = useQueryClient()
+  const { displayAlert } = useAlert()
   const [streamedText, setStreamedText] = useState('')
   const [promptTemplate, setPromptTemplate] = useState('')
   const [defaultPromptTemplate, setDefaultPromptTemplate] = useState('')
@@ -181,6 +185,7 @@ function AISummaryModal({
       )
 
       if (existingPrompt) {
+        setSelectedSavedPromptId(existingPrompt.id)
         return existingPrompt.id
       }
 
@@ -212,6 +217,31 @@ function AISummaryModal({
 
   const streamSummary = useCallback(
     async (templateOverride: string, defaultTemplateForComparison?: string) => {
+      const trimmedTemplate = templateOverride.trim()
+      const baselineDefaultTemplate = (
+        defaultTemplateForComparison ??
+        defaultPromptTemplateRef.current ??
+        defaultPromptTemplate
+      ).trim()
+      const templateCacheKey =
+        trimmedTemplate === baselineDefaultTemplate ? '__default__' : trimmedTemplate
+      const summaryCacheKey = [
+        'ai-summary',
+        promptType,
+        streamUrl,
+        requestDependencyKey || '__default__',
+        selectedModelId || '__server-default__',
+        templateCacheKey,
+      ] as const
+
+      const cachedSummary = queryClient.getQueryData<string>(summaryCacheKey)
+      if (cachedSummary !== undefined) {
+        setRequestError(null)
+        setStreamedText(cachedSummary)
+        setIsSummarizing(false)
+        return
+      }
+
       if (summaryAbortControllerRef.current) {
         summaryAbortControllerRef.current.abort()
       }
@@ -228,30 +258,12 @@ function AISummaryModal({
         const selectedTemplateMatchesCurrent =
           !!selectedSavedPrompt && selectedSavedPrompt.promptTemplate === templateOverride
 
-        let savedPromptId: string | undefined =
+        const savedPromptId: string | undefined =
           selectedTemplateMatchesCurrent && selectedSavedPromptId
             ? selectedSavedPromptId
             : undefined
 
-        let promptToSend: string | undefined = templateOverride
-
-        if (savedPromptId) {
-          promptToSend = undefined
-        } else {
-          const trimmedTemplate = templateOverride.trim()
-          const baselineDefaultTemplate = (
-            defaultTemplateForComparison ??
-            defaultPromptTemplateRef.current ??
-            defaultPromptTemplate
-          ).trim()
-          const isDefaultTemplate = trimmedTemplate === baselineDefaultTemplate
-          if (!isDefaultTemplate) {
-            const persistedPromptId = await persistPromptTemplate(templateOverride)
-            if (persistedPromptId) {
-              savedPromptId = persistedPromptId
-            }
-          }
-        }
+        const promptToSend: string | undefined = savedPromptId ? undefined : templateOverride
 
         const response = await fetch(streamUrl, {
           method: 'POST',
@@ -279,6 +291,7 @@ function AISummaryModal({
 
         const reader = response.body.getReader()
         const decoder = new TextDecoder()
+        let summaryText = ''
 
         try {
           while (true) {
@@ -288,8 +301,11 @@ function AISummaryModal({
             }
 
             const chunk = decoder.decode(value)
+            summaryText += chunk
             setStreamedText((prev) => prev + chunk)
           }
+
+          queryClient.setQueryData(summaryCacheKey, summaryText)
         } finally {
           reader.releaseLock()
         }
@@ -307,13 +323,41 @@ function AISummaryModal({
       buildAuthHeaders,
       buildRequestBody,
       defaultPromptTemplate,
-      persistPromptTemplate,
       savedPrompts,
       selectedModelId,
       selectedSavedPromptId,
       streamUrl,
+      queryClient,
+      promptType,
+      requestDependencyKey,
     ],
   )
+
+  const handleSavePrompt = useCallback(async () => {
+    const trimmedTemplate = promptTemplate.trim()
+    if (!trimmedTemplate) {
+      return
+    }
+
+    const promptAlreadySaved = savedPrompts.some(
+      (savedPrompt) =>
+        savedPrompt.promptType === promptType &&
+        savedPrompt.promptTemplate.trim() === trimmedTemplate,
+    )
+
+    setRequestError(null)
+    const persistedPromptId = await persistPromptTemplate(promptTemplate)
+    if (!persistedPromptId) {
+      setRequestError('Failed to save prompt. Please try again.')
+      displayAlert('error', 'Failed to save prompt. Please try again.')
+      return
+    }
+
+    displayAlert(
+      'success',
+      promptAlreadySaved ? 'Prompt already saved.' : 'Prompt saved successfully.',
+    )
+  }, [displayAlert, persistPromptTemplate, promptTemplate, promptType, savedPrompts])
 
   useEffect(() => {
     streamSummaryRef.current = streamSummary
@@ -551,7 +595,7 @@ function AISummaryModal({
                       variant='contained'
                       fullWidth
                       startIcon={<ReplayRoundedIcon fontSize='small' />}
-                      disabled={summaryIsLoading || isPersistingPrompt}
+                      disabled={summaryIsLoading}
                       onClick={() => streamSummary(promptTemplate)}
                       sx={{
                         background:
@@ -562,7 +606,7 @@ function AISummaryModal({
                         },
                       }}
                     >
-                      {isPersistingPrompt ? 'Saving...' : 'Regenerate'}
+                      Regenerate
                     </Button>
                   </Stack>
                 </Stack>
@@ -600,6 +644,18 @@ function AISummaryModal({
                   >
                     Keep placeholders for best results: {placeholderHint}
                   </Typography>
+                  {canSavePrompts && (
+                    <Button
+                      size='small'
+                      variant='outlined'
+                      startIcon={<SaveRoundedIcon fontSize='small' />}
+                      onClick={handleSavePrompt}
+                      disabled={isPersistingPrompt || !promptTemplate.trim()}
+                      sx={{ mt: 1 }}
+                    >
+                      {isPersistingPrompt ? 'Saving...' : 'Save Prompt'}
+                    </Button>
+                  )}
                   {!canSavePrompts && (
                     <Typography
                       variant='caption'
