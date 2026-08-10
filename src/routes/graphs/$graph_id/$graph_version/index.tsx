@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { queryClient } from '../../../../utils/queryClient'
-import { graphMetadata, graphSchema } from '../../../../API/graphRegistry'
 import { useQuery } from '@tanstack/react-query'
+import { graphMetadata, graphSchema } from '../../../../API/graphRegistry'
 import GraphId from '../../../../pages/graphId/GraphId'
 
 // export const Route = createFileRoute('/graphs/$graph_id/$graph_version/')({

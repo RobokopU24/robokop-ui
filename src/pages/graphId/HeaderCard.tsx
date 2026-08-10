@@ -1,6 +1,5 @@
 import { Card, CardContent, Chip, Stack, Typography, Box } from '@mui/material'
-import { Download, OpenInNew } from '@mui/icons-material'
-import { formatFileSize } from '../../utils/getFileSize'
+import { OpenInNew } from '@mui/icons-material'
 import stringUtils from '../../utils/strings'
 import { formatBuildDate } from '../../utils/dateTime'
 import { GraphMetadataV2 } from '../../API/graphMetadata'
@@ -10,11 +9,8 @@ interface HeaderCardProps {
   displayVersion: string
   displayDescription: string
   v2Metadata?: GraphMetadataV2 | null
-  latestMetadataUrl?: string
-  fileSize?: number
   setIsSankeyGraphModalOpen: (isOpen: boolean) => void
   graph_id: string | undefined
-  downloadLink: string
   nodeCount: number
   edgeCount: number
 }
@@ -24,17 +20,11 @@ function HeaderCard({
   displayVersion,
   displayDescription,
   v2Metadata,
-  latestMetadataUrl,
-  fileSize,
   setIsSankeyGraphModalOpen,
   graph_id,
-  downloadLink,
   nodeCount,
   edgeCount,
 }: HeaderCardProps) {
-  const metadataHref = latestMetadataUrl
-    ? `${window.location.origin}/graphs/${latestMetadataUrl.replace(/^\/+/, '')}`
-    : undefined
   return (
     <Card variant='outlined' sx={{ mt: 2 }} id='description'>
       <CardContent>
@@ -113,14 +103,6 @@ function HeaderCard({
             sx={{ mt: 2 }}
             alignItems='center'
           >
-            {/* {graphData.graph_url && (
-              <>
-                <a className="external-links" href={graphData.graph_url} target="_blank" rel="noopener noreferrer">
-                  {graphData.graph_id === "robokopkg" ? "Neo4j Browser" : "Knowledge Source"} <OpenInNew sx={{ fontSize: "1.25rem", ml: 0.5 }} />
-                </a>
-              </>
-            )}
-            <p>•</p> */}
             <a
               className='external-links'
               href={`https://robokop-automat.apps.renci.org/#/${graph_id}`}
@@ -129,17 +111,6 @@ function HeaderCard({
             >
               Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
             </a>
-            <p>•</p>
-            {metadataHref && (
-              <a
-                className='external-links'
-                href={metadataHref}
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                Metadata <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
-              </a>
-            )}
             {v2Metadata?.license && (
               <>
                 <p>•</p>
@@ -155,20 +126,6 @@ function HeaderCard({
             )}
           </Stack>
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} sx={{ mt: 2 }}>
-            <a
-              className='details-card-button'
-              href={downloadLink}
-              target='_blank'
-              rel='noopener noreferrer'
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                maxWidth: '300px',
-              }}
-            >
-              <span>Download Graph ({formatFileSize(fileSize || 0, 2)})</span> <Download />
-            </a>
             <button
               style={{
                 display: 'flex',

@@ -65,7 +65,8 @@ export interface GraphMetadataV2 {
   }>
   isBasedOn: Array<{
     '@type': string
-    id: string
+    identifier?: string
+    id?: string
     name: string
     description: string
     license: string
@@ -185,7 +186,7 @@ export default {
         return null
       }
       return response.data
-    } catch (_) {
+    } catch {
       return null
     }
   },
@@ -206,7 +207,7 @@ export default {
         return null
       }
       return response.data
-    } catch (_) {
+    } catch {
       return null
     }
   },

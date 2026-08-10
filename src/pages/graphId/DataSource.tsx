@@ -72,14 +72,14 @@ function DataSource({ v2Metadata }: DataSourceProps) {
                                 rel='noopener noreferrer'
                                 title='Source URL'
                               >
-                                {source.name || source.id}{' '}
+                                {source.name || source.identifier || source.id}{' '}
                                 <OpenInNew
                                   fontSize='small'
                                   sx={{ transform: 'scale(0.85) translateY(5px)' }}
                                 />
                               </MuiLink>
                             ) : (
-                              source.name || source.id
+                              source.name || source.identifier || source.id
                             )}
                           </Typography>
                           {source.version && (
