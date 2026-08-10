@@ -29,6 +29,24 @@ function Releases({ releases, loading }: ReleasesProps) {
   console.log('releases', { releases, loading })
   const { graph_id, graph_version } = useParams({ strict: false })
 
+  const sortedReleases = React.useMemo(() => {
+    if (!releases) return []
+
+    return [...releases].sort((a, b) => {
+      if (a.latest && !b.latest) return -1
+      if (!a.latest && b.latest) return 1
+
+      const aTime = new Date(a.release_date).getTime()
+      const bTime = new Date(b.release_date).getTime()
+
+      if (Number.isNaN(aTime) && Number.isNaN(bTime)) return 0
+      if (Number.isNaN(aTime)) return 1
+      if (Number.isNaN(bTime)) return -1
+
+      return bTime - aTime
+    })
+  }, [releases])
+
   const isViewingVersion = (version: string, isLatest: boolean) => {
     if (!graph_version) return false
     if (graph_version === 'latest') return isLatest
@@ -91,7 +109,7 @@ function Releases({ releases, loading }: ReleasesProps) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {releases?.map((release) => {
+                  {sortedReleases.map((release) => {
                     const isActiveVersion = isViewingVersion(release.version, release.latest)
 
                     return (
