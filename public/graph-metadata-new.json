@@ -1,0 +1,948 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "biolink": "https://w3id.org/biolink/",
+    "orion": "https://github.com/RobokopU24/ORION"
+  },
+  "@id": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/",
+  "@type": "Dataset",
+  "name": "ROBOKOP KG",
+  "description": "ROBOKOP (KG) is an open-source biomedical KG that supports the ROBOKOP application and currently contains millions of biomedical relationships derived from dozens of integrated and harmonized biological knowledge sources and bio-ontologies, including the Automat primary and aggregate knowledge sources. ROBOKOP KG also includes text-mined assertions from PubMed and PubMed Central, derived from natural language processing (NLP). Note that text-based assertions, while providing valuable information, must be interpreted with caution, as NLP algorithms may introduce false assertions.",
+  "url": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/",
+  "version": "1.0.2",
+  "dateCreated": "2026-07-24T22:46:38",
+  "dateModified": "2026-07-24T22:46:38",
+  "orion:buildVersion": "0f19b07ae4f62181",
+  "orion:biolinkVersion": "v4.4.2",
+  "orion:babelVersion": "2025sep1",
+  "hasPart": [
+    {
+      "@id": "https://robokop.renci.org/graphs/BINDING-DB/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on BindingDB",
+      "orion:buildVersion": "5575f3f187548b01",
+      "orion:nodeCount": 1215531,
+      "orion:edgeCount": 1919561
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/BgeeHuman/1.0.0/",
+      "name": "A ROBOKOP Knowledge Graph based on Bgee Human Gene Expression Calls",
+      "orion:buildVersion": "fa4abe79fc2ee612",
+      "orion:nodeCount": 18687,
+      "orion:edgeCount": 629533
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/CCIDB/9200202021d24cda/",
+      "name": "A ROBOKOP Knowledge Graph based on Cell-Cell Interaction Database (CCIDB)",
+      "orion:buildVersion": "9200202021d24cda",
+      "orion:nodeCount": 384,
+      "orion:edgeCount": 2242
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/CHEBIProps/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on Chemical Entities of Biological Interest",
+      "orion:buildVersion": "397d1500709a817b",
+      "orion:nodeCount": 25805,
+      "orion:edgeCount": 0
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/ClinGenDosageSensitivity/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on ClinGen - Clinical Genome Resource",
+      "orion:buildVersion": "e789bbea92a356b7",
+      "orion:nodeCount": 2541,
+      "orion:edgeCount": 2506
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/ClinGenGeneDiseaseValidity/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on ClinGen - Gene-Disease Clinical Validity",
+      "orion:buildVersion": "dfb3f99b6943ec40",
+      "orion:nodeCount": 5042,
+      "orion:edgeCount": 3530
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/CTD/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on Comparative Toxicogenomics Database",
+      "orion:buildVersion": "83756ecdc7c36f24",
+      "orion:nodeCount": 26365,
+      "orion:edgeCount": 168392
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/DrugCentral/6484daab4c67eeba/",
+      "name": "A ROBOKOP Knowledge Graph based on DrugCentral",
+      "orion:buildVersion": "6484daab4c67eeba",
+      "orion:nodeCount": 13408,
+      "orion:edgeCount": 261135
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/DrugMechDB/5386eef03f56b22f/",
+      "name": "A ROBOKOP Knowledge Graph based on DrugMechDB",
+      "orion:buildVersion": "5386eef03f56b22f",
+      "orion:nodeCount": 4833,
+      "orion:edgeCount": 13154
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/GtoPdb/dc4565f2c83d530d/",
+      "name": "A ROBOKOP Knowledge Graph based on Guide to PHARMACOLOGY (GtoPdb)",
+      "orion:buildVersion": "dc4565f2c83d530d",
+      "orion:nodeCount": 11000,
+      "orion:edgeCount": 17386
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/Hetio/1.0.3/",
+      "name": "A ROBOKOP Knowledge Graph based on Hetionet",
+      "orion:buildVersion": "7ae57bb806361a3e",
+      "orion:nodeCount": 40360,
+      "orion:edgeCount": 1504968
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/HGNC/1.0.3/",
+      "name": "A ROBOKOP Knowledge Graph based on HUGO Gene Nomenclature Committee (HGNC)",
+      "orion:buildVersion": "8fde4359fe0685f1",
+      "orion:nodeCount": 28259,
+      "orion:edgeCount": 32711
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/HMDB/c71735ed127eaa75/",
+      "name": "A ROBOKOP Knowledge Graph based on Human Metabolome Database (HMDB)",
+      "orion:buildVersion": "c71735ed127eaa75",
+      "orion:nodeCount": 94293,
+      "orion:edgeCount": 1412039
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/HumanGOA/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on Gene Ontologies Annotations (Human)",
+      "orion:buildVersion": "32e1eb407d3522ea",
+      "orion:nodeCount": 37549,
+      "orion:edgeCount": 309447
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/IntAct/d7c6fdf674b698b3/",
+      "name": "A ROBOKOP Knowledge Graph based on IntAct Molecular Interaction Database",
+      "orion:buildVersion": "d7c6fdf674b698b3",
+      "orion:nodeCount": 108897,
+      "orion:edgeCount": 1236643
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/KinAce/638675a66b07e7d9/",
+      "name": "A ROBOKOP Knowledge Graph based on KinAce",
+      "orion:buildVersion": "638675a66b07e7d9",
+      "orion:nodeCount": 3123,
+      "orion:edgeCount": 14719
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/LINCS/6073423530bff2e8/",
+      "name": "A ROBOKOP Knowledge Graph based on Library of Integrated Network-Based Cellular Signatures",
+      "orion:buildVersion": "6073423530bff2e8",
+      "orion:nodeCount": 8838,
+      "orion:edgeCount": 241216
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/MetabolomicsWorkbench/61b10c3063d18adb/",
+      "name": "A ROBOKOP Knowledge Graph based on Metabolomics Workbench",
+      "orion:buildVersion": "61b10c3063d18adb",
+      "orion:nodeCount": 1858,
+      "orion:edgeCount": 5503
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/MonarchKG/1.0.3/",
+      "name": "A ROBOKOP Knowledge Graph based on Monarch Initiative KG",
+      "orion:buildVersion": "63e6eaf9e7d6491b",
+      "orion:nodeCount": 64955,
+      "orion:edgeCount": 624025
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/MONDOProps/6a12395dea58fe4f/",
+      "name": "A ROBOKOP Knowledge Graph based on ",
+      "orion:buildVersion": "6a12395dea58fe4f",
+      "orion:nodeCount": 26241,
+      "orion:edgeCount": 0
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/OntologicalHierarchy/54ab4d1c87a91dd2/",
+      "name": "A ROBOKOP Knowledge Graph based on Ubergraph Subclass Relationships",
+      "orion:buildVersion": "54ab4d1c87a91dd2",
+      "orion:nodeCount": 13048,
+      "orion:edgeCount": 64234581
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/PANTHER/71da4a4c85204418/",
+      "name": "A ROBOKOP Knowledge Graph based on Protein Analysis THrough Evolutionary Relationships (PANTHER)",
+      "orion:buildVersion": "71da4a4c85204418",
+      "orion:nodeCount": 48765,
+      "orion:edgeCount": 660403
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/PHAROS/49d097ddee8d4e7f/",
+      "name": "A ROBOKOP Knowledge Graph based on Pharos",
+      "orion:buildVersion": "49d097ddee8d4e7f",
+      "orion:nodeCount": 299087,
+      "orion:edgeCount": 549209
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/Reactome/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on Reactome",
+      "orion:buildVersion": "2502bf82cae4a8e1",
+      "orion:nodeCount": 128024,
+      "orion:edgeCount": 512669
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/textminingkp/4ecaf9bbf58d09f5/",
+      "name": "A ROBOKOP Knowledge Graph based on ",
+      "orion:buildVersion": "4ecaf9bbf58d09f5",
+      "orion:nodeCount": 31877,
+      "orion:edgeCount": 1380500
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/SIGNOR/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on SIGnaling Network Open Resource (SIGNOR)",
+      "orion:buildVersion": "4c077dcc36dadb33",
+      "orion:nodeCount": 6754,
+      "orion:edgeCount": 49288
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/STRING-DB-Human/dc86e026a7fc672e/",
+      "name": "A ROBOKOP Knowledge Graph based on STRING (Human)",
+      "orion:buildVersion": "dc86e026a7fc672e",
+      "orion:nodeCount": 18695,
+      "orion:edgeCount": 1107370
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/UbergraphNonredundant/77067d62d7d0df3e/",
+      "name": "A ROBOKOP Knowledge Graph based on Ubergraph Nonredundant",
+      "orion:buildVersion": "77067d62d7d0df3e",
+      "orion:nodeCount": 3266816,
+      "orion:edgeCount": 9135243
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/ClinGenVariantPathogenicity/1.0.0/",
+      "name": "A ROBOKOP Knowledge Graph based on ClinGen - Variant Pathogenicity",
+      "orion:buildVersion": "d011c33d4e3b8cd7",
+      "orion:nodeCount": 13980,
+      "orion:edgeCount": 147377
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/GWASCatalog/1.0.1/",
+      "name": "A ROBOKOP Knowledge Graph based on GWAS Catalog",
+      "orion:buildVersion": "4bc1fe0521175bd1",
+      "orion:nodeCount": 657872,
+      "orion:edgeCount": 3815037
+    },
+    {
+      "@id": "https://robokop.renci.org/graphs/GTEx/651a70bf0067f176/",
+      "name": "A ROBOKOP Knowledge Graph based on Genotype-Tissue Expression (GTEx) Project",
+      "orion:buildVersion": "651a70bf0067f176",
+      "orion:nodeCount": 4898052,
+      "orion:edgeCount": 52204676
+    }
+  ],
+  "isBasedOn": [
+    {
+      "@type": "Dataset",
+      "identifier": "infores:bindingdb",
+      "name": "BindingDB",
+      "description": "A public, web-accessible database of measured binding affinities, focusing chiefly on the interactions of proteins considered to be candidate drug-targets with ligands that are small, drug-like molecules",
+      "license": "Creative Commons BY 3.0",
+      "attribution": "https://www.bindingdb.org/rwd/bind/info.jsp",
+      "url": "https://www.bindingdb.org/",
+      "contentUrl": "https://www.bindingdb.org/rwd/bind/chemsearch/marvin/SDFdownload.jsp?all_download=yes",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkae1075",
+        "Liu T, Hwang L, Burley SK, Nitsche CI, Southan C, Walters WP, Gilson MK. BindingDB in 2024: a FAIR knowledgebase of protein-small molecule binding data. Nucleic Acids Res. 2025 Jan 6;53(D1):D1633-D1644. doi: 10.1093/nar/gkae1075. PMID: 39574417; PMCID: PMC11701568."
+      ],
+      "version": "202607"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:bgee",
+      "name": "Bgee Human Gene Expression Calls",
+      "description": "Bgee provides calls of baseline presence or absence of gene expression from curated wild-type healthy samples. This source uses the Homo sapiens simple expression-call file.",
+      "license": "CC BY 4.0",
+      "attribution": "https://www.bgee.org/",
+      "url": "https://www.bgee.org/",
+      "contentUrl": "https://www.bgee.org/ftp/current/download/calls/expr_calls/Homo_sapiens_expr_simple.tsv.gz",
+      "citation": ["https://doi.org/10.1093/nar/gkae1104"],
+      "version": "v15_2"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:ccidb",
+      "name": "Cell-Cell Interaction Database (CCIDB)",
+      "description": "A curated database containing information about cell-cell interactions, including biological and clinical contexts. CCIs were manually retrieved from 272 studies and annotated with 38 types of context features.",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "https://sites.google.com/view/sysmedlab",
+      "url": "https://ccidb.sysmed.kr/",
+      "contentUrl": "https://ccidb.sysmed.kr/",
+      "citation": [
+        "https://doi.org/10.1093/database/baad057",
+        "Noh JY, Lee HI, Choi JH, Cho SH, Yi YH, Lim JH, Myung EB, Shin YJ, Shin HJ, Woo HG. CCIDB: a manually curated cell-cell interaction database with cell context information. Database (Oxford). 2023 Aug 11;2023:baad057. doi: 10.1093/database/baad057. PMID: 37566630; PMCID: PMC10419333."
+      ],
+      "version": "2023_08_11"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:chebi",
+      "name": "Chemical Entities of Biological Interest",
+      "description": "Chemical Entities of Biological Interest (ChEBI) is a freely available dictionary of molecular entities focused on \u2018small\u2019 chemical compounds.",
+      "license": "CC BY 4.0",
+      "attribution": "https://www.ebi.ac.uk/chebi/aboutChebiForward.do",
+      "url": "https://www.ebi.ac.uk/chebi/",
+      "contentUrl": "https://www.ebi.ac.uk/chebi/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkv1031",
+        "Hastings J, Owen G, Dekker A, Ennis M, Kale N, Muthukrishnan V, Turner S, Swainston N, Mendes P, Steinbeck C. (2016). ChEBI in 2016: Improved services and an expanding collection of metabolites. Nucleic Acids Res."
+      ],
+      "version": "7_7_2026"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:clingen",
+      "name": "ClinGen - Clinical Genome Resource",
+      "description": "The ClinGen Dosage Sensitivity curation process collects evidence supporting/refuting the haploinsufficiency and triplosensitivity of genes and genomic regions.",
+      "license": "CC0 1.0",
+      "attribution": "https://clinicalgenome.org/curation-activities/dosage-sensitivity/",
+      "url": "https://clinicalgenome.org/",
+      "contentUrl": "http://ftp.clinicalgenome.org/",
+      "citation": [
+        "https://doi.org/10.1056/NEJMsr1406261",
+        "Rehm HL, Berg JS, Brooks LD, Bustamante CD, Evans JP, Landrum MJ, Ledbetter DH, Maglott DR, Martin CL, Nussbaum RL, Plon SE, Ramos EM, Sherry ST, Watson MS; ClinGen. ClinGen--the Clinical Genome Resource. N Engl J Med. 2015 Jun 4;372(23):2235-42. doi: 10.1056/NEJMsr1406261."
+      ],
+      "version": "202607"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:clingen",
+      "name": "ClinGen - Gene-Disease Clinical Validity",
+      "description": "The ClinGen Gene-Disease Clinical Validity curation process involves evaluating the strength of evidence supporting or refuting a claim that variation in a particular gene causes a particular monogenic disease.",
+      "license": "CC0 1.0",
+      "attribution": "https://clinicalgenome.org/curation-activities/gene-disease-validity/",
+      "url": "https://clinicalgenome.org/",
+      "contentUrl": "https://search.clinicalgenome.org/kb/gene-validity/download",
+      "citation": [
+        "https://doi.org/10.1056/NEJMsr1406261",
+        "Rehm HL, Berg JS, Brooks LD, Bustamante CD, Evans JP, Landrum MJ, Ledbetter DH, Maglott DR, Martin CL, Nussbaum RL, Plon SE, Ramos EM, Sherry ST, Watson MS; ClinGen. ClinGen--the Clinical Genome Resource. N Engl J Med. 2015 Jun 4;372(23):2235-42. doi: 10.1056/NEJMsr1406261."
+      ],
+      "version": "202607"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:ctd",
+      "name": "Comparative Toxicogenomics Database",
+      "description": "The Comparative Toxicogenomics Database (CTD) is an open-source database that provides manually curated information about chemical-gene/protein, chemical-disease, and gene-disease relationships, with additional support for the curated relationships provided by functional and pathway data.",
+      "license": "https://ctdbase.org/about/legal.jsp",
+      "attribution": "http://ctdbase.org/",
+      "url": "http://ctdbase.org/",
+      "contentUrl": "https://ctdbase.org/downloads/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkae883",
+        "Davis AP, Wiegers TC, Sciaky D, Barkalow F, Strong M, Wyatt B, Wiegers J, McMorran R, Abrar S, Mattingly CJ Comparative Toxicogenomics Database\u2019s 20th anniversary: update 2025. Nucleic Acids Res. 2024 Oct 10. "
+      ],
+      "version": "June_2026"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:drugcentral",
+      "name": "DrugCentral",
+      "description": "DrugCentral provides open-source data on active ingredients, chemical entities, pharmaceutical products, drug mode of action, indications, and pharmacologic action for approved drugs, derived from information provided by the US Food & Drug Administration, the European Medicines Agency, and the Pharmaceutical and Medical Devices Agency. Caveat: DrugCentral provides limited information on discontinued and drugs approved outside of the US, but users should be aware that that information has not been validated.",
+      "license": "https://drugcentral.org/privacy",
+      "attribution": "https://drugcentral.org/about",
+      "url": "https://drugcentral.org/",
+      "contentUrl": "https://drugcentral.org/download",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkw993",
+        "Ursu O, Holmes J, Knockel J, Bologa CG, Yang JJ, Mathias SL, Nelson SJ, Oprea TI. DrugCentral: online drug compendium. Nucleic Acids Res. 2017 Jan 4;45(D1):D932-D939. doi: 10.1093/nar/gkw993. Epub 2016 Oct 26. PMID: 27789690; PMCID: PMC5210665."
+      ],
+      "version": "11_1_2023",
+      "isBasedOn": [
+        {
+          "@type": "Dataset",
+          "identifier": "infores:chembl",
+          "name": "ChEMBL",
+          "description": "",
+          "license": "CC BY-SA 3.0",
+          "url": "https://www.ebi.ac.uk/chembl/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:drugbank",
+          "name": "DrugBank",
+          "description": "",
+          "license": "CC BY-NC 4.0 (Complete Database), CC0 1.0 (Open Data)",
+          "url": "https://go.drugbank.com/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:faers",
+          "name": "FDA Adverse Event Reporting System",
+          "description": "",
+          "license": "Public Domain / CC0 1.0",
+          "url": "https://open.fda.gov/data/faers/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:gtopdb",
+          "name": "Guide to Pharmacology",
+          "description": "",
+          "license": "CC BY-SA 4.0",
+          "url": "https://www.guidetopharmacology.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:kegg",
+          "name": "Kyoto Encyclopedia of Genes and Genomes (KEGG)",
+          "description": "",
+          "license": "Proprietary (Kanehisa Laboratories) but free for academic web access",
+          "url": "https://www.genome.jp/kegg/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:pdsp",
+          "name": "Psychoactive Drug Screening Program",
+          "description": "",
+          "license": "CC BY-NC-SA 4.0",
+          "url": "https://pdsp.unc.edu/"
+        }
+      ]
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:drugmechdb",
+      "name": "DrugMechDB",
+      "description": "A database of paths that represent the mechanism of action from a drug to a disease in an indication.",
+      "license": "Creative Commons Zero v1.0 Universal license",
+      "attribution": "https://sulab.github.io/DrugMechDB/",
+      "url": "https://sulab.github.io/DrugMechDB/",
+      "contentUrl": "https://github.com/SuLab/DrugMechDB/raw/main/indication_paths.json",
+      "citation": [
+        "https://doi.org/10.1038/s41597-023-02534-z",
+        "Gonzalez-Cavazos, A.C., Tanska, A., Mayers, M. et al. DrugMechDB: A Curated Database of Drug Mechanisms. Sci Data 10, 632 (2023)."
+      ],
+      "version": "2.0.1"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:gtopdb",
+      "name": "Guide to PHARMACOLOGY (GtoPdb)",
+      "description": "The International Union of Basic and Clinical Pharmacology (IUPHAR) / British Pharmacological Society (BPS) Guide to Pharmacology database (GtoPdb) provides searchable open-source quantitative information on drug targets and the prescription medicines and experimental drugs that act on them.",
+      "license": "CC BY-SA 4.0",
+      "attribution": "https://www.guidetopharmacology.org/citing.jsp",
+      "url": "http://www.guidetopharmacology.org/",
+      "contentUrl": "https://www.guidetopharmacology.org/DATA/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkad944",
+        "Harding SD, Armstrong JF, Faccenda E, Southan C, Alexander SPH, Davenport AP, Spedding M, Davies JA. (2023) The IUPHAR/BPS Guide to PHARMACOLOGY in 2024. Nucl. Acids Res. 2024; 52(D1):D1438-D1449."
+      ],
+      "version": "2026.2"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:hetionet",
+      "name": "Hetionet",
+      "description": "Hetionet is an open-source biomedical heterogeneous information network (hetnet) or graph-based resource describing relationships uncovered by millions of biomedical research studies over the past fifty years.",
+      "license": "https://het.io/about/",
+      "attribution": "https://het.io/about/",
+      "url": "https://het.io/about/",
+      "contentUrl": "https://github.com/hetio/hetionet/blob/master/hetnet/json/hetionet-v1.0.json.bz2",
+      "citation": [
+        "https://doi.org/10.1371/journal.pcbi.1004259",
+        "Heterogeneous Network Edge Prediction: A Data Integration Approach to Prioritize Disease-Associated Genes\nHimmelstein DS, Baranzini SE\nPLOS Computational Biology (2015)"
+      ],
+      "version": "1.0",
+      "isBasedOn": [
+        {
+          "@type": "Dataset",
+          "identifier": "infores:bgee",
+          "name": "Bgee",
+          "description": "",
+          "license": "CC0 1.0",
+          "url": "https://www.bgee.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:lincs",
+          "name": "Library of Integrated Network-Based Cellular Signatures",
+          "description": "",
+          "license": "CC BY 4.0",
+          "url": "https://lincsproject.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:sider",
+          "name": "SIDER",
+          "description": "",
+          "license": "CC BY-NC-SA 4.0",
+          "url": "http://sideeffects.embl.de/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:tissues-expression-db",
+          "name": "Tissue Expression Database",
+          "description": "",
+          "license": "CC BY 4.0",
+          "url": "https://tissues.jensenlab.org/"
+        }
+      ]
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:hgnc",
+      "name": "HUGO Gene Nomenclature Committee (HGNC)",
+      "description": "The HUGO Gene Nomenclature Committee (HGNC) database provides open access to HGNC-approved unique symbols and names for human genes, gene groups, and associated resources, including links to genomic, proteomic and phenotypic information.",
+      "license": "CC0",
+      "attribution": "https://www.genenames.org/",
+      "url": "https://www.genenames.org/",
+      "contentUrl": "https://www.genenames.org/download/archive/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkac888",
+        "Seal RL, Braschi B, Gray K, Jones TEM, Tweedie S, Haim-Vilmovsky L, Bruford EA. Genenames.org: the HGNC resources in 2023. Nucleic Acids Res. 2023 Jan 6;51(D1):D1003-D1009. doi: 10.1093/nar/gkac888. PMID: 36243972; PMCID: PMC9825485."
+      ],
+      "version": "2026-07-24"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:hmdb",
+      "name": "Human Metabolome Database (HMDB)",
+      "description": "The Human Metabolome Database (HMDB) is an openly accessible database containing detailed information about small molecule metabolites found in the human body, with links between chemical data, clinical data, and molecular biology/biochemistry data, including protein sequences (enzymes and transporters).",
+      "license": "CC BY-NC 4.0",
+      "attribution": "https://hmdb.ca/",
+      "url": "https://hmdb.ca/",
+      "contentUrl": "https://hmdb.ca/downloads",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkab1062",
+        "Wishart DS, Guo A, Oler E, Wang F, Anjum A, Peters H, Dizon R, Sayeeda Z, Tian S, Lee BL, Berjanskii M, Mah R, Yamamoto M, Jovel J, Torres-Calzada C, Hiebert-Giesbrecht M, Lui VW, Varshavi D, Varshavi D, Allen D, Arndt D, Khetarpal N, Sivakumaran A, Harford K, Sanford S, Yee K, Cao X, Budinski Z, Liigand J, Zhang L, Zheng J, Mandal R, Karu N, Dambrova M, Schi\u00f6th HB, Greiner R, Gautam V. HMDB 5.0: the Human Metabolome Database for 2022. Nucleic Acids Res. 2022 Jan 7;50(D1):D622-D631. doi: 10.1093/nar/gkab1062. PMID: 34986597; PMCID: PMC8728138."
+      ],
+      "version": "5.0"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:goa",
+      "name": "Gene Ontologies Annotations (Human)",
+      "description": "The Gene Ontology (GO) Consortium\u2019s Human Gene Ontologies Annotations (Human GOA) resource provides open access to curated assignment of GO terms to proteins in the UniProt KnowledgeBase (UniProtKB), RNA molecules from RNACentral, and protein complexes from the Complex Portal.",
+      "license": "CC BY 4.0",
+      "attribution": "https://geneontology.org/",
+      "url": "https://geneontology.org/",
+      "contentUrl": "http://current.geneontology.org/annotations/goa_human.gaf.gz",
+      "citation": [
+        "https://doi.org/10.1093/genetics/iyad031",
+        "The Gene Ontology Consortium. The Gene Ontology knowledgebase in 2023. Genetics. 2023 May 4;224(1):iyad031."
+      ],
+      "version": "2026-06-19"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:intact",
+      "name": "IntAct Molecular Interaction Database",
+      "description": "The IntAct Molecular Interaction Database provides open access to molecular interactions data derived from literature curation or direct user submission.",
+      "license": "CC BY 4.0",
+      "attribution": "http://europepmc.org/article/MED/24234451",
+      "url": "https://www.ebi.ac.uk/intact/",
+      "contentUrl": "https://www.ebi.ac.uk/intact/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkab1006",
+        "N. Del Toro et al., \u201cThe IntAct database: efficient access to fine-grained molecular interaction data,\u201d Nucleic Acids Res., vol. 50, no. D1, pp. D648\u2013D653, Jan. 2022, PMID: 34761267"
+      ],
+      "version": "1_14_2026"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:kinace",
+      "name": "KinAce",
+      "description": "The KinAce web portal aggregates and visualizes the network of interactions between protein-kinases and their substrates in the human genome.",
+      "license": "Creative Commons Attribution 4.0 International",
+      "attribution": "https://kinace.kinametrix.com/#section-about",
+      "url": "https://kinace.kinametrix.com/",
+      "contentUrl": "https://github.com/GauravPandeyLab/KiNet/raw/master/data/ksi_source_full_dataset.csv",
+      "citation": [
+        "https://doi.org/10.1101/2023.12.08.570875",
+        "Sekar, J.A.P., Li, Y.C., Schlessinger, A. et al. A web portal for exploring kinase-substrate interactions. npj Syst Biol Appl 10, 113 (2024). https://doi.org/10.1038/s41540-024-00442-5"
+      ],
+      "version": "2024-07-10",
+      "isBasedOn": [
+        {
+          "@type": "Dataset",
+          "identifier": "infores:epsd",
+          "name": "EPSD",
+          "description": "",
+          "license": "No License Mentioned",
+          "url": "https://epsd.biocuckoo.cn/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:iptmnet",
+          "name": "iPTMnet",
+          "description": "",
+          "license": "CC BY-NC-SA 4.0",
+          "url": "https://iptmnet.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:psite-plus",
+          "name": "PhosphoSitePlus",
+          "description": "",
+          "license": "CC BY-NC-SA 3.0",
+          "url": "https://www.phosphosite.org/"
+        }
+      ]
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:lincs",
+      "name": "Library of Integrated Network-Based Cellular Signatures",
+      "description": "LINCS is an NIH Common Fund program that generates and catalogs perturbation-induced changes in gene expression and other cellular processes, aiming to create a comprehensive network-based understanding of how cells respond to various perturbations including drugs, genetic modifications, and environmental factors.",
+      "license": "CC BY 4.0",
+      "attribution": "https://lincsproject.org/LINCS/",
+      "url": "https://lincsproject.org/",
+      "contentUrl": "https://cfde-drc.s3.amazonaws.com/LINCS/KG%20Assertions",
+      "citation": [
+        "https://doi.org/10.1016/j.cels.2017.11.001",
+        "Keenan AB, et al. The Library of Integrated Network-Based Cellular Signatures NIH Program: System-Level Cataloging of Human Cells Response to Perturbations. Cell Syst. 2018 Jan 24;6(1):13-24. doi: 10.1016/j.cels.2017.11.001. Epub 2017 Nov 29. PMID: 29199020; PMCID: PMC5799026."
+      ],
+      "version": "2024-05-08"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:metabolomics_workbench",
+      "name": "Metabolomics Workbench",
+      "description": "Metabolomics Workbench is a public repository for metabolomics metadata and experimental data spanning various species and experimental platforms, funded by the NIH Common Fund Metabolomics Program. It provides analysis tools, metabolite databases, metabolite standards, protocols, tutorials, and training materials.",
+      "license": "CC0 1.0",
+      "attribution": "https://www.metabolomicsworkbench.org/about/howtocite.php",
+      "url": "https://www.metabolomicsworkbench.org/",
+      "contentUrl": "https://cfde-drc.s3.amazonaws.com/Metabolomics/KG%20Assertions",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkv1042",
+        "Sud M, Fahy E, Cotter D, Azam K, Vadivelu I, Burant C, Edison A, Fiehn O, Higashi R, Nair KS, Sumner S, Subramaniam S. Metabolomics Workbench: An international repository for metabolomics data and metadata, metabolite standards, protocols, tutorials and training, and analysis tools. Nucleic Acids Res. 2016 Jan 4;44(D1):D463-70."
+      ],
+      "version": "2024-05-08"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:monarchinitiative",
+      "name": "Monarch Initiative KG",
+      "description": "The Monarch Initiative is an international consortium that leads key global standards and semantic data integration technologies. Monarch resources and integrated data are foundational to many downstream applications. We collaborate with stakeholders to continuously improve the platform, which is composed of multiple open-source, open-access components. Our mission is to enhance data utility, accessibility, and transparency to improve rare disease diagnosis and treatment.",
+      "license": "BSD-3-Clause",
+      "attribution": "https://monarchinitiative.org/",
+      "url": "https://monarchinitiative.org/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkad1082",
+        "Putman TE, Schaper K, Matentzoglu N, Rubinetti VP, Alquaddoomi FS, Cox C, Caufield JH, Elsarboukh G, Gehrke S, Hegde H, Reese JT, Braun I, Bruskiewich RM, Cappelletti L, Carbon S, Caron AR, Chan LE, Chute CG, Cortes KG, De Souza V, Fontana T, Harris NL, Hartley EL, Hurwitz E, Jacobsen JOB, Krishnamurthy M, Laraway BJ, McLaughlin JA, McMurry JA, Moxon SAT, Mullen KR, O'Neil ST, Shefchek KA, Stefancsik R, Toro S, Vasilevsky NA, Walls RL, Whetzel PL, Osumi-Sutherland D, Smedley D, Robinson PN, Mungall CJ, Haendel MA, Munoz-Torres MC. The Monarch Initiative in 2024: an analytic platform integrating phenotypes, genes and diseases across species. Nucleic Acids Res. 2024 Jan 5;52(D1):D938-D949. doi: 10.1093/nar/gkad1082. PMID: 38000386; PMCID: PMC10767791."
+      ],
+      "version": "'2026-07-14'"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:mondo",
+      "name": "",
+      "description": "",
+      "license": "",
+      "version": "6_2_2026"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:ubergraph",
+      "name": "Ubergraph Subclass Relationships",
+      "description": "Subclass relationships from the redundant version of Ubergraph.",
+      "license": "https://raw.githubusercontent.com/INCATools/ubergraph/master/LICENSE.txt",
+      "attribution": "https://github.com/INCATools/ubergraph",
+      "url": "https://github.com/INCATools/ubergraph",
+      "contentUrl": "https://github.com/INCATools/ubergraph",
+      "citation": [
+        "https://doi.org/10.5281/zenodo.7249759",
+        "Balhoff, J. P., Bayindir, U., Caron, A. R., Matentzoglu, N., Osumi-Sutherland, D., & Mungall, C. J. (2022, September 28). Ubergraph: integrating OBO ontologies into a unified semantic graph. ICBO 2022: International Conference on Biomedical Ontology (ICBO), Ann Arbor, Michigan, USA."
+      ],
+      "version": "2026-05-31"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:panther",
+      "name": "Protein Analysis THrough Evolutionary Relationships (PANTHER)",
+      "description": "The Protein ANalysis THrough Evolutionary Relationships (PANTHER) classification system provides an openly available annotation library of gene family phylogenetic trees, with persistent identifiers attached to all nodes in the trees and annotation of each protein member of the family by its family and protein class, subfamily, orthologs, paralogs, GO Phylogenetic Annotation Project function and Reactome pathways.",
+      "license": "http://pantherdb.org/tou.jsp",
+      "attribution": "http://pantherdb.org/publications.jsp#HowToCitePANTHER",
+      "url": "https://www.pantherdb.org/",
+      "contentUrl": "ftp.pantherdb.org/sequence_classifications/",
+      "citation": [
+        "https://doi.org/10.1002/pro.4218",
+        "Paul D. Thomas, Dustin Ebert, Anushya Muruganujan, Tremayne Mushayahama, Laurent-Philippe Albou and Huaiyu Mi\nProtein Society. 2022;31(1):8-22. doi:10.1002/pro.4218"
+      ],
+      "version": "19.0"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:pharos",
+      "name": "Pharos",
+      "description": "Pharos is the openly accessible user interface to the Illuminating the Druggable Genome (IDG) program's Knowledge Management Center (KMC), which aims to develop a comprehensive, integrated knowledge-base for the Druggable Genome (DG) to illuminate the uncharacterized and/or poorly annotated portion of the DG, focusing on three of the most commonly drug-targeted protein families: G-protein-coupled receptors; ion channels; and kinases.",
+      "license": "Data accessed from Pharos and TCRD is publicly available from the primary sources listed above. Please respect their individual licenses regarding proper use and redistribution.",
+      "url": "https://pharos.nih.gov/",
+      "contentUrl": "https://pharos.nih.gov/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkac1033",
+        "Sheils, T., Mathias, S. et al, \"TCRD and Pharos 2021: mining the human proteome for disease biology\", Nucl. Acids Res., 2021. DOI: 10.1093/nar/gkaa993"
+      ],
+      "version": "v6_13_4",
+      "isBasedOn": [
+        {
+          "@type": "Dataset",
+          "identifier": "infores:ctd",
+          "name": "Comparative Toxicogenomics Database",
+          "description": "",
+          "license": "Custom CTD License",
+          "url": "https://ctdbase.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:diseases",
+          "name": "DISEASES",
+          "description": "",
+          "license": "CC BY 4.0",
+          "url": "https://diseases.jensenlab.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:disgenet",
+          "name": "DisGeNET",
+          "description": "",
+          "license": "CC BY 4.0",
+          "url": "https://www.disgenet.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:drugcentral",
+          "name": "DrugCentral",
+          "description": "",
+          "license": "CC BY-SA 4.0",
+          "url": "https://drugcentral.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:eram",
+          "name": "eRAM: encyclopedia of rare disease annotations for precision medicine",
+          "description": "",
+          "license": "Custom eRAM License",
+          "url": "http://www.youreram.cn/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:monarchinitiative",
+          "name": "Monarch Initiative",
+          "description": "",
+          "license": "BSD-3-Clause",
+          "url": "https://monarchinitiative.org/"
+        },
+        {
+          "@type": "Dataset",
+          "identifier": "infores:uniprot",
+          "name": "UniProt Knowledgebase",
+          "description": "",
+          "license": "CC BY 4.0",
+          "url": "https://www.uniprot.org/"
+        }
+      ]
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:reactome",
+      "name": "Reactome",
+      "description": "Reactome is a free, open-source, curated and peer-reviewed pathway database",
+      "license": "CC0 1.0",
+      "attribution": "https://reactome.org/",
+      "url": "https://reactome.org/",
+      "contentUrl": "https://reactome.org/",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkad1025",
+        "Milacic M, Beavers D, Conley P, Gong C, Gillespie M, Griss J, Haw R, Jassal B, Matthews L, May B, Petryszak R, Ragueneau E, Rothfels K, Sevilla C, Shamovsky V, Stephan R, Tiwari K, Varusai T, Weiser J, Wright A, Wu G, Stein L, Hermjakob H, D\u2019Eustachio P. The Reactome Pathway Knowledgebase 2024. Nucleic Acids Research. 2024. doi: 10.1093/nar/gkad1025"
+      ],
+      "version": "V97"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:text-mining-provider-targeted",
+      "name": "",
+      "description": "The Text Mining Provider KG contains subject-predicate-object assertions derived from the application of natural language processing (NLP) algorithms to the PubMedCentral Open Access collection of publications plus additional titles and abstracts from PubMed.",
+      "license": "",
+      "version": "9_7_2024"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:signor",
+      "name": "SIGnaling Network Open Resource (SIGNOR)",
+      "description": "Signor 3.0 is a resource that annotates experimental evidence about causal interactions between proteins and other entities of biological relevance: stimuli, phenotypes, enzyme inhibitors, complexes, protein families etc. ",
+      "license": "CC BY 4.0",
+      "attribution": "https://signor.uniroma2.it/",
+      "url": "https://signor.uniroma2.it/",
+      "contentUrl": "https://signor.uniroma2.it/download_entity.php",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkac883",
+        "Lo Surdo P, Iannuccelli M, Contino S, Castagnoli L, Licata L, Cesareni G, Perfetto L. SIGNOR 3.0, the SIGnaling network open resource 3.0: 2022 update. Nucleic Acids Res. 2022 Oct 16:gkac883. doi: 10.1093/nar/gkac883. Epub ahead of print. PMID: 36243968."
+      ],
+      "version": "Jul2026"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:string",
+      "name": "STRING (Human)",
+      "description": "The Search Tool for the Retrieval of Interacting Genes/Proteins (STRING) database provides information on known and predicted protein-protein interactions (both direct and indirect) derived from genomic context predictions, high-throughput laboratory experiments, conserved co-expression, automated text mining, and aggregated knowledge from primary data sources.",
+      "license": "CC BY 4.0",
+      "attribution": "https://string-db.org/",
+      "url": "https://string-db.org",
+      "contentUrl": "https://string-db.org",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkac1000",
+        "Szklarczyk D, Gable AL, Nastou KC, Lyon D, Kirsch R, Pyysalo S, Doncheva NT, Legeay M, Fang T, Bork P, Jensen LJ, von Mering C. The STRING database in 2021: customizable protein-protein networks, and functional characterization of user-uploaded gene/measurement sets. Nucleic Acids Res. 2021 Jan 8;49(D1):D605-D612. doi: 10.1093/nar/gkaa1074. Erratum in: Nucleic Acids Res. 2021 Oct 11;49(18):10800. doi: 10.1093/nar/gkab835. PMID: 33237311; PMCID: PMC7779004."
+      ],
+      "version": "v12.0"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:ubergraph",
+      "name": "Ubergraph Nonredundant",
+      "description": "Ubergraph is an open-source graph database containing integrated ontologies, including GO, CHEBI, HPO, and Uberon\u2019s anatomical ontology.",
+      "license": "https://raw.githubusercontent.com/INCATools/ubergraph/master/LICENSE.txt",
+      "attribution": "https://github.com/INCATools/ubergraph",
+      "url": "https://github.com/INCATools/ubergraph#downloads",
+      "contentUrl": "https://github.com/INCATools/ubergraph#downloads",
+      "citation": [
+        "https://doi.org/10.5281/zenodo.7249759",
+        "Balhoff, J. P., Bayindir, U., Caron, A. R., Matentzoglu, N., Osumi-Sutherland, D., & Mungall, C. J. (2022, September 28). Ubergraph: integrating OBO ontologies into a unified semantic graph. ICBO 2022: International Conference on Biomedical Ontology (ICBO), Ann Arbor, Michigan, USA."
+      ],
+      "version": "2026-05-31"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:clingen",
+      "name": "ClinGen - Variant Pathogenicity",
+      "description": "ClinGen variant curation utilizes the 2015 American College of Medical Genetics and Genomics (ACMG) guideline for sequence variant interpretation, which provides an evidence-based framework to classify variants. The results of these analyses will be deposited in ClinVar for community access.",
+      "license": "CC0 1.0",
+      "attribution": "https://clinicalgenome.org/curation-activities/variant-pathogenicity/",
+      "url": "https://clinicalgenome.org/",
+      "contentUrl": "http://erepo.clinicalgenome.org/evrepo/api/classifications/all",
+      "citation": [
+        "https://doi.org/10.1056/NEJMsr1406261",
+        "Rehm HL, Berg JS, Brooks LD, Bustamante CD, Evans JP, Landrum MJ, Ledbetter DH, Maglott DR, Martin CL, Nussbaum RL, Plon SE, Ramos EM, Sherry ST, Watson MS; ClinGen. ClinGen--the Clinical Genome Resource. N Engl J Med. 2015 Jun 4;372(23):2235-42. doi: 10.1056/NEJMsr1406261."
+      ],
+      "version": "202607"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:gwas-catalog",
+      "name": "GWAS Catalog",
+      "description": "The Genome-Wide Association Studies (GWAS) Catalog provides a curated, searchable, visualisable, and openly available database of single nucleotide polymorphism (SNP)-trait associations, derived from all GWAS publications identified by curators, who then extract the reported trait, significant SNP-trait associations, and sample metadata.",
+      "license": "CC BY 4.0",
+      "attribution": "https://www.ebi.ac.uk/gwas/",
+      "url": "https://www.ebi.ac.uk/gwas/",
+      "contentUrl": "https://www.ebi.ac.uk/gwas/docs/file-downloads",
+      "citation": [
+        "https://doi.org/10.1093/nar/gkae1070",
+        "Cerezo M, Sollis E, Ji Y, Lewis E, Abid A, Bircan KO, Hall P, Hayhurst J, John S, Mosaku A, Ramachandran S, Foreman A, Ibrahim A, McLaughlin J, Pendlington Z, Stefancsik R, Lambert SA, McMahon A, Morales J, Keane T, Inouye M, Parkinson H, Harris LW.\nThe NHGRI-EBI GWAS Catalog: standards for reusability, sustainability and diversity\nNucleic Acids Research, Volume 53, Issue D1, 6 January 2025, Pages D998\u2013D1005, https://doi.org/10.1093/nar/gkae1070"
+      ],
+      "version": "7_20_2026"
+    },
+    {
+      "@type": "Dataset",
+      "identifier": "infores:gtex",
+      "name": "Genotype-Tissue Expression (GTEx) Project",
+      "description": "The Genotype-Tissue Expression (GTEx) portal provides open access to data on tissue-specific gene expression and regulation, derived from molecular assays (e.g., WGS, WES, RNA-Seq) on 54 non-diseased tissue sites across nearly 1000 individuals.",
+      "license": "https://www.gtexportal.org/home/license",
+      "attribution": "The data used for the analyses described in this manuscript were obtained from: [insert, where appropriate] the GTEx Portal on MM/DD/YY and/or dbGaP accession number phs000424.vN.pN on MM/DD/YYYY.",
+      "url": "https://www.gtexportal.org/",
+      "contentUrl": "https://www.gtexportal.org/home/downloads/adult-gtex",
+      "citation": [
+        "https://doi.org/10.1038/ng.2653",
+        "Lonsdale, J., Thomas, J., Salvatore, M. et al. The Genotype-Tissue Expression (GTEx) project. Nat Genet 45, 580\u2013585 (2013)."
+      ],
+      "version": "8"
+    }
+  ],
+  "schema": {
+    "@type": "Dataset",
+    "@id": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/schema.json",
+    "name": "RobokopKG Data Schema",
+    "description": "JSON-LD Schema describing the contents of the knowledge graph",
+    "encodingFormat": "application/ld+json"
+  },
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "name": "nodes",
+      "encodingFormat": "biolink:KGX",
+      "contentUrl": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/nodes.jsonl.gz"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "edges",
+      "encodingFormat": "biolink:KGX",
+      "contentUrl": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/edges.jsonl.gz"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "graph-metadata",
+      "encodingFormat": "application/ld+json",
+      "contentUrl": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/graph-metadata.json"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "schema",
+      "encodingFormat": "application/ld+json",
+      "contentUrl": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/schema.json"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "neo4j",
+      "contentUrl": "https://robokop.renci.org/graphs/RobokopKG/1.0.2/RobokopKG_1.0.2.db.dump"
+    }
+  ],
+  "conformsTo": [
+    {
+      "@id": "https://w3id.org/biolink/",
+      "name": "Biolink Model"
+    },
+    {
+      "@id": "https://github.com/biolink/kgx/blob/master/docs/kgx_format.md",
+      "name": "KGX Format"
+    }
+  ],
+  "keywords": [
+    "knowledge graph",
+    "biomedical",
+    "drug discovery",
+    "translational research",
+    "gene",
+    "disease",
+    "drug",
+    "phenotype",
+    "pathway"
+  ],
+  "creator": [
+    {
+      "@type": "Organization",
+      "@id": "https://ror.org/0130frc33",
+      "name": "Renaissance Computing Institute (RENCI)",
+      "url": "https://renci.org"
+    }
+  ],
+  "contactPoint": [
+    {
+      "@type": "ContactPoint",
+      "contactType": "developer",
+      "url": "https://github.com/RobokopU24/ORION/issues"
+    }
+  ],
+  "funder": [
+    {
+      "@type": "Organization",
+      "@id": "https://ror.org/05wvpxv85",
+      "name": "National Center for Advancing Translational Sciences (NCATS)",
+      "url": "https://ncats.nih.gov"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ror.org/00j4k1h63",
+      "name": "National Institute of Environmental Health Sciences (NIEHS)",
+      "url": "https://www.niehs.nih.gov"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://ror.org/01cwqze88",
+      "name": "National Institutes of Health (NIH)",
+      "url": "https://www.nih.gov"
+    }
+  ],
+  "license": "https://spdx.org/licenses/MIT"
+}
