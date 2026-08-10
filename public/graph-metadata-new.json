@@ -259,9 +259,7 @@
       "attribution": "https://www.bgee.org/",
       "url": "https://www.bgee.org/",
       "contentUrl": "https://www.bgee.org/ftp/current/download/calls/expr_calls/Homo_sapiens_expr_simple.tsv.gz",
-      "citation": [
-        "https://doi.org/10.1093/nar/gkae1104"
-      ],
+      "citation": ["https://doi.org/10.1093/nar/gkae1104"],
       "version": "v15_2"
     },
     {
