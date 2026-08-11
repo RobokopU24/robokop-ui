@@ -48,6 +48,19 @@ interface AISummaryModalProps {
   }) => unknown
 }
 
+const getPromptSortTime = (prompt: SavedPrompt) => {
+  const timestamp = prompt.createdAt || prompt.updatedAt
+  if (!timestamp) {
+    return 0
+  }
+
+  const parsed = Date.parse(timestamp)
+  return Number.isNaN(parsed) ? 0 : parsed
+}
+
+const sortSavedPrompts = (prompts: SavedPrompt[]) =>
+  [...prompts].sort((a, b) => getPromptSortTime(b) - getPromptSortTime(a))
+
 function AISummaryModal({
   isOpen,
   onClose,
@@ -154,8 +167,9 @@ function AISummaryModal({
 
     try {
       const prompts = await savedPromptsApi.listSavedPrompts(promptType, headers)
-      setSavedPrompts(prompts)
-      return prompts
+      const sortedPrompts = sortSavedPrompts(prompts)
+      setSavedPrompts(sortedPrompts)
+      return sortedPrompts
     } catch (error) {
       console.error('[saved-prompts] failed to fetch', error)
       setSavedPrompts([])
@@ -202,7 +216,7 @@ function AISummaryModal({
           headers,
         )
 
-        setSavedPrompts((previous) => [...previous, savedPrompt])
+        setSavedPrompts((previous) => sortSavedPrompts([...previous, savedPrompt]))
         setSelectedSavedPromptId(savedPrompt.id)
         return savedPrompt.id
       } catch (error) {
