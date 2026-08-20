@@ -18,7 +18,9 @@ import {
 } from '@mui/material'
 import { alpha } from '@mui/material/styles'
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
+import DescriptionRoundedIcon from '@mui/icons-material/DescriptionRounded'
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded'
+import PictureAsPdfRoundedIcon from '@mui/icons-material/PictureAsPdfRounded'
 import ReplayRoundedIcon from '@mui/icons-material/ReplayRounded'
 import SaveRoundedIcon from '@mui/icons-material/SaveRounded'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
@@ -61,6 +63,88 @@ const getPromptSortTime = (prompt: SavedPrompt) => {
 const sortSavedPrompts = (prompts: SavedPrompt[]) =>
   [...prompts].sort((a, b) => getPromptSortTime(b) - getPromptSortTime(a))
 
+const sanitizeFileName = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+const escapeHtml = (value: string) =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+
+const summaryExportStyles = `
+  .summary-export {
+    font-family: Calibri, Arial, sans-serif;
+    color: #0f172a;
+    line-height: 1.6;
+    font-size: 12pt;
+  }
+  .summary-export h1 {
+    font-size: 24px;
+    margin: 0 0 16px;
+  }
+  .summary-export h2 {
+    font-size: 20px;
+    margin: 20px 0 8px;
+  }
+  .summary-export h3 {
+    font-size: 17px;
+    margin: 16px 0 8px;
+  }
+  .summary-export p {
+    margin: 8px 0;
+  }
+  .summary-export ul,
+  .summary-export ol {
+    margin: 8px 0;
+    padding-left: 24px;
+  }
+  .summary-export li {
+    margin: 3px 0;
+  }
+  .summary-export code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: #f1f5f9;
+    border-radius: 4px;
+    padding: 1px 6px;
+  }
+  .summary-export pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  }
+  .summary-export blockquote {
+    border-left: 3px solid #cbd5e1;
+    margin: 12px 0;
+    padding-left: 10px;
+    color: #334155;
+  }
+`
+
+const buildSummaryHtmlFragment = (title: string, bodyHtml: string) =>
+  `<article class="summary-export"><h1>${escapeHtml(title)}</h1>${bodyHtml}</article>`
+
+const buildSummaryHtmlDocument = (title: string, bodyHtml: string) => `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(title)}</title>
+    <style>${summaryExportStyles}</style>
+  </head>
+  <body>
+    ${buildSummaryHtmlFragment(title, bodyHtml)}
+  </body>
+</html>`
+
 function AISummaryModal({
   isOpen,
   onClose,
@@ -89,9 +173,11 @@ function AISummaryModal({
   const [isSummarizing, setIsSummarizing] = useState(false)
   const [isPersistingPrompt, setIsPersistingPrompt] = useState(false)
   const [selectedModelId, setSelectedModelId] = useState('')
+  const [activeDownloadType, setActiveDownloadType] = useState<'pdf' | 'doc' | null>(null)
   const [requestError, setRequestError] = useState<string | null>(null)
   const summaryAbortControllerRef = useRef<AbortController | null>(null)
   const promptAbortControllerRef = useRef<AbortController | null>(null)
+  const summaryContentRef = useRef<HTMLDivElement | null>(null)
   const autoRunKeyRef = useRef<string | null>(null)
   const defaultPromptTemplateRef = useRef('')
   const streamSummaryRef = useRef<
@@ -372,6 +458,100 @@ function AISummaryModal({
       promptAlreadySaved ? 'Prompt already saved.' : 'Prompt saved successfully.',
     )
   }, [displayAlert, persistPromptTemplate, promptTemplate, promptType, savedPrompts])
+
+  const downloadBlob = useCallback(
+    (blob: Blob, extension: 'pdf' | 'doc') => {
+      const safeTitle = sanitizeFileName(title) || 'ai-summary'
+      const timestamp = new Date().toISOString().replaceAll(':', '-').slice(0, 19)
+      const fileName = `${safeTitle}-${timestamp}.${extension}`
+      const objectUrl = window.URL.createObjectURL(blob)
+      const anchor = document.createElement('a')
+      anchor.href = objectUrl
+      anchor.download = fileName
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      window.URL.revokeObjectURL(objectUrl)
+    },
+    [title],
+  )
+
+  const handleDownloadDoc = useCallback(() => {
+    if (!streamedText || isSummarizing || isLoadingPromptTemplate) {
+      return
+    }
+
+    try {
+      setActiveDownloadType('doc')
+      const markdownHtml = summaryContentRef.current?.innerHTML?.trim()
+      const fallbackBody = `<p>${escapeHtml(streamedText).replaceAll('\n', '<br/>')}</p>`
+      const htmlDocument = buildSummaryHtmlDocument(title, markdownHtml || fallbackBody)
+      const docBlob = new Blob([htmlDocument], {
+        type: 'application/msword;charset=utf-8',
+      })
+      downloadBlob(docBlob, 'doc')
+      displayAlert('success', 'Summary downloaded as DOC.')
+    } catch (error) {
+      console.error('[summary-download] failed to download doc', error)
+      displayAlert('error', 'Failed to download DOC file. Please try again.')
+    } finally {
+      setActiveDownloadType(null)
+    }
+  }, [displayAlert, downloadBlob, isLoadingPromptTemplate, isSummarizing, streamedText, title])
+
+  const handleDownloadPdf = useCallback(async () => {
+    if (!streamedText || isSummarizing || isLoadingPromptTemplate) {
+      return
+    }
+
+    let tempContainer: HTMLDivElement | null = null
+
+    try {
+      setActiveDownloadType('pdf')
+      const { jsPDF } = await import('jspdf')
+      const markdownHtml = summaryContentRef.current?.innerHTML?.trim()
+      const fallbackBody = `<p>${escapeHtml(streamedText).replaceAll('\n', '<br/>')}</p>`
+      const htmlFragment = buildSummaryHtmlFragment(title, markdownHtml || fallbackBody)
+      tempContainer = document.createElement('div')
+      tempContainer.style.position = 'fixed'
+      tempContainer.style.left = '0'
+      tempContainer.style.top = '0'
+      tempContainer.style.width = '800px'
+      tempContainer.style.background = '#ffffff'
+      tempContainer.style.zIndex = '-1'
+      tempContainer.style.pointerEvents = 'none'
+      tempContainer.innerHTML = `<style>${summaryExportStyles}</style>${htmlFragment}`
+      document.body.appendChild(tempContainer)
+
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      })
+
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
+      await pdf.html(tempContainer, {
+        margin: [36, 36, 36, 36],
+        autoPaging: 'text',
+        html2canvas: {
+          scale: 0.75,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+        },
+      })
+
+      const pdfBlob = pdf.output('blob')
+      downloadBlob(pdfBlob, 'pdf')
+      displayAlert('success', 'Summary downloaded as PDF.')
+    } catch (error) {
+      console.error('[summary-download] failed to download pdf', error)
+      displayAlert('error', 'Failed to download PDF file. Please try again.')
+    } finally {
+      if (tempContainer) {
+        tempContainer.remove()
+      }
+
+      setActiveDownloadType(null)
+    }
+  }, [displayAlert, downloadBlob, isLoadingPromptTemplate, isSummarizing, streamedText, title])
 
   useEffect(() => {
     streamSummaryRef.current = streamSummary
@@ -717,6 +897,28 @@ function AISummaryModal({
                 label={summaryIsLoading ? 'Generating...' : 'Ready'}
                 sx={{ fontWeight: 700 }}
               />
+              {streamedText && !summaryIsLoading && (
+                <>
+                  <Button
+                    size='small'
+                    variant='outlined'
+                    startIcon={<PictureAsPdfRoundedIcon fontSize='small' />}
+                    onClick={handleDownloadPdf}
+                    disabled={activeDownloadType !== null}
+                  >
+                    {activeDownloadType === 'pdf' ? 'Preparing...' : 'PDF'}
+                  </Button>
+                  <Button
+                    size='small'
+                    variant='outlined'
+                    startIcon={<DescriptionRoundedIcon fontSize='small' />}
+                    onClick={handleDownloadDoc}
+                    disabled={activeDownloadType !== null}
+                  >
+                    {activeDownloadType === 'doc' ? 'Preparing...' : 'DOC'}
+                  </Button>
+                </>
+              )}
               <IconButton size='small' onClick={onClose} sx={{ color: 'text.secondary' }}>
                 <CloseRoundedIcon fontSize='small' />
               </IconButton>
@@ -749,6 +951,7 @@ function AISummaryModal({
               )}
               {streamedText ? (
                 <Box
+                  ref={summaryContentRef}
                   sx={{
                     lineHeight: 1.7,
                     fontSize: 15,
