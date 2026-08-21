@@ -32,6 +32,7 @@
     "export-to-csv": "^1.4.0",
     "fuse.js": "^7.1.0",
     "idb-keyval": "^6.2.2",
+    "jspdf": "^4.2.1",
     "lodash": "^4.17.21",
     "papaparse": "^5.5.3",
     "posthog-js": "^1.407.7",
