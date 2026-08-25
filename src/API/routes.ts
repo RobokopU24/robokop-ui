@@ -52,6 +52,7 @@ export const llmRoutes = {
   summarizeGraph: `${llmEndpoint}/stream-graph-summary`,
   summarizeKGNodes: `${llmEndpoint}/stream-kg-nodes-summary`,
   summarizeTable: `${llmEndpoint}/stream-table-summary`,
+  nlToQuery: `${llmEndpoint}/nl-to-query`,
 }
 
 const llmModelsEndpoint = `${baseAuthURL}/llm-models`
