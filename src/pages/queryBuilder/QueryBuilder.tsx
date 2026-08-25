@@ -12,6 +12,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import { set as idbSet } from 'idb-keyval'
 import RegisterPasskeyDialog from '../../components/RegisterPasskeyDialog'
+import AskInEnglish from './nlQuery/AskInEnglish'
 import TextEditor from './textEditor/TextEditor'
 import GraphEditor from './graphEditor/GraphEditor'
 import JsonEditor from './jsonEditor/JsonEditor'
@@ -173,6 +174,7 @@ export default function QueryBuilder() {
               minSize={30}
               style={{ padding: '20px 20px 20px 0', overflowY: 'auto' }}
             >
+              <AskInEnglish />
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </Panel>
             <PanelResizeHandle
