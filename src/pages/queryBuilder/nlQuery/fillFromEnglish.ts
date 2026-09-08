@@ -1,7 +1,7 @@
 import { llmRoutes } from '../../../API/routes'
 import { NodeOption, QueryGraph } from '../textEditor/types'
 import { extractSlotsHeuristic } from './extractSlots'
-import { FillResult, GroundedNode } from './types'
+import { FillResult, GroundedNode, SchemaValidation } from './types'
 import fetchCuries from '../../../utils/fetchCuries'
 import strings from '../../../utils/strings'
 import axios from 'axios'
@@ -118,6 +118,7 @@ export async function fillQueryFromEnglish(options: {
           return {
             queryGraph,
             grounded,
+            schemaValidation: data?.schema_validation as SchemaValidation | undefined,
             source:
               data?.source === 'heuristic'
                 ? 'heuristic'

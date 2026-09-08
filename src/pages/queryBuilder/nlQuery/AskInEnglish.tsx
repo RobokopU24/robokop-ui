@@ -69,7 +69,13 @@ export default function AskInEnglish() {
       })
 
       const unresolved = filled.grounded.filter((node) => node.unresolved)
-      if (unresolved.length) {
+      if (filled.schemaValidation && !filled.schemaValidation.valid) {
+        displayAlert(
+          'warning',
+          filled.schemaValidation.warnings[0] ||
+            'The generated graph could not be fully matched to the current ROBOKOP schema.',
+        )
+      } else if (unresolved.length) {
         displayAlert(
           'warning',
           `Could not resolve: ${unresolved.map((node) => node.mention).join(', ')}. Search that node box to pick a match.`,
@@ -78,6 +84,12 @@ export default function AskInEnglish() {
         displayAlert(
           'info',
           'Filled the graph. Some names had multiple matches — click a chip to pick another.',
+        )
+      } else if ((filled.schemaValidation?.grounded_categories_adjusted ?? 0) > 0) {
+        displayAlert(
+          'info',
+          filled.schemaValidation?.warnings[0] ||
+            'Filled the graph and adjusted node categories to match the ROBOKOP schema.',
         )
       } else {
         displayAlert(
@@ -180,13 +192,25 @@ export default function AskInEnglish() {
           </Stack>
         )}
         {result && (
-          <Typography variant='caption' color='text.secondary'>
-            {result.source === 'pathway'
-              ? 'Filled the ROBOKOP outcome-pathway chain (drug or chemical → gene → process → phenotype → disease).'
-              : result.source === 'llm'
-                ? 'Interpreted on the server with Azure, then grounded with the name resolver.'
-                : 'Used a basic fill. Log in so the server can interpret the question with Azure and look up nodes.'}
-          </Typography>
+          <Stack spacing={0.25}>
+            <Typography variant='caption' color='text.secondary'>
+              {result.source === 'pathway'
+                ? 'Filled the ROBOKOP outcome-pathway chain (drug or chemical → gene → process → phenotype → disease).'
+                : result.source === 'llm'
+                  ? 'Interpreted on the server with Azure, then grounded with the name resolver.'
+                  : 'Used a basic fill. Log in so the server can interpret the question with Azure and look up nodes.'}
+            </Typography>
+            {result.schemaValidation && (
+              <Typography
+                variant='caption'
+                color={result.schemaValidation.valid ? 'success.main' : 'warning.main'}
+              >
+                {result.schemaValidation.valid
+                  ? `Validated against ROBOKOP schema${result.schemaValidation.schema_id ? ` ${result.schemaValidation.schema_id.split('/').filter(Boolean).at(-2) ?? ''}` : ''}.`
+                  : 'Some edges are not supported by the current ROBOKOP schema.'}
+              </Typography>
+            )}
+          </Stack>
         )}
       </Stack>
       <Menu
