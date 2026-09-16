@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import usePageStatus from '../../stores/usePageStatus'
 import { useAuth } from '../../context/AuthContext'
 import { usePasskey } from '../../hooks/usePasskey'
@@ -12,6 +12,7 @@ import cloneDeep from 'lodash/cloneDeep'
 
 import { set as idbSet } from 'idb-keyval'
 import RegisterPasskeyDialog from '../../components/RegisterPasskeyDialog'
+import AskInEnglish from './nlQuery/AskInEnglish'
 import TextEditor from './textEditor/TextEditor'
 import GraphEditor from './graphEditor/GraphEditor'
 import JsonEditor from './jsonEditor/JsonEditor'
@@ -22,6 +23,7 @@ import TemplateModal from '../entryPoint/TemplateModal'
 import BookmarkModal from '../entryPoint/BookmarkModal'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import posthog from 'posthog-js'
+import { FeatureGate } from '../../components/FeatureGate'
 
 /**
  * Query Builder parent component
@@ -173,6 +175,9 @@ export default function QueryBuilder() {
               minSize={30}
               style={{ padding: '20px 20px 20px 0', overflowY: 'auto' }}
             >
+              <FeatureGate feature='question-builder-ai'>
+                <AskInEnglish />
+              </FeatureGate>
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </Panel>
             <PanelResizeHandle

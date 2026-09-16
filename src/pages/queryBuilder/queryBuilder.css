@@ -19,6 +19,14 @@
   gap: 10px;
 }
 
+.ask-in-english {
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+}
+
 #queryGraphEditor {
   /* padding: 20px; */
   height: 100%;
