@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import usePageStatus from '../../stores/usePageStatus'
 import { useAuth } from '../../context/AuthContext'
 import { usePasskey } from '../../hooks/usePasskey'
@@ -23,6 +23,7 @@ import TemplateModal from '../entryPoint/TemplateModal'
 import BookmarkModal from '../entryPoint/BookmarkModal'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
 import posthog from 'posthog-js'
+import { FeatureGate } from '../../components/FeatureGate'
 
 /**
  * Query Builder parent component
@@ -174,7 +175,9 @@ export default function QueryBuilder() {
               minSize={30}
               style={{ padding: '20px 20px 20px 0', overflowY: 'auto' }}
             >
-              <AskInEnglish />
+              <FeatureGate feature='question-builder-ai'>
+                <AskInEnglish />
+              </FeatureGate>
               <TextEditor rows={queryBuilder.textEditorRows || []} />
             </Panel>
             <PanelResizeHandle

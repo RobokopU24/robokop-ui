@@ -55,7 +55,6 @@ export default function AskInEnglish() {
       const filled = await fillQueryFromEnglish({
         question: trimmed,
         authHeaders,
-        displayAlert,
       })
       queryBuilder.dispatch({
         type: 'saveGraph',
@@ -194,11 +193,7 @@ export default function AskInEnglish() {
         {result && (
           <Stack spacing={0.25}>
             <Typography variant='caption' color='text.secondary'>
-              {result.source === 'pathway'
-                ? 'Filled the ROBOKOP outcome-pathway chain (drug or chemical → gene → process → phenotype → disease).'
-                : result.source === 'llm'
-                  ? 'Interpreted on the server with Azure, then grounded with the name resolver.'
-                  : 'Used a basic fill. Log in so the server can interpret the question with Azure and look up nodes.'}
+              Interpreted on the server with Azure, then grounded with the name resolver.
             </Typography>
             {result.schemaValidation && (
               <Typography
