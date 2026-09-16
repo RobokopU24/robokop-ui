@@ -153,7 +153,6 @@ export default function AskInEnglish() {
                 handleFill()
               }
             }}
-            helperText='Looks up names with the same name resolver as the node boxes below.'
           />
           <Button
             variant='contained'
@@ -190,22 +189,15 @@ export default function AskInEnglish() {
             ))}
           </Stack>
         )}
-        {result && (
-          <Stack spacing={0.25}>
-            <Typography variant='caption' color='text.secondary'>
-              Interpreted on the server with Azure, then grounded with the name resolver.
-            </Typography>
-            {result.schemaValidation && (
-              <Typography
-                variant='caption'
-                color={result.schemaValidation.valid ? 'success.main' : 'warning.main'}
-              >
-                {result.schemaValidation.valid
-                  ? `Validated against ROBOKOP schema${result.schemaValidation.schema_id ? ` ${result.schemaValidation.schema_id.split('/').filter(Boolean).at(-2) ?? ''}` : ''}.`
-                  : 'Some edges are not supported by the current ROBOKOP schema.'}
-              </Typography>
-            )}
-          </Stack>
+        {result?.schemaValidation && (
+          <Typography
+            variant='caption'
+            color={result.schemaValidation.valid ? 'success.main' : 'warning.main'}
+          >
+            {result.schemaValidation.valid
+              ? `Validated against ROBOKOP schema${result.schemaValidation.schema_id ? ` ${result.schemaValidation.schema_id.split('/').filter(Boolean).at(-2) ?? ''}` : ''}.`
+              : 'Some edges are not supported by the current ROBOKOP schema.'}
+          </Typography>
         )}
       </Stack>
       <Menu
