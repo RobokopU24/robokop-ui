@@ -29,6 +29,7 @@ import { llmRoutes } from '../API/routes'
 import savedPromptsApi, { SavedPrompt } from '../API/savedPrompts'
 import { getActiveLlmModels, getDefaultModelId } from '../functions/llmModelFunctions'
 import { useAlert } from './AlertProvider'
+import { buildSummaryPromptInput } from '../utils/summaryPrompt'
 
 interface AISummaryModalProps {
   isOpen: boolean
@@ -83,6 +84,7 @@ const summaryExportStyles = `
     color: #0f172a;
     line-height: 1.6;
     font-size: 12pt;
+    overflow-wrap: anywhere;
   }
   .summary-export h1 {
     font-size: 24px;
@@ -316,12 +318,14 @@ function AISummaryModal({
   )
 
   const streamSummary = useCallback(
-    async (templateOverride: string, defaultTemplateForComparison?: string) => {
+    async (
+      templateOverride: string,
+      defaultTemplateForComparison?: string,
+      forceRegenerate = false,
+    ) => {
       const trimmedTemplate = templateOverride.trim()
       const baselineDefaultTemplate = (
-        defaultTemplateForComparison ??
-        defaultPromptTemplateRef.current ??
-        defaultPromptTemplate
+        defaultTemplateForComparison ?? defaultPromptTemplateRef.current
       ).trim()
       const templateCacheKey =
         trimmedTemplate === baselineDefaultTemplate ? '__default__' : trimmedTemplate
@@ -335,7 +339,7 @@ function AISummaryModal({
       ] as const
 
       const cachedSummary = queryClient.getQueryData<string>(summaryCacheKey)
-      if (cachedSummary !== undefined) {
+      if (!forceRegenerate && cachedSummary !== undefined) {
         setRequestError(null)
         setStreamedText(cachedSummary)
         setIsSummarizing(false)
@@ -355,15 +359,11 @@ function AISummaryModal({
         const selectedSavedPrompt = savedPrompts.find(
           (savedPrompt) => savedPrompt.id === selectedSavedPromptId,
         )
-        const selectedTemplateMatchesCurrent =
-          !!selectedSavedPrompt && selectedSavedPrompt.promptTemplate === templateOverride
-
-        const savedPromptId: string | undefined =
-          selectedTemplateMatchesCurrent && selectedSavedPromptId
-            ? selectedSavedPromptId
-            : undefined
-
-        const promptToSend: string | undefined = savedPromptId ? undefined : templateOverride
+        const promptInput = buildSummaryPromptInput(
+          promptType,
+          templateOverride,
+          selectedSavedPrompt,
+        )
 
         const response = await fetch(streamUrl, {
           method: 'POST',
@@ -373,8 +373,7 @@ function AISummaryModal({
           },
           body: JSON.stringify(
             buildRequestBody({
-              promptTemplate: promptToSend,
-              savedPromptId,
+              ...promptInput,
               modelId: selectedModelId || undefined,
             }),
           ),
@@ -422,7 +421,6 @@ function AISummaryModal({
     [
       buildAuthHeaders,
       buildRequestBody,
-      defaultPromptTemplate,
       savedPrompts,
       selectedModelId,
       selectedSavedPromptId,
@@ -508,7 +506,7 @@ function AISummaryModal({
 
     try {
       setActiveDownloadType('pdf')
-      const { jsPDF } = await import('jspdf')
+      const { createSummaryPdf } = await import('../utils/summaryPdf')
       const markdownHtml = summaryContentRef.current?.innerHTML?.trim()
       const fallbackBody = `<p>${escapeHtml(streamedText).replaceAll('\n', '<br/>')}</p>`
       const htmlFragment = buildSummaryHtmlFragment(title, markdownHtml || fallbackBody)
@@ -516,7 +514,7 @@ function AISummaryModal({
       tempContainer.style.position = 'fixed'
       tempContainer.style.left = '0'
       tempContainer.style.top = '0'
-      tempContainer.style.width = '800px'
+      tempContainer.style.width = '698px'
       tempContainer.style.background = '#ffffff'
       tempContainer.style.zIndex = '-1'
       tempContainer.style.pointerEvents = 'none'
@@ -527,18 +525,7 @@ function AISummaryModal({
         requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
       })
 
-      const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
-      await pdf.html(tempContainer, {
-        margin: [36, 36, 36, 36],
-        autoPaging: 'text',
-        html2canvas: {
-          scale: 0.75,
-          backgroundColor: '#ffffff',
-          useCORS: true,
-        },
-      })
-
-      const pdfBlob = pdf.output('blob')
+      const pdfBlob = await createSummaryPdf(tempContainer, title)
       downloadBlob(pdfBlob, 'pdf')
       displayAlert('success', 'Summary downloaded as PDF.')
     } catch (error) {
@@ -790,7 +777,7 @@ function AISummaryModal({
                       fullWidth
                       startIcon={<ReplayRoundedIcon fontSize='small' />}
                       disabled={summaryIsLoading}
-                      onClick={() => streamSummary(promptTemplate)}
+                      onClick={() => streamSummary(promptTemplate, undefined, true)}
                       sx={{
                         background:
                           'linear-gradient(89deg, rgba(98,125,255,1) 0%, rgba(122,90,251,1) 100%)',
