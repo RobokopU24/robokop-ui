@@ -193,7 +193,7 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
             <div
               key={i}
               style={{
-                maxWidth: '300px',
+                maxWidth: 'min(300px, 100%)',
                 display: 'inline-flex',
                 marginTop: '4px',
               }}
@@ -239,85 +239,115 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
     }
   }
   return (
-    <Modal open={isOpen} onClose={onModalClose}>
-      <div
-        style={{
-          padding: '20px',
+    <Modal
+      open={isOpen}
+      onClose={onModalClose}
+      aria-labelledby='query-template-modal-title'
+      sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}
+    >
+      <Box
+        sx={{
+          p: { xs: 2, sm: 2.5 },
           backgroundColor: 'white',
           borderRadius: '8px',
-          maxWidth: '500px',
-          margin: 'auto',
-          marginTop: '100px',
+          width: '100%',
+          maxWidth: '540px',
+          maxHeight: 'calc(100dvh - 32px)',
+          boxSizing: 'border-box',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
+            flexShrink: 0,
           }}
         >
           <img src='/react-icons/cgTemplate.svg' alt='Example' />
-          <h3 style={{ margin: '0 0 0 12px', fontWeight: 500 }}>Choose from Templates</h3>
+          <h3 id='query-template-modal-title' style={{ margin: '0 0 0 12px', fontWeight: 500 }}>
+            Choose from Templates
+          </h3>
         </div>
-        <p style={{ color: '#5E5E5E', fontSize: '14px', margin: '8px 0 0 0' }}>
+        <p style={{ color: '#5E5E5E', fontSize: '14px', margin: '8px 0 0 0', flexShrink: 0 }}>
           Use any of the customizable templates available from the list
         </p>
-        {templateQueries.map((query, index) => (
-          <Accordion
-            key={query.id}
-            className={`example-box example-box-unselected`}
-            expanded={expanded === `panel${index + 1}`}
-            onChange={handleChange(`panel${index + 1}`)}
-            sx={{
-              borderRadius: '8px',
-              padding: 0,
-            }}
-          >
-            <AccordionSummary
-              aria-controls={`panel${index + 1}d-content`}
-              id={`panel${index + 1}d-header`}
-              expandIcon={<ExpandMoreIcon />}
-              sx={{ m: 0, p: 0, borderRadius: '8px', border: 'none' }}
-              onClick={() => handleSelectExample(query)}
+        <Box
+          sx={{
+            minHeight: 0,
+            overflowY: 'auto',
+            overflowWrap: 'anywhere',
+            overscrollBehavior: 'contain',
+          }}
+        >
+          {templateQueries.map((query, index) => (
+            <Accordion
+              key={query.id}
+              className={`example-box example-box-unselected`}
+              expanded={expanded === `panel${index + 1}`}
+              onChange={handleChange(`panel${index + 1}`)}
+              sx={{
+                borderRadius: '8px',
+                padding: 0,
+              }}
             >
-              <div style={{ margin: 0, padding: '8px' }}>
-                <h4
-                  style={{
-                    fontWeight: 500,
-                    margin: 0,
-                    fontFamily: 'Roboto',
-                    fontSize: '16px',
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {createTemplateDisplay(query.template, expanded === `panel${index + 1}`)}
-                </h4>
-              </div>
-            </AccordionSummary>
-            <AccordionDetails>
-              <List sx={{ py: 0 }}>
-                {query.sub_examples &&
-                  query.sub_examples.map((subExample, subIndex) => (
-                    <ListItem
-                      key={subIndex}
-                      sx={{ p: 0, ml: 2, borderBottom: '1px solid #e0e0e0' }}
-                    >
-                      <ListItemText
-                        sx={{ p: 0, m: 0 }}
-                        primary={
-                          <SubExample
-                            subExample={subExample}
-                            mainNodesTemplate={query.template as TemplatePart[]}
-                          />
-                        }
-                      />
-                    </ListItem>
-                  ))}
-              </List>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-        <div style={{ display: 'flex', justifyContent: 'end', marginTop: '32px', gap: '8px' }}>
+              <AccordionSummary
+                aria-controls={`panel${index + 1}d-content`}
+                id={`panel${index + 1}d-header`}
+                expandIcon={<ExpandMoreIcon />}
+                sx={{ m: 0, p: 0, borderRadius: '8px', border: 'none' }}
+                onClick={() => handleSelectExample(query)}
+              >
+                <div style={{ margin: 0, padding: '8px' }}>
+                  <h4
+                    style={{
+                      fontWeight: 500,
+                      margin: 0,
+                      fontFamily: 'Roboto',
+                      fontSize: '16px',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {createTemplateDisplay(query.template, expanded === `panel${index + 1}`)}
+                  </h4>
+                </div>
+              </AccordionSummary>
+              <AccordionDetails>
+                <List sx={{ py: 0 }}>
+                  {query.sub_examples &&
+                    query.sub_examples.map((subExample, subIndex) => (
+                      <ListItem
+                        key={subIndex}
+                        sx={{ p: 0, ml: 2, borderBottom: '1px solid #e0e0e0' }}
+                      >
+                        <ListItemText
+                          sx={{ p: 0, m: 0 }}
+                          primary={
+                            <SubExample
+                              subExample={subExample}
+                              mainNodesTemplate={query.template as TemplatePart[]}
+                            />
+                          }
+                        />
+                      </ListItem>
+                    ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'end',
+            paddingTop: '16px',
+            gap: '8px',
+            flexShrink: 0,
+            flexWrap: 'wrap',
+          }}
+        >
           <button onClick={onModalClose} className='button-cancel'>
             Cancel
           </button>
@@ -333,7 +363,7 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
             Select Query
           </button>
         </div>
-      </div>
+      </Box>
     </Modal>
   )
 }
