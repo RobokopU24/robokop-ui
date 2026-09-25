@@ -41,6 +41,7 @@ interface AISummaryModalProps {
   placeholderHint: string
   streamUrl: string
   canSummarize?: boolean
+  canEditPrompt?: boolean
   blockedMessage?: string
   requestDependencyKey?: string
   buildAuthHeaders: () => Record<string, string>
@@ -157,6 +158,7 @@ function AISummaryModal({
   placeholderHint,
   streamUrl,
   canSummarize = true,
+  canEditPrompt = false,
   blockedMessage,
   requestDependencyKey,
   buildAuthHeaders,
@@ -616,6 +618,12 @@ function AISummaryModal({
   const canSavePrompts = Boolean(buildAuthHeaders().Authorization)
   const summaryIsLoading = isSummarizing || isLoadingPromptTemplate
 
+  useEffect(() => {
+    if (!canEditPrompt && isPromptEditorOpen) {
+      setIsPromptEditorOpen(false)
+    }
+  }, [canEditPrompt, isPromptEditorOpen])
+
   return (
     <Modal
       open={isOpen}
@@ -761,16 +769,18 @@ function AISummaryModal({
                     </Select>
                   </FormControl>
                   <Stack direction='row' spacing={1}>
-                    <Button
-                      size='small'
-                      variant='outlined'
-                      fullWidth
-                      startIcon={<EditNoteRoundedIcon fontSize='small' />}
-                      onClick={() => setIsPromptEditorOpen((prev) => !prev)}
-                      sx={{ borderColor: alpha('#627dff', 0.35), color: '#4b63d4' }}
-                    >
-                      {isPromptEditorOpen ? 'Hide Editor' : 'Edit Prompt'}
-                    </Button>
+                    {canEditPrompt && (
+                      <Button
+                        size='small'
+                        variant='outlined'
+                        fullWidth
+                        startIcon={<EditNoteRoundedIcon fontSize='small' />}
+                        onClick={() => setIsPromptEditorOpen((prev) => !prev)}
+                        sx={{ borderColor: alpha('#627dff', 0.35), color: '#4b63d4' }}
+                      >
+                        {isPromptEditorOpen ? 'Hide Editor' : 'Edit Prompt'}
+                      </Button>
+                    )}
                     <Button
                       size='small'
                       variant='contained'
@@ -793,7 +803,7 @@ function AISummaryModal({
                 </Stack>
               </Paper>
 
-              {isPromptEditorOpen && (
+              {canEditPrompt && isPromptEditorOpen && (
                 <Paper
                   variant='outlined'
                   sx={{
