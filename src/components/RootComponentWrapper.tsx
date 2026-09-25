@@ -8,8 +8,7 @@ import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 import { ThemeProvider as StylesThemeProvider } from '@mui/styles'
 import { AuthProvider } from '../context/AuthContext'
 import { BYOKProvider } from '../context/BYOKContext'
-import Header from './header/Header'
-import Footer from './footer/Footer'
+import SiteLayout from './SiteLayout'
 import { PostHogProvider } from 'posthog-js/react'
 import { QueryBuilderProvider } from '../context/queryBuilder'
 import { queryClient } from '../utils/queryClient'
@@ -55,9 +54,7 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
               <StylesThemeProvider theme={theme}>
                 <QueryBuilderProvider>
                   <div id='pageContainer'>
-                    <Header />
-                    <div id='contentContainer'>{children}</div>
-                    <Footer />
+                    <SiteLayout>{children}</SiteLayout>
                   </div>
                 </QueryBuilderProvider>
               </StylesThemeProvider>
