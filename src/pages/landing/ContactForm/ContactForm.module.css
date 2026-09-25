@@ -51,18 +51,37 @@
 .submitButtonWrapper {
   display: flex;
   align-items: flex-start;
+  gap: 16px;
 }
 
 .submitButtonWrapper > p {
+  flex: 1;
   color: var(--text-faded-color);
   font-size: 0.85rem;
   padding: 0 16px;
   text-align: center;
 }
 
+.submitButtonWrapper > button {
+  flex-shrink: 0;
+}
+
 @media (max-width: 850px) {
   .nameEmailGroup {
     flex-direction: column;
+  }
+
+  .submitButtonWrapper {
+    flex-direction: column;
+  }
+
+  .submitButtonWrapper > p {
+    padding: 0;
+    text-align: left;
+  }
+
+  .submitButtonWrapper > button {
+    align-self: flex-end;
   }
 }
 
