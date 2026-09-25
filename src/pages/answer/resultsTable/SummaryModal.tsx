@@ -2,6 +2,8 @@ import React, { useCallback } from 'react'
 import { llmRoutes } from '../../../API/routes'
 import { useBYOK } from '../../../context/BYOKContext'
 import AISummaryModal from '../../../components/AISummaryModal'
+import { useFeatureAccess } from '../../../hooks'
+import { FEATURE_IDS } from '../../../utils/featureIds'
 
 function SummaryModal({
   isOpen,
@@ -15,6 +17,7 @@ function SummaryModal({
   ids: string[]
 }) {
   const { isActive, sessionToken } = useBYOK()
+  const { canAccess } = useFeatureAccess()
 
   const buildAuthHeaders = useCallback(() => {
     const token = localStorage.getItem('authToken')
@@ -60,6 +63,7 @@ function SummaryModal({
       promptPlaceholder='Write your article summarization prompt template'
       placeholderHint='{{abstractsWithLinkByIDs}}'
       streamUrl={llmRoutes.summarizeLinks}
+      canEditPrompt={canAccess(FEATURE_IDS.SUMMARY_PROMPT_EDITOR)}
       requestDependencyKey={`${ids.join('|')}::${links.join('|')}`}
       buildAuthHeaders={buildAuthHeaders}
       buildRequestBody={buildRequestBody}

@@ -1,6 +1,6 @@
 import { Modal } from '@mui/material'
 import React, { useEffect } from 'react'
-import { QueryTemplate, TemplatesArray } from '../queryBuilder/templatedQueries/types'
+import { TemplatesArray } from '../queryBuilder/templatedQueries/types'
 // import examples from '../queryBuilder/templatedQueries/templates.json';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
@@ -143,6 +143,7 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
 
   useEffect(() => {
     checkTemplateCompletion()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryBuilder.query_graph])
 
   const SubExample = ({ subExample, mainNodesTemplate }: SubExampleProps) => {

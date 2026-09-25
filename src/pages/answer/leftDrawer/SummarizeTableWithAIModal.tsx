@@ -6,6 +6,8 @@ import BiolinkContext from '../../../context/biolink'
 import { BiolinkContextType } from '../../queryBuilder/textEditor/types'
 import { useBYOK } from '../../../context/BYOKContext'
 import AISummaryModal from '../../../components/AISummaryModal'
+import { useFeatureAccess } from '../../../hooks'
+import { FEATURE_IDS } from '../../../utils/featureIds'
 
 interface SummarizeTableWithAIModalProps {
   isOpen: boolean
@@ -88,6 +90,7 @@ function SummarizeTableWithAIModal({
   const { predicates } = useContext(BiolinkContext) as BiolinkContextType
   const queryGraph = graphQueryContext(answerStore.message.query_graph, predicates)
   const { isActive, sessionToken } = useBYOK()
+  const { canAccess } = useFeatureAccess()
 
   const buildAuthHeaders = useCallback(() => {
     const token = localStorage.getItem('authToken')
@@ -134,6 +137,7 @@ function SummarizeTableWithAIModal({
       promptPlaceholder='Write your table summarization prompt template'
       placeholderHint='{{queryGraph}}, {{tableData}}, {{truncationNote}}'
       streamUrl={llmRoutes.summarizeTable}
+      canEditPrompt={canAccess(FEATURE_IDS.SUMMARY_PROMPT_EDITOR)}
       requestDependencyKey={`${tableData.rows.length}:${tableData.truncated}:${queryGraph}`}
       buildAuthHeaders={buildAuthHeaders}
       buildRequestBody={buildRequestBody}

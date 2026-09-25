@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react'
 import AISummaryModal from '../../../components/AISummaryModal'
 import { llmRoutes } from '../../../API/routes'
+import { useFeatureAccess } from '../../../hooks'
+import { FEATURE_IDS } from '../../../utils/featureIds'
 
 interface SummarizeKGNodesWithAIModalProps {
   isOpen: boolean
@@ -17,6 +19,7 @@ function SummarizeKGNodesWithAIModal({
   isLoggedIn,
   canSummarize,
 }: SummarizeKGNodesWithAIModalProps) {
+  const { canAccess } = useFeatureAccess()
   const canRun = isLoggedIn && canSummarize
   const blockedMessage = !isLoggedIn
     ? 'Please log in to use the summarization feature.'
@@ -62,6 +65,7 @@ function SummarizeKGNodesWithAIModal({
       placeholderHint='{{minimalJson}}'
       streamUrl={llmRoutes.summarizeKGNodes}
       canSummarize={canRun}
+      canEditPrompt={canAccess(FEATURE_IDS.SUMMARY_PROMPT_EDITOR)}
       blockedMessage={blockedMessage}
       requestDependencyKey={JSON.stringify(minimalJson)}
       buildAuthHeaders={buildAuthHeaders}
