@@ -62,6 +62,7 @@ export default function AskInEnglish() {
       })
       setResult(filled)
       posthog.capture('question_builder_nl_fill', {
+        query: trimmed,
         source: filled.source,
         unresolved: filled.grounded.filter((node) => node.unresolved).length,
         ambiguous: filled.grounded.filter((node) => node.ambiguous).length,
