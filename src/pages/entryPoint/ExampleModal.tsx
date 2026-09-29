@@ -146,7 +146,7 @@ function ExampleModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
           >
             <h4 style={{ fontWeight: 500, margin: 0 }}>{createTemplateDisplay(query.template)}</h4>
             <p style={{ margin: 0, color: '#5E5E5E', fontSize: '14px', marginTop: '4px' }}>
-              Short description about the query
+              {query.description}
             </p>
           </div>
         ))}

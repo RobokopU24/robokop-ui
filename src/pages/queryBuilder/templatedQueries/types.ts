@@ -52,6 +52,7 @@ export interface TemplateQuery {
 export interface ExampleQuery {
   type: 'example'
   id: number
+  description: string
   template: TemplatePart[]
   structure: QueryStructure
 }
