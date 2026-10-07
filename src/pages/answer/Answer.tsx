@@ -18,10 +18,13 @@ import ResultsTable from './resultsTable/ResultsTable'
 
 import './answer.css'
 import { useAlert } from '../../components/AlertProvider'
+import { captureEvent, getAnswerMetrics } from '../../utils/analytics'
 
 interface AnswerProps {
   answer_id?: string
 }
+
+type AnswerSource = 'quick_query' | 'saved_answer'
 
 // --- Local Types ---
 
@@ -123,8 +126,9 @@ export default function Answer({ answer_id }: AnswerProps) {
    * @param answerResponse - Either an object with error message or stringified message object
    */
 
-  function validateAndInitializeMessage(answerResponse: any): void {
+  function validateAndInitializeMessage(answerResponse: any, source: AnswerSource): void {
     if (answerResponse && answerResponse.status && answerResponse.status === 'error') {
+      captureEvent('answer_load_failed', { source, failure_stage: 'response' })
       pageStatus.setFailure(answerResponse.message)
       return
     }
@@ -133,18 +137,21 @@ export default function Answer({ answer_id }: AnswerProps) {
     try {
       answerResponseJSON = JSON.parse(answerResponse)
     } catch (err) {
+      captureEvent('answer_load_failed', { source, failure_stage: 'parse' })
       console.error('Failed to parse answer response:', err)
       pageStatus.setFailure('Invalid answer JSON')
       return
     }
 
     if (answerResponseJSON.status === 'error') {
+      captureEvent('answer_load_failed', { source, failure_stage: 'processing' })
       pageStatus.setFailure(`Error during answer processing: ${answerResponseJSON.message}`)
       return
     }
 
     const validationErrors = trapiUtils.validateMessage(answerResponseJSON)
     if (validationErrors.length) {
+      captureEvent('answer_load_failed', { source, failure_stage: 'validation' })
       pageStatus.setFailure(`Found errors while parsing message: ${validationErrors.join(', ')}`)
       return
     }
@@ -155,6 +162,10 @@ export default function Answer({ answer_id }: AnswerProps) {
       )
       try {
         answerStore.initialize(answerResponseJSON.message, updateDisplayState)
+        captureEvent('answer_loaded', {
+          source,
+          ...getAnswerMetrics(answerResponseJSON.message),
+        })
         pageStatus.setSuccess()
       } catch (err) {
         displayAlert('error', `Failed to initialize message. Please submit an issue: ${err}`)
@@ -182,7 +193,7 @@ export default function Answer({ answer_id }: AnswerProps) {
     }
     const answerResponse = await API.cache.getAnswerData(answer_id, accessToken)
 
-    validateAndInitializeMessage(answerResponse)
+    validateAndInitializeMessage(answerResponse, 'saved_answer')
   }
 
   /**
@@ -221,7 +232,7 @@ export default function Answer({ answer_id }: AnswerProps) {
         idbGet('quick_message')
           .then((val) => {
             if (val) {
-              validateAndInitializeMessage(val)
+              validateAndInitializeMessage(val, 'quick_query')
             } else {
               // if quick_message === undefined
               answerStore.reset()
@@ -270,15 +281,30 @@ export default function Answer({ answer_id }: AnswerProps) {
             try {
               idbSet('quick_message', JSON.stringify(msg))
               answerStore.initialize(msg.message, updateDisplayState)
+              captureEvent('answer_uploaded', {
+                status: 'succeeded',
+                file_size_bytes: file.size,
+                ...getAnswerMetrics(msg.message),
+              })
               // user uploaded a new answer, reset the url
               if (answer_id) {
                 navigate({ to: '/answer' })
               }
             } catch (err) {
+              captureEvent('answer_uploaded', {
+                status: 'failed',
+                failure_stage: 'initialize',
+                file_size_bytes: file.size,
+              })
               displayAlert('error', `Failed to initialize message. Please submit an issue: ${err}`)
               answerStore.reset()
             }
           } catch (err) {
+            captureEvent('answer_uploaded', {
+              status: 'failed',
+              failure_stage: 'query_graph',
+              file_size_bytes: file.size,
+            })
             console.error('Failed to parse query graph:', err)
             displayAlert(
               'error',
@@ -287,10 +313,20 @@ export default function Answer({ answer_id }: AnswerProps) {
           }
           pageStatus.setSuccess()
         } else {
+          captureEvent('answer_uploaded', {
+            status: 'failed',
+            failure_stage: 'validation',
+            file_size_bytes: file.size,
+          })
           pageStatus.setFailure(errors.join(', '))
         }
       }
       fr.onerror = () => {
+        captureEvent('answer_uploaded', {
+          status: 'failed',
+          failure_stage: 'file_read',
+          file_size_bytes: file.size,
+        })
         displayAlert(
           'error',
           'Sorry but there was a problem uploading the file. The file may be invalid JSON.',

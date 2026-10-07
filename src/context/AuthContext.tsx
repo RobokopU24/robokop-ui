@@ -5,6 +5,7 @@ import routes from '../API/routes'
 import { useAlert } from '../components/AlertProvider'
 import posthog from 'posthog-js'
 import { User } from '../functions/userFunctions'
+import { captureEvent } from '../utils/analytics'
 
 interface AuthContextType {
   user: User | null
@@ -58,11 +59,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = (userData: User, token: string) => {
     setUser(userData)
     posthog.identify(userData.id, { email: userData.email, name: userData.name })
+    captureEvent('user_logged_in')
     localStorage.setItem('authToken', token)
     displayAlert('success', 'You have successfully logged in.')
   }
 
   const logout = async () => {
+    captureEvent('user_logged_out')
     setUser(null)
     posthog.reset()
     localStorage.removeItem('authToken')

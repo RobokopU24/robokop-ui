@@ -32,6 +32,7 @@ import type { SortingState, ColumnFiltersState, ColumnDef } from '@tanstack/reac
 import EmptyTable from '../../../components/shared/emptyTableRows/EmptyTable'
 import ResultExplorer from './ResultExplorer'
 import './resultsTable.css'
+import { captureEvent } from '../../../utils/analytics'
 
 interface NodeType {
   id: string
@@ -224,7 +225,15 @@ export default function ResultsTable({ answerStore, containerSx }: ResultsTableP
                         key={row.id}
                         hover
                         selected={answerStore.selectedRowId === row.id}
-                        onClick={() => answerStore.selectRow(row.original, row.id)}
+                        onClick={() => {
+                          captureEvent('answer_result_selected', {
+                            result_index: row.index,
+                            result_count: data.length,
+                            active_filter_count: columnFilters.length,
+                            has_search_filter: Boolean(searchQuery.trim()),
+                          })
+                          answerStore.selectRow(row.original, row.id)
+                        }}
                       >
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id} sx={{ py: 2 }}>

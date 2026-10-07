@@ -25,6 +25,7 @@ import NodeSelector from '../queryBuilder/textEditor/textEditorRow/NodeSelector'
 import { NodeOption } from '../queryBuilder/textEditor/types'
 import { SubExample, SubExampleProps } from '../queryBuilder/templatedQueries/ExampleQueryView'
 import { parse } from 'yaml'
+import { captureEvent, getQueryGraphMetrics } from '../../utils/analytics'
 
 interface ExampleModalProps {
   isOpen: boolean
@@ -354,6 +355,10 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
           </button>
           <button
             onClick={() => {
+              captureEvent('query_source_applied', {
+                method: 'template',
+                ...getQueryGraphMetrics(queryBuilder.query_graph),
+              })
               setExpanded(false)
               onClose()
               navigate({ to: '/question-builder' })

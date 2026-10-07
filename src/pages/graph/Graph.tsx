@@ -4,6 +4,7 @@ import { Link } from '@tanstack/react-router'
 import stringUtils from '../../utils/strings'
 import '../details/Details.css'
 import { GraphRegistryEntry } from '../../API/graphRegistry'
+import { captureEvent } from '../../utils/analytics'
 
 interface GraphProps {
   graphData: GraphRegistryEntry[]
@@ -46,7 +47,7 @@ function Graph({ graphData, isLoading }: GraphProps) {
             ))
           : graphData
               .filter((graph) => graph.name)
-              .map((graph) => (
+              .map((graph, index) => (
                 <div
                   key={graph.graph_id}
                   className='details-card'
@@ -100,6 +101,14 @@ function Graph({ graphData, isLoading }: GraphProps) {
                       className='details-card-button'
                       to='/graphs/$graph_id'
                       params={{ graph_id: graph.graph_id }}
+                      onClick={() =>
+                        captureEvent('graph_catalog_item_selected', {
+                          catalog_position: index + 1,
+                          catalog_size: graphData.length,
+                          node_count: graph.nodes_count,
+                          edge_count: graph.edges_counts,
+                        })
+                      }
                     >
                       Details →
                     </Link>

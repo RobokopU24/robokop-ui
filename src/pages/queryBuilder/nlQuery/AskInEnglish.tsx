@@ -12,12 +12,12 @@ import {
   Typography,
 } from '@mui/material'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
-import posthog from 'posthog-js'
 import { useAlert } from '../../../components/AlertProvider'
 import { useQueryBuilderContext } from '../../../context/queryBuilder'
 import { fillQueryFromEnglish } from './fillFromEnglish'
 import { FillResult, GroundedNode } from './types'
 import { NodeOption } from '../textEditor/types'
+import { captureEvent, getQueryGraphMetrics } from '../../../utils/analytics'
 
 function nodeLabel(node: NodeOption): string {
   if (node.ids?.[0]) return `${node.name} (${node.ids[0]})`
@@ -51,6 +51,8 @@ export default function AskInEnglish() {
     if (!trimmed || isFilling) return
 
     setIsFilling(true)
+    const startedAt = performance.now()
+    captureEvent('natural_language_query_started', { character_count: trimmed.length })
     try {
       const filled = await fillQueryFromEnglish({
         question: trimmed,
@@ -61,11 +63,12 @@ export default function AskInEnglish() {
         payload: { message: { query_graph: filled.queryGraph } },
       })
       setResult(filled)
-      posthog.capture('question_builder_nl_fill', {
-        query: trimmed,
+      captureEvent('natural_language_query_succeeded', {
         source: filled.source,
         unresolved: filled.grounded.filter((node) => node.unresolved).length,
         ambiguous: filled.grounded.filter((node) => node.ambiguous).length,
+        duration_ms: Math.round(performance.now() - startedAt),
+        ...getQueryGraphMetrics(filled.queryGraph),
       })
 
       const unresolved = filled.grounded.filter((node) => node.unresolved)
@@ -98,6 +101,10 @@ export default function AskInEnglish() {
         )
       }
     } catch (error) {
+      captureEvent('natural_language_query_failed', {
+        character_count: trimmed.length,
+        duration_ms: Math.round(performance.now() - startedAt),
+      })
       console.error('[nl-to-query] fill failed', error)
       displayAlert('error', 'Could not fill the question. Try a more specific description.')
     } finally {

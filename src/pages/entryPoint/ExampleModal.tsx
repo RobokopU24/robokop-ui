@@ -11,6 +11,7 @@ import {
 } from '../queryBuilder/templatedQueries/TemplateQueriesModal'
 import { useQueryBuilderContext } from '../../context/queryBuilder'
 import { useNavigate } from '@tanstack/react-router'
+import { captureEvent, getQueryGraphMetrics } from '../../utils/analytics'
 interface ExampleModalProps {
   isOpen: boolean
   onClose: () => void
@@ -156,6 +157,10 @@ function ExampleModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
           </button>
           <button
             onClick={() => {
+              captureEvent('query_source_applied', {
+                method: 'example',
+                ...getQueryGraphMetrics(queryBuilder.query_graph),
+              })
               onClose()
               navigate({ to: '/question-builder' })
             }}

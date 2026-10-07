@@ -10,6 +10,7 @@ import { useAlert } from '../../components/AlertProvider'
 import API from '../../API/routes'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ShareIcon from '@mui/icons-material/Share'
+import { captureEvent, getQueryGraphMetrics } from '../../utils/analytics'
 
 interface BookmarkedQuery {
   id: string
@@ -137,6 +138,10 @@ function BookmarkModal({ isOpen, onClose, onCancel }: BookmarkModalProps) {
           </button>
           <button
             onClick={() => {
+              captureEvent('query_source_applied', {
+                method: 'bookmark',
+                ...getQueryGraphMetrics(queryBuilder.query_graph),
+              })
               onClose()
               navigate({ to: '/question-builder' })
             }}

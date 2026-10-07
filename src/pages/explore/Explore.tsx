@@ -1,6 +1,7 @@
 import React from 'react'
 import { Container, Typography, Box, Divider, Link as MuiLink } from '@mui/material'
 import { Link } from '@tanstack/react-router'
+import { captureEvent } from '../../utils/analytics'
 
 export default function Explore() {
   return (
@@ -16,7 +17,12 @@ export default function Explore() {
       <Divider sx={{ mb: 4 }} />
 
       <Box sx={{ mb: 6 }}>
-        <MuiLink component={Link} to={`/explore/enrichment-analysis`} underline='hover'>
+        <MuiLink
+          component={Link}
+          to={`/explore/enrichment-analysis`}
+          underline='hover'
+          onClick={() => captureEvent('explore_tool_selected', { tool: 'enrichment_analysis' })}
+        >
           Enrichment Analysis
           <Box
             component='span'
@@ -37,7 +43,12 @@ export default function Explore() {
       </Box>
 
       <Box>
-        <MuiLink component={Link} to={`/explore/drug-chemical`} underline='hover'>
+        <MuiLink
+          component={Link}
+          to={`/explore/drug-chemical`}
+          underline='hover'
+          onClick={() => captureEvent('explore_tool_selected', { tool: 'drug_disease_pairs' })}
+        >
           Drug to Disease Pairs
         </MuiLink>
         <Typography sx={{ mt: 1 }}>

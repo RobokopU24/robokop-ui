@@ -5,6 +5,7 @@ import { useQueryBuilderContext } from '../../context/queryBuilder'
 import cloneDeep from 'lodash/cloneDeep'
 import { useNavigate } from '@tanstack/react-router'
 import TemplateModal from './TemplateModal'
+import { captureEvent } from '../../utils/analytics'
 
 function EntryPoint() {
   const queryBuilder = useQueryBuilderContext()
@@ -30,6 +31,7 @@ function EntryPoint() {
       description: 'Select one of the existing queries from our set of examples provided',
       buttonText: 'View Examples',
       action: () => {
+        captureEvent('query_source_selected', { method: 'example', location: 'welcome' })
         setSavedState(cloneDeep(queryBuilder.query_graph))
         setExampleModalOpen(true)
       },
@@ -40,6 +42,7 @@ function EntryPoint() {
       description: 'Use any of the customizable templates available from the list',
       buttonText: 'Explore Templates',
       action: () => {
+        captureEvent('query_source_selected', { method: 'template', location: 'welcome' })
         setSavedState(cloneDeep(queryBuilder.query_graph))
         setTemplateModalOpen(true)
       },
@@ -49,7 +52,10 @@ function EntryPoint() {
       title: 'Create your own query',
       description: 'Start from scratch with what you need using our query builder',
       buttonText: 'Create Query',
-      action: () => navigate({ to: '/question-builder' }),
+      action: () => {
+        captureEvent('query_source_selected', { method: 'manual', location: 'welcome' })
+        navigate({ to: '/question-builder' })
+      },
     },
   ]
   return (

@@ -22,8 +22,8 @@ import ExampleModal from '../entryPoint/ExampleModal'
 import TemplateModal from '../entryPoint/TemplateModal'
 import BookmarkModal from '../entryPoint/BookmarkModal'
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels'
-import posthog from 'posthog-js'
 import { FeatureGate } from '../../components/FeatureGate'
+import { captureEvent, getAnswerMetrics, getQueryGraphMetrics } from '../../utils/analytics'
 
 /**
  * Query Builder parent component
@@ -41,6 +41,7 @@ export default function QueryBuilder() {
     {
       label: 'Load Example',
       onClick: () => {
+        captureEvent('query_source_selected', { method: 'example', location: 'query_builder' })
         setSavedState(cloneDeep(queryBuilder.query_graph))
         setExampleModalOpen(true)
       },
@@ -49,6 +50,7 @@ export default function QueryBuilder() {
     {
       label: 'Load Template',
       onClick: () => {
+        captureEvent('query_source_selected', { method: 'template', location: 'query_builder' })
         setSavedState(cloneDeep(queryBuilder.query_graph))
         setTemplateModalOpen(true)
       },
@@ -57,6 +59,7 @@ export default function QueryBuilder() {
     {
       label: 'Load Bookmark',
       onClick: () => {
+        captureEvent('query_source_selected', { method: 'bookmark', location: 'query_builder' })
         setSavedState(cloneDeep(queryBuilder.query_graph))
         setBookmarkModalOpen(true)
       },
@@ -91,6 +94,7 @@ export default function QueryBuilder() {
   async function onQuickSubmit() {
     pageStatus.setLoading('Fetching answer, this may take a while')
     const prunedQueryGraph = queryGraphUtils.prune(queryBuilder.query_graph)
+    const startedAt = performance.now()
 
     // Debug: log submitted query details
     const qg = prunedQueryGraph
@@ -105,15 +109,30 @@ export default function QueryBuilder() {
       })
     })
     console.log('[Submit] Pruned Query Graph:', JSON.stringify(prunedQueryGraph))
-    posthog.capture('question_builder_search', {
-      query: JSON.stringify(prunedQueryGraph),
-    })
+    captureEvent('query_submission_started', getQueryGraphMetrics(prunedQueryGraph))
 
-    const response = await API.ara.getQuickAnswer(ara, {
-      message: { query_graph: prunedQueryGraph },
-    })
+    let response
+    try {
+      response = await API.ara.getQuickAnswer(ara, {
+        message: { query_graph: prunedQueryGraph },
+      })
+    } catch {
+      captureEvent('query_submission_failed', {
+        ...getQueryGraphMetrics(prunedQueryGraph),
+        failure_stage: 'request',
+        duration_ms: Math.round(performance.now() - startedAt),
+      })
+      displayAlert('error', 'Unable to process this query. Please try again later.')
+      pageStatus.setSuccess()
+      return
+    }
 
     if (response.status === 'error') {
+      captureEvent('query_submission_failed', {
+        ...getQueryGraphMetrics(prunedQueryGraph),
+        failure_stage: 'response',
+        duration_ms: Math.round(performance.now() - startedAt),
+      })
       const fallbackMessage =
         'Unable to process this query. Please review node categories, predicates, and edge directions.'
       const errorMessage = response.message || fallbackMessage
@@ -131,11 +150,20 @@ export default function QueryBuilder() {
       // stringify to stay consistent with answer page json parsing
       idbSet('quick_message', JSON.stringify(response))
         .then(() => {
+          captureEvent('query_submission_succeeded', {
+            ...getAnswerMetrics(response.message),
+            duration_ms: Math.round(performance.now() - startedAt),
+          })
           displayAlert('success', 'Your answer is ready!')
           // once message is stored, navigate to answer page to load and display
           navigate({ to: '/answer' })
         })
         .catch((err) => {
+          captureEvent('query_submission_failed', {
+            ...getQueryGraphMetrics(prunedQueryGraph),
+            failure_stage: 'local_storage',
+            duration_ms: Math.round(performance.now() - startedAt),
+          })
           displayAlert(
             'error',
             `Failed to locally store this answer. Please try again later. Error: ${err}`,
