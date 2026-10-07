@@ -3,6 +3,7 @@ import { OpenInNew } from '@mui/icons-material'
 import stringUtils from '../../utils/strings'
 import { formatBuildDate } from '../../utils/dateTime'
 import { GraphMetadataV2 } from '../../API/graphMetadata'
+import { captureEvent } from '../../utils/analytics'
 
 interface HeaderCardProps {
   displayName: string
@@ -108,6 +109,7 @@ function HeaderCard({
               href={`https://robokop-automat.apps.renci.org/#/${graph_id}`}
               target='_blank'
               rel='noopener noreferrer'
+              onClick={() => captureEvent('graph_external_link_opened', { destination: 'automat' })}
             >
               Automat API <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
             </a>
@@ -119,6 +121,9 @@ function HeaderCard({
                   href={v2Metadata.license}
                   target='_blank'
                   rel='noopener noreferrer'
+                  onClick={() =>
+                    captureEvent('graph_external_link_opened', { destination: 'license' })
+                  }
                 >
                   License <OpenInNew sx={{ fontSize: '1.25rem', ml: 0.5 }} />
                 </a>
@@ -134,7 +139,14 @@ function HeaderCard({
                 maxWidth: '200px',
               }}
               className='details-card-secondary-button'
-              onClick={() => setIsSankeyGraphModalOpen(true)}
+              onClick={() => {
+                captureEvent('graph_visualization_opened', {
+                  visualization: 'sankey',
+                  node_count: nodeCount,
+                  edge_count: edgeCount,
+                })
+                setIsSankeyGraphModalOpen(true)
+              }}
             >
               Sankey Chart
             </button>

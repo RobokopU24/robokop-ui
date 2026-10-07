@@ -21,6 +21,7 @@ import NodeProperties from './NodeProperties'
 import EdgeProperties from './EdgeProperties'
 import { getGraphVersionList } from '../../API/graphRegistry'
 import Releases from './Releases'
+import { captureEvent } from '../../utils/analytics'
 
 const COMMON_SIDEBAR_ITEMS = [
   {
@@ -105,6 +106,18 @@ function GraphId({ v2Metadata, schemaV2 }: GraphIdV2Props) {
   const displayDescription = v2Metadata?.description || 'No description available'
 
   const edgePropertiesData = getAttributesAndCounts(schemaV2?.schema.edges || [])
+
+  React.useEffect(() => {
+    if (!schemaV2) return
+
+    captureEvent('graph_detail_viewed', {
+      node_count: schemaV2.schema.nodes_summary.total_count,
+      edge_count: schemaV2.schema.edges_summary.total_count,
+      has_extended_metadata: Boolean(v2Metadata && Object.keys(v2Metadata).length),
+      has_biolink_version: Boolean(v2Metadata?.biolinkVersion),
+      has_babel_version: Boolean(v2Metadata?.babelVersion),
+    })
+  }, [schemaV2, v2Metadata])
 
   const sidebarItems =
     v2Metadata !== null && Object.entries(v2Metadata).length > 0

@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
+import { captureEvent } from '../../utils/analytics'
 
 interface SidebarProps {
   listOfContents: { id: string; title: string }[]
@@ -24,7 +25,11 @@ function Sidebar({ listOfContents }: SidebarProps) {
       </Typography>
       {listOfContents.map((item) => (
         <Box key={item.id} sx={{ mb: 1 }}>
-          <a href={`#${item.id}`} style={{ textDecoration: 'none', color: '#1976d2' }}>
+          <a
+            href={`#${item.id}`}
+            style={{ textDecoration: 'none', color: '#1976d2' }}
+            onClick={() => captureEvent('graph_section_selected', { section: item.id })}
+          >
             {item.title}
           </a>
         </Box>

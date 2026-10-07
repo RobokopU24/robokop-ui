@@ -13,6 +13,7 @@ import {
   TextField,
 } from '@mui/material'
 import Papa from 'papaparse'
+import { captureEvent, getAnswerMetrics, getQueryGraphMetrics } from '../utils/analytics'
 
 const jsonToCsvString = (json: any[] | Papa.UnparseObject<unknown>) =>
   Promise.resolve(Papa.unparse(json))
@@ -159,6 +160,7 @@ export default function DownloadDialog({
   }
 
   const handleClickDownload = async () => {
+    const queryGraph = message?.query_graph ?? message?.message?.query_graph
     let blob
     if (type === 'json') {
       blob = new Blob([JSON.stringify({ message }, null, 2)], { type: 'application/json' })
@@ -179,6 +181,13 @@ export default function DownloadDialog({
     document.body.appendChild(a)
     a.click()
     a.remove()
+    captureEvent('data_downloaded', {
+      content_type: download_type === 'all_queries' ? 'query' : download_type,
+      file_format: type,
+      ...(download_type === 'answer'
+        ? getAnswerMetrics(message)
+        : getQueryGraphMetrics(queryGraph)),
+    })
     handleClose()
   }
 

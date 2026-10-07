@@ -19,6 +19,7 @@ import {
 } from '@mui/material'
 import { OpenInNew as OpenInNewIcon, Update as UpdateIcon } from '@mui/icons-material'
 import { ReleasesData } from '../../API/graphRegistry'
+import { captureEvent } from '../../utils/analytics'
 
 export interface ReleasesProps {
   releases?: ReleasesData[]
@@ -124,6 +125,12 @@ function Releases({ releases, loading }: ReleasesProps) {
                         <TableCell>
                           <Link
                             href={`/graphs/${graph_id}/${release.version}`}
+                            onClick={() =>
+                              captureEvent('graph_release_selected', {
+                                is_latest: release.latest,
+                                release_count: sortedReleases.length,
+                              })
+                            }
                             sx={{
                               display: 'inline-flex',
                               alignItems: 'center',

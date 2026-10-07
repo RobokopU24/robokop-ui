@@ -27,6 +27,7 @@ import Loading from '../../components/loading/Loading'
 import { useQueryBuilderContext } from '../../context/queryBuilder'
 import HeaderCell from './HeaderCell'
 import { makeStyles } from '@mui/styles'
+import { captureEvent, getQueryGraphMetrics } from '../../utils/analytics'
 
 // Type definitions
 interface DrugDiseasePair {
@@ -117,6 +118,11 @@ export default function DrugDiseasePairs() {
         },
       },
     }
+    captureEvent('explore_query_started', {
+      source: 'drug_disease_pairs',
+      pair_is_known: Boolean(pair.known),
+      ...getQueryGraphMetrics(query.message.query_graph),
+    })
     queryBuilder.dispatch({ type: 'saveGraph', payload: query })
     navigate({ to: '/question-builder' })
   }
@@ -191,7 +197,21 @@ export default function DrugDiseasePairs() {
         if (ignore) return
         const result = await fetchPairs({ pagination, sort: sortParam, filters: filterParam })
         setData(result)
+        captureEvent('explore_dataset_loaded', {
+          dataset: 'drug_disease_pairs',
+          page_number: pagination.pageIndex + 1,
+          page_size: pagination.pageSize,
+          filter_count: Object.keys(filterParam).length,
+          sort_count: Object.keys(sortParam).length,
+          visible_result_count: result.rows.length,
+          total_result_count: result.num_of_results,
+        })
       } catch (e) {
+        captureEvent('explore_dataset_load_failed', {
+          dataset: 'drug_disease_pairs',
+          filter_count: Object.keys(filterParam).length,
+          sort_count: Object.keys(sortParam).length,
+        })
         console.error('Error fetching drug-disease pairs:', e)
       } finally {
         setIsLoading(false)

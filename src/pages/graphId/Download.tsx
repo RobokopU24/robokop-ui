@@ -28,6 +28,7 @@ import { useQuery } from '@tanstack/react-query'
 import { formatFileSize } from '../../utils/getFileSize'
 import { formatBuildDate } from '../../utils/dateTime'
 import { getGraphDownloadList } from '../../API/graphRegistry'
+import { captureEvent } from '../../utils/analytics'
 
 interface DownloadSectionProps {
   version: string
@@ -113,6 +114,17 @@ function DownloadSection({ version }: DownloadSectionProps) {
                               href={`${window.location.origin}/graphs/${link.file_path.replace(/^\/+/, '')}`}
                               target='_blank'
                               rel='noopener noreferrer'
+                              onClick={() => {
+                                const fileName = link.file_path.split('/').pop() || ''
+                                captureEvent('graph_file_downloaded', {
+                                  file_position: idx + 1,
+                                  file_count: downloadData.length,
+                                  file_extension: fileName.includes('.')
+                                    ? fileName.split('.').pop()?.toLowerCase()
+                                    : 'unknown',
+                                  file_size_bytes: link.file_size_bytes || null,
+                                })
+                              }}
                               sx={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
