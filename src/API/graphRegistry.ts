@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const GRAPH_REGISTRY_ROUTE = 'https://robokop-graph-registry.apps.renci.org'
+export const ROBOKOP_ATLAS_ROUTE = 'https://robokop-atlas.apps.renci.org'
 
 export interface GraphRegistryEntry {
   graph_id: string
@@ -22,7 +22,7 @@ export interface ReleasesData {
 }
 
 export const graphRegistryList = async (): Promise<GraphRegistryEntry[]> => {
-  const response = await axios.get(`${GRAPH_REGISTRY_ROUTE}/registry`)
+  const response = await axios.get(`${ROBOKOP_ATLAS_ROUTE}/registry`)
   if (response.status === 200) {
     return response.data
   } else {
@@ -31,7 +31,7 @@ export const graphRegistryList = async (): Promise<GraphRegistryEntry[]> => {
 }
 
 export const graphSchema = async (graph_id: string, graph_version: string) => {
-  const response = await axios.get(`${GRAPH_REGISTRY_ROUTE}/schema/${graph_id}/${graph_version}`)
+  const response = await axios.get(`${ROBOKOP_ATLAS_ROUTE}/schema/${graph_id}/${graph_version}`)
   if (response.status === 200) {
     return response.data
   } else {
@@ -41,7 +41,7 @@ export const graphSchema = async (graph_id: string, graph_version: string) => {
 
 export const graphMetadata = async (graph_id: string, graph_version: string) => {
   const response = await axios.get(
-    `${GRAPH_REGISTRY_ROUTE}/graph_metadata/${graph_id}/${graph_version}`,
+    `${ROBOKOP_ATLAS_ROUTE}/graph_metadata/${graph_id}/${graph_version}`,
   )
   if (response.status === 200) {
     return response.data
@@ -54,7 +54,7 @@ export const getGraphDownloadList = async (
   graph_id: string,
   graph_version: string,
 ): Promise<GraphDownloadData[]> => {
-  const response = await axios.get(`${GRAPH_REGISTRY_ROUTE}/files/${graph_id}/${graph_version}`)
+  const response = await axios.get(`${ROBOKOP_ATLAS_ROUTE}/files/${graph_id}/${graph_version}`)
   if (response.status === 200) {
     return response.data
   } else {
@@ -63,7 +63,7 @@ export const getGraphDownloadList = async (
 }
 
 export const getGraphVersionList = async (graph_id: string): Promise<ReleasesData[]> => {
-  const response = await axios.get(`${GRAPH_REGISTRY_ROUTE}/versions/${graph_id}`)
+  const response = await axios.get(`${ROBOKOP_ATLAS_ROUTE}/versions/${graph_id}`)
   if (response.status === 200) {
     return response.data
   } else {
