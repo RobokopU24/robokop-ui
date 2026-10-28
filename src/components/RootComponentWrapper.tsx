@@ -44,6 +44,7 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
         api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
         defaults: '2025-05-24',
         capture_exceptions: true, // This enables capturing exceptions using Error Tracking
+        persistence: 'localStorage',
         debug: import.meta.env.MODE === 'development',
       }}
     >
