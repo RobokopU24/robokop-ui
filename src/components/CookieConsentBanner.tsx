@@ -65,10 +65,9 @@ export default function CookieConsentBanner() {
       <Typography id='cookie-consent-description' variant='body2' sx={{ mt: 1, lineHeight: 1.6 }}>
         ROBOKOP uses PostHog to understand how this site is used. Cookie-based analytics are enabled
         by default until you decline. PostHog sets a cookie so it can recognize return visits and
-        measure pages, clicks, and errors. It does not include your queries or uploaded files. If
-        you decline, we count page views without tracking cookies or stored analytics identifiers.
-        We do not record your clicks, errors, or session replay, and we remember your choice in
-        local storage.{' '}
+        measure pages, clicks, and errors. If you decline, we count page views without tracking
+        cookies or stored analytics identifiers. We do not record your clicks, errors, or session
+        replay, and we remember your choice.{' '}
         <Link href='https://posthog.com/privacy' target='_blank' rel='noreferrer'>
           PostHog privacy policy
         </Link>
