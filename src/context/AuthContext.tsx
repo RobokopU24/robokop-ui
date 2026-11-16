@@ -42,7 +42,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         })
         const userData: User = response.data.user
         setUser(userData)
-        posthog.identify(userData.id, { email: userData.email, name: userData.name })
+        if (posthog.get_explicit_consent_status() === 'granted') {
+          posthog.identify(userData.id)
+        }
       } catch (error) {
         console.log(error)
         // TODO: Handle token validation errors
@@ -58,7 +60,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (userData: User, token: string) => {
     setUser(userData)
-    posthog.identify(userData.id, { email: userData.email, name: userData.name })
+    if (posthog.get_explicit_consent_status() === 'granted') {
+      posthog.identify(userData.id)
+    }
     captureEvent('user_logged_in')
     localStorage.setItem('authToken', token)
     displayAlert('success', 'You have successfully logged in.')
@@ -66,8 +70,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     captureEvent('user_logged_out')
+    const consent = posthog.get_explicit_consent_status()
     setUser(null)
     posthog.reset()
+    if (consent === 'granted') {
+      posthog.opt_in_capturing({ captureEventName: false })
+    } else if (consent === 'denied') {
+      posthog.opt_out_capturing()
+    }
     localStorage.removeItem('authToken')
     displayAlert('success', 'You have successfully logged out.')
     navigate({ to: '/' })
