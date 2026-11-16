@@ -9,9 +9,10 @@ import { ThemeProvider as StylesThemeProvider } from '@mui/styles'
 import { AuthProvider } from '../context/AuthContext'
 import { BYOKProvider } from '../context/BYOKContext'
 import SiteLayout from './SiteLayout'
+import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
+import CookieConsentBanner from './CookieConsentBanner'
 import { QueryBuilderProvider } from '../context/queryBuilder'
-import { queryClient } from '../utils/queryClient'
 
 interface RootComponentWrapperProps {
   children: React.ReactNode
@@ -38,16 +39,7 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
   }, [])
 
   return (
-    <PostHogProvider
-      apiKey={import.meta.env.VITE_PUBLIC_POSTHOG_KEY}
-      options={{
-        api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
-        defaults: '2025-05-24',
-        capture_exceptions: true, // This enables capturing exceptions using Error Tracking
-        persistence: 'localStorage',
-        debug: import.meta.env.MODE === 'development',
-      }}
-    >
+    <PostHogProvider client={posthog}>
       <AuthProvider>
         <BYOKProvider>
           <BiolinkContext.Provider value={biolink}>
@@ -57,6 +49,7 @@ function RootComponentWrapper({ children }: RootComponentWrapperProps) {
                   <div id='pageContainer'>
                     <SiteLayout>{children}</SiteLayout>
                   </div>
+                  <CookieConsentBanner />
                 </QueryBuilderProvider>
               </StylesThemeProvider>
             </MuiThemeProvider>
