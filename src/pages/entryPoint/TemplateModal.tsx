@@ -195,6 +195,8 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
             <div
               key={i}
               onClick={(event) => event.stopPropagation()}
+              onKeyDown={(event) => event.stopPropagation()}
+              onKeyUp={(event) => event.stopPropagation()}
               style={{
                 maxWidth: 'min(300px, 100%)',
                 display: 'inline-flex',
@@ -296,6 +298,7 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
               }}
             >
               <AccordionSummary
+                component='div'
                 aria-controls={`panel${index + 1}d-content`}
                 id={`panel${index + 1}d-header`}
                 expandIcon={<ExpandMoreIcon />}
