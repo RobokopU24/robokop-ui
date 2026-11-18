@@ -194,6 +194,7 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
           return (
             <div
               key={i}
+              onClick={(event) => event.stopPropagation()}
               style={{
                 maxWidth: 'min(300px, 100%)',
                 display: 'inline-flex',
@@ -203,7 +204,6 @@ function TemplateModal({ isOpen, onClose, onCancel }: ExampleModalProps) {
               <NodeSelector
                 id={part.id}
                 title={part.name}
-                onClick={(e) => e.stopPropagation()}
                 size='small'
                 properties={queryBuilder.query_graph.nodes[part.id]}
                 nameresCategoryFilter={part.filterType}
