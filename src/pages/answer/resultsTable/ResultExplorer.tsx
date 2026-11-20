@@ -91,6 +91,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
   const debouncedTrimmedNodes = useDebounce(numTrimmedNodes, 500)
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 })
   const [popoverOpen, setPopoverOpen] = useState<PopoverType | null>(null)
+  const [popoverAnchorElement, setPopoverAnchorElement] = useState<Element | null>(null)
   const [popoverData, setPopoverData] = useState<PopoverDataType>({})
   const symmetricPredicates: string[] = (predicates || [])
     .filter((predicate: any) => predicate && predicate.symmetric)
@@ -295,7 +296,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
                     .attr('stroke-width', 0)
                 })
                 .on('click', function (this: SVGCircleElement) {
-                  handleClickNode(d3.select(this).datum() as NodeType)
+                  handleClickNode(d3.select(this).datum() as NodeType, this)
                 }),
             )
             .call((n: d3.Selection<SVGGElement, NodeType, any, any>) =>
@@ -436,18 +437,16 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
   const handleClickEdge = (event: MouseEvent, data: EdgeType) => {
     setPopoverPosition({ x: event.clientX, y: event.clientY })
 
+    setPopoverAnchorElement(null)
     setPopoverData(data)
     setPopoverOpen('edge')
   }
 
-  const handleClickNode = (data: NodeType) => {
-    if (!svgRef.current) return
-    const { top, left } = svgRef.current.getBoundingClientRect()
+  const handleClickNode = (data: NodeType, element: SVGCircleElement) => {
     const nodeDetails = answerStore.resultJSON.knowledge_graph.nodes?.[data.id]
-    setPopoverPosition({
-      x: left + (data.x ?? 0),
-      y: top + (data.y ?? 0),
-    })
+    const { left, top, width, height } = element.getBoundingClientRect()
+    setPopoverPosition({ x: left + width / 2, y: top + height / 2 })
+    setPopoverAnchorElement(element)
     setPopoverData({
       name: nodeDetails?.name || data.name,
       id: data.id,
@@ -504,6 +503,7 @@ export default function ResultExplorer({ answerStore }: { answerStore: AnswerSto
         open={popoverOpen === 'node'}
         onClose={() => setPopoverOpen(null)}
         anchorPosition={{ top: popoverPosition.y, left: popoverPosition.x }}
+        anchorElement={popoverAnchorElement}
         above
       >
         {popoverOpen === 'node' && <NodeAttributesTable nodeData={popoverData as any} />}
