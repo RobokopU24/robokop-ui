@@ -11,7 +11,7 @@ import taxaCurieLookup from './taxon-curie-lookup.json'
 import { useAlert } from '../../../../components/AlertProvider'
 import { NodeOption } from '../types'
 import { AsyncAutocomplete, AutocompleteOption, DataSource } from './AsyncAutocomplete'
-import ChemicalStructurePreview from './ChemicalStructurePreview'
+import ChemicalStructurePreview from '../../../../components/ChemicalStructure'
 import { supportsStructurePreview } from '../../../../utils/chemicalStructure'
 
 interface NodeSelectorProps {

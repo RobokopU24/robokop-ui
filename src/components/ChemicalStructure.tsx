@@ -1,21 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { useQuery } from '@tanstack/react-query'
 import { Box, CircularProgress, Skeleton, Typography } from '@mui/material'
 
-import { fetchSmiles } from '../../../../utils/chemicalStructure'
+import { useChemicalSmiles } from '../hooks/useChemicalSmiles'
+import type { SmilesSource } from '../utils/chemicalStructure'
 
 const PREVIEW_WIDTH = 240
 const PREVIEW_HEIGHT = 200
-
-function useNodeSmiles(curie: string) {
-  return useQuery({
-    queryKey: ['chemical-smiles', curie],
-    queryFn: () => fetchSmiles(curie),
-    staleTime: Infinity,
-    gcTime: 30 * 60 * 1000,
-    retry: 1,
-  })
-}
 
 let smilesDrawerPromise: Promise<typeof import('smiles-drawer').default> | null = null
 function loadSmilesDrawer() {
@@ -122,33 +112,32 @@ function PreviewMessage({ children }: { children: ReactNode }) {
   )
 }
 
-interface ChemicalStructurePreviewProps {
-  curie: string
-  name?: string
+export function ChemicalStructureLoading() {
+  return (
+    <Box sx={{ width: PREVIEW_WIDTH }}>
+      <Skeleton variant='rounded' width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
+      <Typography variant='caption' color='text.secondary' sx={{ display: 'block', mt: 0.5 }}>
+        Loading structure…
+      </Typography>
+    </Box>
+  )
 }
 
-export default function ChemicalStructurePreview({ curie, name }: ChemicalStructurePreviewProps) {
-  const { data: result, isPending, isError } = useNodeSmiles(curie)
-  const smiles = result?.smiles
+interface ChemicalStructureDrawingProps {
+  smiles: string
+  source?: SmilesSource
+  showSmiles?: boolean
+}
 
-  let body: ReactNode
-  if (isPending) {
-    body = (
-      <Box sx={{ width: PREVIEW_WIDTH }}>
-        <Skeleton variant='rounded' width={PREVIEW_WIDTH} height={PREVIEW_HEIGHT} />
-        <Typography variant='caption' color='text.secondary' sx={{ display: 'block', mt: 0.5 }}>
-          Loading structure…
-        </Typography>
-      </Box>
-    )
-  } else if (isError) {
-    body = <PreviewMessage>Couldn&apos;t load structure</PreviewMessage>
-  } else if (!smiles) {
-    body = <PreviewMessage>No structure available</PreviewMessage>
-  } else {
-    body = (
-      <>
-        <SmilesStructure smiles={smiles} />
+export function ChemicalStructureDrawing({
+  smiles,
+  source,
+  showSmiles = true,
+}: ChemicalStructureDrawingProps) {
+  return (
+    <>
+      <SmilesStructure smiles={smiles} />
+      {showSmiles && (
         <Typography
           variant='caption'
           color='text.secondary'
@@ -165,11 +154,33 @@ export default function ChemicalStructurePreview({ curie, name }: ChemicalStruct
         >
           {smiles}
         </Typography>
+      )}
+      {source && (
         <Typography variant='caption' color='text.secondary' sx={{ display: 'block', mt: 0.5 }}>
-          Source: {result?.source}
+          Source: {source}
         </Typography>
-      </>
-    )
+      )}
+    </>
+  )
+}
+
+interface ChemicalStructurePreviewProps {
+  curie: string
+  name?: string
+}
+
+export default function ChemicalStructurePreview({ curie, name }: ChemicalStructurePreviewProps) {
+  const { result, isLoading, isError } = useChemicalSmiles(curie)
+
+  let body: ReactNode
+  if (isLoading) {
+    body = <ChemicalStructureLoading />
+  } else if (isError) {
+    body = <PreviewMessage>Couldn&apos;t load structure</PreviewMessage>
+  } else if (!result) {
+    body = <PreviewMessage>No structure available</PreviewMessage>
+  } else {
+    body = <ChemicalStructureDrawing smiles={result.smiles} source={result.source} />
   }
 
   return (

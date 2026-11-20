@@ -3,6 +3,12 @@ import { Box, Table, TableBody, TableCell, TableRow } from '@mui/material'
 import { styled } from '@mui/material/styles'
 import { Link } from '@tanstack/react-router'
 
+import {
+  ChemicalStructureDrawing,
+  ChemicalStructureLoading,
+} from '../../components/ChemicalStructure'
+import { useChemicalSmiles } from '../../hooks/useChemicalSmiles'
+
 const StyledTableBody = styled(TableBody)(() => ({
   '& .MuiTableRow-root:last-of-type .MuiTableCell-root': {
     borderBottom: 'none',
@@ -35,6 +41,48 @@ interface NodeData {
     original_attribute_name?: string
     value?: string | number | boolean | (string | number | boolean)[]
   }>
+}
+
+type NodeAttribute = NonNullable<NodeData['attributes']>[number]
+
+function findSmilesAttribute(attributes: NodeAttribute[] | undefined): string | null {
+  if (!Array.isArray(attributes)) return null
+  for (const attribute of attributes) {
+    const name = (attribute.original_attribute_name || '').toLowerCase()
+    const typeId = (attribute.attribute_type_id || '').toLowerCase()
+    if (name !== 'smiles' && !typeId.endsWith('smiles')) continue
+    const values = Array.isArray(attribute.value) ? attribute.value : [attribute.value]
+    const smiles = values.find((v): v is string => typeof v === 'string' && v.length > 0)
+    if (smiles) return smiles
+  }
+  return null
+}
+
+const StructureRow: React.FC<{
+  id: string | undefined
+  attributes: NodeAttribute[] | undefined
+}> = ({ id, attributes }) => {
+  const knownSmiles = findSmilesAttribute(attributes)
+  const { result, isLoading } = useChemicalSmiles(id, knownSmiles)
+
+  if (!isLoading && !result) return null
+
+  return (
+    <TableRow style={{ verticalAlign: 'top' }}>
+      <TableCell>Structure</TableCell>
+      <TableCell>
+        {isLoading || !result ? (
+          <ChemicalStructureLoading />
+        ) : (
+          <ChemicalStructureDrawing
+            smiles={result.smiles}
+            source={result.source}
+            showSmiles={!knownSmiles}
+          />
+        )}
+      </TableCell>
+    </TableRow>
+  )
 }
 
 interface NodeAttributesTableProps {
@@ -77,6 +125,8 @@ const NodeAttributesTable: React.FC<NodeAttributesTableProps> = ({ nodeData }) =
               <ValueCell value={categories} />
             </TableRow>
           )}
+
+          <StructureRow id={typeof id === 'string' ? id : undefined} attributes={attributes} />
 
           {Boolean(count) && (
             <TableRow style={{ verticalAlign: 'top' }}>

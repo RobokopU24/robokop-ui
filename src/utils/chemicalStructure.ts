@@ -4,7 +4,7 @@ import API from '../API'
 
 const PUBCHEM_PUG_REST = 'https://pubchem.ncbi.nlm.nih.gov/rest/pug'
 
-export type SmilesSource = 'ROBOKOP KG' | 'PubChem'
+export type SmilesSource = 'ROBOKOP KG' | 'PubChem' | 'Result attributes'
 
 export interface SmilesResult {
   smiles: string
