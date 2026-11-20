@@ -11,6 +11,8 @@ import taxaCurieLookup from './taxon-curie-lookup.json'
 import { useAlert } from '../../../../components/AlertProvider'
 import { NodeOption } from '../types'
 import { AsyncAutocomplete, AutocompleteOption, DataSource } from './AsyncAutocomplete'
+import ChemicalStructurePreview from './ChemicalStructurePreview'
+import { supportsStructurePreview } from '../../../../utils/chemicalStructure'
 
 interface NodeSelectorProps {
   onClick?: (event: React.MouseEvent) => void
@@ -248,6 +250,14 @@ export default function NodeSelector({
     nameresCategoryFilter,
   ])
 
+  function renderOptionPreview(option: AutocompleteOption<NodeOption>) {
+    const node = option.value
+    if (!node || node.key !== undefined || !node.ids || node.ids.length !== 1) return null
+    const curie = node.ids[0]
+    if (!supportsStructurePreview(curie)) return null
+    return <ChemicalStructurePreview key={curie} curie={curie} name={node.name} />
+  }
+
   useEffect(
     () => () => {
       if (cancel) {
@@ -301,6 +311,7 @@ export default function NodeSelector({
         },
       }}
       getOptionLabel={(option) => option.label}
+      renderOptionPreview={renderOptionPreview}
     />
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useRef, useEffect, useLayoutEffect } from 'react'
 import {
   useFloating,
   autoUpdate,
@@ -77,6 +77,8 @@ export interface AutocompleteProps<T = any> {
     state: { selected: boolean; active: boolean },
   ) => React.ReactNode
   getOptionLabel?: (option: AutocompleteOption<T>) => string
+  renderOptionPreview?: (option: AutocompleteOption<T>) => React.ReactNode | null | undefined
+  previewDelayMs?: number
   getOptionDisabled?: (option: AutocompleteOption<T>) => boolean
   noOptionsText?: string
   loadingText?: string
@@ -179,6 +181,8 @@ export function AsyncAutocomplete<T = any>({
   onInputChange,
   renderOption,
   getOptionLabel = (option) => option.label,
+  renderOptionPreview,
+  previewDelayMs = 200,
   getOptionDisabled = (option) => option.disabled || false,
   noOptionsText = 'No options',
   loadingText = 'Loading...',
@@ -194,6 +198,12 @@ export function AsyncAutocomplete<T = any>({
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [sourceLoadingStates, setSourceLoadingStates] = useState<Record<string, boolean>>({})
   const [asyncResults, setAsyncResults] = useState<Record<string, AutocompleteOption<T>[]>>({})
+  const [preview, setPreview] = useState<{
+    option: AutocompleteOption<T>
+    element: HTMLElement
+  } | null>(null)
+  const previewTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const previewHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const listRef = useRef<Array<HTMLElement | null>>([])
   const listContentRef = useRef<Array<string | null>>([])
@@ -218,6 +228,81 @@ export function AsyncAutocomplete<T = any>({
     ],
     whileElementsMounted: autoUpdate,
   })
+
+  const previewReference = useMemo(() => {
+    if (!preview) return null
+    const row = preview.element
+    return {
+      contextElement: row,
+      getBoundingClientRect() {
+        const rowRect = row.getBoundingClientRect()
+        const containerRect = refs.floating.current?.getBoundingClientRect() ?? rowRect
+        const top = Math.min(
+          Math.max(rowRect.top, containerRect.top),
+          containerRect.bottom - rowRect.height,
+        )
+        return {
+          x: containerRect.left,
+          y: top,
+          left: containerRect.left,
+          right: containerRect.right,
+          top,
+          bottom: top + rowRect.height,
+          width: containerRect.width,
+          height: rowRect.height,
+        }
+      },
+    }
+  }, [preview, refs.floating])
+
+  const { refs: previewRefs, floatingStyles: previewFloatingStyles } = useFloating({
+    open: open && !!preview,
+    placement: 'right-start',
+    elements: { reference: preview?.element ?? null },
+    middleware: [flip({ fallbackPlacements: ['left-start'], padding: 8 }), shift({ padding: 8 })],
+    whileElementsMounted: autoUpdate,
+  })
+
+  useLayoutEffect(() => {
+    previewRefs.setPositionReference(previewReference)
+  }, [previewRefs, previewReference])
+
+  const clearPreviewTimer = useCallback(() => {
+    if (previewTimerRef.current) {
+      clearTimeout(previewTimerRef.current)
+      previewTimerRef.current = null
+    }
+  }, [])
+
+  const schedulePreview = useCallback(
+    (option: AutocompleteOption<T> | undefined, element: HTMLElement | null | undefined) => {
+      if (!renderOptionPreview) return
+      clearPreviewTimer()
+      if (!option || !element) return
+      previewTimerRef.current = setTimeout(() => {
+        setPreview({ option, element })
+      }, previewDelayMs)
+    },
+    [renderOptionPreview, clearPreviewTimer, previewDelayMs],
+  )
+
+  const cancelHidePreview = useCallback(() => {
+    if (previewHideTimerRef.current) {
+      clearTimeout(previewHideTimerRef.current)
+      previewHideTimerRef.current = null
+    }
+  }, [])
+
+  const hidePreview = useCallback(() => {
+    clearPreviewTimer()
+    cancelHidePreview()
+    setPreview(null)
+  }, [clearPreviewTimer, cancelHidePreview])
+
+  const scheduleHidePreview = useCallback(() => {
+    cancelHidePreview()
+    previewHideTimerRef.current = setTimeout(hidePreview, 150)
+  }, [cancelHidePreview, hidePreview])
 
   const optionsWithGroups = useMemo(() => {
     const result: Array<{
@@ -283,12 +368,19 @@ export function AsyncAutocomplete<T = any>({
   }, [selectableOptions, getOptionLabel])
 
   const role = useRole(context, { role: 'listbox' })
-  const dismiss = useDismiss(context)
+  const dismiss = useDismiss(context, {
+    outsidePress: (event) => !previewRefs.floating.current?.contains(event.target as Node | null),
+  })
 
   const listNavigation = useListNavigation(context, {
     listRef,
     activeIndex,
-    onNavigate: setActiveIndex,
+    onNavigate: (index) => {
+      setActiveIndex(index)
+      if (index !== null) {
+        schedulePreview(selectableOptions[index], listRef.current[index])
+      }
+    },
     virtual: true,
     loop: true,
   })
@@ -384,6 +476,18 @@ export function AsyncAutocomplete<T = any>({
   }, [selectableOptions.length, open])
 
   useEffect(() => {
+    hidePreview()
+  }, [open, inputValue, asyncResults, hidePreview])
+
+  useEffect(
+    () => () => {
+      clearPreviewTimer()
+      cancelHidePreview()
+    },
+    [clearPreviewTimer, cancelHidePreview],
+  )
+
+  useEffect(() => {
     if (activeIndex !== null && listRef.current[activeIndex]) {
       listRef.current[activeIndex]?.scrollIntoView({
         block: 'nearest',
@@ -467,6 +571,9 @@ export function AsyncAutocomplete<T = any>({
     }
   }, [value, open, getOptionLabel])
 
+  const previewContent =
+    open && preview && renderOptionPreview ? renderOptionPreview(preview.option) : null
+
   const isLoading = externalLoading || Object.values(sourceLoadingStates).some((loading) => loading)
   const hasOptions = selectableOptions.length > 0
 
@@ -529,7 +636,10 @@ export function AsyncAutocomplete<T = any>({
               isolation: 'isolate',
             }}
             elevation={8}
-            {...getFloatingProps()}
+            {...getFloatingProps({
+              onMouseEnter: cancelHidePreview,
+              onMouseLeave: scheduleHidePreview,
+            })}
           >
             <List dense disablePadding sx={{ py: 0 }}>
               {optionsWithGroups.length === 0 &&
@@ -602,6 +712,12 @@ export function AsyncAutocomplete<T = any>({
                       onClick={() =>
                         selectableIdx !== undefined && handleOptionClick(option, selectableIdx)
                       }
+                      onMouseEnter={
+                        renderOptionPreview
+                          ? (e: React.MouseEvent<HTMLElement>) =>
+                              schedulePreview(option, e.currentTarget)
+                          : undefined
+                      }
                       className={isActive ? 'active' : ''}
                       tabIndex={-1}
                       role='option'
@@ -651,6 +767,23 @@ export function AsyncAutocomplete<T = any>({
               )}
             </List>
           </StyledPaper>
+          {previewContent && (
+            <Paper
+              ref={previewRefs.setFloating}
+              elevation={8}
+              style={{
+                ...previewFloatingStyles,
+                zIndex: 10000,
+              }}
+              onMouseEnter={() => {
+                clearPreviewTimer()
+                cancelHidePreview()
+              }}
+              onMouseLeave={scheduleHidePreview}
+            >
+              {previewContent}
+            </Paper>
+          )}
         </FloatingPortal>
       )}
     </>
