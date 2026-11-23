@@ -19,6 +19,7 @@ const informationLinks = [
   { to: '/funding', label: 'Funding' },
   { to: '/license', label: 'License' },
   { to: '/termsofservice', label: 'Terms of Service' },
+  { to: '/cookies', label: 'Cookie policy & preferences' },
 ] as const
 
 export default function SiteLayout({ children }: { children: ReactNode }) {

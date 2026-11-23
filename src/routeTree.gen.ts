@@ -20,6 +20,7 @@ import { Route as GuideRouteImport } from './routes/guide'
 import { Route as FundingRouteImport } from './routes/funding'
 import { Route as EventsRouteImport } from './routes/events'
 import { Route as DeveloperToolsRouteImport } from './routes/developer-tools'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CitationsRouteImport } from './routes/citations'
 import { Route as AboutRouteImport } from './routes/about'
@@ -92,6 +93,11 @@ const EventsRoute = EventsRouteImport.update({
 const DeveloperToolsRoute = DeveloperToolsRouteImport.update({
   id: '/developer-tools',
   path: '/developer-tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/citations': typeof CitationsRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
   '/funding': typeof FundingRoute
@@ -224,6 +231,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/citations': typeof CitationsRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
   '/funding': typeof FundingRoute
@@ -256,6 +264,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/citations': typeof CitationsRoute
   '/contact': typeof ContactRoute
+  '/cookies': typeof CookiesRoute
   '/developer-tools': typeof DeveloperToolsRoute
   '/events': typeof EventsRoute
   '/funding': typeof FundingRoute
@@ -289,6 +298,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/citations'
     | '/contact'
+    | '/cookies'
     | '/developer-tools'
     | '/events'
     | '/funding'
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/citations'
     | '/contact'
+    | '/cookies'
     | '/developer-tools'
     | '/events'
     | '/funding'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/citations'
     | '/contact'
+    | '/cookies'
     | '/developer-tools'
     | '/events'
     | '/funding'
@@ -383,6 +395,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CitationsRoute: typeof CitationsRoute
   ContactRoute: typeof ContactRoute
+  CookiesRoute: typeof CookiesRoute
   DeveloperToolsRoute: typeof DeveloperToolsRoute
   EventsRoute: typeof EventsRoute
   FundingRoute: typeof FundingRoute
@@ -487,6 +500,13 @@ declare module '@tanstack/react-router' {
       path: '/developer-tools'
       fullPath: '/developer-tools'
       preLoaderRoute: typeof DeveloperToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -623,6 +643,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CitationsRoute: CitationsRoute,
   ContactRoute: ContactRoute,
+  CookiesRoute: CookiesRoute,
   DeveloperToolsRoute: DeveloperToolsRoute,
   EventsRoute: EventsRoute,
   FundingRoute: FundingRoute,
