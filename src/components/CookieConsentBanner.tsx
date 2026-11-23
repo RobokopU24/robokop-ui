@@ -1,43 +1,12 @@
-import { useEffect, useState } from 'react'
 import { Box, Button, Link, Paper, Typography } from '@mui/material'
-import posthog from 'posthog-js'
-import { useAuth } from '../context/AuthContext'
-import {
-  clearPostHogTrackingCookie,
-  readStoredPostHogConsent,
-  subscribeToCookieConsentOpen,
-  type PostHogConsentStatus,
-} from '../utils/posthogConsent'
-
-const projectKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY as string | undefined
+import { Link as RouterLink, useLocation } from '@tanstack/react-router'
+import useCookieConsent from '../hooks/useCookieConsent'
 
 export default function CookieConsentBanner() {
-  const { user } = useAuth()
-  const [consent, setConsent] = useState<PostHogConsentStatus>(() =>
-    readStoredPostHogConsent(projectKey),
-  )
-  const [preferencesOpen, setPreferencesOpen] = useState(false)
+  const { consent, choose, enabled } = useCookieConsent()
+  const pathname = useLocation({ select: (location) => location.pathname })
 
-  useEffect(() => subscribeToCookieConsentOpen(() => setPreferencesOpen(true)), [])
-
-  if (!projectKey || (consent !== 'pending' && !preferencesOpen)) return null
-
-  const accept = () => {
-    posthog.opt_in_capturing({ captureEventName: false })
-    if (user) posthog.identify(user.id)
-    setConsent('granted')
-    setPreferencesOpen(false)
-  }
-
-  const decline = () => {
-    // Clear the previous identity before switching a pending visitor to cookieless mode.
-    if (posthog.get_explicit_consent_status() !== 'denied') posthog.reset(true)
-    posthog.set_config({ cookieless_mode: 'on_reject' })
-    posthog.opt_out_capturing()
-    clearPostHogTrackingCookie(projectKey)
-    setConsent('denied')
-    setPreferencesOpen(false)
-  }
+  if (!enabled || consent !== 'pending' || pathname.replace(/\/$/, '') === '/cookies') return null
 
   return (
     <Paper
@@ -63,21 +32,13 @@ export default function CookieConsentBanner() {
         Cookie consent
       </Typography>
       <Typography id='cookie-consent-description' variant='body2' sx={{ mt: 1, lineHeight: 1.6 }}>
-        ROBOKOP uses PostHog to understand how this site is used. Cookie-based analytics are enabled
-        by default until you decline. PostHog sets a cookie so it can recognize return visits and
-        measure pages, clicks, and errors. If you decline, we count page views without tracking
-        cookies or stored analytics identifiers. We do not record your clicks, errors, or session
-        replay, and we remember your choice.{' '}
-        <Link href='https://posthog.com/privacy' target='_blank' rel='noreferrer'>
-          PostHog privacy policy
+        ROBOKOP uses PostHog analytics. Cookies are enabled until you decline. Declining allows only
+        page-view counting without tracking cookies.{' '}
+        <Link component={RouterLink} to='/cookies'>
+          Read our cookie policy and manage your preferences
         </Link>
         .
       </Typography>
-      {consent !== 'pending' && (
-        <Typography variant='body2' sx={{ mt: 1, color: '#475569' }}>
-          Current choice: cookies are {consent === 'granted' ? 'allowed' : 'declined'}.
-        </Typography>
-      )}
       <Box
         sx={{
           position: 'sticky',
@@ -94,7 +55,7 @@ export default function CookieConsentBanner() {
         <Button
           type='button'
           variant='outlined'
-          onClick={decline}
+          onClick={() => choose('denied')}
           sx={{ borderColor: '#c5cbe0', color: '#334155' }}
         >
           Decline
@@ -102,7 +63,7 @@ export default function CookieConsentBanner() {
         <Button
           type='button'
           variant='contained'
-          onClick={accept}
+          onClick={() => choose('granted')}
           autoFocus={consent === 'pending'}
           sx={{ bgcolor: '#627dff', '&:hover': { bgcolor: '#4b63d4' } }}
         >

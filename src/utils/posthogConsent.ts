@@ -31,8 +31,6 @@ export function filterPostHogEvent(
   }
 }
 
-const OPEN_COOKIE_CONSENT = 'robokop-open-cookie-consent'
-
 export function posthogConsentStorageKey(projectKey: string) {
   return `__ph_opt_in_out_${projectKey}`
 }
@@ -69,13 +67,4 @@ export function clearPostHogTrackingCookie(projectKey: string) {
   } catch {
     // Storage can be blocked. The consent choice is still kept separately.
   }
-}
-
-export function openCookieConsent() {
-  window.dispatchEvent(new Event(OPEN_COOKIE_CONSENT))
-}
-
-export function subscribeToCookieConsentOpen(onOpen: () => void) {
-  window.addEventListener(OPEN_COOKIE_CONSENT, onOpen)
-  return () => window.removeEventListener(OPEN_COOKIE_CONSENT, onOpen)
 }

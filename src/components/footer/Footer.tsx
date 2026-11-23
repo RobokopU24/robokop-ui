@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from '@tanstack/react-router'
 import { formatBuildDate } from '../../utils/dateTime'
-import { openCookieConsent } from '../../utils/posthogConsent'
 import './footer.css'
 
 const rawVersion = import.meta.env.VITE_APP_VERSION as string | undefined
@@ -36,16 +35,8 @@ export default function Footer() {
         <a href='https://datascience.nih.gov/about/odss' target='_blank' rel='noreferrer'>
           ODSS
         </a>
-        . <Link to='/termsofservice'>Terms of Service</Link>
-        {import.meta.env.VITE_PUBLIC_POSTHOG_KEY && (
-          <>
-            .{' '}
-            <button type='button' className='footer-cookie-preferences' onClick={openCookieConsent}>
-              Cookie preferences
-            </button>
-          </>
-        )}
-        .
+        . <Link to='/termsofservice'>Terms of Service</Link>.{' '}
+        <Link to='/cookies'>Cookie policy &amp; preferences</Link>.
       </p>
       {(version || formattedBuildDate) && (
         <p className='footer-version'>
